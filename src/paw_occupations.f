@@ -27,6 +27,7 @@ LOGICAL(4)  :: START=.TRUE.    ! DOES NOT READ FROM RESTART FILE
 INTEGER(4)  :: NB=0            ! #(BANDS)
 INTEGER(4)  :: NKPT=0          ! #(K-POINTS)
 INTEGER(4)  :: NSPIN=0         ! #(SPINS)
+INTEGER(4)  :: Ndim=0          ! #(SPINor components)
 LOGICAL(4)  :: TDYN=.FALSE.    ! DYNAMICAL/STATIC OCCUPATION
 LOGICAL(4)  :: RESET=.TRUE.    ! SETS OUTPUT MODE OF DYNOCC$REPORT
 LOGICAL(4)  :: TSTOP=.FALSE.   ! SET VELOCITY TO ZERO
@@ -827,7 +828,7 @@ PRINT*,'WGHT',WGHT
 !       ================================================================
         NB1=MIN(NB1,NB)
         NKPT1=MIN(NKPT1,NKPT)
-        NSPIN1=MIN(NSPIN1,NSPIN)
+        Nspin1=MIN(NSPIN1,NSPIN)
         X0(1:NB1,1:NKPT1,1:NSPIN1)=TMP0(1:NB1,1:NKPT1,1:NSPIN1)
         XM(1:NB1,1:NKPT1,1:NSPIN1)=TMPM(1:NB1,1:NKPT1,1:NSPIN1)
         DEALLOCATE(TMP0)
@@ -1448,7 +1449,7 @@ print*,'dynocc ',tfixtot,tfixspin,q0,s0,totcha,spincha,totpot,spinpot
          CALL ERROR$STOP('DYNOCC$PROPAGATE')
        END IF
        if(.not.tfixtot)totcha=q0
-       if(.not.tfixspin)spincha=q0
+       if(.not.tfixspin)spincha=s0
 !
 !      =================================================================
 !      == ADJUST CHEMICAL POTENTIALS AND CHARGES                      ==
