@@ -694,7 +694,7 @@ $\mat{h}_\rho$ is kept as \verb|KSET%HRHO|.
 \end{eqnarray}
 $\mat{h'}$ is kept as \verb|KSET%H0|.
 %
-\item \verb|DMFT_GLOC|: The local Greens function is obtained as
+\item \verb|DMFT_GLOC|: The local Green's function is obtained as
   Brillouin zone integral over the k-dependent greens function after
   projecting onto the correlated orbitals on the specified site.
 \begin{eqnarray}
@@ -1021,7 +1021,7 @@ The two equations are solved iteratively
 \end{eqnarray}
 
 This equation is a Newton scheme with the Green's function in the
-slope estimate replaced by the non-interacting Greens function with
+slope estimate replaced by the non-interacting Green's function with
 zero potential self energy and chemical potential. \textbf{Should
   there be convergence problems, it may be improved by using the
   static Green's function $\mat{G}_\rho$ instead.}
@@ -1073,10 +1073,412 @@ either natural orbitals derived from the local density matrix or which
 may be eigenstates of the local overlap matrix.
 
 %====================================================================
-\section{Helper routines}
+%\section{Helper routines}
 %====================================================================
 
+\appendix
+%====================================================================
+%\chapter{Helper routines}
+%====================================================================
+%====================================================================
+\chapter{The Green function}
+%====================================================================
+We construct the \textbf{lattice Green's function}
+\begin{eqnarray}
+\hat{G}^{lat}(i\omega_\nu)&=&
+\biggl[(i\hbar\omega_\nu+\mu)\hat{1}
+-\hat{h}-\Delta\hat{\Sigma}(i\omega_\nu)\biggr]^{-1}
+\nonumber\\
+&\approx&\sum_{n,n'}|\psi_n\rangle
+\underbrace{
+\biggl[\langle\psi_{n'}|(i\hbar\omega_\nu+\mu)\hat{1}-\hat{h}
+-\Delta\hat{\Sigma}(i\omega_\nu)|\psi_n\rangle\biggr]_{n,n'}^{-1}
+}_{G^{lat}_{n,n'}}
+\langle\psi_{n'}|
+\label{eq:latgreenfunc}
+\end{eqnarray}
+This expression is approximate, if the set of band states is not
+complete, and, in practice, corrections are required.
 
+In the representation of the band states, the lattice Green's function
+has the form
+\begin{eqnarray}
+G^{lat}_{n,n'}(i\omega_\nu)&=&
+\biggl[\langle\psi_{n'}|(i\hbar\omega_\nu+\mu)\hat{1}-\hat{h}
+-\Delta\hat{\Sigma}(i\omega_\nu)|\psi_n\rangle\biggr]_{n,n'}^{-1}
+\label{eq:latgreenfuncmat}
+\end{eqnarray}
+Note that the matrix to be inverted is not necessarily hermitean!
+
+%====================================================================
+\section{Project Green's function onto local orbitals}
+%====================================================================
+For a hamiltonian $\hat{h}=\sum_{a,b}|\pi_a\rangle
+h_{a,b}\langle\pi_b|$ and a self energy 
+$\hat{\Sigma}(i\omega_\nu)=
+\sum_{a,b}|\pi_a\rangle
+\Sigma_{a,b}(i\omega_\nu)
+\langle\pi_b|$
+acting onto the local orbitals, the Green's function can be expressed
+as
+\begin{eqnarray}
+\hat{G}(i\omega_\nu)&=&
+\sum_{a,b}|\chi_a\rangle
+\biggl\lbrace
+\sum_n\langle\pi_a|\psi_n\rangle
+\biggl[
+(i\hbar\omega_\nu+\mu)\delta_{n,n'}
+\nonumber\\
+&&-\sum_{c,d}\langle\psi_n|\pi_c\rangle
+\Bigl(h_{c,d}+\Sigma_{c,d}(i\omega_\nu)\Bigr)
+\langle\pi_d|\psi_{n'}\rangle
+\biggr]^{-1}_{n,n'}
+\langle\psi_{n'}|\pi_b\rangle
+\biggr\rbrace
+\langle\chi_b|
+\label{eq:greenlocorb}
+\end{eqnarray}
+We converted Eq.~\eqref{eq:latgreenfunc} into a basis of local
+orbitals $|\chi_a\rangle$ using
+$|\psi_n\rangle=\sum_a|\chi_a\rangle\langle\pi_a|\psi_n\rangle$.
+
+
+In order to evaluate Green's function, we still need to refer to the
+band states. The Green's function can, however, also be expressed
+without making direct use of the band states, namely as
+\begin{eqnarray}
+\mat{G}_{a,b}(i\omega_\nu)
+=\biggl[(i\hbar\omega_\nu+\mu)\mat{S}
+-\mat{h}-\mat{\Sigma}(i\omega_\nu)\biggr]^{-1}
+_{a,b}
+\label{eq:greenlocform1}
+\end{eqnarray}
+where
+\begin{eqnarray}
+S^{-1}_{a,b}=\sum_k\langle\pi_a|\psi_n\rangle f_n\langle\psi_n|\pi_b\rangle
+\label{eq:inverses}
+\end{eqnarray}
+
+\textbf{Proof:}
+Here, I will show that the Green's function mtrix expressed in local orbitals
+\eq{eq:greenlocform1}
+\begin{eqnarray}
+\mat{G}_{a,b}(i\omega_\nu)=
+\sum_n\langle\pi_a|\psi_n\rangle
+\biggl[
+(i\hbar\omega_\nu+\mu)\delta_{n,n'}-
+\sum_{c,d}\langle\psi_n|\pi_c\rangle
+\Bigl(\mat{h}_{c,d}+\mat{\Sigma}_{c,d}(i\omega_\nu)\Bigr)
+\langle\pi_d|\psi_{n'}\rangle
+\biggr]^{-1}_{n,n'}
+\langle\psi_{n'}|\pi_b\rangle
+\nonumber\\
+\label{eq:greenlocform2}
+\end{eqnarray}
+can be expressed in the form of \eq{eq:greenlocform1}.
+
+I order to simplify the proof, I will not write out the self energy,
+nor the chemical potential. This is possible because the proof works
+for each Matsubara frequency independently, so that both can be
+absorbed in the non-interacting Hamiltonian.
+\begin{eqnarray}
+G_{a,b}(i\omega_\nu)
+&=&
+\sum_{n,n'}\langle\pi_a|\psi_{n}\rangle
+\biggl(i\hbar\omega_\nu\delta_{n,n'}
+-
+\langle\psi_n|\pi\rangle
+\mat{h}
+\langle\pi|\psi_{n'}\rangle\biggr)^{-1}_{n,n'}
+\langle\psi_{n'}|\pi_b\rangle
+\nonumber\\
+&=&
+\sum_{n,n'}\langle\pi_a|\psi_{n}\rangle
+\bigl(
+\sum_{j=0}^\infty
+\frac{1}{(i\hbar\omega_\nu)^{j+1}}
+\biggl(
+\langle\psi|\pi\rangle
+\mat{h}
+\langle\pi|\psi\rangle\biggr)^j_{n,n'}
+\langle\psi_{n'}|\pi_b\rangle
+\nonumber\\
+&=&
+\sum_{n,n'}\langle\pi_a|\psi_{n}\rangle
+\bigl(
+\sum_{j=0}^\infty
+\frac{1}{(i\hbar\omega_\nu)^{j+1}}
+\biggl(\sum_{n_2,\ldots,n_{j}} 
+\langle\psi_{n}|\pi\rangle
+\mat{h}
+\langle\pi|\psi_{n_2}\rangle\langle\psi_{n_2}|\pi\rangle
+\ldots
+\mat{h}
+\langle\pi|\psi_{n'}\rangle\biggr)
+\langle\psi_{n'}|\pi_b\rangle
+\nonumber\\
+&=&
+\sum_{j=0}^\infty\frac{1}{(i\hbar\omega_\nu)^{j+1}}
+\biggl(\sum_{n_1,\ldots,n_{j+1}} 
+\underbrace{\langle\pi|\psi_{n_1}\rangle
+\langle\psi_{n_1}|\pi\rangle}_{\mat{S}^{-1}}
+\mat{h}
+\underbrace{\langle\pi|\psi_{n_2}\rangle\langle\psi_{n_2}|\pi\rangle}_{\mat{S}^{-1}}
+\ldots
+\mat{h}
+\underbrace{\langle\pi|\psi_{n_{j+1}}\rangle
+\langle\psi_{n_{j+1}}|\pi\rangle}_{\mat{S}^{-1}}
+\biggr)_{a,b}
+\nonumber\\
+&=&
+\biggl(\sum_{j=0}^\infty\frac{1}{(i\hbar\omega_\nu)^{j+1}}
+\biggl(\mat{S}^{-1}\mat{h}\biggr)^{j}\mat{S}^{-1}\biggr)_{a,b}
+\nonumber\\
+&=&\biggl[i\hbar\omega_\nu\mat{S}\biggl
+(\mat{1}-\frac{1}{i\hbar\omega_\nu}\mat{S}^{-1}\mat{h}\Bigr)\biggr]^{-1}_{a,b}
+\nonumber\\
+&=&\biggl[i\hbar\omega_\nu\mat{S}-\mat{h}\biggr]^{-1}_{a,b}
+\end{eqnarray}
+q.e.d.
+
+%====================================================================
+\subsection{Laurent expansion of the Green's function}
+%====================================================================
+Here we extract the Laurent expansion of the Green's function in the form
+\begin{eqnarray}
+\mat{G}=\biggl[(i\hbar\omega_\nu+\mu)\mat{S}
+-\mat{h}-\mat{\Sigma}(i\omega_\nu)\biggr]^{-1}
+\end{eqnarray}
+where the self energy has the Laurent expansion
+\begin{eqnarray}
+\mat{\Sigma}(i\omega_\nu)
+=\sum_{j=0}^\infty\frac{1}{(i\hbar\omega_\nu)^j}\mathcal{S}^{(j)}
+\end{eqnarray}
+
+
+\begin{eqnarray}
+\mat{G}
+&=&\biggl[(i\hbar\omega_\nu)\mat{S}
+\Bigl(\mat{1}-\frac{1}{i\hbar\omega_\nu}
+\mat{S}^{-1}
+\Bigl(\mat{h}-\mu\mat{S}+\mat{\Sigma}(i\omega_\nu)\Bigr)\biggr)\biggr]^{-1}
+\nonumber\\
+&=&
+\sum_{j=0}^\infty
+\frac{1}{(i\hbar\omega_\nu)^{j+1}}
+\biggl(
+\mat{S}^{-1}\Bigl(\mat{h}-\mu\mat{S}+\mat{\Sigma}(i\omega_\nu)\Bigr)\biggr)^{j}
+\mat{S}^{-1}
+\nonumber\\
+&=&
+\frac{1}{(i\hbar\omega_\nu)}
+\mat{S}^{-1}
++
+\frac{1}{(i\hbar\omega_\nu)^2}
+\mat{S}^{-1}\Bigl(\mat{h}-\mu\mat{S}
++\mat{\mathcal{S}}^{(0)}
++\frac{1}{i\hbar\omega_\nu}\mat{\mathcal{S}}^{(1)}
+\Bigr)\mat{S}^{-1}
+\nonumber\\
+&&+
+\frac{1}{(i\hbar\omega_\nu)^3}
+\mat{S}^{-1}\Bigl(\mat{h}-\mu\mat{S}+\mat{\mathcal{S}}^{(0)}\Bigr)
+\mat{S}^{-1}
+\Bigl(\mat{h}-\mu\mat{S}+\mat{\mathcal{S}}^{(0)}\Bigr)\biggr)\mat{S}^{-1}
++O(\omega_\nu^{-4})
+\nonumber\\
+&=&
+\frac{1}{(i\hbar\omega_\nu)}
+\mat{S}^{-1}
++
+\frac{1}{(i\hbar\omega_\nu)^2}
+\mat{S}^{-1}\Bigl(\mat{h}-\mu\mat{S}
++\mat{\mathcal{S}}^{(0)}
+\Bigr)\mat{S}^{-1}
+\nonumber\\
+&&+
+\frac{1}{(i\hbar\omega_\nu)^3}
+\mat{S}^{-1}
+\biggl(
+\mat{\mathcal{S}}^{(1)}
++
+\Bigl(\mat{h}-\mu\mat{S}+\mat{\mathcal{S}}^{(0)}\Bigr)\mat{S}^{-1}
+\Bigl(\mat{h}-\mu\mat{S}+\mat{\mathcal{S}}^{(0)}\Bigr)
+\biggr)
+\mat{S}^{-1}
++O(\omega_\nu^{-4})
+\end{eqnarray}
+
+\begin{eqnarray}
+\mat{G}=\sum_{j=1}^\infty \frac{1}{(i\hbar\omega_\nu)^j}\mat{\mathcal{G}}^{(j)}
+\end{eqnarray}
+with
+\begin{eqnarray}
+\mat{\mathcal{G}}^{(1)}
+&=&\mat{S}^{-1}
+\nonumber\\
+\mat{\mathcal{G}}^{(2)}
+&=&\mat{S}^{-1}
+\Bigl(\mat{h}-\mu\mat{S}
++\mat{\mathcal{S}}^{(0)}
+\Bigr)\mat{S}^{-1}
+\nonumber\\
+\mat{\mathcal{G}}^{(3)}
+&=&\mat{S}^{-1}
+\biggl(
+\mat{\mathcal{S}}^{(1)}
++
+\Bigl(\mat{h}-\mu\mat{S}+\mat{\mathcal{S}}^{(0)}\Bigr)\mat{S}^{-1}
+\Bigl(\mat{h}-\mu\mat{S}+\mat{\mathcal{S}}^{(0)}\Bigr)
+\biggr)
+\mat{S}^{-1}
+\end{eqnarray}
+
+
+The expansion coefficients for the Laurent expansion are hermitian.
+We exploit that $\mat{G}(-i\omega_\nu)=\mat{G}^\dagger(i\omega_\nu)$
+\begin{eqnarray}
+\sum_{j=1}^\infty\frac{1}{(-i\hbar\omega_\nu)^j}\mat{\mathcal{G}}^{(j)}
+=\mat{G}(-i\omega_\nu)&=&\mat{G}^\dagger(i\omega_\nu)
+=\sum_{j=1}^\infty\frac{1}{(-i\hbar\omega_\nu)^j}
+\left(\mat{\mathcal{G}}^{(j)}\right)^\dagger
+\nonumber\\
+\Rightarrow\qquad
+\mat{\mathcal{G}}^{(j)}&=&\left(\mat{\mathcal{G}}^{(j)}\right)^\dagger
+\end{eqnarray}
+
+From this requirement we can derive that $\mat{S}$, $\mat{h}$,
+$\mat{\mathcal{S}}^{(0)}$ and $\mat{\mathcal{S}}^{(0)}$ are hermitian as well.
+
+%====================================================================
+\subsection{Regularization}
+%====================================================================
+From \url{http://en.wikipedia.org/wiki/Matsubara_frequency} we obtain
+the following expression for the \textbf{fermionic} summations.  In
+these expressions the Matsubara frequencies are\footnote{They differ
+  from those of the source by a factor $1/\hbar$.}
+\begin{eqnarray}
+\omega_\nu=(2\nu+1)\pi/(\hbar\beta)
+\end{eqnarray}
+
+
+\begin{eqnarray}
+-k_BT\sum_\nu\ln[-i\hbar\omega_\nu+\epsilon]\e{i\omega_\nu0^+}
+&=&-k_BT\ln[1+e^{-\beta \epsilon}]
+\\
+k_BT\sum_\nu \frac{1}{(i\hbar\omega_\nu-\epsilon)}\e{i\omega_\nu 0^+}
+&=&(1+\e{\beta \epsilon})^{-1}
+\\
+k_BT\sum_\nu \frac{1}{(i\hbar\omega_\nu-\epsilon)^n}
+&=&\frac{1}{(k_BT)^{n-1}(n-1)!}
+\left.\partial_\epsilon^{n-1}\right|_{x=\beta\epsilon}(1+\e{x})^{-1}
+\end{eqnarray}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+\hline
+$j$& 1 & 2 & 3 & 4 & 5 &6 &7 &8 & 9 & 10\\
+\hline
+$\partial^{j-1}_x(1+\e{x})^{-1}$
+&$\frac{1}{2}$ 
+&$-\frac{1}{4}$ 
+&$0$ 
+&$+\frac{1}{8}$ 
+&$0$ 
+&$-\frac{1}{4}$ 
+&$0$ 
+&$\frac{17}{16}$
+&$0$ 
+&$-\frac{31}{4}$
+\\
+\hline
+$\partial^{j-1}_x(1+\e{x})^{-1}$
+&$0.5$ 
+&$-0.25$ 
+&$0$ 
+&$+0.125$ 
+&$0$ 
+&$-0.25$ 
+&$0$ 
+&$+1.0625$
+&$0$ 
+&$-7.75$
+\\
+\hline
+\hline
+$j$& 11 & 12 & 13 & 14 & 15 &16 &17 &18 & 19 & 20\\
+\hline
+$\partial^{j-1}_x(1+\e{x})^{-1}$
+&$0$ 
+&$\frac{691}{8}$ 
+&$0$ 
+&$-\frac{5461}{4}$ 
+&$0$ 
+&$\frac{929569}{32}$ 
+&$0$ 
+&$-\frac{3202291}{4}$
+&$0$ 
+&$+\frac{221930581}{8}$
+\\
+\hline
+$\partial^{j-1}_x(1+\e{x})^{-1}$
+&$0$ 
+&$86.375$ 
+&$0$ 
+&$-1365.25$ 
+&$0$ 
+&$29.0\times10^3$ 
+&$0$ 
+&$-800\times10^3$
+&$0$ 
+&$27.7\times 10^6$ %$+27741322.625$
+\\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=0.5\linewidth,clip=true]
+{Figs/Matsubarasums/matsubarasums1.eps}
+\end{center}
+\caption{\label{fig:matsubarasums} The result of Matsubara sums
+  $-k_BT\sum_\nu\ln[-i\hbar\omega_\nu+\epsilon]$, $k_BT\sum_\nu
+  \frac{1}{(i\hbar\omega_\nu-\epsilon)}\e{i\omega_\nu 0^+}$,
+$k_BT\sum_\nu \frac{1}{(i\hbar\omega_\nu-\epsilon)^2}$ as
+  function of energy $\epsilon$.}
+\end{figure}
+
+%==============================================================================
+\subsubsection{Laurent expansion for the density matrix}
+%==============================================================================
+With this expression, we obtain the Matsubara sum required for the
+density matrix as
+\begin{eqnarray*}
+\frac{1}{\beta}\sum_\nu\mat{G}\e{i\omega_\nu0^+}
+&=&\sum_{j=1}^\infty
+\left.\mat{\mathcal{G}}^{(j)}\frac{1}{(j-1)!}
+\partial^{j-1}_\epsilon\right|_{\epsilon=0}(1+\e{\beta\epsilon})^{-1}
+\nonumber\\
+&=&
+\frac{1}{2}\mat{\mathcal{G}}^{(1)}
+-\frac{1}{4}\beta\mat{\mathcal{G}}^{(2)}
+-0\cdot\beta^2\mat{\mathcal{G}}^{(3)}
++\underbrace{\Bigl(
+\frac{1}{3!}\frac{1}{8}\beta^3\mat{\mathcal{G}}^{(4)}
+-\frac{1}{5!}\frac{1}{4}\beta^5\mat{\mathcal{G}}^{(6)}
++\frac{1}{7!}1.0?\beta^7\mat{\mathcal{G}}^{(8)}\Bigr)
+}_{\text{from grapher}}
++O(\beta^9)
+\nonumber\\
+&=&
+\frac{1}{2}\mat{\mathcal{G}}^{(1)}
+-\frac{1}{4}\beta\mat{\mathcal{G}}^{(2)}
++\underbrace{\Bigl(
+\frac{1}{48}\beta^3\mat{\mathcal{G}}^{(4)}
+-\frac{1}{480}\beta^5\mat{\mathcal{G}}^{(6)}
++\frac{1.0?}{4320}\beta^7\mat{\mathcal{G}}^{(8)}\Bigr)}_{\text{from grapher}}
++O(\beta^9)
+\end{eqnarray*}
 
 \bibliographystyle{prsty}
 \bibliography{all}
