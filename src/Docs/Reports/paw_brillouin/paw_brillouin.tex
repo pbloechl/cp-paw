@@ -1,0 +1,337 @@
+\documentclass[11pt,a4paper]{report}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                 %%
+%%    Header file for the Phi-S-X Series                           %%
+%%                                                                 %%
+%%    german version header_gm.tex is derived from header.tex      %%
+%%    by uncommenting the line ``\setboolean{german}{true}'' below %%
+%%                                                                 %%
+%%    Never edit the german version! all changes must be done      %%
+%%    in the english version header.tex                            %%
+%%                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{cite}
+%====================================================================
+%-- define flag for language adaptations
+\usepackage{ifthen}   % allows to select only certain text
+\newboolean{german}
+\setboolean{german}{false}
+%\setboolean{german}{true}  % uncomment this line for german editions
+%====================================================================
+%
+% Textschriftart: Computer modern Bright
+% body:            CM-Bright 10pt
+% section titles:  CM-Bright Bold
+% formulas:        CM-Bright Math Oblique
+%
+\usepackage[standard-baselineskips]{cmbright}
+\usepackage{cmbright}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{amsfonts}
+\usepackage{exscale}
+\usepackage{amssymb} % CM-Bright provides the AMS symbols
+\usepackage{curves}
+\usepackage{braket}
+\usepackage{miller}     % miller indices
+\usepackage{chemmacros} % http://www.mychemistry.eu/mychemistry/
+%
+\usepackage{typearea}
+\def\usedfonts{CM-Bright}
+%\typearea[current]{calc} % benutzt die aktuelle 
+       % bindekorrektur (BCOR angabe als parameter in koma usepackage)
+       % und berechnet satzspiegel neu
+\typearea[current]{11} %fixed div value
+\let\Vec=\mathbold   % cmbright.sty provides a bold/italic math alphabet
+\let\Dot=\mathbold   % cmbright.sty provides a bold/italic math alphabet
+\let\Ddot=\mathbold   % cmbright.sty provides a bold/italic math alphabet
+%=====================================================================
+\usepackage{url}\urlstyle{tt}
+\usepackage{float}
+\usepackage{bm}       % provides the command \bm{} that makes bold math symbols
+\usepackage{amsmath}
+\usepackage{amsbsy}   % allows bold mathematical symbols
+\usepackage{amscd}
+ \usepackage{a4wide}  % it is better to use the ``geometry'' package
+\usepackage{array}    % 
+\usepackage{fancyhdr} %  defines pagestyle fancy
+\usepackage{epsfig}   % include graphics with epsfig
+\usepackage{graphicx} % includegraphics
+\usepackage{epstopdf}
+\usepackage{wrapfig}
+\usepackage{fancybox} % allows shadow-boxes
+\usepackage{color}    % allows to use color in the text
+%\usepackage{eepic}
+\usepackage{flafter}  % places picture next to its reference
+\usepackage{makeidx}  % make an index
+%\usepackage{MnSymbol}  % 
+%\usepackage{marvosym}  % 
+%== allow links between documents ============================================
+\usepackage{xr}
+\externaldocument[phisx1-]{../../ClassicalMechanics/Book/cm-gm}
+\externaldocument[phisx2-]{../../Electrodynamics/Book/el-gm}
+\externaldocument[phisx3-]{../../QuantumMechanics/Book/qm}
+\externaldocument[phisx4-]{../../StatisticalMechanics/Book/sm}
+\externaldocument[phisxqm2-]{../../QuantumMechanics/Book/qm2}
+\externaldocument[phisxsm2-]{../../StatisticalMechanicsII/Book/sm2}
+\externaldocument[phisxcb-]{../../Chemicalbond/Book/cb}
+% Example: Figure~PhiSX:Quantum
+% Mechanics-\ref{phisx3-fig:doubleslitwave} on page
+% \pageref{phisx3-fig:doubleslitwave}
+%
+%==========================================================================
+%==  page layout  =========================================================
+%==========================================================================
+% eqnarray environment: reduce with of space in place of each ``&''
+\setlength\arraycolsep{1.4pt}
+
+\pagestyle{fancy}
+\fancyhf{} 
+\fancyhead[LE]{\textsc{\thepage}\qquad\textsc{\leftmark}}
+\fancyhead[RO]{\textsc{\leftmark}\qquad\textsc{\thepage}}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0pt} 
+\addtolength{\headheight}{2.5pt}
+\fancypagestyle{plain}{\fancyhead{}
+   \renewcommand{\headrulewidth}{0pt}
+   \fancyfoot[CO]{\bfseries\thepage}}
+
+% Line spacing -----------------------------------------------------------
+\newlength{\defbaselineskip}
+\setlength{\defbaselineskip}{\baselineskip}
+\newcommand{\setlinespacing}[1]%
+           {\setlength{\baselineskip}{#1 \defbaselineskip}}
+\newcommand{\doublespacing}{\setlength{\baselineskip}%
+                           {2.0 \defbaselineskip}}
+\newcommand{\singlespacing}{\setlength{\baselineskip}{\defbaselineskip}}
+
+% Absatz einr\"ucken ------------------------------------------------------
+%\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+% -------------------------------------------------------------------------
+\ifthenelse{\boolean{german}}
+  {\def\figurename{Abb.}}
+  {\def\figurename{Fig.}}
+%--------------------------------------------------------------------------
+\renewcommand{\arraystretch}{1.15}  % skaliert den Zeilen abstand in der 
+    % tabular und array umgebung
+%
+%==========================================================================
+%==  boxes etc ============================================================
+%==========================================================================
+%== minipage in a shadowbox ===============================================
+%== minipage in a framedbox ===============================================
+%== minipage in a framedbox ===============================================
+%=========================================================================
+% color used to point out information to the teacher
+\definecolor{highlight}{rgb}{1.0,0.7,0.}
+\newcommand{\Special}[1]{\textbf{\textcolor{highlight}{#1}}}
+%=========================================================================
+%  switch certain parts on and off. uses ifthen package
+\newboolean{teacher}\setboolean{teacher}{false}
+% this parameter can be changed in the manuscript again
+\setboolean{teacher}{true} %private version if true!
+\newcommand{\teacheronly}[1]{\ifthenelse{\boolean{teacher}}{#1\hfill\\ }}
+%
+%==========================================================================
+%==  define new symbols                                                 ===
+%==========================================================================
+\newcommand{\e}[1]{\mathrm{e}^{#1}}% exponential function
+\renewcommand{\Re}{\mathrm{Re}}    % real part
+\renewcommand{\Im}{\mathrm{Im}}    % imaginary part
+\newcommand{\lagr}{\ell}           % Lagrange dichte
+\newcommand{\Lagr}{\mathcal{L}}    % Lagrange Funktion
+\newcommand{\erf}{{\rm erf}}       %
+\newcommand{\atan}{{\rm atan}}     % arcus tangens
+\newcommand{\mat}[1]{\bm{#1}}  % Matrix
+\newcommand{\defas}{\stackrel{\text{def}}{=}}  %  is defined as
+\ifthenelse{\boolean{german}}
+  {\newcommand{\rot}{{\rm\bf rot}}}    % curl
+  {\newcommand{\rot}{{\rm\bf curl}}}   % curl
+\newcommand{\sgn}{{\rm sgn}}       % sign
+\ifthenelse{\boolean{german}}
+   {\newcommand{\Tr}{\mathrm{Sp}}}      % trace
+   {\newcommand{\Tr}{\mathrm{Tr}}}      % trace
+\ifthenelse{\boolean{german}}
+   {\newcommand{\grmn}[2]{\footnote{``#2'' hei{\ss}t in englisch ``#1''}}}
+   {\newcommand{\grmn}[2]{\footnote{``#1'' translates as ``#2'' into German}}}
+% define the equation reference
+\ifthenelse{\boolean{german}}
+   {\newcommand{\eq}[1]{\text{Gl.}~\ref{#1}}}
+   {\newcommand{\eq}[1]{\text{Eq.}~\ref{#1}}}
+% define a relation with an equation number ontop
+\newcommand{\eqrel}[2]{\stackrel{\eq{#1}}{#2}}
+\newcommand{\zero}{\varnothing}
+%\newcommand{\ket}[1]{|#1\rangle} % contained in package braket
+\newcommand{\sumint}{\int\hspace{-15pt}\sum}
+\newcommand{\marker}[1]{\textcolor{blue}{\emph{#1}}}
+%
+%==========================================================================
+%==                                                                     ===
+%==========================================================================
+% Prevent figures from appearing on a page by themselves
+% from http://dcwww.camd.dtu.dk/~schiotz/comp/LatexTips/LatexTips.html
+
+
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.75}
+%
+%==========================================================================
+%==                                                                     ===
+%==========================================================================
+\makeindex    % make index. uses makeidx package.
+\newcommand{\petertt}[1]{\textcolor{red}{\texttt{#1}}}
+\DeclareMathOperator*{\stat}{stat}
+\begin{document}
+\begin{titlepage}
+\begin{center}
+\vspace*{3.5cm}
+{\huge \textbf{The DMFT object of the CP-PAW code}}\\
+\vspace{0.5cm}
+{\large Peter E. Bl\"ochl}
+\vspace{0.5cm} 
+\end{center}
+
+\vfill
+\begin{center}
+Copyright Peter E. Bl\"ochl; Sept.2, 2013-\today\\
+{\small
+Institute of Theoretical Physics;
+Clausthal University of Technology;\\ 
+D-38678 Clausthal Zellerfeld; Germany;\\
+http://www.pt.tu-clausthal.de/atp/}
+\end{center}
+\end{titlepage}
+\noindent            
+\tableofcontents
+%====================================================================
+\chapter{BRILLOUIN object}
+%====================================================================
+%====================================================================
+\section{Purpose and theoretical background}
+%====================================================================
+The purpose of this object is to perform integrations of matrix
+elements over the occupied part of Brillouin zone.
+\begin{eqnarray}
+\langle A\rangle=\sum_n \frac{1}{V_G}\int d^3k\;
+A_n(\vec{k})\theta(\epsilon_n(\vec{k})-\mu)
+\end{eqnarray}
+where the matrix of the one-particle operator $\hat{A}$ elements are
+\begin{eqnarray}
+A_n(\vec{k})=\langle\psi_n(\vec{k})|\hat{A}|\psi_n(\vec{k})\rangle
+\end{eqnarray}
+and $\epsilon_n(\vec{k})$ are the one-particle energies, the
+eigenvalues of the Hamiltonian.
+
+In the linear tetrahedron method\cite{jepsen71_ssc9_1763,
+  lehmann72_pssb54_469, bloechl94_prb49_16223}, the function values
+are evaluated at a set of discrete k-points $\vec{k}_j$ and energy
+levels and matrix elements are linarly interpolated within tetrahedra
+filling the space between the grid points.
+
+The BRILLOUIN object selects the grid points and reduces them on the
+basis of point groups symemtry operations of the crystal.
+
+If the integral is performed as linear interpolation between grid
+points, it can be written in the simple form
+\begin{eqnarray}
+\langle A\rangle=\sum_n\sum_{j} w_n(\vec{k}_j) A_n(\vec{k}_j)
+\end{eqnarray}
+where the integration weights are independent of the type if matrix
+element to be integrated.\cite{bloechl94_prb49_16223} They are
+evaluated using the tetrahedron method.
+
+The integration weights include a quadratic correction, which improves
+the integrals substantially beyond the purely linear
+approximation.\cite{bloechl94_prb49_16223}
+
+%====================================================================
+\subsection{Symmetry operations}
+%====================================================================
+The symmetry operations can be found in the book by Bradley and
+Cracknell\cite{bradley72_book}, which lists in table~3.4
+\textit{``Results of operatoes on the reciprocal lattice vectors''}
+the point group operations in terms of reciprocal lattice vectors of
+all the space-point groups of crystals. Note that the operations in
+terms of real space lattice vectors differ from those in reciprocal
+lattice vectors.
+
+It is very important that the real-space lattice vectors are chosen
+exactly in the convention of table~3.1 \textit{``The 14 Bravais
+  lattices''} of Bradley Cracknell. There are different possible
+choices, but only the one given in the book is compatible with teh
+transformations in Table 3.4.
+
+The transformations are converted into matrices as follows: Let us
+take the operation $C^+_{32}$ for the face-centered cubic lattice
+$\Gamma^f_c$:
+\begin{center}
+\begin{tabular}{|l|c|c|c|}
+\hline
+&\multicolumn{3}{|c|}{$\Gamma^f_c$}\\
+\hline
+$C^+_{32}$ & $-\vec{g}_1-\vec{g}_2-\vec{g}_3$ & $\vec{g}_1$ & $\vec{g}_3$\\
+\hline
+\end{tabular}
+\end{center}
+The resulting matrix is
+\begin{eqnarray}
+\mat{O}=
+\left(\begin{array}{ccc}
+-1 & 1 & 0 \\
+-1 & 0 & 0 \\
+-1 & 0 & 1\\
+\end{array}\right)
+\end{eqnarray}
+The first lattice vector $\vec{g}_1$ has the form $\vec{i}=(1,0,0)$ in
+relative coordinates. It is transformed into $\vec{i'}=\mat{O}\vec{i}
+=(-1,-1,-1)$, which is $-\vec{g}_1-\vec{g}_2-\vec{g}_3$.
+
+It is only necessary to provide the generators of the point group.
+The generators are a minimum set of operations from which all point
+group operations are be obtained as products of these generators.
+
+
+
+%================================================================
+\section{Brillouin\_msh}
+%================================================================
+\begin{itemize}
+\item RBAS real-space lattice vectors in kartesian coordinates
+\item NGKP Target value of the number of general
+  k-points on the interpolation grid
+\item NSYM number of generators for the point group operations 
+\item IARB
+\item TSHIFT
+\end{itemize}
+
+First, the k-point grid is defined by determining the division of the
+lattice vectors $N(3)$ in \verb|brillouin_basdiv|. The value
+$NMSHPNT=(N(1)+1)*(N(2)+1)*(N(3)+1)$ is returned. The grid divisions
+are placed onto \verb|this%nkdiv|
+
+In \verb|brillouin_reduz| the k-points are mapped onto each other
+using the point group operations
+\begin{eqnarray}
+\vec{k}_{i_1,i_2,i_3}=\sum_{j=1}^3 \vec{g}_{j}\frac{i_{j}+\frac{1}{2}\tau_j}{n_{j}}
+\nonumber
+\vec{i}'=\mat{O}\vec{i}
+\end{eqnarray}
+In this way a mapping 
+between k-points is established. For two symetry
+related k-points the mapping always goes to the k-point with the lower
+value according to some unique numbering scheme.
+
+In \verb|brillouin_zuord| this mapping is used to determine the
+irreducible k-points on the grid. The irreducible k-points are the
+those that are mapped under the mapping \verb|NUM| onto themselfes
+Those k-points will be calculated in relative coordinates as $XK$ an
+the mapping $NUM$ will be modified so that the general k-points point
+onto the irreducible k-points in their own arrangement.
+
+The tetrahedra are calculated and mappend onto irreducible ones.
+
+\bibliographystyle{prsty}
+\bibliography{all}
+\end{document}  
