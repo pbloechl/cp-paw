@@ -10,179 +10,8 @@
 %%    in the english version header.tex                            %%
 %%                                                                 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage{cite}
-%====================================================================
-%-- define flag for language adaptations
-\usepackage{ifthen}   % allows to select only certain text
-\newboolean{german}
-\setboolean{german}{false}
-%\setboolean{german}{true}  % uncomment this line for german editions
-%====================================================================
-%
-% Textschriftart: Computer modern Bright
-% body:            CM-Bright 10pt
-% section titles:  CM-Bright Bold
-% formulas:        CM-Bright Math Oblique
-%
-\usepackage[standard-baselineskips]{cmbright}
-\usepackage{cmbright}
-\usepackage[T1]{fontenc}
-\usepackage{textcomp}
-\usepackage{amsfonts}
-\usepackage{exscale}
-\usepackage{amssymb} % CM-Bright provides the AMS symbols
-\usepackage{curves}
-\usepackage{braket}
-\usepackage{miller}     % miller indices
-\usepackage{chemmacros} % http://www.mychemistry.eu/mychemistry/
-%
-\usepackage{typearea}
-\def\usedfonts{CM-Bright}
-%\typearea[current]{calc} % benutzt die aktuelle 
-       % bindekorrektur (BCOR angabe als parameter in koma usepackage)
-       % und berechnet satzspiegel neu
-\typearea[current]{11} %fixed div value
-\let\Vec=\mathbold   % cmbright.sty provides a bold/italic math alphabet
-\let\Dot=\mathbold   % cmbright.sty provides a bold/italic math alphabet
-\let\Ddot=\mathbold   % cmbright.sty provides a bold/italic math alphabet
-%=====================================================================
-\usepackage{url}\urlstyle{tt}
-\usepackage{float}
-\usepackage{bm}       % provides the command \bm{} that makes bold math symbols
-\usepackage{amsmath}
-\usepackage{amsbsy}   % allows bold mathematical symbols
-\usepackage{amscd}
- \usepackage{a4wide}  % it is better to use the ``geometry'' package
-\usepackage{array}    % 
-\usepackage{fancyhdr} %  defines pagestyle fancy
-\usepackage{epsfig}   % include graphics with epsfig
-\usepackage{graphicx} % includegraphics
-\usepackage{epstopdf}
-\usepackage{wrapfig}
-\usepackage{fancybox} % allows shadow-boxes
-\usepackage{color}    % allows to use color in the text
-%\usepackage{eepic}
-\usepackage{flafter}  % places picture next to its reference
-\usepackage{makeidx}  % make an index
-%\usepackage{MnSymbol}  % 
-%\usepackage{marvosym}  % 
-%== allow links between documents ============================================
-\usepackage{xr}
-\externaldocument[phisx1-]{../../ClassicalMechanics/Book/cm-gm}
-\externaldocument[phisx2-]{../../Electrodynamics/Book/el-gm}
-\externaldocument[phisx3-]{../../QuantumMechanics/Book/qm}
-\externaldocument[phisx4-]{../../StatisticalMechanics/Book/sm}
-\externaldocument[phisxqm2-]{../../QuantumMechanics/Book/qm2}
-\externaldocument[phisxsm2-]{../../StatisticalMechanicsII/Book/sm2}
-\externaldocument[phisxcb-]{../../Chemicalbond/Book/cb}
-% Example: Figure~PhiSX:Quantum
-% Mechanics-\ref{phisx3-fig:doubleslitwave} on page
-% \pageref{phisx3-fig:doubleslitwave}
-%
-%==========================================================================
-%==  page layout  =========================================================
-%==========================================================================
-% eqnarray environment: reduce with of space in place of each ``&''
-\setlength\arraycolsep{1.4pt}
-
-\pagestyle{fancy}
-\fancyhf{} 
-\fancyhead[LE]{\textsc{\thepage}\qquad\textsc{\leftmark}}
-\fancyhead[RO]{\textsc{\leftmark}\qquad\textsc{\thepage}}
-\renewcommand{\headrulewidth}{0.5pt}
-\renewcommand{\footrulewidth}{0pt} 
-\addtolength{\headheight}{2.5pt}
-\fancypagestyle{plain}{\fancyhead{}
-   \renewcommand{\headrulewidth}{0pt}
-   \fancyfoot[CO]{\bfseries\thepage}}
-
-% Line spacing -----------------------------------------------------------
-\newlength{\defbaselineskip}
-\setlength{\defbaselineskip}{\baselineskip}
-\newcommand{\setlinespacing}[1]%
-           {\setlength{\baselineskip}{#1 \defbaselineskip}}
-\newcommand{\doublespacing}{\setlength{\baselineskip}%
-                           {2.0 \defbaselineskip}}
-\newcommand{\singlespacing}{\setlength{\baselineskip}{\defbaselineskip}}
-
-% Absatz einr\"ucken ------------------------------------------------------
-%\setlength{\parindent}{0pt}
-\setlength{\parskip}{2pt}
-% -------------------------------------------------------------------------
-\ifthenelse{\boolean{german}}
-  {\def\figurename{Abb.}}
-  {\def\figurename{Fig.}}
-%--------------------------------------------------------------------------
-\renewcommand{\arraystretch}{1.15}  % skaliert den Zeilen abstand in der 
-    % tabular und array umgebung
-%
-%==========================================================================
-%==  boxes etc ============================================================
-%==========================================================================
-%== minipage in a shadowbox ===============================================
-%== minipage in a framedbox ===============================================
-%== minipage in a framedbox ===============================================
-%=========================================================================
-% color used to point out information to the teacher
-\definecolor{highlight}{rgb}{1.0,0.7,0.}
-\newcommand{\Special}[1]{\textbf{\textcolor{highlight}{#1}}}
-%=========================================================================
-%  switch certain parts on and off. uses ifthen package
-\newboolean{teacher}\setboolean{teacher}{false}
-% this parameter can be changed in the manuscript again
-\setboolean{teacher}{true} %private version if true!
-\newcommand{\teacheronly}[1]{\ifthenelse{\boolean{teacher}}{#1\hfill\\ }}
-%
-%==========================================================================
-%==  define new symbols                                                 ===
-%==========================================================================
-\newcommand{\e}[1]{\mathrm{e}^{#1}}% exponential function
-\renewcommand{\Re}{\mathrm{Re}}    % real part
-\renewcommand{\Im}{\mathrm{Im}}    % imaginary part
-\newcommand{\lagr}{\ell}           % Lagrange dichte
-\newcommand{\Lagr}{\mathcal{L}}    % Lagrange Funktion
-\newcommand{\erf}{{\rm erf}}       %
-\newcommand{\atan}{{\rm atan}}     % arcus tangens
-\newcommand{\mat}[1]{\bm{#1}}  % Matrix
-\newcommand{\defas}{\stackrel{\text{def}}{=}}  %  is defined as
-\ifthenelse{\boolean{german}}
-  {\newcommand{\rot}{{\rm\bf rot}}}    % curl
-  {\newcommand{\rot}{{\rm\bf curl}}}   % curl
-\newcommand{\sgn}{{\rm sgn}}       % sign
-\ifthenelse{\boolean{german}}
-   {\newcommand{\Tr}{\mathrm{Sp}}}      % trace
-   {\newcommand{\Tr}{\mathrm{Tr}}}      % trace
-\ifthenelse{\boolean{german}}
-   {\newcommand{\grmn}[2]{\footnote{``#2'' hei{\ss}t in englisch ``#1''}}}
-   {\newcommand{\grmn}[2]{\footnote{``#1'' translates as ``#2'' into German}}}
-% define the equation reference
-\ifthenelse{\boolean{german}}
-   {\newcommand{\eq}[1]{\text{Gl.}~\ref{#1}}}
-   {\newcommand{\eq}[1]{\text{Eq.}~\ref{#1}}}
-% define a relation with an equation number ontop
-\newcommand{\eqrel}[2]{\stackrel{\eq{#1}}{#2}}
-\newcommand{\zero}{\varnothing}
-%\newcommand{\ket}[1]{|#1\rangle} % contained in package braket
-\newcommand{\sumint}{\int\hspace{-15pt}\sum}
-\newcommand{\marker}[1]{\textcolor{blue}{\emph{#1}}}
-%
-%==========================================================================
-%==                                                                     ===
-%==========================================================================
-% Prevent figures from appearing on a page by themselves
-% from http://dcwww.camd.dtu.dk/~schiotz/comp/LatexTips/LatexTips.html
-
-
-\renewcommand{\topfraction}{0.85}
-\renewcommand{\textfraction}{0.1}
-\renewcommand{\floatpagefraction}{0.75}
-%
-%==========================================================================
-%==                                                                     ===
-%==========================================================================
-\makeindex    % make index. uses makeidx package.
-\newcommand{\petertt}[1]{\textcolor{red}{\texttt{#1}}}
-\DeclareMathOperator*{\stat}{stat}
+\input{../header}
+\hypersetup{pdftitle=paw_brillouin}
 \begin{document}
 \begin{titlepage}
 \begin{center}
@@ -295,6 +124,30 @@ group operations are be obtained as products of these generators.
 
 
 %================================================================
+\section{Code structure}
+%================================================================
+%================================================================
+\section{Brillouin\_module}
+%================================================================
+The object has an internal memory, which is kept in the Brillouin
+module in the data structure \verb|THIS|.
+\begin{verbatim}
+TYPE THIS_TYPE
+  INTEGER(4)             :: NKP       ! #(IRREDUCIBLE KPOINTS)
+  INTEGER(4)             :: NTET      ! #(IRREDUCIBLE TETRAHEDRA)
+  REAL(8)                :: VOL       ! 1/#(GENERAL TETRAHEDRA)
+  REAL(8)                :: RBAS(3,3) ! REAL SPACE LATTICE VECTORS
+  integer(4)             :: NKDIV(3)
+  integer(4)             :: ishift(3)
+  REAL(8)       ,POINTER :: XK(:,:)   !(3,NKP) IRR. K-POINTS IN RELATIVE COORDINATES
+  INTEGER(4)    ,POINTER :: IKP(:,:)  !(4,NTET) TETRAHEDRON CORNERS
+  INTEGER(4)    ,POINTER :: MULT(:)   !(NTET) MULTIPLICITY OF THE TETRAHEDRON
+  INTEGER(4)    ,POINTER :: irrkp(:)  !(nmshp) pointer to irr. k-point
+END TYPE THIS_TYPE
+\end{verbatim}
+
+
+%================================================================
 \section{Brillouin\_msh}
 %================================================================
 \begin{itemize}
@@ -332,6 +185,6 @@ onto the irreducible k-points in their own arrangement.
 
 The tetrahedra are calculated and mappend onto irreducible ones.
 
-\bibliographystyle{prsty}
-\bibliography{all}
+\bibliographystyle{unsrtnat}
+\bibliography{../all}
 \end{document}  
