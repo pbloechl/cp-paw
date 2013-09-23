@@ -16,7 +16,7 @@
 \begin{titlepage}
 \begin{center}
 \vspace*{3.5cm}
-{\huge \textbf{The DMFT object of the CP-PAW code}}\\
+{\huge \textbf{The Brillouin object of the CP-PAW code}}\\
 \vspace{0.5cm}
 {\large Peter E. Bl\"ochl}
 \vspace{0.5cm} 
@@ -92,9 +92,13 @@ exactly in the convention of table~3.1 \textit{``The 14 Bravais
 choices, but only the one given in the book is compatible with teh
 transformations in Table 3.4.
 
+%====================================================================
+\subsubsection{Table 3.4 of Bradley Cracknell}
+%====================================================================
 The transformations are converted into matrices as follows: Let us
 take the operation $C^+_{32}$ for the face-centered cubic lattice
 $\Gamma^f_c$:
+\begin{table}[h!]
 \begin{center}
 \begin{tabular}{|l|c|c|c|}
 \hline
@@ -104,24 +108,147 @@ $C^+_{32}$ & $-\vec{g}_1-\vec{g}_2-\vec{g}_3$ & $\vec{g}_1$ & $\vec{g}_3$\\
 \hline
 \end{tabular}
 \end{center}
-The resulting matrix is
+\caption{\label{tab:explanationbradleytable34} Example for an entry of
+  table 3.4 of Bradley Cracknell\cite{bradley72_book}}
+\end{table}
+
+The three entries in table~\ref{tab:explanationbradleytable34} specify
+the result of the operation $C^+_{32}$ onto the first, second, and
+third lattice vector, that is
+$\vec{g}'_1=\mat{U}^{C^+_{32}}\vec{g}_1$,
+$\vec{g}'_2=\mat{U}^{C^+_{32}}\vec{g}_2$ and
+$\vec{g}'_3=\mat{U}^{C^+_{32}}\vec{g}_3$. Here, $\mat{U}^{C^+_{32}}$
+is the transformation in cartesian coordinates, and $\vec{g}_i$ are
+the primitive reciprocal lattice vectors in cartesian coordinates.
+
+
+The transformation $C^+_{32}$ can be written as sum of dyadic products
+\footnote{Dyadic products (outer products) of two vectors are written
+  as $\vec{a}\otimes\vec{b}$. The resulting matrix gas the elements
+  $(\vec{a}\otimes\vec{b})_{i,j}=a_ib_j$}
 \begin{eqnarray}
-\mat{O}=
+\mat{U}^{C^+_{32}}&=&
+(-\vec{g}_1-\vec{g}_2-\vec{g}_3)\otimes\vec{g}_1
++\vec{g}_1\otimes\vec{g}_2
++\vec{g}_3\otimes\vec{g}_3
+=\sum_{i,j}O^{\Gamma^f_c,C^+_{32}}_{i,j}  \vec{g}_i\otimes\vec{g}_j
+\end{eqnarray}
+The matrix 
+\begin{eqnarray}
+\mat{O}^{\Gamma^f_c,C^+_{32}} =
 \left(\begin{array}{ccc}
 -1 & 1 & 0 \\
 -1 & 0 & 0 \\
 -1 & 0 & 1\\
 \end{array}\right)
 \end{eqnarray}
-The first lattice vector $\vec{g}_1$ has the form $\vec{i}=(1,0,0)$ in
-relative coordinates. It is transformed into $\vec{i'}=\mat{O}\vec{i}
-=(-1,-1,-1)$, which is $-\vec{g}_1-\vec{g}_2-\vec{g}_3$.
+is the transformation $C^+_{32}$ expressed in relative coordinates of
+the reciprocal lattice vectors $\vec{g}_1,\vec{g}_2,\vec{g}_3$
+specified in Table 3.3 of Bradley Cracknell\cite{bradley72_book}.  The
+matrices $\mat{O}$ can be obtained directly from table~3.4 of Bradley
+Cracknell\cite{bradley72_book}. 
 
-It is only necessary to provide the generators of the point group.
-The generators are a minimum set of operations from which all point
-group operations are be obtained as products of these generators.
+Under the transformation $C^+_{32}$, the first reciprocal lattice
+vector $\vec{g}_1$ is transformed onto
+$\vec{g}_1'=-\vec{g}_1-\vec{g}_2-\vec{g}_3$, the second on
+$\vec{g}'_2=\vec{g}_1$ and that the third vector remains unchanged,
+i.e. $\vec{g}'_3=\vec{g}_3$.
 
+Note, that the choice of Table 3.3 is not unique and that the matrix
+$\mat{O}^{\Gamma^f_c,C^+_{32}}$ depends on that choice.
 
+The reciprocal lattice vectors can be combined into the matrix
+$\mat{g}$. For the example given above, the matrix $\mat{g}$ has,
+according to table 3.3, the form
+\begin{eqnarray}
+\mat{g}^{\Gamma^f_c}=(\vec{g}_1,\vec{g}_2,\vec{g}_3)=\frac{2\pi}{a}
+\left(
+\begin{array}{rrr}
+-1 & 1& 1\\
+ 1 & -1& 1\\
+ 1 & 1& -1 \\
+\end{array}\right)
+\label{eq:matrixgforgfc}
+\end{eqnarray}
+
+The matrix $\mat{g}$ transforms a point $\vec{G}$ in reciprocal space
+from the relative coordinates $\vec{x}$ into cartesian (absolute)
+coordinates $\vec{G}$, i.e. $\vec{G}=\mat{g}\vec{x}$.  Thus, a
+transformation can be written in relative and absolute coordinates as
+\begin{eqnarray}
+\vec{G}'=\mat{U}\vec{G}
+\nonumber\\
+\vec{x'}=\mat{O}\vec{x}
+\end{eqnarray}
+
+Thus, the operation $\mat{U}$ in Cartesian coordinates is obtained from
+$\mat{O}$
+\begin{eqnarray*}
+\mat{U}=\mat{g}\mat{O}\mat{g}^{-1}
+\end{eqnarray*}
+
+For the specific example, we obtain
+\begin{eqnarray}
+\mat{U}^{C^+_{32}}&=&\mat{g}^{\Gamma^f_c}\mat{O}^{\Gamma^f_c,C^+_{32}}
+\left(\mat{g}^{\Gamma^f_c}\right)^{-1}
+=
+\underbrace{\frac{2\pi}{a}\left(\begin{array}{rrr}
+-1 & 1& 1\\
+ 1 & -1& 1\\
+ 1 & 1& -1 \\
+\end{array}\right)}_{\mat{g}}
+\underbrace{\left(\begin{array}{ccc}
+-1 & 1 & 0 \\
+-1 & 0 & 0 \\
+-1 & 0 & 1\\
+\end{array}\right)}_{\mat{O}}
+\underbrace{\frac{a}{2\pi}\cdot\frac{1}{2}
+\left(\begin{array}{rrr}
+0 & 1& 1\\
+ 1 & 0& 1\\
+ 1 & 1& 0 \\
+\end{array}\right)}_{\mat{g}^{-1}}
+\nonumber\\
+&=&\left(\begin{array}{rrr}
+ 0 &  0& -1\\
+ 1 &  0&  0\\
+ 0 & -1&  0 \\
+\end{array}\right)
+\end{eqnarray}
+The result is a three fold rotation about the axis $(1,1,-1)$
+expressed in cartesian coordinates, while
+$\mat{O}^{\Gamma^f_c,C^+_{32}}$ is the same operation expressed in
+relative coordinates for the lattice vectors $\mat{g}^{\Gamma^f_c}$.
+
+%====================================================================
+\subsubsection{Transformation matrices}
+%====================================================================
+Because the Brillouin object transforms the points on the grid, it
+directly works with relative coordinates $\vec{x}$. A k-point is given as
+\begin{eqnarray}
+\vec{G}_{i_1,i_2,i_3}=\mat{g}\vec{x}_{i_1,i_2,i_3}
+\end{eqnarray}
+where
+$\vec{x}_{i_1,i_2,i_3}=(\frac{i_1-1}{n_1},\frac{i_2-1}{n_2},\frac{i_3-1}{n_3})$
+and therefore $\vec{k}_{i_1,i_2,i_3}= \vec{g}_1
+\frac{i_1-1}{n_1}+\vec{g}_2 \frac{i_2-1}{n_2} +\vec{g}_3\frac{i_3-1}{n_3}$.
+In order to transform the indices $(i_1,i_2,i_3)$, we only need the
+matrix $\mat{O}$.
+
+The operations needed by the Brillouin object are these matrices
+$\mat{O}$
+
+%====================================================================
+\subsubsection{Generators}
+%====================================================================
+The point group can be built up from a small number of generators.
+All operations in a point group can be obtained from the set of
+generators by multiplying the generators in arbitrary combinations
+and powers with each other. 
+
+The generators for each of the 230 point groups are listed in
+table~3.7 of Bradley Cracknell. We observe that there are at most five
+generators for each point group.
 
 %================================================================
 \section{Code structure}
@@ -184,6 +311,12 @@ the mapping $NUM$ will be modified so that the general k-points point
 onto the irreducible k-points in their own arrangement.
 
 The tetrahedra are calculated and mappend onto irreducible ones.
+
+
+\appendix
+%=================================================================
+\section{}
+%================================================================
 
 \bibliographystyle{unsrtnat}
 \bibliography{../all}
