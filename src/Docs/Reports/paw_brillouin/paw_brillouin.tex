@@ -93,6 +93,194 @@ choices, but only the one given in the book is compatible with teh
 transformations in Table 3.4.
 
 %====================================================================
+\subsubsection{Symmetry operations}
+%====================================================================
+\begin{center}
+\begin{tabular}{|c|l|}
+\hline
+Schoenflies symbol &  Description\\
+\hline
+$E$ & identity \\
+$I$ & inversion \\
+$C_n$ & anticlockwise n-fold rotation (proper rotation)\\
+$S_n$ & anticlockwise n-fold rotation\\
+    & followed by a reflection about a plane \\
+    & perpendicular to the rotation axis\\
+$\sigma=C_2\cdot I$ & reflection\\
+\hline
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item The reflection can be expressed by a two-fold rotation about an axis
+perpendicular to the mirror plane followed by an inversion.
+%
+\item The improper rotation $S(\phi)$ can also be expressed as product of a
+proper rotation $C(\pi+\phi)$ followed by an inversion.
+\begin{eqnarray}
+C(\phi)&=&\left(\begin{array}{ccc}
+\cos(\phi)& -\sin(\phi) & 0\\
+\sin(\phi)& \cos(\phi) & 0\\
+0& 0& 1\end{array}\right)
+\qquad\;\qquad
+S(\phi)=\left(\begin{array}{ccc}
+\cos(\phi)& -\sin(\phi) & 0\\
+\sin(\phi)& \cos(\phi) & 0\\
+0& 0& -1\end{array}\right)
+\nonumber\\
+I\cdot C(\pi+\phi)
+&=&\left(\begin{array}{ccc}
+-\cos(\pi+\phi)& \sin(\pi+\phi) & 0\\
+-\sin(\pi+\phi)& -\cos(\pi+\phi) & 0\\
+0& 0& -1\end{array}\right)
+=\left(\begin{array}{ccc}
+-\cos(\pi+\phi)& \sin(\pi+\phi) & 0\\
+-\sin(\pi+\phi)& -\cos(\pi+\phi) & 0\\
+0& 0& -1\end{array}\right)
+\nonumber\\
+&=&\left(\begin{array}{ccc}
+\cos(\phi)& -\sin(\phi) & 0\\
+\sin(\phi)& \cos(\phi) & 0\\
+0& 0& -1\end{array}\right)
+=S(\phi)
+\end{eqnarray}
+Thus $S_3^+=I\cdot C_6^-$, $S_4^+=I\cdot C_4^-$ and $S_6^+=I\cdot C_3^-$. 
+\end{itemize}
+
+
+\begin{center}
+\begin{tabular}{||c|c|||c|c||c|c||}
+\hline
+\multicolumn{6}{|c|}{Cubic system (see Fig. 1.3 of Bradley Cracknell\cite{bradley72_book})}\\
+\hline
+2-fold rotation & axis & 3-fold rotation & axis &4-fold rotation & axis \\
+\hline
+$C_{2x},\sigma_x$ & (1,0,0)  & $C_{31}$ & (1,1,1)  &   $C_{4x}$ & (1,0,0)\\  
+$C_{2y},\sigma_y$ & (0,1,0)  & $C_{32}$ & (-1,-1,1)&   $C_{4y}$ & (0,1,0)\\  
+$C_{2z},\sigma_z$ & (0,0,1)  & $C_{33}$ & (1,-1,-1)&   $C_{4z}$ & (0,0,1)\\  
+$C_{2a},\sigma_a$ & (1,1,0)  & $C_{34}$ & (-1,1,-1)&           &\\  
+$C_{2b},\sigma_b$ & (1,-1,0) &         &    & &\\
+$C_{2c},\sigma_c$ & (1,0,1)  &         &  & &\\
+$C_{2d},\sigma_d$ & (0,1,1)  &         &  & &\\
+$C_{2e},\sigma_e$ & (0,1,1)  &         &  & &\\
+$C_{2f},\sigma_f$ & (0,-1,1) &         &  & &\\
+\hline
+\end{tabular}
+\end{center}
+
+Hexagonal system
+\begin{center}
+\begin{tabular}{|c|c|l|}
+$C'_{21}$ & (1,1,0) \\
+\end{tabular}
+\end{center}
+
+
+
+Symmetry symbols according to table 1.2 of Bradley Cracknell.
+\begin{center}
+\begin{tabular}{|c|c|l|}
+\hline
+Schoenflies symbol & parameters. & Description\\
+\hline
+$E$       & E    & identity   \\
+$I=-E$    & INV  & inversion  \\
+\hline
+$C_{2}$   & & \\
+$C_{2j}$  & j=x,y,z,a,b,v,d,e,f& \\
+$C'_{2j}$ & j=1,2,3 &\\
+$C''_{2j}$ & j=1,2,3 &\\
+\hline
+$\sigma_{h}=I\cdot C_2$ & & \\
+$\sigma_{j}=I\cdot C_{2j}$ & j=x,y,z,a,b,v,d,e,f& \\
+$\sigma_{dj}$ & j=1,2,3,a,b,c,d,e,f& \\
+$\sigma_{vj}$  & j=1,2,3& \\
+\hline
+$C_3^\pm$ & $\pm=+,-$ & \\
+$C_{3j}^\pm$ & $j=1,2,3,4; \pm=+,-$ & \\
+\hline
+$S_3^\pm=I\cdot C_6^\mp$ & $\pm=+,-$ \\
+$S_{3j}^\pm=I\cdot C_{lj}^\mp$   & $j=1,2,3,4; \pm=+,-$ & \\
+\hline
+$C_{4j}^\pm$ & $j=x,y,z; \pm=+,-$ & \\
+$S_{4j}^\pm$ & $j=x,y,z; \pm=+,-$ & \\
+\hline
+$C_6^\pm$ & $\pm=+,-$ & \\
+$C_{6j}^\pm$ & $j=1,2,3,4; \pm=+,-$ &\\
+\hline
+$S_6^\pm$ & $\pm=+,-$ & \\
+$S_{6j}^\pm$ & $j=1,2,3,4; \pm=+,-$ & \\
+\hline
+\end{tabular}
+\end{center}
+
+
+\begin{center}
+\begin{tabular}{|c|c|l|}
+\hline
+Schoenflies symbol & Internal repr. & Description\\
+\hline
+$C_2$ & & \\
+$C_{2x}$   & C2X  & two-fold rotation about x-axis\\
+$C_{2y}$   & C2Y  & two-fold rotation about y-axis \\
+$C_{2z}$   & C2Z  &two-fold rotation about z-axis \\
+$C_{2a}$    & C2A & two-fold rotation about the ?? axis\\ 
+$C_{2b}$    & C2B & two-fold rotation about the ?? axis\\ 
+$C'_{21}$ & c21s & \\
+$C'_{22}$ & c21s & \\
+$C'_{23}$ & c21s & \\
+$C''_{21}$ & & \\
+$C''_{22}$ & & \\
+$C''_{23}$ & & \\
+\hline
+$\sigma_{d1}$ & & \\
+$\sigma_{d2}$ & & \\
+$\sigma_{d3}$ & & \\
+$\sigma_h$ & & \\
+$\sigma_{v1}$& & reflection\\
+$\sigma_{v2}$& & reflection\\
+$\sigma_{v3}$& & reflection\\
+$\sigma_x=-C_{2x}$ & -C2X &  reflection at yz plane\\
+$\sigma_y=-C_{2y}$ & -C2Y & reflection at xz plane \\
+$\sigma_z=-C_{2z}$ & -C2Z & reflection at xy plane\\
+$\sigma_{da}$ & -C2A? &  reflection about the ?? plane\\
+$\sigma_{db}$ & -C2B?&  reflection about the ?? plane\\
+\hline
+$C_{3}^+ $  & C3P & 120$^\circ$ rotation about the c-axis\\
+$C_{3}^- $  & C3M & -120$^\circ$ rotation about the c-axis\\
+$C_{31}^+ $ & C31P & 120$^\circ$ rotation about the ?? axis\\
+$C_{32}^+ $ & C31P & 120$^\circ$ rotation about the ?? axis\\
+$C_{33}^+ $ & C31P & 120$^\circ$ rotation about the ?? axis\\
+$C_{34}^+ $ & C31P & 120$^\circ$ rotation about the ?? axis\\
+\hline
+$S_{3}^+ $ & -C3M &  \\
+$S_{3}^- $ & C3M  &  \\
+\hline
+$C_{4z}^+$  & C4ZP & rotation by +90 degree about the z axis\\
+$C_{4z}^-$  & C4ZM &  rotation by -90 degree about the z axis \\
+\hline
+$S_{4z}^+=-C_{4z}^-$ &-C4ZM &  rotation by 90 degree about the z axis\\
+            & &       followed by reflection at the xy plane.\\
+$S_{4z}^-=-C_{4z}^+$ &-C4ZP &  rotation by 90 degree about the z axis\\
+            & &       followed by reflection at the xy plane.\\
+\hline
+$C_{6}^+ $ & C6P & 60$^\circ$ rotation about the c-axis\\
+$C_{6}^- $ & C6M & -60$^\circ$ rotation about the c-axis\\
+$S_{6}^+ $ & -C6M  &  \\
+$S_{6}^- $ &  C6M  &  \\
+\hline
+\end{tabular}
+\end{center}
+
+C2a          two-fold rotation about
+C2b
+sigmaa
+sigmad
+
+
+
+
+
+%====================================================================
 \subsubsection{Table 3.4 of Bradley Cracknell}
 %====================================================================
 The transformations are converted into matrices as follows: Let us
