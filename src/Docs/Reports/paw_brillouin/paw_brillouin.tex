@@ -93,8 +93,115 @@ choices, but only the one given in the book is compatible with teh
 transformations in Table 3.4.
 
 %====================================================================
+\subsubsection{Bravais lattices}
+%====================================================================
+note that the space group object works only with the choice of unit
+cells used by Bradley and Cracknell\cite{bradley72_book} in their
+table
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\multicolumn{2}{|c|}{Bravais Lattice} & $\vec{T}_1$& $\vec{T}_2$& $\vec{T}_3$\\
+\hline
+\hline
+\multicolumn{5}{|c|}{triclinic}\\
+\hline
+primitive & $\Gamma_1$ & & &\\
+\hline
+%
+\hline
+\multicolumn{5}{|c|}{monoclinic}\\
+\hline
+primitive & $\Gamma_m$ & 
+$(0,-b,0)$ & 
+$(a\sin(\gamma),-a\cos(\gamma),0)$ 
+&$(0,0,c)$ \\
+base centered & $\Gamma_m^b$ & 
+$(0,-b,0)$ & 
+$\frac{1}{2}(a\sin(\gamma),-a\cos(\gamma),-c)$ &
+$\frac{1}{2}(a\sin(\gamma),-a\cos(\gamma),c)$ \\
+\hline
+%
+\hline
+\hline
+\multicolumn{5}{|c|}{orthorhombic}\\
+\hline
+primitive & $\Gamma_o$ & 
+$(0,-b,0)$ & 
+$(a,0,0)$ 
+&$(0,0,c)$ \\
+base centered & $\Gamma_o^b$ & 
+$(\frac{1}{2}a,-\frac{1}{2}b,0)$ & 
+$(\frac{1}{2}a,\frac{1}{2}b,0)$ & 
+$(0,0,c)$ \\
+body centered & $\Gamma_o^v$ & 
+$\frac{1}{2}(a,b,c)$ & 
+$\frac{1}{2}(-a,-b,c)$ & 
+$\frac{1}{2}(a,-b,-c)$ \\
+face centered & $\Gamma_o^f$ & 
+$\frac{1}{2}(a,0,c)$ & 
+$\frac{1}{2}(0,-b,c)$ & 
+$\frac{1}{2}(a,-b,0)$ \\
+\hline
+%
+\hline
+\multicolumn{5}{|c|}{tetragonal}\\
+\hline
+primitive & $\Gamma_q$ & 
+$(a,0,0)$ & 
+$(0,a,0)$ 
+&$(0,0,c)$ \\
+\hline
+body centered &$\Gamma_q^v$ & 
+$\frac{1}{2}(-a,a,c)$ & 
+$\frac{1}{2}(a,-a,c)$ & 
+$\frac{1}{2}(a,a,-c)$ \\
+\hline
+%
+\hline
+\multicolumn{5}{|c|}{trigonal}\\
+\hline
+primitive & $\Gamma_{rh}$ & 
+$(0,a,c)$ & 
+$(\frac{1}{2}\sqrt{3}a,\frac{1}{2}a,c)$ &
+$(-\frac{1}{2}\sqrt{3}a,\frac{1}{2}a,c)$ \\
+\hline
+%
+\hline
+\multicolumn{5}{|c|}{hexagonal}\\
+\hline
+primitive & $\Gamma_h$ & 
+$(0,-1,0)a$ & 
+$(\frac{1}{2}\sqrt{3},\frac{1}{2},0)a$ &
+$(0,0,1)c$\\
+\hline
+%
+\hline
+\multicolumn{5}{|c|}{cubic}\\
+\hline
+primitive & $\Gamma_c$ & 
+$(1,0,0)a$ & 
+$(0,1,0)a$ & 
+$(0,0,1)a$ \\
+face centered & $\Gamma_c^f$ & 
+$\frac{1}{2}a(0,1,1)$ & 
+$\frac{1}{2}a(1,0,1)$ & 
+$\frac{1}{2}a(1,1,0)$ \\
+body centered & $\Gamma_c^v$ & 
+$\frac{1}{2}a(-1,1,1)$ & 
+$\frac{1}{2}a(1,-1,1)$ & 
+$\frac{1}{2}a(1,1,-1)$ \\
+\hline
+\end{tabular}
+\end{center}
+
+
+
+
+%====================================================================
 \subsubsection{Symmetry operations}
 %====================================================================
+
 \begin{center}
 \begin{tabular}{|c|l|}
 \hline
@@ -150,7 +257,64 @@ Thus $S_3^+=I\cdot C_6^-$, $S_4^+=I\cdot C_4^-$ and $S_6^+=I\cdot C_3^-$.
 \begin{center}
 \begin{tabular}{||c|c|||c|c||c|c||}
 \hline
-\multicolumn{6}{|c|}{Cubic system (see Fig. 1.3 of Bradley Cracknell\cite{bradley72_book})}\\
+\multicolumn{6}{|c|}{Triclinic system $\Gamma_1$}\\
+\hline
+\hline
+\multicolumn{6}{|c|}{Monoclinic system $\Gamma_m, \Gamma_m^b$}\\
+\hline
+2-fold rotation & axis &  & &  &\\
+\hline
+$C_{2z},\sigma_z$ & (1,0,0)  &  &  &   &\\  
+\hline
+\hline
+\multicolumn{6}{|c|}{Orthorhomic system 
+$\Gamma_o,\Gamma_o^b,\Gamma_o^v,\Gamma_0^f$}\\
+%
+\hline
+2-fold rotation & axis &  & &  &\\
+\hline
+$C_{2x},\sigma_x$ & (1,0,0)  &  &  &   &\\  
+$C_{2y},\sigma_y$ & (0,1,0)  &  &  &   &\\  
+$C_{2z},\sigma_z$ & (0,0,1)  &  &  &   &\\  
+\hline
+\hline
+\multicolumn{6}{|c|}{Tetragonal system $\Gamma_q,\Gamma_q^v$}\\
+\hline
+2-fold rotation & axis & 4-fold rotation &axix &  & \\
+\hline
+$C_{2x},\sigma_x$ & (1,0,0) &  $C^\pm_{4z},S^\mp_{4z}$ & (0,0,1) & & \\
+$C_{2y},\sigma_y$ & (0,1,0) &  & & & \\
+$C_{2z},\sigma_z$ & (0,0,1) &  & & & \\
+$C_{2a},\sigma_a$ & (?,?,?) &  & & & \\
+$C_{2b},\sigma_b$ & (?,?,?) &  & & & \\
+\hline
+%
+\hline
+\multicolumn{6}{|c|}{Trigonal system $\Gamma_{rh}$}\\
+\hline
+2-fold rotation & axis & 3-fold rotation &axix &  & \\
+\hline
+$C'_{21},\sigma_{d1}$ & (?,0,0)  & $C^\pm_3,S^\mp_6$ & (?,?,?) &   &\\  
+$C'_{22},\sigma_{d2}$ & (?,0,0)  & &  &   &\\  
+$C'_{23},\sigma_{d3}$ & (?,0,0)  & &  &   &\\  
+\hline
+%
+\hline
+\multicolumn{6}{|c|}{Hexagonal system $\Gamma_h$}\\
+\hline
+2-fold rotation & axis & 3-fold rotation &axis &6-fold rotation  & axis\\
+\hline
+$C_{2},\sigma_h$ & (?,?,?)  & $C^\pm_3,S^{\mp}_6$ & (?,?,?)  & $C^{\pm}_6,S^{\mp}_3$  & (?,?,?)\\  
+$C'_{21},\sigma_{d1}$ & (?,?,?)  &  &  &   &\\  
+$C'_{22},\sigma_{d2}$ & (?,?,?)  &  &  &   &\\  
+$C'_{23},\sigma_{d3}$ & (?,?,?)  &  &  &   &\\  
+$C''_{21},\sigma_{v1}$ & (?,?,?)  &  &  &   &\\  
+$C''_{22},\sigma_{v2}$ & (?,?,?)  &  &  &   &\\  
+$C''_{23},\sigma_{v3}$ & (?,?,?)  &  &  &   &\\  
+\hline
+\hline
+\multicolumn{6}{|c|}{Cubic system $\Gamma_c,\Gamma_c^f,\Gamma_c^v$
+(see Fig. 1.3 of Bradley Cracknell\cite{bradley72_book})}\\
 \hline
 2-fold rotation & axis & 3-fold rotation & axis &4-fold rotation & axis \\
 \hline
@@ -164,15 +328,16 @@ $C_{2d},\sigma_d$ & (0,1,1)  &         &  & &\\
 $C_{2e},\sigma_e$ & (0,1,1)  &         &  & &\\
 $C_{2f},\sigma_f$ & (0,-1,1) &         &  & &\\
 \hline
+\multicolumn{6}{|c|}{Generators: $I, C_{2x}, C_{2z}, C_{2a}, \sigma_{da}, C^+_{31}$}\\
+\hline
 \end{tabular}
 \end{center}
+A supersript on the Bravais-lattice symbol $\Gamma$ means
+base-centered (b), body-centered (v), face-centered (f) and primitive
+without superscript.
 
-Hexagonal system
-\begin{center}
-\begin{tabular}{|c|c|l|}
-$C'_{21}$ & (1,1,0) \\
-\end{tabular}
-\end{center}
+All lattice systems can have the identity $E$ and the inversion $I$ as
+one of its symmetry elements. They are not listed.
 
 
 
