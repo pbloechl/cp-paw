@@ -1,0 +1,797 @@
+\documentclass[11pt,a4paper]{report}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                 %%
+%%    Header file for the Phi-S-X Series                           %%
+%%                                                                 %%
+%%    german version header_gm.tex is derived from header.tex      %%
+%%    by uncommenting the line ``\setboolean{german}{true}'' below %%
+%%                                                                 %%
+%%    Never edit the german version! all changes must be done      %%
+%%    in the english version header.tex                            %%
+%%                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{../header}
+\hypersetup{pdftitle=paw_brillouin}
+\begin{document}
+\begin{titlepage}
+\begin{center}
+\vspace*{3.5cm}
+{\huge \textbf{The Brillouin object of the CP-PAW code}}\\
+\vspace{0.5cm}
+{\large Peter E. Bl\"ochl}
+\vspace{0.5cm} 
+\end{center}
+
+\vfill
+\begin{center}
+Copyright Peter E. Bl\"ochl; Sept.2, 2013-\today\\
+{\small
+Institute of Theoretical Physics;
+Clausthal University of Technology;\\ 
+D-38678 Clausthal Zellerfeld; Germany;\\
+http://www.pt.tu-clausthal.de/atp/}
+\end{center}
+\end{titlepage}
+\noindent            
+\tableofcontents
+%====================================================================
+\chapter{BRILLOUIN object}
+%====================================================================
+%====================================================================
+\section{Purpose and theoretical background}
+%====================================================================
+The purpose of this object is to perform integrations of matrix
+elements over the occupied part of Brillouin zone.
+\begin{eqnarray}
+\langle A\rangle=\sum_n \frac{1}{V_G}\int d^3k\;
+A_n(\vec{k})\theta(\epsilon_n(\vec{k})-\mu)
+\end{eqnarray}
+where the matrix of the one-particle operator $\hat{A}$ elements are
+\begin{eqnarray}
+A_n(\vec{k})=\langle\psi_n(\vec{k})|\hat{A}|\psi_n(\vec{k})\rangle
+\end{eqnarray}
+and $\epsilon_n(\vec{k})$ are the one-particle energies, the
+eigenvalues of the Hamiltonian.
+
+In the linear tetrahedron method\cite{jepsen71_ssc9_1763,
+  lehmann72_pssb54_469, bloechl94_prb49_16223}, the function values
+are evaluated at a set of discrete k-points $\vec{k}_j$ and energy
+levels and matrix elements are linarly interpolated within tetrahedra
+filling the space between the grid points.
+
+The BRILLOUIN object selects the grid points and reduces them on the
+basis of point groups symemtry operations of the crystal.
+
+If the integral is performed as linear interpolation between grid
+points, it can be written in the simple form
+\begin{eqnarray}
+\langle A\rangle=\sum_n\sum_{j} w_n(\vec{k}_j) A_n(\vec{k}_j)
+\end{eqnarray}
+where the integration weights are independent of the type if matrix
+element to be integrated.\cite{bloechl94_prb49_16223} They are
+evaluated using the tetrahedron method.
+
+The integration weights include a quadratic correction, which improves
+the integrals substantially beyond the purely linear
+approximation.\cite{bloechl94_prb49_16223}
+
+%================================================================
+\section{Code structure: Brillouin}
+%================================================================
+%================================================================
+\subsection{Brillouin\_module}
+%================================================================
+The object has an internal memory, which is kept in the Brillouin
+module in the data structure \verb|THIS|.
+\begin{verbatim}
+TYPE THIS_TYPE
+  INTEGER(4)             :: NKP       ! #(IRREDUCIBLE KPOINTS)
+  INTEGER(4)             :: NTET      ! #(IRREDUCIBLE TETRAHEDRA)
+  REAL(8)                :: VOL       ! 1/#(GENERAL TETRAHEDRA)
+  REAL(8)                :: RBAS(3,3) ! REAL SPACE LATTICE VECTORS
+  integer(4)             :: NKDIV(3)
+  integer(4)             :: ishift(3)
+  REAL(8)       ,POINTER :: XK(:,:)   !(3,NKP) IRR. K-POINTS IN RELATIVE COORDINATES
+  INTEGER(4)    ,POINTER :: IKP(:,:)  !(4,NTET) TETRAHEDRON CORNERS
+  INTEGER(4)    ,POINTER :: MULT(:)   !(NTET) MULTIPLICITY OF THE TETRAHEDRON
+  INTEGER(4)    ,POINTER :: irrkp(:)  !(nmshp) pointer to irr. k-point
+END TYPE THIS_TYPE
+\end{verbatim}
+
+
+%================================================================
+\subsection{Brillouin\_msh}
+%================================================================
+\begin{itemize}
+\item RBAS real-space lattice vectors in kartesian coordinates
+\item NGKP Target value of the number of general
+  k-points on the interpolation grid
+\item NSYM number of generators for the point group operations 
+\item IARB
+\item TSHIFT
+\end{itemize}
+
+First, the k-point grid is defined by determining the division of the
+lattice vectors $N(3)$ in \verb|brillouin_basdiv|. The value
+$NMSHPNT=(N(1)+1)*(N(2)+1)*(N(3)+1)$ is returned. The grid divisions
+are placed onto \verb|this%nkdiv|
+
+In \verb|brillouin_reduz| the k-points are mapped onto each other
+using the point group operations
+\begin{eqnarray}
+\vec{k}_{i_1,i_2,i_3}=\sum_{j=1}^3 \vec{g}_{j}\frac{i_{j}+\frac{1}{2}\tau_j}{n_{j}}
+\nonumber
+\vec{i}'=\mat{O}\vec{i}
+\end{eqnarray}
+In this way a mapping 
+between k-points is established. For two symetry
+related k-points the mapping always goes to the k-point with the lower
+value according to some unique numbering scheme.
+
+In \verb|brillouin_zuord| this mapping is used to determine the
+irreducible k-points on the grid. The irreducible k-points are the
+those that are mapped under the mapping \verb|NUM| onto themselfes
+Those k-points will be calculated in relative coordinates as $XK$ an
+the mapping $NUM$ will be modified so that the general k-points point
+onto the irreducible k-points in their own arrangement.
+
+The tetrahedra are calculated and mappend onto irreducible ones.
+
+%====================================================================
+\chapter{SPACEGROUP object}
+%====================================================================
+%====================================================================
+\section{Purpose and theoretical background}
+%====================================================================
+%====================================================================
+\subsection{Symmetry operations}
+%====================================================================
+The symmetry operations can be found in the book by Bradley and
+Cracknell\cite{bradley72_book}, which lists in table~3.4
+\textit{``Results of operatoes on the reciprocal lattice vectors''}
+the point group operations in terms of reciprocal lattice vectors of
+all the space-point groups of crystals. Note that the operations in
+terms of real space lattice vectors differ from those in reciprocal
+lattice vectors.
+
+It is very important that the real-space lattice vectors are chosen
+exactly in the convention of table~3.1 \textit{``The 14 Bravais
+  lattices''} of Bradley Cracknell. There are different possible
+choices, but only the one given in the book is compatible with teh
+transformations in Table 3.4.
+
+%====================================================================
+\subsection{Bravais lattices}
+%====================================================================
+The SPACEGROUP object works only with the choice of unit cells used by
+Bradley and Cracknell\cite{bradley72_book} in their table
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\multicolumn{2}{|c|}{Bravais Lattice} & $\vec{T}_1$& $\vec{T}_2$& $\vec{T}_3$\\
+\hline
+\hline
+\multicolumn{5}{|c|}{triclinic}\\
+\hline
+primitive & $\Gamma_1$ & & &\\
+\hline
+%
+\hline
+\multicolumn{5}{|c|}{monoclinic}\\
+\hline
+primitive & $\Gamma_m$ & 
+$(0,-b,0)$ & 
+$(a\sin(\gamma),-a\cos(\gamma),0)$ 
+&$(0,0,c)$ \\
+base centered & $\Gamma_m^b$ & 
+$(0,-b,0)$ & 
+$\frac{1}{2}(a\sin(\gamma),-a\cos(\gamma),-c)$ &
+$\frac{1}{2}(a\sin(\gamma),-a\cos(\gamma),c)$ \\
+\hline
+%
+\hline
+\hline
+\multicolumn{5}{|c|}{orthorhombic}\\
+\hline
+primitive & $\Gamma_o$ & 
+$(0,-b,0)$ & 
+$(a,0,0)$ 
+&$(0,0,c)$ \\
+base centered & $\Gamma_o^b$ & 
+$(\frac{1}{2}a,-\frac{1}{2}b,0)$ & 
+$(\frac{1}{2}a,\frac{1}{2}b,0)$ & 
+$(0,0,c)$ \\
+body centered & $\Gamma_o^v$ & 
+$\frac{1}{2}(a,b,c)$ & 
+$\frac{1}{2}(-a,-b,c)$ & 
+$\frac{1}{2}(a,-b,-c)$ \\
+face centered & $\Gamma_o^f$ & 
+$\frac{1}{2}(a,0,c)$ & 
+$\frac{1}{2}(0,-b,c)$ & 
+$\frac{1}{2}(a,-b,0)$ \\
+\hline
+%
+\hline
+\multicolumn{5}{|c|}{tetragonal}\\
+\hline
+primitive & $\Gamma_q$ & 
+$(a,0,0)$ & 
+$(0,a,0)$ 
+&$(0,0,c)$ \\
+\hline
+body centered &$\Gamma_q^v$ & 
+$\frac{1}{2}(-a,a,c)$ & 
+$\frac{1}{2}(a,-a,c)$ & 
+$\frac{1}{2}(a,a,-c)$ \\
+\hline
+%
+\hline
+\multicolumn{5}{|c|}{trigonal}\\
+\hline
+primitive & $\Gamma_{rh}$ & 
+$(0,a,c)$ & 
+$(\frac{1}{2}\sqrt{3}a,\frac{1}{2}a,c)$ &
+$(-\frac{1}{2}\sqrt{3}a,\frac{1}{2}a,c)$ \\
+\hline
+%
+\hline
+\multicolumn{5}{|c|}{hexagonal}\\
+\hline
+primitive & $\Gamma_h$ & 
+$(0,-1,0)a$ & 
+$(\frac{1}{2}\sqrt{3},\frac{1}{2},0)a$ &
+$(0,0,1)c$\\
+\hline
+%
+\hline
+\multicolumn{5}{|c|}{cubic}\\
+\hline
+primitive & $\Gamma_c$ & 
+$(1,0,0)a$ & 
+$(0,1,0)a$ & 
+$(0,0,1)a$ \\
+face centered & $\Gamma_c^f$ & 
+$\frac{1}{2}a(0,1,1)$ & 
+$\frac{1}{2}a(1,0,1)$ & 
+$\frac{1}{2}a(1,1,0)$ \\
+body centered & $\Gamma_c^v$ & 
+$\frac{1}{2}a(-1,1,1)$ & 
+$\frac{1}{2}a(1,-1,1)$ & 
+$\frac{1}{2}a(1,1,-1)$ \\
+\hline
+\end{tabular}
+\end{center}
+
+%====================================================================
+\subsection{Symmetry operations}
+%====================================================================
+\begin{center}
+\begin{tabular}{|c|l|}
+\hline
+Schoenflies symbol &  Description\\
+\hline
+$E$ & identity \\
+$I$ & inversion \\
+$C_n$ & anticlockwise n-fold rotation (proper rotation)\\
+$S_n$ & anticlockwise n-fold rotation\\
+    & followed by a reflection about a plane \\
+    & perpendicular to the rotation axis\\
+$\sigma=C_2\cdot I$ & reflection\\
+\hline
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item The reflection can be expressed by a two-fold rotation about an axis
+perpendicular to the mirror plane followed by an inversion.
+%
+\item The improper rotation $S(\phi)$ can also be expressed as product of a
+proper rotation $C(\pi+\phi)$ followed by an inversion.
+\begin{eqnarray}
+C(\phi)&=&\left(\begin{array}{ccc}
+\cos(\phi)& -\sin(\phi) & 0\\
+\sin(\phi)& \cos(\phi) & 0\\
+0& 0& 1\end{array}\right)
+\qquad\;\qquad
+S(\phi)=\left(\begin{array}{ccc}
+\cos(\phi)& -\sin(\phi) & 0\\
+\sin(\phi)& \cos(\phi) & 0\\
+0& 0& -1\end{array}\right)
+\nonumber\\
+I\cdot C(\pi+\phi)
+&=&\left(\begin{array}{ccc}
+-\cos(\pi+\phi)& \sin(\pi+\phi) & 0\\
+-\sin(\pi+\phi)& -\cos(\pi+\phi) & 0\\
+0& 0& -1\end{array}\right)
+=\left(\begin{array}{ccc}
+-\cos(\pi+\phi)& \sin(\pi+\phi) & 0\\
+-\sin(\pi+\phi)& -\cos(\pi+\phi) & 0\\
+0& 0& -1\end{array}\right)
+\nonumber\\
+&=&\left(\begin{array}{ccc}
+\cos(\phi)& -\sin(\phi) & 0\\
+\sin(\phi)& \cos(\phi) & 0\\
+0& 0& -1\end{array}\right)
+=S(\phi)
+\end{eqnarray}
+Thus $S_3^+=I\cdot C_6^-$, $S_4^+=I\cdot C_4^-$ and $S_6^+=I\cdot C_3^-$. 
+\end{itemize}
+
+
+The following list explains all the symmetry elements for all lattice systems, and it contains a list of generators used lateron.
+\begin{center}
+\begin{tabular}{||c|c|||c|c||c|c||}
+\hline
+\multicolumn{6}{|c|}{Triclinic system $\Gamma_1$}\\
+\hline
+\multicolumn{6}{|c|}{Generators: $I, .... $}\\
+\hline
+\noalign{\medskip}
+%
+\hline
+\multicolumn{6}{|c|}{Monoclinic system $\Gamma_m, \Gamma_m^b$}\\
+\hline
+2-fold rotation & axis &  & &  &\\
+\hline
+$C_{2z},\sigma_z$ & (1,0,0)  &  &  &   &\\  
+\hline
+\multicolumn{6}{|c|}{Generators: $I, .... $}\\
+\hline
+\noalign{\medskip}
+%
+\hline
+\multicolumn{6}{|c|}{Orthorhomic system 
+$\Gamma_o,\Gamma_o^b,\Gamma_o^v,\Gamma_0^f$}\\
+%
+\hline
+2-fold rotation & axis &  & &  &\\
+\hline
+$C_{2x},\sigma_x$ & (1,0,0)  &  &  &   &\\  
+$C_{2y},\sigma_y$ & (0,1,0)  &  &  &   &\\  
+$C_{2z},\sigma_z$ & (0,0,1)  &  &  &   &\\  
+\hline
+\multicolumn{6}{|c|}{Generators: $I, .... $}\\
+\hline
+\noalign{\medskip}
+%
+\hline
+\multicolumn{6}{|c|}{Tetragonal system $\Gamma_q,\Gamma_q^v$}\\
+\hline
+2-fold rotation & axis & 4-fold rotation &axis &  & \\
+\hline
+$C_{2x},\sigma_x$ & (1,0,0) &  $C^\pm_{4z},S^\mp_{4z}$ & (0,0,1) & & \\
+$C_{2y},\sigma_y$ & (0,1,0) &  & & & \\
+$C_{2z},\sigma_z$ & (0,0,1) &  & & & \\
+$C_{2a},\sigma_a$ & (?,?,?) &  & & & \\
+$C_{2b},\sigma_b$ & (?,?,?) &  & & & \\
+\hline
+\multicolumn{6}{|c|}{Generators: $I, .... $}\\
+\hline
+\noalign{\medskip}
+%
+\hline
+\multicolumn{6}{|c|}{Trigonal system $\Gamma_{rh}$}\\
+\hline
+2-fold rotation & axis & 3-fold rotation &axis &  & \\
+\hline
+$C'_{21},\sigma_{d1}$ & (?,0,0)  & $C^\pm_3,S^\mp_6$ & (?,?,?) &   &\\  
+$C'_{22},\sigma_{d2}$ & (?,0,0)  & &  &   &\\  
+$C'_{23},\sigma_{d3}$ & (?,0,0)  & &  &   &\\  
+\hline
+\multicolumn{6}{|c|}{Generators: $I, .... $}\\
+\hline
+\noalign{\medskip}
+%
+\hline
+\multicolumn{6}{|c|}{Hexagonal system $\Gamma_h$}\\
+\hline
+2-fold rotation & axis & 3-fold rotation &axis &6-fold rotation  & axis\\
+\hline
+$C_{2},\sigma_h$ & (?,?,?)  & $C^\pm_3,S^{\mp}_6$ & (?,?,?)  & $C^{\pm}_6,S^{\mp}_3$  & (?,?,?)\\  
+$C'_{21},\sigma_{d1}$ & (?,?,?)  &  &  &   &\\  
+$C'_{22},\sigma_{d2}$ & (?,?,?)  &  &  &   &\\  
+$C'_{23},\sigma_{d3}$ & (?,?,?)  &  &  &   &\\  
+$C''_{21},\sigma_{v1}$ & (?,?,?)  &  &  &   &\\  
+$C''_{22},\sigma_{v2}$ & (?,?,?)  &  &  &   &\\  
+$C''_{23},\sigma_{v3}$ & (?,?,?)  &  &  &   &\\  
+\hline
+\multicolumn{6}{|c|}{Generators: $I, .... $}\\
+\hline
+\end{tabular}
+\end{center}
+\begin{center}
+\begin{tabular}{||c|c|||c|c||c|c||}
+\hline
+\multicolumn{6}{|c|}{Cubic system $\Gamma_c,\Gamma_c^f,\Gamma_c^v$
+(see Fig. 1.3 of Bradley Cracknell\cite{bradley72_book})}\\
+\hline
+2-fold rotation & axis & 3-fold rotation & axis &4-fold rotation & axis \\
+\hline
+$C_{2x},\sigma_x$ & (1,0,0)  & $C_{31}$ & (1,1,1)  &   $C_{4x}$ & (1,0,0)\\  
+$C_{2y},\sigma_y$ & (0,1,0)  & $C_{32}$ & (-1,-1,1)&   $C_{4y}$ & (0,1,0)\\  
+$C_{2z},\sigma_z$ & (0,0,1)  & $C_{33}$ & (1,-1,-1)&   $C_{4z}$ & (0,0,1)\\  
+$C_{2a},\sigma_a$ & (1,1,0)  & $C_{34}$ & (-1,1,-1)&           &\\  
+$C_{2b},\sigma_b$ & (1,-1,0) &         &    & &\\
+$C_{2c},\sigma_c$ & (1,0,1)  &         &  & &\\
+$C_{2d},\sigma_d$ & (0,1,1)  &         &  & &\\
+$C_{2e},\sigma_e$ & (0,1,1)  &         &  & &\\
+$C_{2f},\sigma_f$ & (0,-1,1) &         &  & &\\
+\hline
+\multicolumn{6}{|c|}{Generators: $I, C_{2x}, C_{2z}, C_{2a}, \sigma_{da}, C^+_{31}$}\\
+\hline
+\end{tabular}
+\end{center}
+A supersript on the Bravais-lattice symbol $\Gamma$ means
+base-centered (b), body-centered (v), face-centered (f). The primitive
+lattice has no superscript.
+
+All lattice systems can have the identity $E$ and the inversion $I$ as
+one of its symmetry elements. They are not listed.
+
+
+%% Symmetry symbols according to table 1.2 of Bradley Cracknell.
+%% \begin{center}
+%% \begin{tabular}{|c|c|l|}
+%% \hline
+%% Schoenflies symbol & parameters. & Description\\
+%% \hline
+%% $E$       & E    & identity   \\
+%% $I=-E$    & INV  & inversion  \\
+%% \hline
+%% $C_{2}$   & & \\
+%% $C_{2j}$  & j=x,y,z,a,b,v,d,e,f& \\
+%% $C'_{2j}$ & j=1,2,3 &\\
+%% $C''_{2j}$ & j=1,2,3 &\\
+%% \hline
+%% $\sigma_{h}=I\cdot C_2$ & & \\
+%% $\sigma_{j}=I\cdot C_{2j}$ & j=x,y,z,a,b,v,d,e,f& \\
+%% $\sigma_{dj}$ & j=1,2,3,a,b,c,d,e,f& \\
+%% $\sigma_{vj}$  & j=1,2,3& \\
+%% \hline
+%% $C_3^\pm$ & $\pm=+,-$ & \\
+%% $C_{3j}^\pm$ & $j=1,2,3,4; \pm=+,-$ & \\
+%% \hline
+%% $S_3^\pm=I\cdot C_6^\mp$ & $\pm=+,-$ \\
+%% $S_{3j}^\pm=I\cdot C_{lj}^\mp$   & $j=1,2,3,4; \pm=+,-$ & \\
+%% \hline
+%% $C_{4j}^\pm$ & $j=x,y,z; \pm=+,-$ & \\
+%% $S_{4j}^\pm$ & $j=x,y,z; \pm=+,-$ & \\
+%% \hline
+%% $C_6^\pm$ & $\pm=+,-$ & \\
+%% $C_{6j}^\pm$ & $j=1,2,3,4; \pm=+,-$ &\\
+%% \hline
+%% $S_6^\pm$ & $\pm=+,-$ & \\
+%% $S_{6j}^\pm$ & $j=1,2,3,4; \pm=+,-$ & \\
+%% \hline
+%% \end{tabular}
+%% \end{center}
+
+
+%% \begin{center}
+%% \begin{tabular}{|c|c|l|}
+%% \hline
+%% Schoenflies symbol & Internal repr. & Description\\
+%% \hline
+%% $C_2$ & & \\
+%% $C_{2x}$   & C2X  & two-fold rotation about x-axis\\
+%% $C_{2y}$   & C2Y  & two-fold rotation about y-axis \\
+%% $C_{2z}$   & C2Z  &two-fold rotation about z-axis \\
+%% $C_{2a}$    & C2A & two-fold rotation about the ?? axis\\ 
+%% $C_{2b}$    & C2B & two-fold rotation about the ?? axis\\ 
+%% $C'_{21}$ & c21s & \\
+%% $C'_{22}$ & c21s & \\
+%% $C'_{23}$ & c21s & \\
+%% $C''_{21}$ & & \\
+%% $C''_{22}$ & & \\
+%% $C''_{23}$ & & \\
+%% \hline
+%% $\sigma_{d1}$ & & \\
+%% $\sigma_{d2}$ & & \\
+%% $\sigma_{d3}$ & & \\
+%% $\sigma_h$ & & \\
+%% $\sigma_{v1}$& & reflection\\
+%% $\sigma_{v2}$& & reflection\\
+%% $\sigma_{v3}$& & reflection\\
+%% $\sigma_x=-C_{2x}$ & -C2X &  reflection at yz plane\\
+%% $\sigma_y=-C_{2y}$ & -C2Y & reflection at xz plane \\
+%% $\sigma_z=-C_{2z}$ & -C2Z & reflection at xy plane\\
+%% $\sigma_{da}$ & -C2A? &  reflection about the ?? plane\\
+%% $\sigma_{db}$ & -C2B?&  reflection about the ?? plane\\
+%% \hline
+%% $C_{3}^+ $  & C3P & 120$^\circ$ rotation about the c-axis\\
+%% $C_{3}^- $  & C3M & -120$^\circ$ rotation about the c-axis\\
+%% $C_{31}^+ $ & C31P & 120$^\circ$ rotation about the ?? axis\\
+%% $C_{32}^+ $ & C31P & 120$^\circ$ rotation about the ?? axis\\
+%% $C_{33}^+ $ & C31P & 120$^\circ$ rotation about the ?? axis\\
+%% $C_{34}^+ $ & C31P & 120$^\circ$ rotation about the ?? axis\\
+%% \hline
+%% $S_{3}^+ $ & -C3M &  \\
+%% $S_{3}^- $ & C3M  &  \\
+%% \hline
+%% $C_{4z}^+$  & C4ZP & rotation by +90 degree about the z axis\\
+%% $C_{4z}^-$  & C4ZM &  rotation by -90 degree about the z axis \\
+%% \hline
+%% $S_{4z}^+=-C_{4z}^-$ &-C4ZM &  rotation by 90 degree about the z axis\\
+%%             & &       followed by reflection at the xy plane.\\
+%% $S_{4z}^-=-C_{4z}^+$ &-C4ZP &  rotation by 90 degree about the z axis\\
+%%             & &       followed by reflection at the xy plane.\\
+%% \hline
+%% $C_{6}^+ $ & C6P & 60$^\circ$ rotation about the c-axis\\
+%% $C_{6}^- $ & C6M & -60$^\circ$ rotation about the c-axis\\
+%% $S_{6}^+ $ & -C6M  &  \\
+%% $S_{6}^- $ &  C6M  &  \\
+%% \hline
+%% \end{tabular}
+%% \end{center}
+
+%====================================================================
+\subsection{Symmetry operations: Table 3.4 of Bradley Cracknell}
+%====================================================================
+The transformations are converted into matrices as follows: Let us
+take the operation $C^+_{32}$ for the face-centered cubic lattice
+$\Gamma^f_c$:
+\begin{table}[h!]
+\begin{center}
+\begin{tabular}{|l|c|c|c|}
+\hline
+&\multicolumn{3}{|c|}{$\Gamma^f_c$}\\
+\hline
+$C^+_{32}$ & $-\vec{g}_1-\vec{g}_2-\vec{g}_3$ & $\vec{g}_1$ & $\vec{g}_3$\\
+\hline
+\end{tabular}
+\end{center}
+\caption{\label{tab:explanationbradleytable34} Example for an entry of
+  table 3.4 of Bradley Cracknell\cite{bradley72_book}}
+\end{table}
+
+The three entries in table~\ref{tab:explanationbradleytable34} specify
+the result of the operation $C^+_{32}$ onto the first, second, and
+third lattice vector, that is
+$\vec{g}'_1=\mat{U}^{C^+_{32}}\vec{g}_1$,
+$\vec{g}'_2=\mat{U}^{C^+_{32}}\vec{g}_2$ and
+$\vec{g}'_3=\mat{U}^{C^+_{32}}\vec{g}_3$. Here, $\mat{U}^{C^+_{32}}$
+is the transformation in cartesian coordinates, and $\vec{g}_i$ are
+the primitive reciprocal lattice vectors in cartesian coordinates.
+
+
+The transformation $C^+_{32}$ can be written as sum of dyadic products
+\footnote{Dyadic products (outer products) of two vectors are written
+  as $\vec{a}\otimes\vec{b}$. The resulting matrix gas the elements
+  $(\vec{a}\otimes\vec{b})_{i,j}=a_ib_j$}
+\begin{eqnarray}
+\mat{U}^{C^+_{32}}&=&
+(-\vec{g}_1-\vec{g}_2-\vec{g}_3)\otimes\vec{g}_1
++\vec{g}_1\otimes\vec{g}_2
++\vec{g}_3\otimes\vec{g}_3
+=\sum_{i,j}O^{\Gamma^f_c,C^+_{32}}_{i,j}  \vec{g}_i\otimes\vec{g}_j
+\end{eqnarray}
+The matrix 
+\begin{eqnarray}
+\mat{O}^{\Gamma^f_c,C^+_{32}} =
+\left(\begin{array}{ccc}
+-1 & 1 & 0 \\
+-1 & 0 & 0 \\
+-1 & 0 & 1\\
+\end{array}\right)
+\label{eq:Oex}
+\end{eqnarray}
+is the transformation $C^+_{32}$ expressed in relative coordinates of
+the reciprocal lattice vectors $\vec{g}_1,\vec{g}_2,\vec{g}_3$
+specified in Table 3.3 of Bradley Cracknell\cite{bradley72_book} for
+the face-centered cubic Bravais system $\Gamma^f_c$.  The matrices
+$\mat{O}$ can be obtained directly from table~3.4 of Bradley
+Cracknell\cite{bradley72_book}.
+
+The meaning of $\mat{O}^{\Gamma^f_c,C^+_{32}}$ as defined in
+\eq{eq:Oex} is the following: Under the transformation $C^+_{32}$, the
+first reciprocal lattice vector $\vec{g}_1$ is transformed onto
+$\vec{g}_1'=-\vec{g}_1-\vec{g}_2-\vec{g}_3$, the second on
+$\vec{g}'_2=\vec{g}_1$ and that the third vector remains unchanged,
+i.e. $\vec{g}'_3=\vec{g}_3$.
+
+Note, that the choice made in Table 3.3 of Bradley Cracknell is not
+unique. The form of the matrix $\mat{O}^{\Gamma^f_c,C^+_{32}}$ relies on the choice of lattice vectors made by Bradley and Cracknell.
+
+The reciprocal lattice vectors can be combined into the matrix
+$\mat{g}$. For the example given above, the matrix $\mat{g}$ has,
+according to table 3.3, the form
+\begin{eqnarray}
+\mat{g}^{\Gamma^f_c}=(\vec{g}_1,\vec{g}_2,\vec{g}_3)=\frac{2\pi}{a}
+\left(
+\begin{array}{rrr}
+-1 & 1& 1\\
+ 1 & -1& 1\\
+ 1 & 1& -1 \\
+\end{array}\right)
+\label{eq:matrixgforgfc}
+\end{eqnarray}
+
+The matrix $\mat{g}$ transforms a point $\vec{G}$ in reciprocal space
+from the relative coordinates $\vec{x}$ into cartesian (absolute)
+coordinates $\vec{G}$, i.e. $\vec{G}=\mat{g}\vec{x}$.  Thus, a
+transformation can be written in relative and absolute coordinates as
+\begin{eqnarray}
+\vec{G}'=\mat{U}\vec{G}
+\nonumber\\
+\vec{x'}=\mat{O}\vec{x}
+\end{eqnarray}
+
+Thus, the operation $\mat{U}$ in Cartesian coordinates is obtained from
+$\mat{O}$
+\begin{eqnarray}
+\mat{U}=\mat{g}\mat{O}\mat{g}^{-1}
+\label{eqLfromotiuing}
+\end{eqnarray}
+
+For the specific example, we obtain
+\begin{eqnarray}
+\mat{U}^{C^+_{32}}&=&\mat{g}^{\Gamma^f_c}\mat{O}^{\Gamma^f_c,C^+_{32}}
+\left(\mat{g}^{\Gamma^f_c}\right)^{-1}
+=
+\underbrace{\frac{2\pi}{a}\left(\begin{array}{rrr}
+-1 & 1& 1\\
+ 1 & -1& 1\\
+ 1 & 1& -1 \\
+\end{array}\right)}_{\mat{g}}
+\underbrace{\left(\begin{array}{ccc}
+-1 & 1 & 0 \\
+-1 & 0 & 0 \\
+-1 & 0 & 1\\
+\end{array}\right)}_{\mat{O}}
+\underbrace{\frac{a}{2\pi}\cdot\frac{1}{2}
+\left(\begin{array}{rrr}
+0 & 1& 1\\
+ 1 & 0& 1\\
+ 1 & 1& 0 \\
+\end{array}\right)}_{\mat{g}^{-1}}
+\nonumber\\
+&=&\left(\begin{array}{rrr}
+ 0 &  0& -1\\
+ 1 &  0&  0\\
+ 0 & -1&  0 \\
+\end{array}\right)
+\end{eqnarray}
+The result is a three fold rotation about the axis $(1,1,-1)$
+expressed in cartesian coordinates, while
+$\mat{O}^{\Gamma^f_c,C^+_{32}}$ is the same operation expressed in
+relative coordinates for the lattice vectors $\mat{g}^{\Gamma^f_c}$.
+
+%====================================================================
+\subsection{Transformation matrices}
+%====================================================================
+Because the Brillouin object transforms the points on the grid, it
+directly works with relative coordinates $\vec{x}$. A k-point is given as
+\begin{eqnarray}
+\vec{G}_{i_1,i_2,i_3}=\mat{g}\vec{x}_{i_1,i_2,i_3}
+\end{eqnarray}
+where
+$\vec{x}_{i_1,i_2,i_3}=(\frac{i_1-1}{n_1},\frac{i_2-1}{n_2},\frac{i_3-1}{n_3})$
+and therefore $\vec{k}_{i_1,i_2,i_3}= \vec{g}_1
+\frac{i_1-1}{n_1}+\vec{g}_2 \frac{i_2-1}{n_2} +\vec{g}_3\frac{i_3-1}{n_3}$.
+In order to transform the indices $(i_1,i_2,i_3)$, we only need the
+matrix $\mat{O}$.
+
+The operations needed by the Brillouin object are these matrices
+$\mat{O}$
+
+%====================================================================
+\subsubsection{Convert operations from reciprocal to real space}
+%====================================================================
+If the operations $\mat{O}$ are given for reciprocal space, the ones
+in real space can be constructed via a transformation into cartesian
+coordinates.
+
+Let $\mat{O}$ be the operation relative to the reciprocal lattice
+vectors $\mat{g}$, and $\mat{P}$ the operation relative to the real
+lattice vectors $\mat{T}$. We obtain the conversion by
+\begin{eqnarray}
+\mat{U}&\eqrel{eqLfromotiuing}{=}&\mat{g}\mat{O}\mat{g}^{-1}
+\nonumber\\
+\mat{U}&=&\mat{T}\mat{P}\mat{T}^{-1}
+\nonumber\\
+\Rightarrow
+\mat{P}
+&=&\mat{T}^{-1}\mat{g}\mat{O}\mat{g}^{-1}\mat{T}
+=\mat{T}^{-1}\Bigl(2\pi\mat{T}^{-1,\top}\Bigr)
+\mat{O}\Bigl(2\pi\mat{T}^{-1,\top}\Bigr)^{-1}\mat{T}
+\nonumber\\
+&=&\mat{T}^{-1}\mat{T}^{-1,\top}
+\mat{O}\mat{T}^{\top}\mat{T}
+\nonumber\\ 
+&=&\Bigl(\mat{T}^{\top}\mat{T}\Bigr)^{-1}
+\mat{O}\Bigl(\mat{T}^{\top}\mat{T}\Bigr)
+\label{eq:oppfromo}
+\end{eqnarray}
+
+If the matrix $\mat{P}$ contains non-integer entries, there is an
+inconsistency between the operations and the Bravais lattice chosen.
+
+
+
+
+%====================================================================
+\subsection{Generators}
+%====================================================================
+The point group can be built up from a small number of generators.
+All operations in a point group can be obtained from the set of
+generators by multiplying the generators in arbitrary combinations
+and powers with each other. 
+
+The generators for each of the 230 point groups are listed in
+table~3.7 of Bradley Cracknell. We observe that there are at most five
+generators for each point group.
+
+
+%================================================================
+\section{Code structure: Spacegroup}
+%================================================================
+It is important to initialize the spacegroup object by specifying a
+space group. This is done by giving the space group number using
+\verb|SPACEGROUP$SETI4('spacegroup',VAL)|. All subsequent operations
+will refer to this spacegroup only. Changing to a different space
+group is possible at any time.
+
+The subroutines are
+\begin{verbatim}
+SUBROUTINE SPACEGROUP$SETI4(ID,VAL)
+SUBROUTINE SPACEGROUP$GETCH(ID,VAL)
+SUBROUTINE SPACEGROUP$RBAS(BRAVAIS,A0,B0,C0,ALPHA,BETA,GAMMA,RBAS)
+  SUBROUTINE SPACEGROUP$ABCALPHABETAGAMMA(SWITCH,A,B,C,ALPHA,BETA,GAMMA,T)
+SUBROUTINE SPACEGROUP$GENERATORS(ID,NOPX,NOP,OPERATION,C)
+SUBROUTINE SPACEGROUP$COMPLETE(NOPX,NOP,OP,C)
+\end{verbatim}
+
+\begin{itemize}
+\item with \verb|SPACEGROUP$SETI4('SPACEGROUP',val)| one sets the
+  spacegroup by its space group number
+%
+\item with \verb|SPACEGROUP$GETCH('BRAVAIS',val)| one retrieves the
+  symbol for the corresponding bravais lattice
+%
+\item with \verb|SPACEGROUP$RBAS| one specifies the lattice vectors by
+  supplying the lattice parameters $a,b,c,\alpha,\beta,\gamma$. Note
+  that angles are given in radian (not degree).
+%
+\item with \verb|SPACEGROUP$GENERATORS| the generators of the group
+  are obtained either in real or in reciprocal space.
+%
+\item with \verb|SPACEGROUP$COMPLETE| the set of generators is
+  expanded to the full point group.
+\end{itemize}
+
+
+%================================================================
+\subsection{SPACEGROUP\$GENERATORS}
+%================================================================
+With \verb|ID='REAL'| or \verb|ID='RECI'| one selects the operations
+in real or reciprocal space. Note that the translations \verb|C| are
+zero in reciprocal space.
+
+An operation is specified by an integer matrix $\mat{O}$, which
+transforms the reciprocal lattice vectors and a vector $\vec{c}$ which
+defines the transformation of the relative coordinates in real space
+as
+\begin{eqnarray}
+\vec{x'}=\mat{P}\vec{x}+\vec{c}
+\end{eqnarray}
+The cartesian coordimates are then
+\begin{eqnarray}
+\vec{r'}=\mat{T}\mat{P}\mat{T}^{-1}\vec{r}+\mat{T}\vec{c}
+\end{eqnarray}
+where $\mat{T}$ is the matrix of real-space lattice vectors.
+
+The real space operation $\mat{P}$ is obtained from the reciprocal
+space operation $\mat{O}$ via \eq{eq:oppfromo}.
+
+%================================================================
+%\subsection{SPACEGROUP\$GENERATORS}
+%================================================================
+
+
+%\appendix
+%=================================================================
+%\section{}
+%================================================================
+
+\bibliographystyle{unsrtnat}
+\bibliography{../all}
+\end{document}  

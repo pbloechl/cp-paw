@@ -1,0 +1,222 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                 %%
+%%    Header file for the Phi-S-X Series                           %%
+%%                                                                 %%
+%%    german version header_gm.tex is derived from header.tex      %%
+%%    by uncommenting the line ``\setboolean{german}{true}'' below %%
+%%                                                                 %%
+%%    Never edit the german version! all changes must be done      %%
+%%    in the english version header.tex                            %%
+%%                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%====================================================================
+%-- define flag for language adaptations
+\usepackage{ifthen}   % allows to select only certain text
+\provideboolean{german}
+\setboolean{german}{false}
+%\setboolean{german}{true}  % uncomment this line for german editions
+%====================================================================
+%
+% Textschriftart: Computer modern Bright
+% body:            CM-Bright 10pt
+% section titles:  CM-Bright Bold
+% formulas:        CM-Bright Math Oblique
+%
+\usepackage[standard-baselineskips]{cmbright}
+\usepackage{cmbright}
+\usepackage[T1]{fontenc}
+\def\usedfonts{CM-Bright}
+\usepackage{typearea}
+%\typearea[current]{calc} % benutzt die aktuelle 
+       % bindekorrektur (BCOR angabe als parameter in koma usepackage)
+       % und berechnet satzspiegel neu
+\typearea[current]{11} %fixed div value
+
+\usepackage{textcomp} % special symbols
+\usepackage{amsfonts} % special symols
+                      % see ftp://ftp.ams.org/pub/tex/doc/amsfonts/amsfndoc.pdf
+\usepackage{amssymb}  % CM-Bright provides the AMS symbols
+\usepackage{exscale}  % allows to scale math expressions to big fonts, 
+                      % e.g. \Huge
+\usepackage{curves}
+\usepackage{braket}
+\usepackage{miller}     % miller indices
+\usepackage{chemmacros} % http://www.mychemistry.eu/mychemistry/
+\usepackage[numbers]{natbib}     % bibliography style
+\usepackage{url}\urlstyle{tt}
+\usepackage{float}
+\usepackage{bm}       % provides the command \bm{} that makes bold math symbols
+\usepackage{amsmath}
+\usepackage{amsbsy}   % allows bold mathematical symbols
+\usepackage{amscd}
+ \usepackage{a4wide}  % it is better to use the ``geometry'' package
+\usepackage{array}    % 
+\usepackage{fancyhdr} %  defines pagestyle fancy
+\usepackage{epsfig}   % include graphics with epsfig
+\usepackage{graphicx} % includegraphics
+\usepackage{epstopdf}
+\usepackage{wrapfig}
+\usepackage{fancybox} % allows shadow-boxes
+\usepackage{color}    % allows to use color in the text
+%\usepackage{eepic}
+\usepackage{flafter}  % places picture next to its reference
+\usepackage{makeidx}  % make an index
+%\usepackage{MnSymbol}  % 
+%\usepackage{marvosym}  % 
+\usepackage{textcase}
+\usepackage{ulem} % defines strikeout \sout{}; underline \uline{}
+                  % double underline \uuline{}; wave underline \uwave{}
+                  % cross out \xout{}
+%
+%==========================================================================
+%==  page layout  =========================================================
+%==========================================================================
+% eqnarray environment: reduce with of space in place of each ``&''
+\setlength\arraycolsep{1.4pt}
+\pagestyle{fancy}
+%\renewcommand{\chaptermark}[1]{\markboth{\thechapter\ #1}{}}
+\renewcommand{\chaptermark}[1]{\markboth{\MakeUppercase{\thechapter\ #1}}{}}
+\fancyhf{} 
+\fancyhead[LE]{\textsc{\thepage}\qquad\textsc{\leftmark}}
+\fancyhead[RO]{\textsc{\leftmark}\qquad\textsc{\thepage}}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0pt} 
+\addtolength{\headheight}{2.5pt}
+\fancypagestyle{plain}{\fancyhead{}
+   \renewcommand{\headrulewidth}{0pt}
+   \fancyfoot[CO]{\bfseries\thepage}}
+
+% Line spacing -----------------------------------------------------------
+\newlength{\defbaselineskip}
+\setlength{\defbaselineskip}{\baselineskip}
+\newcommand{\setlinespacing}[1]%
+           {\setlength{\baselineskip}{#1 \defbaselineskip}}
+\newcommand{\doublespacing}{\setlength{\baselineskip}%
+                           {2.0 \defbaselineskip}}
+\newcommand{\singlespacing}{\setlength{\baselineskip}{\defbaselineskip}}
+
+% Absatz einr\"ucken ------------------------------------------------------
+%\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+% -------------------------------------------------------------------------
+\ifthenelse{\boolean{german}}
+  {\def\figurename{Abb.}}
+  {\def\figurename{Fig.}}
+%--------------------------------------------------------------------------
+\renewcommand{\arraystretch}{1.15}  % skaliert den Zeilen abstand in der 
+    % tabular und array umgebung
+%
+%==========================================================================
+%==  boxes etc ============================================================
+%==========================================================================
+%== minipage in a shadowbox ===============================================
+\newenvironment{myshadowminipage}[1]%
+  {\par\noindent\begin{Sbox}\begin{minipage}{\linewidth}\vspace{0.1cm}\begin{center}\uppercase{#1}\end{center}}%
+  {\vspace{0.1cm}\end{minipage}\end{Sbox}\shadowbox{\TheSbox}}
+%
+%== minipage in a framedbox ===============================================
+\newenvironment{myframedminipage}%
+  {\par\noindent\begin{Sbox}\begin{minipage}\linewidth\vspace{0.1cm}}%
+  {\vspace{0.1cm}\end{minipage}\end{Sbox}\fbox{\TheSbox}}
+%
+\newcommand{\myshadowbox}[1]{\noindent\shadowbox{\parbox{\linewidth}{\smallskip #1\smallskip}}}
+\newcommand{\myfbox}[1]{\noindent\fbox{\parbox{\linewidth}{\smallskip #1\smallskip}}\medskip}
+%== minipage in a framedbox ===============================================
+\newtheorem{defi}{Definition}[chapter]
+\newenvironment{definition}[1]%
+  {\par\noindent\begin{Sbox}\begin{minipage}{\linewidth}\vspace{0.1cm}\begin{defi}\uppercase{#1}\\\vspace{0.1cm}}%
+  {\vspace{0.1cm}\end{defi}\end{minipage}\end{Sbox}\shadowbox{\TheSbox}}
+%
+%=========================================================================
+% color used to point out information to the teacher
+\definecolor{highlight}{rgb}{1.0,0.7,0.}
+\newcommand{\Special}[1]{\textbf{\textcolor{highlight}{#1}}}
+%=========================================================================
+%  switch certain parts on and off. uses ifthen package
+\newboolean{teacher}\setboolean{teacher}{false}
+% this parameter can be changed in the manuscript again
+\setboolean{teacher}{true} %private version if true!
+\newcommand{\teacheronly}[1]{\ifthenelse{\boolean{teacher}}{#1\hfill\\ }}
+\newcommand{\editor}[1]{\textcolor{blue}{\texttt{Editor: #1}}}
+\newcommand{\MARK}[1]{\textcolor{blue}{#1}} 
+\newcommand{\RED}[1]{\textcolor{red}{#1}} 
+%
+%==========================================================================
+%==  define new symbols                                                 ===
+%==========================================================================
+% define \stat (stationary state) as an operator like \min
+\DeclareMathOperator*{\stat}{stat}
+\let\Vec=\mathbold   % cmbright.sty provides a bold/italic math alphabet
+\let\Dot=\mathbold   % cmbright.sty provides a bold/italic math alphabet
+\let\Ddot=\mathbold   % cmbright.sty provides a bold/italic math alphabet
+%
+\newcommand{\e}[1]{\mathrm{e}^{#1}}% exponential function
+\renewcommand{\Re}{\mathrm{Re}}    % real part
+\renewcommand{\Im}{\mathrm{Im}}    % imaginary part
+\newcommand{\lagr}{\ell}           % Lagrange dichte
+\newcommand{\Lagr}{\mathcal{L}}    % Lagrange Funktion
+\newcommand{\erf}{{\rm erf}}       %
+\newcommand{\atan}{{\rm atan}}     % arcus tangens
+\newcommand{\mat}[1]{\bm{#1}}  % Matrix
+\newcommand{\gmat}[1]{{\boldsymbol #1}}  % Matrix(symbol)
+\newcommand{\defas}{\stackrel{\text{def}}{=}}  %  is defined as
+\ifthenelse{\boolean{german}}
+  {\newcommand{\rot}{{\rm\bf rot}}}    % curl
+  {\newcommand{\rot}{{\rm\bf curl}}}   % curl
+\newcommand{\sgn}{{\rm sgn}}       % sign
+\ifthenelse{\boolean{german}}
+   {\newcommand{\Tr}{\mathrm{Sp}}}      % trace
+   {\newcommand{\Tr}{\mathrm{Tr}}}      % trace
+\ifthenelse{\boolean{german}}
+   {\newcommand{\grmn}[2]{\footnote{``#2'' hei{\ss}t in englisch ``#1''}}}
+   {\newcommand{\grmn}[2]{\footnote{``#1'' translates as ``#2'' into German}}}
+% define the equation reference
+\ifthenelse{\boolean{german}}
+   {\newcommand{\eq}[1]{\text{Gl.}~\ref{#1}}}
+   {\newcommand{\eq}[1]{\text{Eq.}~\ref{#1}}}
+% define a relation with an equation number ontop
+\newcommand{\eqrel}[2]{\stackrel{\eq{#1}}{#2}}
+\newcommand{\zero}{\varnothing}
+%\newcommand{\ket}[1]{|#1\rangle} % contained in package braket
+\newcommand{\sumint}{\int\hspace{-15pt}\sum}
+\newcommand{\marker}[1]{\textcolor{blue}{\emph{#1}}}
+\renewcommand*{\dot}[1]{\overset{\mbox{\large\bfseries .}}{#1}}
+\renewcommand*{\ddot}[1]{\overset{\mbox{\large\bfseries\hspace{+0.1ex}.\hspace{-0.1ex}.}}{#1}}
+%
+%==========================================================================
+%==                                                                     ===
+%==========================================================================
+% Prevent figures from appearing on a page by themselves
+% from http://dcwww.camd.dtu.dk/~schiotz/comp/LatexTips/LatexTips.html
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.75}
+%
+%==========================================================================
+%==                                                                     ===
+%==========================================================================
+\makeindex    % make index. uses makeidx package.
+
+%== allow links between documents ============================================
+\usepackage{xr}
+\usepackage{xr-hyper}
+%==  hyperref package (must be last package)
+\usepackage[colorlinks=true]{hyperref} %specify this as last package
+\hypersetup{citecolor=blue}
+\hypersetup{menucolor=magenta}
+\hypersetup{urlcolor=blue}      % 
+\hypersetup{filecolor=green}    % file links
+\hypersetup{linkcolor=magenta}  %table of contents
+\hypersetup{pdfauthor={Peter E. Bl\"ochl}}
+\hypersetup{pdfdisplaydoctitle=true}
+\externaldocument[phisx1-]{/Users/ptpb/Tree/PhiSX/ClassicalMechanics/Book/cm-gm}
+\externaldocument[phisx2-]{/Users/ptpb/Tree/PhiSX/Electrodynamics/Book/el-gm}
+\externaldocument[phisx3-]{/Users/ptpb/Tree/PhiSX/QuantumMechanics/Book/qm}
+\externaldocument[phisx4-]{/Users/ptpb/Tree/PhiSX/StatisticalMechanics/Book/sm}
+\externaldocument[phisxqm2-]{/Users/ptpb/Tree/PhiSX/QuantumMechanicsII/Book/qm2}
+\externaldocument[phisxsm2-]{/Users/ptpb/Tree/PhiSX/StatisticalMechanicsII/Book/sm2}
+\externaldocument[phisxcb-]{/Users/ptpb/Tree/PhiSX/Chemicalbond/Book/cb}
+% Example: Figure~PhiSX:Quantum
+% Mechanics-\ref{phisx3-fig:doubleslitwave} on page
+% \pageref{phisx3-fig:doubleslitwave}
+
