@@ -44,11 +44,15 @@ http://www.pt.tu-clausthal.de/atp/}
 %====================================================================
 \subsection{Basic definitions}
 %====================================================================
+%====================================================================
+\subsubsection{Node-less bound states}
+%====================================================================
 We define\cite{bloechl12_arxiv1210_5937} a sequence of
 \textbf{node-less bound states}\index{node-less bound states}
 $|u_n\rangle$
 \begin{eqnarray}
 (\hat{h}-\epsilon_n)|u_n\rangle=-|u_{n-1}\rangle
+\label{eq:nodelesseq}
 \end{eqnarray}
 The first wave function, $|u_1\rangle$ is the lowest bound state of
 the hamiltonian. The other ones are calculated by radially integrating
@@ -59,16 +63,34 @@ derivative, so that
 \qquad\text{for $n>1$}
 \end{eqnarray}
 
-The n lowest node-less wave functions span the same Hilbert space as
-the n lowest true wave functions. The node-less wave functions do not
-have any nodes but look like slater orbitals, in the sense that they
-grow at the origin as
+
+The node-less wave functions do not
+have any nodes but look like Slater orbitals, in the sense that they
+grow at the origin as a power and that they decay exponentially at
+large distance. Their behavior at the origin
+is\cite{bloechl12_arxiv1210_5937}
 \begin{eqnarray}
-\left(\frac{2m_e}{\hbar^2}\right)^{n-1}\frac{(2\ell+1)!!}{(\ell-1+2n)!!(2n-2)!!}
+u_{n}(\vec{r})
+=\left(\frac{2m_e}{\hbar^2}\right)^{n-1}
+\frac{(2\ell+1)!!}{(\ell-1+2n)!!(2n-2)!!}
 |\vec{r}|^{\ell+2(n-1)}Y_{\ell,m}(\vec{r})
 \end{eqnarray}
 where $Y_{\ell,m}$ is a real spherical harmonics.
 
+The n lowest node-less wave functions span the same Hilbert space as
+the n lowest true wave functions. The all-electron wave functions can
+be recovered from the node-less wave functions
+via\cite{bloechl12_arxiv1210_5937}
+\begin{eqnarray}
+|\psi_n\rangle=\sum_{m=1}^n|u_m\rangle \prod_{j=1}^{m-1}(\epsilon_j-\epsilon_n)
+=\biggl[\sum_{m=1}^n|u_m\rangle 
+\prod_{j=m}^{n-1}\frac{1}{(\epsilon_j-\epsilon_n)}
+\biggr]\prod_{k=1}^{n-1}(\epsilon_j-\epsilon_n)
+\end{eqnarray}
+
+%====================================================================
+\subsubsection{Node-reduced partial waves}
+%====================================================================
 Secondly we define a sequence of energy-dependent 
 \textbf{node-reduced partial wave}
 \index{node-reduced partial wave}
@@ -88,15 +110,51 @@ The node-reduced wave functions have $n-1$ nodes less than the true
 wave function. Near the origin, it is very similar to $|u_n\rangle$
 over nearly the entire energy range.
 
+
+The all-electron partial wave can be constructed from the node-reduced
+partial wave and the lower node-less bound states
+as\cite{bloechl12_arxiv1210_5937}
+\begin{eqnarray}
+|\phi(\epsilon)\rangle=\biggl[|q_n(\epsilon)\rangle
++\sum_{m=1}^{n-1}|u_m\rangle\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}
+\biggr]
+\prod_{k=1}^{n-1}(\epsilon_j-\epsilon)
+\end{eqnarray}
+
+
+%====================================================================
+\subsubsection{Taylor expansion of node-reduced partial waves}
+%====================================================================
 Finally we introduce a Taylor expansion coefficents of the
 node-reduced wave function in energy.
 \begin{eqnarray}
 |q_n^{(j)}(\epsilon)\rangle=\partial_\epsilon^j|q_n(\epsilon)\rangle
 \end{eqnarray}
 
+
+The Taylor expansion coefficients can be obtained from an inhomogeneus
+Schr\"odinger equation
+\begin{eqnarray}
+(\hat{h}-\epsilon_\nu)|q_n^{(0)}(\epsilon)\rangle&=&-|u_{n-1}\rangle
+\nonumber\\
+(\hat{h}-\epsilon_\nu)|q_n^{(j)}(\epsilon)\rangle&=&j|q_n^{(j-1)}\rangle
+\qquad\text{for $j>0$}
+\end{eqnarray}
+
 The Taylor coefficients start near the origin with a high order, $\sim
 r^{\ell+2n+2j}$, and they usually increase exponentially at large
 distances.
+
+The all-electron partners
+are obtains as follows from the node-reduced partial waves
+\begin{eqnarray}
+|\phi_n^{(j)}(\epsilon_\nu)\rangle
+&\defas&\left.\partial_\epsilon^{j}\right|_{\epsilon_\nu}
+\biggl[|\phi_n(\epsilon)\rangle
+\frac{1}{\prod_{k=1}^{n-1}(\epsilon_j-\epsilon)}\biggr]
+=|q_n^{(j)}(\epsilon_\nu)\rangle+\sum_{m=1}^{n-1}|u_m\rangle c_{j,m}
+\end{eqnarray}
+with coefficients $c_{j,m}$ derived in appendix~\ref{app:tayloraephi}.
 
 %====================================================================
 \subsection{Augmentation from node-reduced wave functions}
@@ -125,12 +183,12 @@ In order to obtain individual partial waves, we chose an expansion
 energy $e_\nu$ and determine the Taylor expansion coefficients in
 energy.
 \begin{eqnarray}
-|\tilde{\phi}^{0}\rangle&=&|q_n(\epsilon_\nu)\rangle+|k\rangle
+|\tilde{\phi}^{(0)}\rangle&=&|q_n(\epsilon_\nu)\rangle+|k\rangle
 \nonumber\\
-|\tilde{\phi}^{j}\rangle&=&|q_n^{(j)}(\epsilon_\nu)\rangle
+|\tilde{\phi}^{(j)}\rangle&=&|q_n^{(j)}(\epsilon_\nu)\rangle
 \qquad\text{for $j>0$}
 \end{eqnarray}
-Note that only the first pseudo partial wave differs from its
+Note, that only the first pseudo partial wave differs from its
 node-reduced partial wave. This is because the difference $|k\rangle$
 has been chosen energy independent.
 
@@ -229,11 +287,18 @@ v-\epsilon_\nu=
 \\
 -\frac{1}{\phi(\vec{r}_c)}\hat{t}\phi(\vec{r}_c)&\qquad\text{for $r<r_c$.}
 \end{cases}
+\label{eq:invertschrgl}
 \end{eqnarray}
-where $r_c$ is the pseudization radius. Thus we obtain a potential
-that is shallow and flat inside the pseudization radius. Outside the
-pseudization radius it is chosen such that partial wave obeys the
-non-relativistic Schr\"odinger equation for this potential.
+where $r_c$ is the pseudization radius. $\hat{t}|\phi\rangle$ is a
+short-hand notation for the result of the kinetic energy operator
+acting on the partial wave. In the non-relativistic theory
+$\hat{t}=\frac{\hat{\vec{p}}^2}{2m_0}$, while the expression is more
+complex in the relativistic theory.
+
+With \eq{eq:invertschrgl}, we obtain a potential that is shallow and
+flat inside the pseudization radius. Outside the pseudization radius
+it is chosen such that partial wave obeys the non-relativistic
+Schr\"odinger equation for this potential.
 
 Now, we derive for this potential the radial wave function and its
 first two energy derivatives
@@ -270,10 +335,13 @@ density at the cutoff radius agree.
 %====================================================================
 \section{Relativistic effects}
 %====================================================================
+I recommend to read the doctoral thesis entitled ``The ZORA equation''
+of Eric van Lenthe, if you can get your hands on it.
+
+
 %====================================================================
 \subsection{Dirac equation}
 %====================================================================
-
 We start from the Dirac equation of an electron in an electric field.
 First we divide the wave function into an upper part
 $\phi=(\Psi_1,\Psi_2)$ and a smaller part $\chi=(\Psi_3,\Psi_4)$
@@ -329,9 +397,10 @@ we obtain the form
 \Bigl(\vec{p} \frac{1+D}{2m_0}\times\vec{p} \Bigr)
 +V-\epsilon\Bigr]|\phi\rangle=0
 \end{eqnarray}
-With $\vec{S}=\frac{\hbar}{2}\vec{\sigma}$ and
-$\vec{L}=\vec{r}\times\vec{p}$, we obtain
-
+With the spin $\vec{S}=\frac{\hbar}{2}\vec{\sigma}$ and the orbit
+angular momentum $\vec{L}=\vec{r}\times\vec{p}$, we obtain for a
+rotationally symmetric $D(\vec{r})$ the Dirac equation for a spherical
+system
 \begin{eqnarray}
 \Bigl[
 \frac{1+D}{2m_0}\vec{p}^2 
@@ -341,124 +410,14 @@ $\vec{L}=\vec{r}\times\vec{p}$, we obtain
 _{\frac{(\partial_r D)}{2m_0}\frac{\vec{r}}{|\vec{r}|}}\times\vec{p} \Bigr)
 +V-\epsilon\Bigr]|\phi\rangle=0
 \nonumber\\
-\Bigl[
+\Rightarrow\Bigl[
 \frac{1+D}{2m_0}\vec{p}^2 
 +\frac{\hbar}{i}\frac{\partial_rD}{2m_0|\vec{r}|}\vec{r}\vec{p} 
-+ \frac{(\partial_r D)}{m_0|\vec{r}|}\vec{S}\vec{L}
++ \underbrace{\frac{(\partial_r D)}{m_0|\vec{r}|}\vec{S}\vec{L}}_{\text{spin-orbit}}
 +V-\epsilon\Bigr]|\phi\rangle=0
 \nonumber\\
 \end{eqnarray}
 
-
-%====================================================================
-\subsection{Spinor harmonics}
-%====================================================================
-For a spherical atom, the spin and orbit angular momenta are no more
-conserved independently, but only the total angular momentum is
-conserved. Therefore we need to introduce spinor harmonics.
-
-The spinor harmonics obey the eigenvalue equations
-\begin{eqnarray*}
-\left(\hat{\vec{L}}+\hat{\vec{S}}\right)^2|\Omega_{j,\ell,j_z}\rangle
-&=&|\Omega_{j,\ell,j_z}\rangle\quad\hbar^2j(j+1)
-\\
-\hat{\vec{L}}^2|\Omega_{j,\ell,j_z}\rangle
-&=&|\Omega_{j,\ell,j_z}\rangle\quad\hbar^2\ell(\ell+1)
-\\
-\hat{\vec{S}}^2|\Omega_{j,\ell,j_z}\rangle
-&=&|\Omega_{j,\ell,j_z}\rangle\quad\hbar^2\frac{3}{4}
-\\
-\hat{\vec{L}}\hat{\vec{S}}|\Omega_{j,\ell,j_z}\rangle
-&=&|\Omega_{j,\ell,j_z}\rangle\quad\hbar^2\frac{1}{2}\left[j(j+1)-\ell(\ell+1)-\frac{3}{4}\right]
-\\
-\left(\hat{L}_z+\hat{S}_z\right)|\Omega_{j,\ell,j_z}\rangle
-&=&|\Omega_{j,\ell,j_z}\rangle\quad\hbar(m+\frac{1}{2})
-\end{eqnarray*}
-where the quantum numbers $\kappa$ can assume any value except zero.
-\begin{eqnarray}
-\kappa&=&\ldots,-2,-1,1,2,\ldots
-\\
-j_z&=&-|\kappa|+\frac{1}{2},-|\kappa|+\frac{3}{2},\ldots,|\kappa|-\frac{1}{2}
-\\
-j&=& |\kappa|-\frac{1}{2}
-\\
-\ell&=&|\kappa+\frac{1}{2}|-\frac{1}{2}
-\end{eqnarray}
-
-The spinor harmonics have the form
-\begin{eqnarray}
-|\chi_{\kappa,j_z}\rangle
-\stackrel{\kappa<0}{=}\left(
-\begin{array}{c}
-|Y_{-\kappa-1,j_z-\frac{1}{2}}\rangle
-\sqrt{\frac{-\kappa+j_z-\frac{1}{2}}{-2\kappa-1}}\\
-|Y_{-\kappa-1,j_z+\frac{1}{2}}\rangle
-\sqrt{\frac{-\kappa-j_z-\frac{1}{2}}{-2\kappa-1}}\end{array}\right)
-\qquad
-|\chi_{\kappa,j_z}\rangle
-\stackrel{\kappa>0}{=}\left(
-\begin{array}{c}
--|Y_{\kappa,j_z-\frac{1}{2}}\rangle
-\sqrt{\frac{\kappa-j_z+\frac{1}{2}}{2\kappa+1}}\\
-|Y_{\kappa,j_z+\frac{1}{2}}\rangle
-\sqrt{\frac{\kappa+j_z+\frac{1}{2}}{2\kappa+1}}\end{array}\right)
-\label{eq:spinorharmonicskappa_a}
-\\
-\underbrace{\chi_{-\ell-1,m+\frac{1}{2}}}_{\Omega_{\ell+\frac{1}{2},\ell,m+\frac{1}{2}}}
-=\left(
-\begin{array}{c}
-|Y_{\ell,m}\rangle\sqrt{\frac{\ell+m+1}{2\ell+1}}\\
-|Y_{\ell,m+1}\rangle\sqrt{\frac{\ell-m}{2\ell+1}}\end{array}\right)
-\qquad
-\underbrace{\chi_{\ell,m+\frac{1}{2}}}_{\Omega_{\ell-\frac{1}{2},\ell,m+\frac{1}{2}}}
-=\left(
-\begin{array}{c}
--|Y_{\ell,m}\rangle\sqrt{\frac{\ell-m}{2\ell+1}}\\
-|Y_{\ell,m+1}\rangle\sqrt{\frac{\ell+m+1}{2\ell+1}}\end{array}\right)
-\label{eq:spinorharmonicskappa}
-\end{eqnarray}
-
-Then spinor harmonics describe states with the spin parallel or
-antiparallel to the orbit angular momentum.
-
-%====================================================================
-\subsection{Spherical Dirac equations in spinor harmonics}
-%====================================================================
-
-The wave functions of an electron is a four-component spinor function
-consisting of spin-up and spin-down components, wach with a large and
-a small wave function.
-\begin{eqnarray*}
-\left(\begin{array}{c}\phi(\epsilon,\vec{r})\\\chi(\epsilon,\vec{r})
-\end{array}\right) =
-\left(\begin{array}{c}g_{\kappa,j_z}(\epsilon,\vec{r})
-\chi_{\kappa,j_z}(\vec{r})\\ if_{-\kappa,j_z}(\epsilon,\vec{r})
-\chi_{-\kappa,j_z}(\vec{r})\\ \end{array}\right) \end{eqnarray*} with
-
-\begin{eqnarray}
-&&\hspace{-2cm}\biggl(
-(1+D)\frac{-\hbar^2}{2m_0}\biggl(\frac{1}{r}\partial_r^2r
--\frac{\ell(\ell+1)}{r^2}\biggr)
--\frac{\hbar^2(\partial_r D)}{2m_0}
-\biggl[\partial_r
-+\frac{\kappa+1}{|\vec{r}|}\biggr]
-+V-\epsilon \biggr)g^{(n)}_{\kappa,j_z}(\epsilon,r)
-\nonumber\\
-&=&
-g^{(n-1)}_{\kappa,j_z}(\epsilon_{n-1},r)
--
-\frac{\hbar}{c}\biggl[\partial_r+\frac{-\kappa+1}{|\vec{r}|}\biggr]
-\frac{1+D}{ 2m_0 }
-f_{-\kappa,j_z}^{(n-1)}(\epsilon_{n-1},r)
-\nonumber\\
-f_{-\kappa,j_Z}^{(n)}(\epsilon,r)
-&=&\frac{1+D(\epsilon)}{2 m_0}
-\biggl(\frac{\hbar}{c}\biggl[\partial_r+\frac{\kappa+1}{|\vec{r}|}\biggr]
-g_{\kappa,j_z}^{(n)}(\epsilon,r)
--
-\frac{1}{c^2}f_{-\kappa,j_z}^{(n-1)}(\epsilon_{n-1},r)\biggr)
-\end{eqnarray}
-Compare with Eq.~5.49-5.51 of the diploma thesis of Robert Schade.
 
 %====================================================================
 \subsection{Relativistic augmentation}
@@ -469,7 +428,7 @@ relativistic effects in the plane wave part. The latter does not
 involve large kinetic energies so that they can be ignored with good
 confidence.
 
-In the PAW method we make the following Ansatz for the wave function:
+In the PAW method, we make the following Ansatz for the wave function:
 \begin{eqnarray}
 \left(\begin{array}{c}|\phi\rangle\\|\chi\rangle\end{array}\right)
 =
@@ -488,12 +447,14 @@ In the PAW method we make the following Ansatz for the wave function:
 \right]
 \langle\tilde{p}_\alpha|\tilde\psi\rangle
 \end{eqnarray}
+This ansatz ensures that the wave function is continuous--if $D(r)$
+vanishes smoothly beyond the augmentation radius--and that all-electron and
+pseudo partial waves become identical. 
 
-This ansatz ensures that the wave function is continuous if $D(r)$
-vanishes smoothly beyond the augmentation radius and all-electron and
-pseudo partial waves become identical. In this choice the small
-component does ot enter the plane wave part.
-
+This mapping from a two-dimensional Pauli spinor onto a four component
+spinor wave function is reminiscent of the Foldy-Wouthuysen
+transformation\cite{foldy50_pr78_29}, which diagonalizes the matrix
+form of the Dirac Hamiltonian.
 \begin{eqnarray}
 \left(\begin{array}{c}\langle\phi|\\
 \langle\chi|\end{array}\right)
@@ -575,7 +536,7 @@ v-\epsilon &\quad \vec{\sigma}\vec{p}c\\
 &&\hspace{2cm}-\langle\tilde{\phi}_\alpha|
 \frac{\hat{\vec{p}}^2}{2m_0}
 +\tilde{v}-\epsilon|\tilde{\phi}_\beta\rangle
-+
+-
 \textcolor{red}{
 \langle\tilde{\chi}_\alpha|\tilde{v}-\epsilon|\tilde{\chi}_\beta\rangle}
 \Bigr]\langle
@@ -602,7 +563,7 @@ v-\epsilon &\quad \vec{\sigma}\vec{p}c\\
 -\langle\tilde{\phi}_\alpha|
 \frac{\hat{\vec{p}}^2}{2m_0}
 +\tilde{v}-\epsilon|\tilde{\phi}_\beta\rangle
-+
+-
 \textcolor{red}{
 \langle\tilde{\chi}_\alpha|\tilde{v}-\epsilon|\tilde{\chi}_\beta\rangle}
 \Bigr]\langle
@@ -713,8 +674,233 @@ dV_{\alpha,\beta}&=&
 -\langle\tilde{\chi}_\alpha|\tilde{v}|\tilde{\chi}_\beta\rangle
 \end{eqnarray}
 
+%====================================================================
+\subsection{Nodeless construction for the Dirac equation}
+%====================================================================
+We generalize \eq{eq:nodelesseq} to the Dirac equation, which yields
+\begin{eqnarray}
+\left(\begin{array}{cc}
+v-\epsilon_n &\quad \vec{\sigma}\vec{p}c\\
+\vec{\sigma}\vec{p}c &\quad -2m_0c^2+v-\epsilon_n\end{array}\right)
+\left(\begin{array}{c}|u_n\rangle\\|v_n\rangle\end{array}\right)
+&=&-\left(\begin{array}{c}|u_{n-1}\rangle\\|v_{n-1}\rangle\end{array}\right)
+\end{eqnarray}
+where the small component of a nodeless function is denoted by $|v_n\rangle$.
+
+We resolve for the small component $|v_n\rangle$
+\begin{eqnarray}
+|v_n\rangle=\frac{1+D_n}{2m_0c}(\vec{\sigma}\vec{p})|u_n\rangle
++\frac{1+D_n}{2m_0c^2}|v_{n-1}\rangle
+\label{eq:nodelessdiracsmall}
+\end{eqnarray}
+and insert the result into the first equation
+\begin{eqnarray}
+(V-\epsilon)|u_n\rangle
++(\vec{\sigma}\vec{p})c|v_n\rangle&=&-|u_{n-1}\rangle 
+\nonumber\\
+\Bigl[(\vec{\sigma}\vec{p})
+\frac{1+D_n}{2m_0}(\vec{\sigma}\vec{p})
++v-\epsilon_n\Bigr]|u_n\rangle
+&=&-|u_{n-1}\rangle -(\vec{\sigma}\vec{p})\frac{1+D_n}{2m_0c}|v_{n-1}\rangle
+\nonumber\\
+\Bigl[
+(1+D_n)\frac{\vec{p}^2}{2m_0}
++\frac{\hbar}{i}
+\frac{\vec{\nabla}D_n}{2m_0}\vec{p}
++\vec{S}\Bigl(\frac{\vec{\nabla}D_n}{m_0}\times\vec{p}\Bigr)
++v-\epsilon_n\Bigr]|u_n\rangle
+&=&-|u_{n-1}\rangle -(\vec{S}\vec{p})\frac{1+D_n}{\hbar m_0c}|v_{n-1}\rangle
+\nonumber\\
+\label{eq:nodelessdirac1}
+\end{eqnarray}
 
 
+%====================================================================
+\subsection{Spinor harmonics}
+%====================================================================
+For a spherical atom, the spin and orbit angular momenta are no more
+conserved independently, but only the total angular momentum is
+conserved. Therefore we need to introduce spinor harmonics.
+
+The spinor harmonics obey the eigenvalue equations
+\begin{eqnarray}
+\left(\hat{\vec{L}}+\hat{\vec{S}}\right)^2|\Omega_{j,\ell,j_z}\rangle
+&=&|\Omega_{j,\ell,j_z}\rangle\quad\hbar^2j(j+1)
+\\
+\hat{\vec{L}}^2|\Omega_{j,\ell,j_z}\rangle
+&=&|\Omega_{j,\ell,j_z}\rangle\quad\hbar^2\ell(\ell+1)
+\\
+\hat{\vec{S}}^2|\Omega_{j,\ell,j_z}\rangle
+&=&|\Omega_{j,\ell,j_z}\rangle\quad\hbar^2\frac{3}{4}
+\\
+\hat{\vec{L}}\hat{\vec{S}}|\Omega_{j,\ell,j_z}\rangle
+&=&|\Omega_{j,\ell,j_z}\rangle\quad\hbar^2\frac{1}{2}\left[j(j+1)-\ell(\ell+1)-\frac{3}{4}\right]
+\label{eq:lsspinorharmonic}
+\\
+\left(\hat{L}_z+\hat{S}_z\right)|\Omega_{j,\ell,j_z}\rangle
+&=&|\Omega_{j,\ell,j_z}\rangle\quad\hbar(m+\frac{1}{2})
+\end{eqnarray}
+where the quantum numbers $\kappa$ can assume any value except zero.
+\begin{eqnarray}
+\kappa&=&\ldots,-2,-1,1,2,\ldots
+\\
+j_z&=&-|\kappa|+\frac{1}{2},-|\kappa|+\frac{3}{2},\ldots,|\kappa|-\frac{1}{2}
+\\
+j&=& |\kappa|-\frac{1}{2}
+\\
+\ell&=&|\kappa+\frac{1}{2}|-\frac{1}{2}
+\end{eqnarray}
+
+The spinor harmonics have the form
+\begin{eqnarray}
+|\chi_{\kappa,j_z}\rangle
+\stackrel{\kappa<0}{=}\left(
+\begin{array}{c}
+|Y_{-\kappa-1,j_z-\frac{1}{2}}\rangle
+\sqrt{\frac{-\kappa+j_z-\frac{1}{2}}{-2\kappa-1}}\\
+|Y_{-\kappa-1,j_z+\frac{1}{2}}\rangle
+\sqrt{\frac{-\kappa-j_z-\frac{1}{2}}{-2\kappa-1}}\end{array}\right)
+\qquad
+|\chi_{\kappa,j_z}\rangle
+\stackrel{\kappa>0}{=}\left(
+\begin{array}{c}
+-|Y_{\kappa,j_z-\frac{1}{2}}\rangle
+\sqrt{\frac{\kappa-j_z+\frac{1}{2}}{2\kappa+1}}\\
+|Y_{\kappa,j_z+\frac{1}{2}}\rangle
+\sqrt{\frac{\kappa+j_z+\frac{1}{2}}{2\kappa+1}}\end{array}\right)
+\label{eq:spinorharmonicskappa_a}
+\\
+\underbrace{\chi_{-\ell-1,m+\frac{1}{2}}}_{\Omega_{\ell+\frac{1}{2},\ell,m+\frac{1}{2}}}
+=\left(
+\begin{array}{c}
+|Y_{\ell,m}\rangle\sqrt{\frac{\ell+m+1}{2\ell+1}}\\
+|Y_{\ell,m+1}\rangle\sqrt{\frac{\ell-m}{2\ell+1}}\end{array}\right)
+\qquad
+\underbrace{\chi_{\ell,m+\frac{1}{2}}}_{\Omega_{\ell-\frac{1}{2},\ell,m+\frac{1}{2}}}
+=\left(
+\begin{array}{c}
+-|Y_{\ell,m}\rangle\sqrt{\frac{\ell-m}{2\ell+1}}\\
+|Y_{\ell,m+1}\rangle\sqrt{\frac{\ell+m+1}{2\ell+1}}\end{array}\right)
+\label{eq:spinorharmonicskappa}
+\end{eqnarray}
+
+Then spinor harmonics describe states with the spin parallel or
+antiparallel to the orbit angular momentum.
+
+%====================================================================
+\subsection{Spherical Dirac equations in spinor harmonics}
+%====================================================================
+The wave function of an electron is a four-component spinor function
+consisting of a two-dimensional large and a two-dimensional small
+component. Each has again a spin-up and a spin-down component.
+\begin{eqnarray}
+\left(\begin{array}{c}\phi(\epsilon,\vec{r})\\\chi(\epsilon,\vec{r})
+\end{array}\right) =
+\left(\begin{array}{c}g_{\kappa,j_z}(\epsilon,\vec{r})
+\chi_{\kappa,j_z}(\vec{r})\\ if_{-\kappa,j_z}(\epsilon,\vec{r})
+\chi_{-\kappa,j_z}(\vec{r})\\ \end{array}\right) 
+\end{eqnarray} 
+
+This Ansatz can be inserted into \eq{eq:nodelessdirac1}
+and \eq{eq:nodelessdiracsmall}
+
+
+\begin{eqnarray}
+\Bigl[
+(1+D_n)\frac{\vec{p}^2}{2m_0}
++\frac{\hbar}{i}
+\frac{\partial_rD_n}{2m_0|\vec{r}}\vec{r}\vec{p}
++\frac{\partial_rD_n}{m_0|\vec{r}|} \vec{S}\underbrace{
+\Bigl(\vec{r}\times\vec{p}\Bigr)}_{\vec{L}}
++v-\epsilon_n\Bigr]|u_n\rangle
+&=&-|u_{n-1}\rangle -(\vec{S}\vec{p})\frac{1+D_n}{\hbar m_0c}|v_{n-1}\rangle
+\nonumber\\
+|v_n\rangle=\frac{1+D_n}{2 m_0}
+\Bigl[\frac{2}{\hbar c}
+(\vec{S}\vec{p})|u_n\rangle
++\frac{1}{c^2}|v_{n-1}\rangle\Bigr]
+\end{eqnarray}
+which yields with \eq{eq:lsspinorharmonic}
+
+\begin{eqnarray}
+&&\hspace{-2cm}\biggl(
+(1+D)\frac{-\hbar^2}{2m_0}\biggl(\frac{1}{r}\partial_r^2r
+-\frac{\ell(\ell+1)}{r^2}\biggr)
+-\frac{\hbar^2(\partial_r D)}{2m_0}
+\biggl[\partial_r
++\frac{\kappa+1}{|\vec{r}|}\biggr]
++V-\epsilon \biggr)g^{(n)}_{\kappa,j_z}(\epsilon,r)
+\nonumber\\
+&=&
+-g^{(n-1)}_{\kappa,j_z}(\epsilon_{n-1},r)
++
+\frac{\hbar}{c}\biggl[\partial_r+\frac{-\kappa+1}{|\vec{r}|}\biggr]
+\frac{1+D}{ 2m_0 }
+f_{-\kappa,j_z}^{(n-1)}(\epsilon_{n-1},r)
+\nonumber\\
+f_{-\kappa,j_Z}^{(n)}(\epsilon,r)
+&=&\frac{1+D(\epsilon)}{2 m_0}
+\biggl(\frac{\hbar}{c}\biggl[\partial_r+\frac{\kappa+1}{|\vec{r}|}\biggr]
+g_{\kappa,j_z}^{(n)}(\epsilon,r)
++
+\frac{1}{c^2}f_{-\kappa,j_z}^{(n-1)}(\epsilon_{n-1},r)\biggr)
+\end{eqnarray}
+Compare with Eq.~5.49-5.51 of the diploma thesis of Robert Schade.
+(Note, however, that I changed the sign of $f_{n}$ relative to that of
+$f_{n-1}$, etc. relative to my earlier notes.)
+
+%=====================================================================
+\chapter{Code structure}
+%=====================================================================
+%=====================================================================
+\section{Setups\_newpro}
+%=====================================================================
+%=====================================================================
+\subsection{Input variables}
+%=====================================================================
+The major input parameters are:
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+L    & main angular-momentum quantum number\\
+SO   & spin-orbit allignment $\sgn(\vec{S}\vec{L})$ (SO$\in\{-1,0,1\}$)\\
+ROUT & bound states are calculates in a box with radius ROUT\\
+RC   & cutoff for pseudization of partial waves\\
+ENU  & energy for Taylor expansion of partial waves\\
+\hline
+\end{tabular}
+\end{center}
+
+%=====================================================================
+\subsection{Flow chart}
+%=====================================================================
+The flow of the subroutine is as follows:
+\begin{enumerate}
+\item nodeless core wave functions \verb|UCORE|
+\item Taylor expansion coefficients of node-reduced partial waves \verb|QN|
+\item energy dertivative partial wave of highest partial wave \verb|QNDOT|
+\item pseudo core wave functions \verb|PSUCORE|
+\item pseudo partial waves \verb|PSPHI| (without core tails)
+\item all-electron partial waves \verb|AEPHI| and inclusion of ps-core
+  tails in pseudo partial waves
+\item bare projector functions \verb|PRO|
+\item bi-orthogonalization
+\item matrix elements \verb|DTKIN| \verb|DOVER|
+\end{enumerate}
+
+%=====================================================================
+\subsubsection{pseudo core wave functions}
+%=====================================================================
+We construct the function
+\begin{eqnarray}
+f_1&=&r^\ell
+\nonumber\\
+f_2&=& r^{\ell+2}
+\nonumber\\
+f_3&=& r^{\ell+4}
+\end{eqnarray}
+to the nodeless core wave function os that value and derivative agree
+at the pseudization radius.
 
 \appendix
 %=====================================================================
@@ -739,6 +925,76 @@ R(|\vec{r}|)\chi_{-\kappa,j_z}
 \ell&\text{for $\vec{L}\vec{S}<0$ .i.e. $so=-1$}\\
 -1&\text{for $\vec{L}\vec{S}=0$ .i.e. $so=0$}\\
 \end{cases}
+\end{eqnarray}
+
+%=====================================================================
+\chapter{Taylor expansion of node-reduced partial waves}
+\label{app:tayloraephi} 
+%=====================================================================
+
+\begin{eqnarray}
+|\phi_n^{(j)}(\epsilon_\nu)\rangle
+&\defas&\left.\partial_\epsilon^{j}\right|_{\epsilon_\nu}
+\biggl[|\phi_n(\epsilon)\rangle
+\frac{1}{\prod_{k=1}^{n-1}(\epsilon_j-\epsilon)}\biggr]
+\nonumber\\
+&=&\left.\partial_\epsilon^{j}\right|_{\epsilon_\nu}
+\biggl[
+|q_n(\epsilon)\rangle
++\sum_{m=1}^{n-1}|u_m\rangle\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}
+\biggr]
+\nonumber\\
+&=&
+|q_n^{(j)}(\epsilon_\nu)\rangle
++\sum_{m=1}^{n-1}|u_m\rangle
+\left.\partial_\epsilon^{j}\right|_{\epsilon_\nu}
+\biggl[\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}
+\biggr]
+\end{eqnarray}
+
+
+\begin{eqnarray}
+\left.\partial_\epsilon^{0}\right|_{\epsilon_\nu}
+\biggl[\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}\biggr]
+&=&
+\biggl[\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon_\nu}\biggr]
+\nonumber\\
+\left.\partial_\epsilon^{1}\right|_{\epsilon_\nu}
+\biggl[\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}\biggr]
+&=&\biggl[\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon_\nu}\biggr]
+\biggl[\sum_{k=m}^{n-1}\frac{1}{\epsilon_j-\epsilon_\nu}\biggr]
+\end{eqnarray}
+
+Let us first form the derivatives 
+\begin{eqnarray}
+a_{j,m}&\defas&\left.\partial_\epsilon^{j}\right|_{\epsilon_\nu}
+\biggl[\sum_{k=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}\biggr]
+=\biggl[\sum_{k=m}^{n-1}\frac{j!}{(\epsilon_j-\epsilon_\nu)^{j+1}}\biggr]
+\qquad\text{for $j=0,\infty$}
+\end{eqnarray}
+
+Then we can evaluate the derivatives of the product
+\begin{eqnarray}
+c_{j,m}&\defas&\left.\partial_\epsilon^{j}\right|_{\epsilon_\nu}
+\biggl[\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}\biggr]
+\nonumber\\
+c_{0,m}&=&\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon_\nu}
+\nonumber\\
+c_{1,m}&=&c_{0,m}a_{0,m}
+\nonumber\\
+c_{2,m}&=&(c_{0,m}a_{0,m})a_{0,m}+c_{0,m}a_{1,m}
+=c_{1,m}a_{0,m}+c_{0,m}a_{1,m}
+\nonumber\\
+c_{3,m}&=&c_{2,m}a_{0,m}+2c_{1,m}a_{1,m}+c_{0,m}a_{2,m}
+\nonumber\\
+c_{j,m}&=&\sum_{k=0}^{j-1}\binom{j-1}{k}c_{j-k-1,m}a_{k,m}
+\end{eqnarray}
+
+
+\begin{eqnarray}
+|\phi_n^{(j)}(\epsilon_\nu)\rangle
+&=&
+|q_n^{(j)}(\epsilon_\nu)\rangle+\sum_{m=1}^{n-1}|u_m\rangle c_{j,m}
 \end{eqnarray}
 
 
