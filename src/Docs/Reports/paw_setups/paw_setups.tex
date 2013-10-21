@@ -12,6 +12,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{../header}
 \hypersetup{pdftitle=paw_brillouin}
+\newcommand{\petertt}[1]{\textcolor{red}{\texttt{#1}}}
 \makeindex
 \begin{document}
 \begin{titlepage}
@@ -239,7 +240,7 @@ The first term (j=0) is best calculated directly from
 \end{eqnarray}
 
 %====================================================================
-\subsubsection{Biorthogonalization}
+\subsubsection{Bi-orthogonalization}
 %====================================================================
 The bi-orthogonalization shall establish 
 \begin{eqnarray}
@@ -255,10 +256,15 @@ We do this while maintaining the partial waves, i.e.
 \textbf{The biorthogonalization deteriorates quickly, if the number of
   partial waves is increased.}
 
+
+\petertt{Question: does the integrand for the overlap between
+  projector function and partial wave fall off sufficiently fast with
+  distance? Note, that the partial waves increase exponentially.}
+
+
 %====================================================================
 \subsubsection{Augmentation contribution to matrix elements}
 %====================================================================
-
 \begin{eqnarray}
 dO_{\alpha,\beta}&=&\langle\phi_\alpha|\phi_\beta\rangle-
 \langle\tilde{\phi}_\alpha|\tilde{\phi}_\beta\rangle
@@ -269,6 +275,12 @@ dT_{\alpha,\beta}&=&\langle\phi_\alpha|\hat{t}|\phi_\beta\rangle-
 The calculation of these matrix elements becomes substantially more
 involved in the relativistic case.
 
+\petertt{Problem: In order to cancel the tails of the core wave
+  functions, the pseudo partial waves must include a pseudo-core
+  contribution. This, however, is likely to produce ghost states. A
+  remedy could be to change the exponentially increasing behavior of
+  the the node-reduced partial waves artificially such that they do no
+  more grow. In that case, the pseudo-core contribution would not harm.}
 
 %====================================================================
 \subsection{Pseudo wave functions from node-reduced wave functions}
@@ -347,8 +359,8 @@ First we divide the wave function into an upper part
 $\phi=(\Psi_1,\Psi_2)$ and a smaller part $\chi=(\Psi_3,\Psi_4)$
 \begin{eqnarray}
 \left(\begin{array}{cc}
-V-\epsilon &\quad \vec{\sigma}\vec{p}c\\
-\vec{\sigma}\vec{p}c &\quad -2m_0c^2+V-\epsilon\end{array}\right)
+v-\epsilon &\quad \vec{\sigma}\vec{p}c\\
+\vec{\sigma}\vec{p}c &\quad -2m_0c^2+v-\epsilon\end{array}\right)
 \left(\begin{array}{c}|\phi\rangle\\|\chi\rangle\end{array}\right)=0
 \label{eq:dirac2by2withepsilon}
 \end{eqnarray}
@@ -358,12 +370,12 @@ Pauli matrices $\sigma_x,\sigma_y,\sigma_z$.
 
 It will be connvenient to introduce the function
 \begin{eqnarray}
-1+D(r)=\Bigl[1+\frac{\epsilon-V}{2m_0c^2}\Bigr]^{-1}
+1+D(\vec{r})\defas\Bigl[1+\frac{\epsilon-v(\vec{r})}{2m_0c^2}\Bigr]^{-1}
 \end{eqnarray}
 so that the Dirac equation obtains the form
 \begin{eqnarray}
 \left(\begin{array}{cc}
-V-\epsilon &\quad \vec{\sigma}\vec{p}c\\
+v-\epsilon &\quad \vec{\sigma}\vec{p}c\\
 \vec{\sigma}\vec{p}c &\quad \frac{-2m_0c^2}{1+D}\end{array}\right)
 \left(\begin{array}{c}|\phi\rangle\\|\chi\rangle\end{array}\right)=0
 \label{eq:dirac2by2withepsilonb}
@@ -373,7 +385,7 @@ The small contribution can be extracted from the second equation of
 \eq{eq:dirac2by2withepsilonb}
 \begin{eqnarray}
 |\chi\rangle
-=\frac{1}{2m_0c^2+\epsilon-V}
+=\frac{1}{2m_0c^2+\epsilon-v}
 \vec{\sigma}\vec{p}c |\phi\rangle
 =\frac{1+D}{2m_0c}
 \vec{\sigma}\vec{p} |\phi\rangle
@@ -382,7 +394,7 @@ Thus it can be eliminated from the first equation, which is turned
 into a second-order differntial equation for the large component.
 \begin{eqnarray}
 \Bigl[\vec{\sigma}\vec{p} \frac{1+D}{2m_0}
-\vec{\sigma}\vec{p} +V-\epsilon\Bigr]|\phi\rangle=0
+\vec{\sigma}\vec{p} +v-\epsilon\Bigr]|\phi\rangle=0
 \end{eqnarray}
 
 Using the magic equation
@@ -395,7 +407,7 @@ we obtain the form
 \Bigl[\vec{p} \frac{1+D}{2m_0}\vec{p} 
 +i\vec{\sigma} 
 \Bigl(\vec{p} \frac{1+D}{2m_0}\times\vec{p} \Bigr)
-+V-\epsilon\Bigr]|\phi\rangle=0
++v-\epsilon\Bigr]|\phi\rangle=0
 \end{eqnarray}
 With the spin $\vec{S}=\frac{\hbar}{2}\vec{\sigma}$ and the orbit
 angular momentum $\vec{L}=\vec{r}\times\vec{p}$, we obtain for a
@@ -408,13 +420,13 @@ system
 +i\frac{2}{\hbar}\vec{S} 
 \Bigl(\frac{\hbar}{i}(\underbrace{\vec{\nabla}\frac{1+D}{2m_0}}
 _{\frac{(\partial_r D)}{2m_0}\frac{\vec{r}}{|\vec{r}|}}\times\vec{p} \Bigr)
-+V-\epsilon\Bigr]|\phi\rangle=0
++v-\epsilon\Bigr]|\phi\rangle=0
 \nonumber\\
 \Rightarrow\Bigl[
 \frac{1+D}{2m_0}\vec{p}^2 
 +\frac{\hbar}{i}\frac{\partial_rD}{2m_0|\vec{r}|}\vec{r}\vec{p} 
 + \underbrace{\frac{(\partial_r D)}{m_0|\vec{r}|}\vec{S}\vec{L}}_{\text{spin-orbit}}
-+V-\epsilon\Bigr]|\phi\rangle=0
++v-\epsilon\Bigr]|\phi\rangle=0
 \nonumber\\
 \end{eqnarray}
 
@@ -459,8 +471,8 @@ form of the Dirac Hamiltonian.
 \left(\begin{array}{c}\langle\phi|\\
 \langle\chi|\end{array}\right)
 \left(\begin{array}{cc}
-V-\epsilon &\quad \vec{\sigma}\vec{p}c\\
-\vec{\sigma}\vec{p}c &\quad -2m_0c^2+V-\epsilon\end{array}\right)
+v-\epsilon &\quad \vec{\sigma}\vec{p}c\\
+\vec{\sigma}\vec{p}c &\quad -2m_0c^2+v-\epsilon\end{array}\right)
 \left(\begin{array}{c}|\phi\rangle\\|\chi\rangle\end{array}\right)=0
 \end{eqnarray}
 
@@ -606,7 +618,7 @@ where the wave functions are simple plane waves.
 \langle\tilde\psi|
 (\vec{\sigma}\vec{p})\frac{(\tilde{v}-\epsilon)}{(2m_0c)^2}(\vec{\sigma}\vec{p})
 |\tilde{\psi}\rangle
-&=&\frac{(\hbar\vec{G})^2}{2m_0}\frac{\epsilon-V}{2m_0c^2}
+&=&\frac{(\hbar\vec{G})^2}{2m_0}\frac{\epsilon-v}{2m_0c^2}
 \approx \frac{E_{kin}^2}{2m_0c^2}\approx E^2_{kin} \cdot 2.5
 \times10^{-5}\frac{1}{H}
 \nonumber\\
@@ -664,7 +676,7 @@ dO_{\alpha,\beta}&=&
 -\langle\tilde{\phi}_\alpha|\tilde{\phi}_\beta\rangle
 -\langle\tilde{\chi}_\alpha|\tilde{\chi}_\beta\rangle
 \nonumber\\
-\hat{\tilde{V}}&=&\hat{V}+
+\hat{\tilde{v}}&=&\hat{v}+
 \sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle dV_{\alpha,\beta}\langle\tilde{p}_\beta|
 \nonumber\\
 dV_{\alpha,\beta}&=&
@@ -695,7 +707,7 @@ We resolve for the small component $|v_n\rangle$
 \end{eqnarray}
 and insert the result into the first equation
 \begin{eqnarray}
-(V-\epsilon)|u_n\rangle
+(v-\epsilon)|u_n\rangle
 +(\vec{\sigma}\vec{p})c|v_n\rangle&=&-|u_{n-1}\rangle 
 \nonumber\\
 \Bigl[(\vec{\sigma}\vec{p})
@@ -829,7 +841,7 @@ which yields with \eq{eq:lsspinorharmonic}
 -\frac{\hbar^2(\partial_r D)}{2m_0}
 \biggl[\partial_r
 +\frac{\kappa+1}{|\vec{r}|}\biggr]
-+V-\epsilon \biggr)g^{(n)}_{\kappa,j_z}(\epsilon,r)
++v-\epsilon \biggr)g^{(n)}_{\kappa,j_z}(\epsilon,r)
 \nonumber\\
 &=&
 -g^{(n-1)}_{\kappa,j_z}(\epsilon_{n-1},r)
@@ -916,7 +928,7 @@ at the pseudization radius.
 &=&\frac{i\hbar^2}{2}\Bigl[\partial_r+\frac{\kappa+1}{|\vec{r}|}\Bigr]
 R(|\vec{r}|)\chi_{-\kappa,j_z}
 \\
-1+D&=&\frac{1}{1+\frac{\epsilon-V}{2m_0c^2}}
+1+D&=&\frac{1}{1+\frac{\epsilon-v}{2m_0c^2}}
 \\
 \kappa(\ell,so)&=&-1+so\cdot\Bigl(\ell+\frac{so-1}{2}\Bigr)
 =
