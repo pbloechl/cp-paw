@@ -348,7 +348,8 @@ density at the cutoff radius agree.
 \section{Relativistic effects}
 %====================================================================
 I recommend to read the doctoral thesis entitled ``The ZORA equation''
-of Eric van Lenthe, if you can get your hands on it.
+of Eric van Lenthe\cite{lenthe96_thesis}, if you can get your hands on
+it.
 
 
 %====================================================================
@@ -857,9 +858,10 @@ g_{\kappa,j_z}^{(n)}(\epsilon,r)
 +
 \frac{1}{c^2}f_{-\kappa,j_z}^{(n-1)}(\epsilon_{n-1},r)\biggr)
 \end{eqnarray}
-Compare with Eq.~5.49-5.51 of the diploma thesis of Robert Schade.
-(Note, however, that I changed the sign of $f_{n}$ relative to that of
-$f_{n-1}$, etc. relative to my earlier notes.)
+Compare with Eq.~5.49-5.51 of the master thesis of Robert
+Schade\cite{schade12_thesis}.  (Note, however, that I changed the sign
+of $f_{n}$ relative to that of $f_{n-1}$, etc. relative to my earlier
+notes.)
 
 %=====================================================================
 \chapter{Code structure}
@@ -868,10 +870,21 @@ $f_{n-1}$, etc. relative to my earlier notes.)
 \section{Remarks}
 %=====================================================================
 \begin{itemize}
-\item The small contribution introduces nodes near the nucleus which
-  must not be counted. This is taken care off by changing
-  \verb|schroedinger$phaseshift| so that nodes are counted starting
-  with a minimum radius.
+\item The small contribution introduces nodes for the nodeless wave
+  functions that lie near the nucleus which must not be counted. It is
+  a consequence of treating the small component. This is taken care
+  off by changing \verb|schroedinger$phaseshift| so that nodes are
+  counted starting with a minimum radius. Schade\cite{schade12_thesis}
+  gives the minimum radus of 0.07~a$_0$ for the core states and
+  0.09~a$_0$ for the valence states.
+%
+\item Zora avoids the small component.?? Scalar relativistic
+  calculations should treat the small component.
+%
+\item Currently the pseudo partial waves contain a pseudo core
+  contribution so that they match teh all-electron partial waves
+  exactly. This is likely to cause ghost states! 
+%
 \end{itemize}
 
 %=====================================================================
