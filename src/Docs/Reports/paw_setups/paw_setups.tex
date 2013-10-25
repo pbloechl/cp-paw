@@ -92,7 +92,7 @@ via\cite{bloechl12_arxiv1210_5937}
 %====================================================================
 \subsubsection{Node-reduced partial waves}
 %====================================================================
-Secondly we define a sequence of energy-dependent 
+Secondly, we define a sequence of energy-dependent 
 \textbf{node-reduced partial wave}
 \index{node-reduced partial wave}
 through
@@ -108,7 +108,7 @@ with the boundary conditions
 \end{eqnarray}
 
 The node-reduced wave functions have $n-1$ nodes less than the true
-wave function. Near the origin, it is very similar to $|u_n\rangle$
+wave function. Near the origin, they are very similar to $|u_n\rangle$
 over nearly the entire energy range.
 
 
@@ -120,42 +120,55 @@ as\cite{bloechl12_arxiv1210_5937}
 +\sum_{m=1}^{n-1}|u_m\rangle\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}
 \biggr]
 \prod_{k=1}^{n-1}(\epsilon_j-\epsilon)
+\label{eq:aephifromnodereduced}
 \end{eqnarray}
 
 
 %====================================================================
 \subsubsection{Taylor expansion of node-reduced partial waves}
 %====================================================================
-Finally we introduce a Taylor expansion coefficents of the
+Finally, we introduce a Taylor-expansion coefficents of the
 node-reduced wave function in energy.
 \begin{eqnarray}
-|q_n^{(j)}(\epsilon)\rangle=\partial_\epsilon^j|q_n(\epsilon)\rangle
+|q_n^{(j)}(\epsilon)\rangle=
+\frac{(-1)^j}{j!}\partial_\epsilon^j|q_n(\epsilon)\rangle
+\label{eq:taylorexpansioncoefficientsqn}
+\end{eqnarray}
+so that
+\begin{eqnarray}
+|q_n^{(j)}(\epsilon)\rangle=\sum_{j=0}^\infty 
+|q_n^{(j)}(\epsilon_\nu)\rangle
+\Bigl[-(\epsilon-\epsilon_\nu)\Bigr]^j
 \end{eqnarray}
 
+The sign and the factorial have been included so that the differential
+equation for the Taylor coefficients is similar to that of the
+nodeless wave functions.
 
-The Taylor expansion coefficients can be obtained from an inhomogeneus
+The Taylor-expansion coefficients can be obtained from an inhomogeneus
 Schr\"odinger equation
 \begin{eqnarray}
 (\hat{h}-\epsilon_\nu)|q_n^{(0)}(\epsilon)\rangle&=&-|u_{n-1}\rangle
 \nonumber\\
-(\hat{h}-\epsilon_\nu)|q_n^{(j)}(\epsilon)\rangle&=&j|q_n^{(j-1)}\rangle
+(\hat{h}-\epsilon_\nu)|q_n^{(j)}(\epsilon)\rangle&=&-|q_n^{(j-1)}\rangle
 \qquad\text{for $j>0$}
 \end{eqnarray}
 
-The Taylor coefficients start near the origin with a high order, $\sim
-r^{\ell+2n+2j}$, and they usually increase exponentially at large
-distances.
+The Taylor-expansion coefficients start near the origin with a high
+order, $\sim r^{\ell+2n+2j}$, and they usually increase exponentially
+at large distances.
 
-The all-electron partners
-are obtains as follows from the node-reduced partial waves
+The all-electron partners are obtained as follows from the node-reduced
+partial waves
 \begin{eqnarray}
 |\phi_n^{(j)}(\epsilon_\nu)\rangle
-&\defas&\left.\partial_\epsilon^{j}\right|_{\epsilon_\nu}
+&\defas&\frac{(-1)^j}{j!}\left.\partial_\epsilon^{j}\right|_{\epsilon_\nu}
 \biggl[|\phi_n(\epsilon)\rangle
 \frac{1}{\prod_{k=1}^{n-1}(\epsilon_j-\epsilon)}\biggr]
-=|q_n^{(j)}(\epsilon_\nu)\rangle+\sum_{m=1}^{n-1}|u_m\rangle c_{j,m}
+=|q_n^{(j)}(\epsilon_\nu)\rangle+\sum_{m=1}^{n-1}|u_m\rangle c_{m,j}
+\label{eq:taylorexpansioncoefficientsaephi}
 \end{eqnarray}
-with coefficients $c_{j,m}$ derived in appendix~\ref{app:tayloraephi}.
+with coefficients $c_{m,j}$ derived in appendix~\ref{app:tayloraephi}.
 
 %====================================================================
 \subsection{Augmentation from node-reduced wave functions}
@@ -194,7 +207,7 @@ node-reduced partial wave. This is because the difference $|k\rangle$
 has been chosen energy independent.
 
 %====================================================================
-\subsubsection{Construct bare projector functions}
+\subsubsection{Construction of bare projector functions}
 %====================================================================
 The projector functions are derived from a energy dependent definition
 of a projector, namely
@@ -212,7 +225,8 @@ of a projector, namely
 The Taylor expansion in the energy leads to the bare projector
 functions
 \begin{eqnarray}
-|p'^{(j)}\rangle&=&\partial_\epsilon^j|p'(\epsilon)\rangle
+|p'^{(j)}\rangle&\defas&\frac{(-1)^j}{j!}
+\partial_\epsilon^j|p'(\epsilon)\rangle
 \nonumber\\
 &=&
 \Bigl[-|u_{n-1}\rangle
@@ -366,10 +380,11 @@ v-\epsilon &\quad \vec{\sigma}\vec{p}c\\
 \label{eq:dirac2by2withepsilon}
 \end{eqnarray}
 where $\epsilon$ is the energy of the electron relative to the
-rest-energy $m_0c^2$. $\vec{\sigma}$ is a vector formed from the three
-Pauli matrices $\sigma_x,\sigma_y,\sigma_z$.
+rest-energy $m_0c^2$. $\vec{\sigma}$ is a vector of $2\times2$
+matrices formed from the three Pauli matrices
+$\sigma_x,\sigma_y,\sigma_z$.
 
-It will be connvenient to introduce the function
+It will be convenient to introduce the function
 \begin{eqnarray}
 1+D(\vec{r})\defas\Bigl[1+\frac{\epsilon-v(\vec{r})}{2m_0c^2}\Bigr]^{-1}
 \end{eqnarray}
@@ -391,8 +406,9 @@ The small contribution can be extracted from the second equation of
 =\frac{1+D}{2m_0c}
 \vec{\sigma}\vec{p} |\phi\rangle
 \end{eqnarray}
-Thus it can be eliminated from the first equation, which is turned
-into a second-order differntial equation for the large component.
+Thus, the small component can be eliminated from the first equation of
+\eq{eq:dirac2by2withepsilonb}, which is turned into a second-order
+differential equation for the large component.
 \begin{eqnarray}
 \Bigl[\vec{\sigma}\vec{p} \frac{1+D}{2m_0}
 \vec{\sigma}\vec{p} +v-\epsilon\Bigr]|\phi\rangle=0
@@ -409,15 +425,19 @@ we obtain the form
 +i\vec{\sigma} 
 \Bigl(\vec{p} \frac{1+D}{2m_0}\times\vec{p} \Bigr)
 +v-\epsilon\Bigr]|\phi\rangle=0
+\nonumber\\
+\Bigl[\frac{1+D}{2m_0}\vec{p}^2-i\frac{\hbar}{2m_0}(\vec{\nabla}D)\vec{p}
++\vec{S}\Bigl(\frac{\vec{\nabla}D}{m_0}\times\vec{p} \Bigr)
++v-\epsilon\Bigr]|\phi\rangle=0
 \end{eqnarray}
-With the spin $\vec{S}=\frac{\hbar}{2}\vec{\sigma}$ and the orbit
-angular momentum $\vec{L}=\vec{r}\times\vec{p}$, we obtain for a
-rotationally symmetric $D(\vec{r})$ the Dirac equation for a spherical
-system
+where $\vec{S}=\frac{\hbar}{2}\vec{\sigma}$ is the spin.  For a
+rotationally symmetric $D(\vec{r})$ , we can
+introduce the orbit angular momentum $\vec{L}=\vec{r}\times\vec{p}$
+and we obtain the Dirac equation in the form
 \begin{eqnarray}
 \Bigl[
 \frac{1+D}{2m_0}\vec{p}^2 
-+\frac{\hbar}{i}\frac{\partial_rD}{2m_0|\vec{r}|}\vec{r}\vec{p} 
+-i\frac{\hbar\partial_rD}{2m_0|\vec{r}|}\vec{r}\vec{p} 
 +i\frac{2}{\hbar}\vec{S} 
 \Bigl(\frac{\hbar}{i}(\underbrace{\vec{\nabla}\frac{1+D}{2m_0}}
 _{\frac{(\partial_r D)}{2m_0}\frac{\vec{r}}{|\vec{r}|}}\times\vec{p} \Bigr)
@@ -425,7 +445,7 @@ _{\frac{(\partial_r D)}{2m_0}\frac{\vec{r}}{|\vec{r}|}}\times\vec{p} \Bigr)
 \nonumber\\
 \Rightarrow\Bigl[
 \frac{1+D}{2m_0}\vec{p}^2 
-+\frac{\hbar}{i}\frac{\partial_rD}{2m_0|\vec{r}|}\vec{r}\vec{p} 
+-i\frac{\hbar\partial_rD}{2m_0|\vec{r}|}\vec{r}\vec{p} 
 + \underbrace{\frac{(\partial_r D)}{m_0|\vec{r}|}\vec{S}\vec{L}}_{\text{spin-orbit}}
 +v-\epsilon\Bigr]|\phi\rangle=0
 \nonumber\\
@@ -437,9 +457,9 @@ _{\frac{(\partial_r D)}{2m_0}\frac{\vec{r}}{|\vec{r}|}}\times\vec{p} \Bigr)
 %====================================================================
 It is our goal to separate all relativistic effects out into the
 augmentation contribution, so that we need not consider the
-relativistic effects in the plane wave part. The latter does not
-involve large kinetic energies so that they can be ignored with good
-confidence.
+relativistic effects in the plane-wave part. The plane-wave part does
+not involve large kinetic energies so that their contribution to the
+relativistic effects can be ignored with good confidence.
 
 In the PAW method, we make the following Ansatz for the wave function:
 \begin{eqnarray}
@@ -467,12 +487,16 @@ pseudo partial waves become identical.
 This mapping from a two-dimensional Pauli spinor onto a four component
 spinor wave function is reminiscent of the Foldy-Wouthuysen
 transformation\cite{foldy50_pr78_29}, which diagonalizes the matrix
-form of the Dirac Hamiltonian.
+form of the Dirac Hamiltonian.\footnote{Here we distinguish
+  $\vec{\sigma}\vec{p}$ and its hermitean conjugate
+  $(\vec{\sigma}\vec{p})^\dagger$. This refers to the fact that the
+  identity is not valid on a point-per-point basis, but only in
+  connection with certain boundary conditions.}
 \begin{eqnarray}
 \left(\begin{array}{c}\langle\phi|\\
 \langle\chi|\end{array}\right)
 \left(\begin{array}{cc}
-v-\epsilon &\quad \vec{\sigma}\vec{p}c\\
+v-\epsilon &\quad (\vec{\sigma}\vec{p}c)^\dagger\\
 \vec{\sigma}\vec{p}c &\quad -2m_0c^2+v-\epsilon\end{array}\right)
 \left(\begin{array}{c}|\phi\rangle\\|\chi\rangle\end{array}\right)=0
 \end{eqnarray}
@@ -484,22 +508,26 @@ $D$ to zero.
 
 In addition we introduce the small components of the partial waves 
 \begin{eqnarray}
-|\chi_\alpha\rangle&=&(1+D_\beta)\frac{\vec{\sigma}\vec{p}}{2m_0c}
+|\chi_\alpha\rangle&=&(1+D_\alpha)\frac{\vec{\sigma}\vec{p}}{2m_0c}
 |\phi_\alpha\rangle
 \nonumber\\
 |\tilde{\chi}_\alpha\rangle&=&\frac{\vec{\sigma}\vec{p}}{2m_0c}
 |\tilde{\phi}_\alpha\rangle
 \end{eqnarray}
-The motivation for the small pseudo partial wave is that we have set
-$D$ to zero, while we kept the speed of light finite.
+The index on the $D_\alpha$ indicates that it has been evaluated with
+the energy $\epsilon_\alpha$, the energy used in the nodeless equation
+for $|\phi_\alpha\angle$.
+
+For the small pseudo partial wave we made the choice to set $D$ to
+zero, while we keep the finite speed of light.
 
 
 \begin{eqnarray}
 \Rightarrow
 0&=&\left(\begin{array}{c}\langle\tilde{\psi}|\\
-\langle\tilde{\psi}|\frac{\vec{\sigma}\vec{p}}{2m_0c}\end{array}\right)
+\langle\tilde{\psi}|\frac{(\vec{\sigma}\vec{p})^\dagger}{2m_0c}\end{array}\right)
 \left(\begin{array}{cc}
-\tilde{v}-\epsilon &\quad \vec{\sigma}\vec{p}c\\
+\tilde{v}-\epsilon &\quad (\vec{\sigma}\vec{p}c)^\dagger \\
 \vec{\sigma}\vec{p}c &\quad -2m_0c^2+\tilde{v}-\epsilon\end{array}\right)
 \left(\begin{array}{c}|\psi\rangle\\
 \frac{\vec{\sigma}\vec{p}}{2m_0c}|\tilde{\psi}\rangle\end{array}\right)
@@ -511,7 +539,7 @@ $D$ to zero, while we kept the speed of light finite.
 \langle\chi_\alpha|
 \end{array}\right)
 \left(\begin{array}{cc}
-v-\epsilon &\quad \vec{\sigma}\vec{p}c\\
+v-\epsilon &\quad (\vec{\sigma}\vec{p}c)^\dagger\\
 \vec{\sigma}\vec{p}c &\quad -2m_0c^2+v-\epsilon\end{array}\right)
 \left(\begin{array}{c}|\phi_\beta\rangle\\
 |\chi_\beta\rangle\end{array}\right)
@@ -521,65 +549,58 @@ v-\epsilon &\quad \vec{\sigma}\vec{p}c\\
 \langle\tilde{\chi}_\alpha|
 \end{array}\right)
 \left(\begin{array}{cc}
-\tilde{v}-\epsilon &\quad \vec{\sigma}\vec{p}c\\
+\tilde{v}-\epsilon &\quad (\vec{\sigma}\vec{p}c)^\dagger\\
 \vec{\sigma}\vec{p}c &\quad -2m_0c^2+\tilde{v}-\epsilon\end{array}\right)
 \left(\begin{array}{c}|\tilde{\phi}_\beta\rangle\\
 |\tilde{\chi}_\beta\rangle\end{array}\right)
 %
 \biggr]
 \langle\tilde{p}_\beta|\tilde{\psi}\rangle
-\nonumber\\
+\nonumber\\  %==========================================================
 %
 &=&\langle\tilde\psi|
 \frac{\hat{\vec{p}}^2}{2m_0}+\tilde{v}-\epsilon
 +
 \underbrace{
-\textcolor{red}{(\vec{\sigma}\vec{p})\frac{(\tilde{v}-\epsilon)}{(2m_0c)^2}(\vec{\sigma}\vec{p})}}_{\textrm{ignored}}
+\textcolor{red}{(\vec{\sigma}\vec{p})^\dagger
+\frac{(\tilde{v}-\epsilon)}{(2m_0c)^2}(\vec{\sigma}\vec{p})}}_{\textrm{ignored}}
 |\tilde{\psi}\rangle
 \nonumber\\
 &+&\sum_{\alpha,\beta}\langle\tilde{\psi}|\tilde{p}_\alpha\rangle
-\Bigl[
-\underbrace{\langle\phi_\alpha|(\vec{\sigma}\vec{p})|\chi_\beta\rangle
-+\langle\chi_\alpha|(\vec{\sigma}\vec{p})|\phi_\beta\rangle
--2m_0c^2\langle\chi_\alpha|\chi_\beta\rangle}_{T_{\alpha,\beta}}
-+\langle\phi_\alpha|v-\epsilon|\phi_\beta\rangle
-+\textcolor{red}{\langle\chi_\alpha|v-\epsilon|\chi_\beta\rangle}
+\biggl\lbrace
+\underbrace{\Bigl[
+\overbrace{
+\langle\phi_\alpha|(\vec{\sigma}\vec{p})^\dagger
+\frac{1+D_\alpha}{2m_0}
+}^{\langle\chi_\alpha|}
+(\vec{\sigma}\vec{p})|\phi_\beta\rangle
++\langle\phi_\alpha|
+(\vec{\sigma}\vec{p})^\dagger
+\overbrace{\frac{1+D_\beta}{2m_0}(\vec{\sigma}\vec{p})
+|\phi_\beta\rangle}^{|\chi_\beta\rangle}
+-2m_0c^2\langle\chi_\alpha|\chi_\beta\rangle\Bigr]}_{T_{\alpha,\beta}}
 \nonumber\\
 %
-&&\hspace{2cm}-\langle\tilde{\phi}_\alpha|
-\frac{\hat{\vec{p}}^2}{2m_0}
-+\tilde{v}-\epsilon|\tilde{\phi}_\beta\rangle
--
-\textcolor{red}{
-\langle\tilde{\chi}_\alpha|\tilde{v}-\epsilon|\tilde{\chi}_\beta\rangle}
-\Bigr]\langle
-\tilde{p}_\beta|\tilde{\psi}\rangle
-%
+&&\hspace{1.5cm}
+-\underbrace{\Bigl[
+\overbrace{\langle\tilde{\phi}_\alpha|
+(\vec{\sigma}\vec{p})^\dagger\frac{1}{2m_0}
+}^{\langle\tilde{\chi}_\alpha|}(\vec{\sigma}\vec{p})
++(\vec{\sigma}\vec{p})^\dagger
+\overbrace{
+\frac{1}{2m_0}(\vec{\sigma}\vec{p})
+|\tilde{\phi}_\beta\rangle}^{|\tilde{\chi}_\beta\rangle}
+-2m_0c^2\langle\tilde{\chi}_\alpha
+|\tilde{\chi}_\beta\rangle\Bigr]}_{\tilde{T}_{\alpha,\beta}}
 \nonumber\\
-&=&\langle\tilde\psi|
-\frac{\hat{\vec{p}}^2}{2m_0}+\tilde{v}-\epsilon
-+
-\underbrace{
-\textcolor{red}{(\vec{\sigma}\vec{p})\frac{(\tilde{v}-\epsilon)}{(2m_0c)^2}(\vec{\sigma}\vec{p})}}_{\textrm{ignored}}
-|\tilde{\psi}\rangle
-\nonumber\\
-&+&\sum_{\alpha,\beta}\langle\tilde{\psi}|\tilde{p}_\alpha\rangle
-\Bigl[
-\underbrace{\langle\phi_\alpha|
-(\vec{\sigma}\vec{p})\frac{1+D_\alpha}{2m_0}(\vec{\sigma}\vec{p})
-+(\vec{\sigma}\vec{p})\frac{1+D_\beta}{2m_0}(\vec{\sigma}\vec{p})
-|\phi_\beta\rangle
--2m_0c^2\langle\chi_\alpha|\chi_\beta\rangle}_{T_{\alpha,\beta}}
-\nonumber\\
-&&+\langle\phi_\alpha|v-\epsilon|\phi_\beta\rangle
+&&\hspace{1.5cm}+\langle\phi_\alpha|v-\epsilon|\phi_\beta\rangle
 +\textcolor{red}{\langle\chi_\alpha|v-\epsilon|\chi_\beta\rangle}
 -\langle\tilde{\phi}_\alpha|
-\frac{\hat{\vec{p}}^2}{2m_0}
-+\tilde{v}-\epsilon|\tilde{\phi}_\beta\rangle
+\tilde{v}-\epsilon|\tilde{\phi}_\beta\rangle
 -
 \textcolor{red}{
 \langle\tilde{\chi}_\alpha|\tilde{v}-\epsilon|\tilde{\chi}_\beta\rangle}
-\Bigr]\langle
+\biggr\rbrace\langle
 \tilde{p}_\beta|\tilde{\psi}\rangle
 \end{eqnarray}
 We used that $(\vec{\sigma}\vec{p})^2=\vec{p}^2$.
@@ -866,26 +887,6 @@ notes.)
 %=====================================================================
 \chapter{Code structure}
 %=====================================================================
-%=====================================================================
-\section{Remarks}
-%=====================================================================
-\begin{itemize}
-\item The small contribution introduces nodes for the nodeless wave
-  functions that lie near the nucleus which must not be counted. It is
-  a consequence of treating the small component. This is taken care
-  off by changing \verb|schroedinger$phaseshift| so that nodes are
-  counted starting with a minimum radius. Schade\cite{schade12_thesis}
-  gives the minimum radus of 0.07~a$_0$ for the core states and
-  0.09~a$_0$ for the valence states.
-%
-\item Zora avoids the small component.?? Scalar relativistic
-  calculations should treat the small component.
-%
-\item Currently the pseudo partial waves contain a pseudo core
-  contribution so that they match teh all-electron partial waves
-  exactly. This is likely to cause ghost states! 
-%
-\end{itemize}
 
 %=====================================================================
 \section{Setups\_newpro}
@@ -939,6 +940,64 @@ at the pseudization radius.
 
 \appendix
 %=====================================================================
+\chapter{Remarks}
+%=====================================================================
+\begin{itemize}
+\item The small contribution introduces nodes for the nodeless wave
+  functions that lie near the nucleus which must not be counted. It is
+  a consequence of treating the small component. This is taken care
+  off by changing \verb|schroedinger$phaseshift| so that nodes are
+  counted starting with a minimum radius. Schade\cite{schade12_thesis}
+  gives the minimum radus of 0.07~a$_0$ for the core states and
+  0.09~a$_0$ for the valence states.
+%
+\item Zora avoids the small component.?? Scalar relativistic
+  calculations should treat the small component.
+%
+\item Currently the pseudo partial waves do not contain a pseudo core
+  contribution. The pseudo core contribution can introduce ghost
+  states.  On the other hand the pseudo core part lets the
+  all-electron and pseudo partial waves to deviate at larger
+  distances. Does this affect introduce an effect between core states
+  and exponentially increasing partial waves?
+%
+\item The Taylor and the Secant equation are closely related. The
+  equations differ only by the value of the chosen energy which is
+  $\epsilon_\nu$ in one case and $\epsilon_{n+j}$ in the other. Can
+  this be exploited?
+%
+\item we need a criterion for the quality of the augmentation: The
+  Taylor expansion of $|q_n(\epsilon)\rangle$ may have a radially
+  dependent convergence radius $\epsilon_c(r)$. For a truncated Taylor
+  expansion there is a radius where it is better to leave out a term
+  than to include it. Similar problems occur for the secant
+  construction usually employed in the PAW method.
+
+  We could use something like
+  \begin{eqnarray}
+  Q(\epsilon)\defas\min_{\vec{c}}
+\sum_n\Bigl|\langle f_n|\Bigl[\tilde{h}-\epsilon+
+\sum_\alpha|\tilde{p}_\alpha\rangle(dH_{\alpha,\beta}-\epsilon dO_{\alpha,\beta})
+\langle\tilde{p}_\beta|\Bigr]|q'_n(\vec{c},\epsilon)\rangle\Bigr|^2
+  \end{eqnarray}
+  where $|f_n\rangle$ is some orthonormal basisset and
+  $q'_n(\vec{c},\epsilon)\rangle$ is some kind of expansion for the
+  partial waves with coefficients $\vec{c}$.
+%
+\item I need a section about the finite nuclear size
+%
+\item The fock contribution is not yet included in the new version.
+%
+\item for a semi-core state one should include a bound state for
+  semi-core and for the valence state. The equations are very similar
+  so that formulations can be integrated well. 
+%
+\end{itemize}
+
+
+
+
+%=====================================================================
 \chapter{Useful formulas}
 %=====================================================================
 \begin{eqnarray}
@@ -966,72 +1025,154 @@ R(|\vec{r}|)\chi_{-\kappa,j_z}
 \chapter{Taylor expansion of node-reduced partial waves}
 \label{app:tayloraephi} 
 %=====================================================================
+Here we derive the coefficients $c_{m,j}$ used to determine the Taylor
+coeffcieients \eq{eq:taylorexpansioncoefficientsaephi} of the
+all-electron partial waves from the nodeless core wave functions and
+the Taylor expansion coefficients \eq{eq:taylorexpansioncoefficientsqn}
+of the node-reduced wave functions.
 
 \begin{eqnarray}
 |\phi_n^{(j)}(\epsilon_\nu)\rangle
-&\defas&\left.\partial_\epsilon^{j}\right|_{\epsilon_\nu}
+&\eqrel{eq:taylorexpansioncoefficientsaephi}{=}&
+\frac{(-1)^j}{j!}\left.\partial_\epsilon^{j}\right|_{\epsilon_\nu}
 \biggl[|\phi_n(\epsilon)\rangle
 \frac{1}{\prod_{k=1}^{n-1}(\epsilon_j-\epsilon)}\biggr]
 \nonumber\\
-&=&\left.\partial_\epsilon^{j}\right|_{\epsilon_\nu}
+&\eqrel{eq:aephifromnodereduced}{=}&
+\frac{(-1)^j}{j!}\left.\partial_\epsilon^{j}\right|_{\epsilon_\nu}
 \biggl[
 |q_n(\epsilon)\rangle
 +\sum_{m=1}^{n-1}|u_m\rangle\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}
 \biggr]
 \nonumber\\
-&=&
+&\eqrel{eq:taylorexpansioncoefficientsqn}{=}&
 |q_n^{(j)}(\epsilon_\nu)\rangle
 +\sum_{m=1}^{n-1}|u_m\rangle
-\left.\partial_\epsilon^{j}\right|_{\epsilon_\nu}
+\biggl(
+\underbrace{\frac{(-1)^j}{j!}\left.\partial_\epsilon^{j}\right|_{\epsilon_\nu}
 \biggl[\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}
-\biggr]
+\biggr]}_{c_{m,j}}\Biggr)
 \end{eqnarray}
 
-
+It is our goal to work out the coeffcients $c_{m,j}$. To explore the
+structure of the expressions let us evaluate the first two
+derivatives of the product terms
 \begin{eqnarray}
-\left.\partial_\epsilon^{0}\right|_{\epsilon_\nu}
-\biggl[\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}\biggr]
+\underbrace{\left.\partial_\epsilon^{0}\right|_{\epsilon_\nu}
+\biggl[\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}\biggr]}_{b_{m,0}}
 &=&
-\biggl[\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon_\nu}\biggr]
+\underbrace{\biggl[\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon_\nu}\biggr]
+}_{b_{m,0}}
 \nonumber\\
-\left.\partial_\epsilon^{1}\right|_{\epsilon_\nu}
+\underbrace{\left.\partial_\epsilon^{1}\right|_{\epsilon_\nu}
+\biggl[\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}\biggr]}_{b_{m,1}}
+&=&\underbrace{\biggl[\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon_\nu}\biggr]
+}_{b_{m,0}}
+\underbrace{\biggl[\sum_{k=m}^{n-1}\frac{1}{\epsilon_j-\epsilon_\nu}\biggr]
+}_{a_{m,0}}
+\label{eq:taylorphicm1}
+\end{eqnarray}
+Let us now introduce the new symbols
+\begin{eqnarray}
+b_{m,j}&\defas&\left.\partial_\epsilon^{j}\right|_{\epsilon_\nu}
 \biggl[\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}\biggr]
-&=&\biggl[\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon_\nu}\biggr]
-\biggl[\sum_{k=m}^{n-1}\frac{1}{\epsilon_j-\epsilon_\nu}\biggr]
+\nonumber\\
+a_{m,j}&\defas&\left.\partial_\epsilon^{j}\right|_{\epsilon_\nu}
+\biggl[\sum_{k=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}\biggr]
 \end{eqnarray}
 
-Let us first form the derivatives 
+Thus we obtain
 \begin{eqnarray}
-a_{j,m}&\defas&\left.\partial_\epsilon^{j}\right|_{\epsilon_\nu}
+b_{m,1}&=&b_{m,0}a_{m,0}
+\nonumber\\
+b_{m,2}&=&b_{m,1}a_{m,0}+b_{m,0}a_{m,1}
+\nonumber\\
+b_{m,2}&=&b_{m,2}a_{m,0}+2b_{m,1}a_{m,1}+b_{m,0}a_{m,2}
+\nonumber\\
+b_{m,j}&=&\sum_{k=0}^{j-1}\binom{j-1}{k}b_{m,j-k-1}a_{m,k}
+\nonumber\\
+\underbrace{\frac{(-1)^j}{j!}b_{m,j}}_{c_{m,j}}
+&=&
+\sum_{k=0}^{j-1}
+\frac{(-1)^j}{j!}\underbrace{\frac{j-1)!}{(j-k-1)!k!}}
+_{\binom{j-1}{k}}b_{m,j-k-1}a_{m,k}
+\nonumber\\
+&=&
+\sum_{k=0}^{j-1}
+\frac{-1}{j}
+\underbrace{\Bigl[\frac{(-1)^{j-k-1}}{(j-k-1)!}b_{m,j-k-1}\Bigr]}_{c_{m,j-k-1}}
+\Bigl[\frac{(-1)^k}{k!}a_{m,k}\Bigr]
+\end{eqnarray}
+
+The coefficients $a_{m,k}$ are obtained as follows
+\begin{eqnarray}
+a_{m,j}&=&\left.\partial_\epsilon^{j}\right|_{\epsilon_\nu}
 \biggl[\sum_{k=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}\biggr]
 =\biggl[\sum_{k=m}^{n-1}\frac{j!}{(\epsilon_j-\epsilon_\nu)^{j+1}}\biggr]
-\qquad\text{for $j=0,\infty$}
 \end{eqnarray}
-
-Then we can evaluate the derivatives of the product
+so that
 \begin{eqnarray}
-c_{j,m}&\defas&\left.\partial_\epsilon^{j}\right|_{\epsilon_\nu}
-\biggl[\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}\biggr]
-\nonumber\\
-c_{0,m}&=&\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon_\nu}
-\nonumber\\
-c_{1,m}&=&c_{0,m}a_{0,m}
-\nonumber\\
-c_{2,m}&=&(c_{0,m}a_{0,m})a_{0,m}+c_{0,m}a_{1,m}
-=c_{1,m}a_{0,m}+c_{0,m}a_{1,m}
-\nonumber\\
-c_{3,m}&=&c_{2,m}a_{0,m}+2c_{1,m}a_{1,m}+c_{0,m}a_{2,m}
-\nonumber\\
-c_{j,m}&=&\sum_{k=0}^{j-1}\binom{j-1}{k}c_{j-k-1,m}a_{k,m}
+\frac{(-1)^j}{j!}a_{m,j}&=&
+-\sum_{k=m}^{n-1}\frac{1}{(\epsilon_\nu-\epsilon_j)^{j+1}}
 \end{eqnarray}
 
-
+Thus we obtain the following recursive set of equations
+\begin{eqnarray}
+c_{m,0}&=&\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}
+\\
+c_{m,j}&=&\frac{-1}{j}\sum_{k=0}^{j-1}  c_{m,j-k-1}d_{m,k}
+\qquad\text{for $j=1,\ldots,\infty$}
+\nonumber\\
+d_{m,j}&=&-
+\biggl[\sum_{k=m}^{n-1}\frac{1}{(\epsilon_j-\epsilon_\nu)^{j+1}}\biggr]
+\qquad\text{for $j=0,\ldots,\infty$}
+\end{eqnarray}
+with which we can evaluate the true wave functions in the form
 \begin{eqnarray}
 |\phi_n^{(j)}(\epsilon_\nu)\rangle
 &=&
 |q_n^{(j)}(\epsilon_\nu)\rangle+\sum_{m=1}^{n-1}|u_m\rangle c_{j,m}
 \end{eqnarray}
 
+%=====================================================================
+\chapter{Derivation of inhomogeneity for the radial Dirac equation}
+\label{app:inhomraddirac}
+%=====================================================================
+Here I make the derivation of the inhomogenity of the radial Dirac
+equation very explicit so that one can follow all the signs. This is
+because I changed the sign convention of the nodeless construction,
+which may cause a mixup with earlier results.
+
+\begin{eqnarray}
+&&-|u_{n-1}\rangle-(\vec{S}\vec{p})\frac{1+D}{\hbar m_0c}|v_{n-1}\rangle
+\nonumber\\
+&&
+-g_{\kappa,j_z}^{n-1}-\frac{i\hbar^2}{2}
+\Bigl(\partial_r+\frac{1-\kappa}{|\vec{r}|}\Bigr)\frac{1+D}{\hbar m_0c} 
+\Bigl(if_{-\kappa,j_z}^{n-1}\Bigr)
+\nonumber\\
+&&\Bigl(-g_{\kappa,j_z}^{n-1}\Bigr)-\frac{\hbar}{c}
+\Bigl(\partial_r+\frac{1-\kappa}{|\vec{r}|}\Bigr)\frac{1+D}{2m_0} 
+\Bigl(-f_{-\kappa,j_z}^{n-1}\Bigr)
+\end{eqnarray}
+
+\begin{eqnarray}
+|v_n\rangle&=&\frac{1+D}{2m}
+\Bigl[\frac{2}{\hbar c}(\vec{S}\vec{p})|u_n\rangle+\frac{1}{c}v_n\rangle
+\nonumber\\
+if_{-\kappa,j_z}^{n}&=&\frac{1+D}{2m}
+\Bigl[\frac{2}{\hbar c}\frac{i\hbar^2}{2}
+\Bigl[\partial_r+\frac{1+\kappa|}{|\vec{r}|}\Bigr]
+g_{\kappa,j_z}^{(n)}
++\frac{1}{c^2}\Bigl(if_{-\kappa,j_z}^{(n)}\Bigr)\Bigr]
+\nonumber\\
+f_{-\kappa,j_z}^{n}&=&\frac{1+D}{2m}
+\Bigl[\frac{\hbar}{c}
+\Bigl[\partial_r+\frac{1+\kappa|}{|\vec{r}|}\Bigr]
+g_{\kappa,j_z}^{(n)}
++\frac{1}{c^2}\Bigl(f_{-\kappa,j_z}^{(n)}\Bigr)\Bigr]
+\nonumber\\
+\end{eqnarray}
 
 
 \printindex
