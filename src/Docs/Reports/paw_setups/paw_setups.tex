@@ -1099,9 +1099,9 @@ _{\binom{j-1}{k}}b_{m,j-k-1}a_{m,k}
 \nonumber\\
 &=&
 \sum_{k=0}^{j-1}
-\frac{-1}{j}
+\frac{+1}{j}
 \underbrace{\Bigl[\frac{(-1)^{j-k-1}}{(j-k-1)!}b_{m,j-k-1}\Bigr]}_{c_{m,j-k-1}}
-\Bigl[\frac{(-1)^k}{k!}a_{m,k}\Bigr]
+\Bigl[-\frac{(-1)^k}{k!}a_{m,k}\Bigr]
 \end{eqnarray}
 
 The coefficients $a_{m,k}$ are obtained as follows
@@ -1112,18 +1112,18 @@ a_{m,j}&=&\left.\partial_\epsilon^{j}\right|_{\epsilon_\nu}
 \end{eqnarray}
 so that
 \begin{eqnarray}
-\frac{(-1)^j}{j!}a_{m,j}&=&
--\sum_{k=m}^{n-1}\frac{1}{(\epsilon_\nu-\epsilon_j)^{j+1}}
+-\frac{(-1)^j}{j!}a_{m,j}&=&
++\sum_{k=m}^{n-1}\frac{1}{(\epsilon_\nu-\epsilon_j)^{j+1}}
 \end{eqnarray}
 
 Thus we obtain the following recursive set of equations
 \begin{eqnarray}
 c_{m,0}&=&\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}
 \\
-c_{m,j}&=&\frac{-1}{j}\sum_{k=0}^{j-1}  c_{m,j-k-1}d_{m,k}
+c_{m,j}&=&\frac{1}{j}\sum_{k=0}^{j-1}  c_{m,j-k-1}d_{m,k}
 \qquad\text{for $j=1,\ldots,\infty$}
 \nonumber\\
-d_{m,j}&=&-
+d_{m,j}&=&
 \biggl[\sum_{k=m}^{n-1}\frac{1}{(\epsilon_j-\epsilon_\nu)^{j+1}}\biggr]
 \qquad\text{for $j=0,\ldots,\infty$}
 \end{eqnarray}
