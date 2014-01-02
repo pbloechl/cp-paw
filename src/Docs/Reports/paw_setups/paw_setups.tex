@@ -39,6 +39,9 @@ http://www.pt.tu-clausthal.de/atp/}
 %====================================================================
 \chapter{Purpose and theoretical background}
 %====================================================================
+The nodeless construction is proposed by Bl\"ochl and
+F\"orst\cite{bloechl12_arxiv1210_5937}.
+
 %====================================================================
 \section{Nodeless constructiuon}
 %====================================================================
@@ -48,7 +51,7 @@ http://www.pt.tu-clausthal.de/atp/}
 %====================================================================
 \subsubsection{Energy-dependent partial waves}
 %====================================================================
-Let us consider a spherical one-particle Hamiltonian $hat{h}$. We
+Let us consider a spherical one-particle Hamiltonian $\hat{h}$. We
 construct energy-dependent partial waves by radially integrating the
 radial Schr\"odinger equation 
 \begin{eqnarray}
@@ -61,6 +64,11 @@ conditions
 {|\vec{r}|^\ell Y_{\ell,m}(\vec{r})}
 \end{eqnarray}
 at the origin.
+
+The only difference to the common construction is that we do not
+normalize the partial waves within a sphere, but by the boundary
+conditions at the origin. That is, we effectively shrink the
+normalization sphere to zero.
 
 
 
@@ -146,6 +154,11 @@ as\cite{bloechl12_arxiv1210_5937}
 %====================================================================
 \subsubsection{Series expansion of the node-reduced partial wave}
 %====================================================================
+
+
+
+
+
 Let us now define a new sequence of nodeless functions via
 \begin{eqnarray}
 (\hat{h}-\epsilon)|\bar{q}_{n}^{(j)}(\epsilon)\rangle&=&
@@ -170,8 +183,9 @@ This sequence can be constructed by the recursive equation
 \label{eq:recursionqbar}
 \end{eqnarray}
 
-In the special case that all energies $\epsilon_{n+k}$ are chosen
-identical this series results in the Taylor expansion coefficients
+In the special case that all energies $\epsilon_{n+k}$ are chosen to
+be identical, this series expansion produces the Taylor expansion
+coefficients
 \begin{eqnarray}
 |q_n^{(j)}(\epsilon)\rangle=
 \frac{(-1)^j}{j!}\partial_\epsilon^j|q_n(\epsilon)\rangle
@@ -246,16 +260,16 @@ full energy-dependent wave function.
 &=&
 \underbrace{
 |\bar{q}_n^{(j)}(\epsilon)\rangle
-\prod_{m=0}^{j-1}(\epsilon_{n+m}-\epsilon)
+\left(\prod_{m=0}^{j-1}(\epsilon_{n+m}-\epsilon)\right)
 +
 \sum_{k=0}^{j-1}
 |\bar{q}_{n}^{(k)}(\epsilon_{n+k})\rangle
-\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon)
+\left(\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon)\right)
 }_{|q_n(\epsilon)\rangle}
 \nonumber\\
 &+&
 \underbrace{
-\sum_{m=1}^{n-1}|u_m\rangle\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}
+\left(\sum_{m=1}^{n-1}|u_m\rangle\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}\right)
 }_{\text{core contribution}}
 \end{eqnarray}
 
@@ -580,7 +594,7 @@ it.
 %====================================================================
 We start from the Dirac equation of an electron in an electric field.
 First we divide the wave function into an upper part
-$\phi=(\Psi_1,\Psi_2)$ and a smaller part $\chi=(\Psi_3,\Psi_4)$
+$\phi=(\Psi_1,\Psi_2)$ and a lower part $\chi=(\Psi_3,\Psi_4)$
 \begin{eqnarray}
 \left(\begin{array}{cc}
 v-\epsilon &\quad \vec{\sigma}\vec{p}c\\
@@ -725,12 +739,14 @@ In addition we introduce the small components of the partial waves
 \end{eqnarray}
 The index on the $D_\alpha$ indicates that it has been evaluated with
 the energy $\epsilon_\alpha$, the energy used in the nodeless equation
-for $|\phi_\alpha\angle$.
+for $|\phi_\alpha\rangle$.
 
 For the small pseudo partial wave we made the choice to set $D$ to
 zero, while we keep the finite speed of light.
 
-
+To extract Hamiltonian and Overlap operator from the Dirac equation, I
+form the matrix element of the Dirac equation with the corresponding
+Bra.
 \begin{eqnarray}
 \Rightarrow
 0&=&\left(\begin{array}{c}\langle\tilde{\psi}|\\
@@ -811,11 +827,12 @@ v-\epsilon &\quad (\vec{\sigma}\vec{p}c)^\dagger\\
 \langle\tilde{\chi}_\alpha|\tilde{v}-\epsilon|\tilde{\chi}_\beta\rangle}
 \biggr\rbrace\langle
 \tilde{p}_\beta|\tilde{\psi}\rangle
+\nonumber\\
 \end{eqnarray}
 We used that $(\vec{\sigma}\vec{p})^2=\vec{p}^2$.
 
 The three terms marked in red are problematic, because
-the first one contrbutes to plane wave part. The all-electron term is
+the first one contributes to plane wave part. The all-electron term is
 not neglegible in the core region, but it also does not vanish in the
 tail region, if the partial waves, and with it their small components,
 diverge with increasing radius. This diverging part does, however, not
@@ -823,7 +840,7 @@ contribute, because it is cancelled by the corresponding one-center
 pseudo term. This is also the reason that the pseudo term needs to be
 included.
 
-Approximation: 
+\textbf{Approximation:}
 The pseudo term of the plane wave part, however, is considered to be
 small and is ignored in the current implementation. Let us investigate
 the size of the error.
@@ -967,32 +984,61 @@ conserved. Therefore we need to introduce spinor harmonics.
 
 The spinor harmonics obey the eigenvalue equations
 \begin{eqnarray}
-\left(\hat{\vec{L}}+\hat{\vec{S}}\right)^2|\Omega_{j,\ell,j_z}\rangle
-&=&|\Omega_{j,\ell,j_z}\rangle\quad\hbar^2j(j+1)
+\left(\hat{\vec{L}}+\hat{\vec{S}}\right)^2|\chi_{\kappa,j_z}\rangle
+&=&|\chi_{\kappa,j_z}\rangle\quad
+\underbrace{\hbar^2(\kappa^2-\frac{1}{2})}_{\hbar^2j(j+1)}
 \\
-\hat{\vec{L}}^2|\Omega_{j,\ell,j_z}\rangle
-&=&|\Omega_{j,\ell,j_z}\rangle\quad\hbar^2\ell(\ell+1)
+\hat{\vec{L}}^2|\chi_{\kappa,j_z}\rangle
+&=&|\chi_{\kappa,j_z}\rangle\quad\hbar^2\kappa(\kappa+1)
 \\
-\hat{\vec{S}}^2|\Omega_{j,\ell,j_z}\rangle
-&=&|\Omega_{j,\ell,j_z}\rangle\quad\hbar^2\frac{3}{4}
+\hat{\vec{S}}^2|\chi_{\kappa,j_z}\rangle
+&=&|\chi_{\kappa,j_z}\rangle\quad\hbar^2\frac{3}{4}
 \\
-\hat{\vec{L}}\hat{\vec{S}}|\Omega_{j,\ell,j_z}\rangle
-&=&|\Omega_{j,\ell,j_z}\rangle\quad\hbar^2\frac{1}{2}\left[j(j+1)-\ell(\ell+1)-\frac{3}{4}\right]
+\hat{\vec{L}}\hat{\vec{S}}|\chi_{\kappa,j_z}\rangle
+&=&|\chi_{\kappa,j_z}\rangle
+\quad\left(-\hbar^2\frac{\kappa+1}{2}\right)
 \label{eq:lsspinorharmonic}
 \\
-\left(\hat{L}_z+\hat{S}_z\right)|\Omega_{j,\ell,j_z}\rangle
-&=&|\Omega_{j,\ell,j_z}\rangle\quad\hbar(m+\frac{1}{2})
+\left(\hat{L}_z+\hat{S}_z\right)|\chi_{\kappa,j_z}\rangle
+&=&|\chi_{\kappa,j_z}\rangle\quad\hbar j_z
+\\
+\frac{1}{|\vec{r}|}\vec{r}\;\vec{\sigma}\chi_{\kappa,j_z}&=&-\chi_{-\kappa,j_z}
 \end{eqnarray}
-where the quantum numbers $\kappa$ can assume any value except zero.
+where the quantum numbers $\kappa$ can assume any integer value except zero.
 \begin{eqnarray}
-\kappa&=&\ldots,-2,-1,1,2,\ldots
+\kappa&=&\ldots,-2,-1,\qquad 1,2,\ldots
 \\
 j_z&=&-|\kappa|+\frac{1}{2},-|\kappa|+\frac{3}{2},\ldots,|\kappa|-\frac{1}{2}
 \\
 j&=& |\kappa|-\frac{1}{2}
 \\
 \ell&=&|\kappa+\frac{1}{2}|-\frac{1}{2}
+\\
+\left(\begin{array}{c} m_{\uparrow}\\m_{\downarrow}\end{array}\right)
+&=&\left(\begin{array}{c} j_z-\frac{1}{2}\\j_z+\frac{1}{2}\end{array}\right)
 \end{eqnarray}
+Furthermore, 
+\begin{eqnarray}
+\vec{L}\vec{S}
+\begin{cases}
+<0 & \text{ for $\kappa >0$}\\
+=0 & \text{ for $\kappa =-1$, i.e. for $\ell=0$}\\
+>0 & \text{ for $\kappa <-1$}
+\end{cases}
+\end{eqnarray}
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+\hline
+$\kappa$ & -4 & -3 & -2 & -1 & - & 1 & 2 & 3 \\
+\hline
+$\ell$   &  3 &  2 &  1 &  0 & - & 1 & 2 & 3 \\
+\hline
+$\ell$   &  f &  d &  p &  s & - & p & d & f \\
+\hline
+\end{tabular}
+\end{center}
+
 
 The spinor harmonics have the form
 \begin{eqnarray}
