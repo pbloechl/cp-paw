@@ -119,10 +119,9 @@ via\cite{bloechl12_arxiv1210_5937}
 %====================================================================
 \subsubsection{Node-reduced partial waves}
 %====================================================================
-Secondly, we define a sequence of energy-dependent 
-\textbf{node-reduced partial wave}
-\index{node-reduced partial wave}
-through
+Secondly, we define \cite{bloechl12_arxiv1210_5937} a sequence of
+energy-dependent \textbf{node-reduced partial wave}
+\index{node-reduced partial wave} through
 \begin{eqnarray}
 (\hat{h}-\epsilon)|q_n(\epsilon)\rangle=-|u_{n-1}\rangle
 \end{eqnarray}
@@ -154,12 +153,8 @@ as\cite{bloechl12_arxiv1210_5937}
 %====================================================================
 \subsubsection{Series expansion of the node-reduced partial wave}
 %====================================================================
-
-
-
-
-
-Let us now define a new sequence of nodeless functions via
+Let us now define \cite{bloechl12_arxiv1210_5937} a new sequence of
+nodeless functions via
 \begin{eqnarray}
 (\hat{h}-\epsilon)|\bar{q}_{n}^{(j)}(\epsilon)\rangle&=&
 -|\bar{q}_n^{(j-1)}(\epsilon_{n+j-1})\rangle
@@ -293,7 +288,7 @@ energy-independent function $|k\rangle$, because this is likely not to
 introduce extra nodes and to produce wave functions that are equally
 suited for a plane wave expansion.
 
-Thus we obtain a definition of our pseudo partual waves over the
+Thus we obtain a definition of our pseudo partial waves over the
 entire energy region
 \begin{eqnarray}
 |\tilde{\phi}(\epsilon)\rangle
@@ -330,6 +325,7 @@ for the energy dependent partial wave to $N_j$ terms
 |\bar{q}_{n}^{(k)}(\epsilon_{n+k})\rangle
 \prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon)
 +|k\rangle
+\label{eq:truncatedpspartialwithk}
 \end{eqnarray}
 This representation of the energy dependent partial wave is exact for
 the energies $\epsilon_{n+j}$ for $0\le j\le N_j-1$.
@@ -340,6 +336,7 @@ A basis set describing the pseudo partial waves is
 \nonumber\\
 |\tilde{\phi}^{(j)}\rangle&=&|\bar{q}_n^{(j)}(\epsilon_{n+j})\rangle
 \qquad\text{for $1\le j\le N_j-1$}
+\label{eq:tildephijfromqbar}
 \end{eqnarray}
 Note, that only the first pseudo partial wave differs from its
 node-reduced partial wave. This is because the difference $|k\rangle$
@@ -373,22 +370,27 @@ the chosen energies $\epsilon_{n+j}$.
 The pseudo partial waves at the energies are
 \begin{eqnarray}
 |\tilde{\phi}(\epsilon_{n+p})\rangle
-&=&
+&\eqrel{eq:truncatedpspartialwithk}{=}&
 \sum_{k=0}^{N_j-1}|\bar{q}_n^{(k)}(\epsilon_{n+k})\rangle
 \prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon_{n+p})+|k\rangle
 \nonumber\\
 &=&\sum_{k=0}^{p}|\bar{q}_n^{(k)}(\epsilon_{n+k})\rangle
 \prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon_{n+p})+|k\rangle
 \nonumber\\
-&=&\sum_{k=0}^{p}|\tilde{\phi}^{(k)}\rangle
+&\eqrel{eq:tildephijfromqbar}{=}&\sum_{k=0}^{p}|\tilde{\phi}^{(k)}\rangle
 \prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon_{n+p})
+\label{eq:tildepsienplusp}
 \end{eqnarray}
-This expression holds strictly, but if there are two or more identical
-$\epsilon_{n+p}$, there is only a single independent partial wave for
-this set of energies. As a result the space of bare projector
-functions derived from these partial waves is too small. For each
-degenerate set of partial waves we need to introduce first and higher
-derivatives of the partial waves.
+(the terms that drop out in the second line vanish because of the
+energy factor contains a zero term.)
+
+The expression {eq:tildepsienplusp} holds strictly, as long as there
+are no degernate valued in the sequence $\epsilon_{n+p}$. If two or
+more $\epsilon_{n+p}$ are identical, there is only a single
+independent partial wave for this set of energies. As a result the
+space of bare projector functions derived from these partial waves is
+too small. For each degenerate set of partial waves we need to
+introduce first and higher derivatives of the partial waves.
 
 The bare projector functions are obtained as follows
 \begin{eqnarray}
@@ -840,11 +842,12 @@ contribute, because it is cancelled by the corresponding one-center
 pseudo term. This is also the reason that the pseudo term needs to be
 included.
 
-\textbf{Approximation:}
-The pseudo term of the plane wave part, however, is considered to be
-small and is ignored in the current implementation. Let us investigate
-the size of the error.
-\begin{eqnarray*}
+
+%========================================================================
+\subsection{Approximation of relativistic effects for the PAW-Hamiltonian}
+%========================================================================
+The pseudo term of the plane wave part marked in red
+\begin{eqnarray}
 \langle\tilde\psi|
 (\vec{\sigma}\vec{p})\frac{(\tilde{v}-\epsilon)}{(2m_0c)^2}(\vec{\sigma}\vec{p})
 |\tilde{\psi}\rangle &=& \langle\tilde\psi|
@@ -857,8 +860,10 @@ the size of the error.
 \frac{-i\hbar}{2m_0}(\vec{\nabla}\tilde{v})\vec{p} +\frac{1}{m_0}
 \vec{S}\Bigl((\vec{\nabla}\tilde{v})\times\vec{p}\Bigr)
 +(\tilde{v}-\epsilon)\vec{p}^2 |\tilde{\psi}\rangle
-\end{eqnarray*}
-
+\label{eq:neglectedrelpart}
+\end{eqnarray}
+is considered to be small and is ignored in the current
+implementation. Let us investigate the size of the error.
 
 In order to estimate its size let us consider the free electron case,
 where the wave functions are simple plane waves.
@@ -886,8 +891,66 @@ dominant term of the pseudo plane wave part, while it does not have
 the exponentially increasing behavior that needs to be canceled in the
 all-electron term.
 
+%========================================================================
+\subsection{Relativistic PAW-Hamiltonian}
+%========================================================================
+With the neglect of the term Eq.~\ref{eq:neglectedrelpart}, we obtain
+\begin{eqnarray}
+0&=&
+\langle\tilde{\Psi}|\hat{\tilde{H}}-\hat{\tilde{O}}\epsilon|\tilde{\Psi}\rangle
+\nonumber\\
+&=&\langle\tilde\psi|
+\frac{\hat{\vec{p}}^2}{2m_0}+\tilde{v}-\epsilon 
++\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle
+\biggl(dT_{\alpha,\beta}+dV_{\alpha,\beta}-\epsilon dO_{\alpha,\beta}\biggr)
+\langle\tilde{p}_\beta|
+|\tilde{\psi}\rangle
+\nonumber\\
+&=&\langle\tilde\psi|
+\frac{\hat{\vec{p}}^2}{2m_0}+\tilde{v}-\epsilon
+|\tilde{\psi}\rangle
+\nonumber\\
+&+&\sum_{\alpha,\beta}\langle\tilde{\psi}|\tilde{p}_\alpha\rangle
+\biggl\lbrace
+\underbrace{\Bigl[
+\overbrace{
+\langle\phi_\alpha|(\vec{\sigma}\vec{p})^\dagger
+\frac{1+D_\alpha}{2m_0}
+}^{\langle\chi_\alpha|}
+(\vec{\sigma}\vec{p})|\phi_\beta\rangle
++\langle\phi_\alpha|
+(\vec{\sigma}\vec{p})^\dagger
+\overbrace{\frac{1+D_\beta}{2m_0}(\vec{\sigma}\vec{p})
+|\phi_\beta\rangle}^{|\chi_\beta\rangle}
+-2m_0c^2\langle\chi_\alpha|\chi_\beta\rangle\Bigr]}_{T_{\alpha,\beta}}
+\nonumber\\
+%
+&&\hspace{1.5cm}
+-\underbrace{\Bigl[
+\overbrace{\langle\tilde{\phi}_\alpha|
+(\vec{\sigma}\vec{p})^\dagger\frac{1}{2m_0}
+}^{\langle\tilde{\chi}_\alpha|}(\vec{\sigma}\vec{p})
++(\vec{\sigma}\vec{p})^\dagger
+\overbrace{
+\frac{1}{2m_0}(\vec{\sigma}\vec{p})
+|\tilde{\phi}_\beta\rangle}^{|\tilde{\chi}_\beta\rangle}
+-2m_0c^2\langle\tilde{\chi}_\alpha
+|\tilde{\chi}_\beta\rangle\Bigr]}_{\tilde{T}_{\alpha,\beta}}
+\nonumber\\
+&&\hspace{1.5cm}+\langle\phi_\alpha|v-\epsilon|\phi_\beta\rangle
++\textcolor{red}{\langle\chi_\alpha|v-\epsilon|\chi_\beta\rangle}
+-\langle\tilde{\phi}_\alpha|
+\tilde{v}-\epsilon|\tilde{\phi}_\beta\rangle
+-
+\textcolor{red}{
+\langle\tilde{\chi}_\alpha|\tilde{v}-\epsilon|\tilde{\chi}_\beta\rangle}
+\biggr\rbrace\langle
+\tilde{p}_\beta|\tilde{\psi}\rangle
+\nonumber\\
+\end{eqnarray}
 
-Thus we obtain Hamiltonian and overlap matrices of the form
+\begin{itemize}
+\item Thus we obtain pseudo kinetic energy operator as
 \begin{eqnarray}
 \hat{\tilde{T}}&=&
 \frac{\hat{\vec{p}}^2}{2m_0}
@@ -916,6 +979,21 @@ dT_{\alpha,\beta}&=&
 }_{|\tilde{g}_\beta\rangle-(\tilde{v}-\epsilon_\beta)|\tilde{\phi}_\beta\rangle}
 +2m_0c^2\langle\tilde{\chi}_\alpha|\tilde{\chi}_\beta\rangle
 \nonumber\\
+\end{eqnarray}
+Here we exploit that the partial waves are constructed from a radial
+Dirac equation of the form
+\begin{eqnarray}
+\biggl[(\vec{\sigma}\vec{p})\frac{1+D_\beta}{2m_0}(\vec{\sigma}\vec{p})
++v-\epsilon_\beta\biggr]|\phi_\beta\rangle&=&|g_\beta\rangle
+\nonumber\\
+\biggl[
+\frac{\hat{\vec{p}}^2}{2m_0}+\tilde{v}-\epsilon_\beta\biggr]
+|\tilde{\phi}_\beta\rangle
+&=&|\tilde{g}_\beta\rangle
+\end{eqnarray}
+
+\item The relativistic pseudo overlap operator has the form
+\begin{eqnarray}
 \hat{\tilde{O}}&=&1+
 \sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle dO_{\alpha,\beta}\langle\tilde{p}_\beta|
 \nonumber\\
@@ -923,7 +1001,10 @@ dO_{\alpha,\beta}&=&
 \langle\phi_\alpha|\phi_\beta\rangle+\langle\chi_\alpha|\chi_\beta\rangle
 -\langle\tilde{\phi}_\alpha|\tilde{\phi}_\beta\rangle
 -\langle\tilde{\chi}_\alpha|\tilde{\chi}_\beta\rangle
-\nonumber\\
+\end{eqnarray}
+
+\item The potential energy has the form
+\begin{eqnarray}
 \hat{\tilde{v}}&=&\hat{v}+
 \sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle dV_{\alpha,\beta}\langle\tilde{p}_\beta|
 \nonumber\\
@@ -933,6 +1014,36 @@ dV_{\alpha,\beta}&=&
 -\langle\tilde{\phi}_\alpha|\tilde{v}|\tilde{\phi}_\beta\rangle
 -\langle\tilde{\chi}_\alpha|\tilde{v}|\tilde{\chi}_\beta\rangle
 \end{eqnarray}
+
+
+From the expression of the potential energy, we obtain a
+representation for the density, namely
+\begin{eqnarray}
+n(\vec{r})=
+\underbrace{
+\sum_n f_n \tilde{\psi}_n^2(\vec{r})+\tilde{n}_c}_{\tilde{n}(\vec{r})}
+&+&\underbrace{
+\sum_{\alpha,\beta}\theta_{\alpha,\beta}
+\biggl(\phi^*_\beta(\vec{r})\phi^*_\alpha(\vec{r})
++\chi^*_\beta(\vec{r})\chi^*_\alpha(\vec{r})\biggr)
++n_c(\vec{r})}_{n^1(\vec{r})}
+\nonumber\\
+&-&\underbrace{
+\sum_{\alpha,\beta}\theta_{\alpha,\beta}
+\biggl(\tilde{\phi}^*_\beta(\vec{r})\tilde{\phi}^*_\alpha(\vec{r})
++\tilde{\chi}^*_\beta(\vec{r})\tilde{\chi}^*_\alpha(\vec{r})
+\biggr)+\tilde{n}_c(\vec{r})}_{\tilde{n}^1(\vec{r})}
+\end{eqnarray}
+Here $n_c(\vec{r})$ is the core electron density and
+$\tilde{n}_c(\vec{r})$ is the core pseudo electron density.
+
+The one-center density matrix $\theta_{\alpha,\beta}$ is defined as
+\begin{eqnarray}
+\theta_{\alpha,\beta}=\sum_n\langle\tilde{p}_\alpha|\tilde{\psi}_n\rangle f_n
+\langle\tilde{p}_\beta\rangle
+\end{eqnarray}
+\end{itemize}
+
 
 %====================================================================
 \subsection{Nodeless construction for the Dirac equation}
