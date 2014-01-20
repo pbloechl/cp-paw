@@ -37,6 +37,30 @@ http://www.pt.tu-clausthal.de/atp/}
 \noindent            
 \tableofcontents
 %====================================================================
+\section{Important notes}
+%====================================================================
+\begin{itemize}
+\item The atomic calculation has been performed in a box equal to
+  rout=r(nr-3). The size of the box for the atom is thus defined by the
+  grid. This is ok.
+
+  The radius rbox selects the partial waves in the traditional
+  construction: Those partial waves are selected that have the same
+  logarithmic derivative at the radius rbox. In the new construction,
+  which is based on a Taylor expansion, on the other hand the radius
+  rbox has no function.
+
+  The matrix elements of the potential energy for dh have been
+  calculated only up to the rbnd=rbox. which is smaller than rout.
+  This is now changed and produces different results.
+%
+\item Tsequentialaugment is not relevant for the total energies of a
+  pure dft calculation. The changes for Si2 have been less than $\mu$H
+  for individual energies and less for the converged total energy.
+
+\end{itemize}
+
+%====================================================================
 \chapter{Purpose and theoretical background}
 %====================================================================
 The nodeless construction is proposed by Bl\"ochl and
@@ -61,9 +85,10 @@ outward with the boundary
 conditions 
 \begin{eqnarray}
 \lim_{|\vec{r}|\rightarrow0}\frac{\phi(\epsilon,\vec{r})}
-{|\vec{r}|^\ell Y_{\ell,m}(\vec{r})}
+{|\vec{r}|^\ell Y_{\ell,m}(\vec{r})}=1
 \end{eqnarray}
-at the origin.
+at the origin. That is, the radial parts of all partial wave behave at
+the origin like $r^\ell$.
 
 The only difference to the common construction is that we do not
 normalize the partial waves within a sphere, but by the boundary
@@ -100,7 +125,7 @@ is\cite{bloechl12_arxiv1210_5937}
 \begin{eqnarray}
 u_{n}(\vec{r})
 =\left(\frac{2m_e}{\hbar^2}\right)^{n-1}
-\frac{(2\ell+1)!!}{(\ell-1+2n)!!(2n-2)!!}
+\frac{(2\ell+1)!!}{(2\ell-1+2n)!!(2n-2)!!}
 |\vec{r}|^{\ell+2(n-1)}Y_{\ell,m}(\vec{r})
 \end{eqnarray}
 where $Y_{\ell,m}$ is a real spherical harmonics.
@@ -154,18 +179,19 @@ as\cite{bloechl12_arxiv1210_5937}
 \subsubsection{Series expansion of the node-reduced partial wave}
 %====================================================================
 Let us now define \cite{bloechl12_arxiv1210_5937} a new sequence of
-nodeless functions via
+nodeless functions for given set of energies $\{\epsilon_{n+j}; j\ge1\}$ via
 \begin{eqnarray}
 (\hat{h}-\epsilon)|\bar{q}_{n}^{(j)}(\epsilon)\rangle&=&
 -|\bar{q}_n^{(j-1)}(\epsilon_{n+j-1})\rangle
 \label{eq:qbardiffgl}
 \\
-(\hat{h}-\epsilon)|\bar{q}_{n}^{(0)}(\epsilon)\rangle&=&-|u_{n-1}\rangle
+(\hat{h}-\epsilon)|\bar{q}_{n}^{(0)}(\epsilon)\rangle&=&-|u_{n-1}\rangle 
 \end{eqnarray}
-which is nearly identical to that of the nodeless equations and that
-of the Taylor coefficients.
+These equations have great similarity with those of the nodeless
+equations \eq{eq:nodelesseq}.
 
-This sequence can be constructed by the recursive equation
+The sequence defined by \eq{eq:qbardiffgl} can be constructed
+by the recursive equation
 \begin{eqnarray}
 |\bar{q}_{n}^{(j+1)}(\epsilon)\rangle&=&
 \frac{-1}{\epsilon-\epsilon_{n+j}}
@@ -214,7 +240,7 @@ obeys \eq{eq:qbardiffgl} for $j+1$.
 \end{eqnarray}
 which is \eq{eq:qbardiffgl} for the next higher value of $j$. This
 completes the proof that $|q_{n}^{(j)}(\epsilon)\rangle$ defined in
-\eq{eq:qbardiffgl} obeyes the recursion \eq{eq:recursionqbar}.
+\eq{eq:qbardiffgl} obeys the recursion \eq{eq:recursionqbar}.
 
 
 
@@ -595,7 +621,7 @@ it.
 \subsection{Dirac equation}
 %====================================================================
 We start from the Dirac equation of an electron in an electric field.
-First we divide the wave function into an upper part
+First we divide the four-component wave function into an upper part
 $\phi=(\Psi_1,\Psi_2)$ and a lower part $\chi=(\Psi_3,\Psi_4)$
 \begin{eqnarray}
 \left(\begin{array}{cc}
@@ -612,6 +638,7 @@ $\sigma_x,\sigma_y,\sigma_z$.
 It will be convenient to introduce the function
 \begin{eqnarray}
 1+D(\vec{r})\defas\Bigl[1+\frac{\epsilon-v(\vec{r})}{2m_0c^2}\Bigr]^{-1}
+\label{eq:defrelativisticfactor}
 \end{eqnarray}
 so that the Dirac equation obtains the form
 \begin{eqnarray}
@@ -630,6 +657,7 @@ The small contribution can be extracted from the second equation of
 \vec{\sigma}\vec{p}c |\phi\rangle
 =\frac{1+D}{2m_0c}
 \vec{\sigma}\vec{p} |\phi\rangle
+\label{eq:defsmallcomponent}
 \end{eqnarray}
 Thus, the small component can be eliminated from the first equation of
 \eq{eq:dirac2by2withepsilonb}, which is turned into a second-order
@@ -637,6 +665,7 @@ differential equation for the large component.
 \begin{eqnarray}
 \Bigl[\vec{\sigma}\vec{p} \frac{1+D}{2m_0}
 \vec{\sigma}\vec{p} +v-\epsilon\Bigr]|\phi\rangle=0
+\label{eq:diraclargebeforemagic}
 \end{eqnarray}
 
 Using the magic equation
@@ -676,6 +705,146 @@ _{\frac{(\partial_r D)}{2m_0}\frac{\vec{r}}{|\vec{r}|}}\times\vec{p} \Bigr)
 \nonumber\\
 \end{eqnarray}
 
+
+%====================================================================
+\subsection{Approximation}
+%====================================================================
+%====================================================================
+\subsubsection{Norm and overlap operator}
+%====================================================================
+The Dirac equation is a differential equation with an energy-dependent
+differential operator. 
+\begin{eqnarray}
+\hat{K}(\epsilon)|\phi\rangle=0
+\end{eqnarray}
+For a given energy $\epsilon_0$ the differential operator can be
+linearized in energy yielding
+\begin{eqnarray}
+\Bigl[\hat{h}-\epsilon\hat{o}\Bigr]|\phi\rangle
+=O\Bigr((\epsilon-\epsilon_0)^2\Bigr)
+\end{eqnarray}
+with
+\begin{eqnarray}
+\hat{h}&:=& \hat{K}(\epsilon_0)
+-\left.\frac{d\hat{K}}{d\epsilon}\right|_{\epsilon_0}\epsilon_0
+\nonumber\\
+\hat{o}&:=& -\left.\frac{d\hat{K}}{d\epsilon}\right|_{\epsilon_0}
+\end{eqnarray}
+
+For the Dirac equation \eq{eq:dirac2by2withepsilon}, the overlap
+operator has the form
+\begin{eqnarray}
+\hat{o}=\left(\begin{array}{cc}\mat{1}&\mat{0}\\
+\mat{0}&\mat{1}\end{array}\right)
+\end{eqnarray}
+which is the well-known norm condition.
+
+In the following we will introduce approximations by changing the
+relativistic factor. The rule given above provides us with guidance,
+how the small component is to be treated.
+
+The same procedure, applied to the two-component equation yields the
+normalization equation for the large component: I start from
+\eq{eq:diraclargebeforemagic}
+\begin{eqnarray}
+\hat{K}(\epsilon)&=&
+\vec{\sigma}\vec{p} \frac{1+D}{2m_0}
+\vec{\sigma}\vec{p} +v-\epsilon
+\nonumber\\
+-\partial_\epsilon\hat{K}(\epsilon)&\eqrel{eq:defrelativisticfactor}{=}&
+1+
+\vec{\sigma}\vec{p} \Bigl(\frac{1+D}{2m_0c}\Bigr)^2
+\vec{\sigma}\vec{p}
+\end{eqnarray}
+Thus the overlap can be obtained by constructing the small component
+using the second form of \eq{eq:defsmallcomponent} and then to form
+the squares.
+
+This suggests that the small component shall be set to zero, whenever,
+a energy-independent relativistic factor is chosen.  
+
+%====================================================================
+\subsubsection{Specific approximations}
+%====================================================================
+\begin{itemize}
+\item non-relativistic approximation: We keep the terms of zero'th
+  order in $\frac{|\vec{p}|}{c}$, respectively
+  $\frac{\epsilon-v}{m_0c^2}$. This amounts to (1) setting the
+  relativistic factor $D(r)$ equal to zero. Following the argument
+  given above, also the small component is set to zero. Thus we
+  obtain the Pauli equation, which separates into two Schr\"odinger
+  equations.
+  \begin{eqnarray}
+  \Bigl[ \frac{\vec{p}^2}{2m_0}+v-\epsilon\Bigr]|\phi\rangle=0
+\qquad\text{with}\qquad
+  |\chi\rangle=0
+  \end{eqnarray}
+%
+\item The ZORA (Zero'th Order Relativistic Approximation): The
+  relativistic factor $D^{Z}(r)=D(\bar{\epsilon}(r),r)$ is kept an
+  energy independent function of position.
+\begin{eqnarray}
+\Bigl[
+\frac{1+D^Z}{2m_0}\vec{p}^2 
+-i\frac{\hbar\partial_rD^Z}{2m_0|\vec{r}|}\vec{r}\vec{p} 
++ \underbrace{\frac{(\partial_r D^Z)}{m_0|\vec{r}|}
+\vec{S}\vec{L}}_{\text{spin-orbit}}
++v-\epsilon\Bigr]|\phi\rangle=0
+\qquad\text{with}\qquad
+  |\chi\rangle=0
+\end{eqnarray}
+%
+\item The FORA (First-Order Relativistic Approximation): The
+  relativistic factor $D(r)$ is kept a function 
+\begin{eqnarray}
+D^{F}(\epsilon,r)=
+D(\bar{\epsilon}(r),r))
++\Bigl(\epsilon-\bar{\epsilon}(r)\Bigr)
+\left.\partial_\epsilon D(\epsilon,r)\right|_{\epsilon=\bar{\epsilon}(r)}
+\end{eqnarray}
+of position, which is
+  linear in the density.
+
+\begin{eqnarray}
+\Bigl[
+\frac{1+D^{F}(\epsilon)}{2m_0}\vec{p}^2 
+-i\frac{\hbar\partial_rD^{F}(\epsilon)}{2m_0|\vec{r}|}\vec{r}\vec{p} 
++ \underbrace{\frac{(\partial_r D^{F}(\epsilon))}{m_0|\vec{r}|}
+\vec{S}\vec{L}}_{\text{spin-orbit}}
++v-
+\epsilon
+\Bigr]|\phi\rangle=0
+\nonumber\\
+  |\chi\rangle=\frac{1+D^F(\epsilon,r)}{2m_0c^2}\vec{\sigma}\vec{p}|\phi\rangle
+\end{eqnarray}
+%
+\item The complete relativistic description uses the original
+  relativistic factor without approximation.
+\end{itemize}
+
+The second type of approximation is the scalar relativistic
+approximation.  The scalar relativistic approximation is automatically
+included in the non-relativistic derscription, it is optional in ZORA
+and it is incompatible with FORA and a full relativistic description.
+
+
+Note that we treat the Term ZORA more flexible that the common usage
+in the literature, because we allow for an arbitrary choice of
+$\bar{\epsilon}$.
+\begin{itemize}
+\item the common ZORA uses $\bar{\epsilon}=0$
+\item the non-relativistic approximation uses $\bar{\epsilon}=v(r)$
+\end{itemize}
+
+I recommend the choice (not implemented...)
+\begin{eqnarray}
+\bar{\epsilon}(\vec{r})
+=
+\max\Bigl[v(r),
+\frac{\sum_n f_n |\phi_n(r)|^2 \epsilon_n}{\sum_n f_n |\phi_n(r)|^2}\Bigr]
+\end{eqnarray}
+This choice ensures that from a certain radius outward, the
+relativistic effects are suppressed completely.
 
 %====================================================================
 \subsection{Relativistic augmentation}
