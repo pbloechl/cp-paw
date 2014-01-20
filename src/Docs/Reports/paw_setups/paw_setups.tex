@@ -1,0 +1,2958 @@
+\documentclass[11pt,a4paper]{report}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                 %%
+%%    Header file for the Phi-S-X Series                           %%
+%%                                                                 %%
+%%    german version header_gm.tex is derived from header.tex      %%
+%%    by uncommenting the line ``\setboolean{german}{true}'' below %%
+%%                                                                 %%
+%%    Never edit the german version! all changes must be done      %%
+%%    in the english version header.tex                            %%
+%%                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{../header}
+\hypersetup{pdftitle=paw_brillouin}
+\newcommand{\petertt}[1]{\textcolor{red}{\texttt{#1}}}
+\makeindex
+\begin{document}
+\begin{titlepage}
+\begin{center}
+\vspace*{3.5cm}
+{\huge \textbf{The SETUPS object of the CP-PAW code}}\\
+\vspace{0.5cm}
+{\large Peter E. Bl\"ochl}
+\vspace{0.5cm} 
+\end{center}
+
+\vfill
+\begin{center}
+Copyright Peter E. Bl\"ochl; Sept.2, 2013-\today\\
+{\small
+Institute of Theoretical Physics;
+Clausthal University of Technology;\\ 
+D-38678 Clausthal Zellerfeld; Germany;\\
+http://www.pt.tu-clausthal.de/atp/}
+\end{center}
+\end{titlepage}
+\noindent            
+\tableofcontents
+%====================================================================
+\section{Important notes}
+%====================================================================
+\begin{itemize}
+\item The atomic calculation has been performed in a box equal to
+  rout=r(nr-3). The size of the box for the atom is thus defined by the
+  grid. This is ok.
+
+  The radius rbox selects the partial waves in the traditional
+  construction: Those partial waves are selected that have the same
+  logarithmic derivative at the radius rbox. In the new construction,
+  which is based on a Taylor expansion, on the other hand the radius
+  rbox has no function.
+
+  The matrix elements of the potential energy for dh have been
+  calculated only up to the rbnd=rbox. which is smaller than rout.
+  This is now changed and produces different results.
+%
+\item Tsequentialaugment is not relevant for the total energies of a
+  pure dft calculation. The changes for Si2 have been less than $\mu$H
+  for individual energies and less for the converged total energy.
+
+\end{itemize}
+
+%====================================================================
+\chapter{Purpose and theoretical background}
+%====================================================================
+The nodeless construction is proposed by Bl\"ochl and
+F\"orst\cite{bloechl12_arxiv1210_5937}.
+
+%====================================================================
+\section{Nodeless constructiuon}
+%====================================================================
+%====================================================================
+\subsection{Basic definitions}
+%====================================================================
+%====================================================================
+\subsubsection{Energy-dependent partial waves}
+%====================================================================
+Let us consider a spherical one-particle Hamiltonian $\hat{h}$. We
+construct energy-dependent partial waves by radially integrating the
+radial Schr\"odinger equation 
+\begin{eqnarray}
+(\hat{h}-\epsilon)|\phi(\epsilon)\rangle=0
+\end{eqnarray}
+outward with the boundary
+conditions 
+\begin{eqnarray}
+\lim_{|\vec{r}|\rightarrow0}\frac{\phi(\epsilon,\vec{r})}
+{|\vec{r}|^\ell Y_{\ell,m}(\vec{r})}=1
+\end{eqnarray}
+at the origin. That is, the radial parts of all partial wave behave at
+the origin like $r^\ell$.
+
+The only difference to the common construction is that we do not
+normalize the partial waves within a sphere, but by the boundary
+conditions at the origin. That is, we effectively shrink the
+normalization sphere to zero.
+
+
+
+%====================================================================
+\subsubsection{Node-less bound states}
+%====================================================================
+We define\cite{bloechl12_arxiv1210_5937} a sequence of
+\textbf{node-less bound states}\index{node-less bound states}
+$|u_n\rangle$
+\begin{eqnarray}
+(\hat{h}-\epsilon_n)|u_n\rangle=-|u_{n-1}\rangle
+\label{eq:nodelesseq}
+\end{eqnarray}
+The first wave function, $|u_1\rangle$ is the lowest bound state of
+the hamiltonian. The other ones are calculated by radially integrating
+the Schr\"odinger equation outward, starting with vanishing value and
+derivative, so that
+\begin{eqnarray}
+\lim_{\vec{r}\rightarrow0}|\frac{\langle\vec{r}|u_n\rangle}{|\vec{r}|^{\ell+1}}=0
+\qquad\text{for $n>1$}
+\end{eqnarray}
+
+
+The node-less wave functions do not
+have any nodes but look like Slater orbitals, in the sense that they
+grow at the origin as a power and that they decay exponentially at
+large distance. Their behavior at the origin
+is\cite{bloechl12_arxiv1210_5937}
+\begin{eqnarray}
+u_{n}(\vec{r})
+=\left(\frac{2m_e}{\hbar^2}\right)^{n-1}
+\frac{(2\ell+1)!!}{(2\ell-1+2n)!!(2n-2)!!}
+|\vec{r}|^{\ell+2(n-1)}Y_{\ell,m}(\vec{r})
+\end{eqnarray}
+where $Y_{\ell,m}$ is a real spherical harmonics.
+
+The n lowest node-less wave functions span the same Hilbert space as
+the n lowest true wave functions. The all-electron wave functions can
+be recovered from the node-less wave functions
+via\cite{bloechl12_arxiv1210_5937}
+\begin{eqnarray}
+|\phi_n\rangle=\sum_{m=1}^n|u_m\rangle \prod_{j=1}^{m-1}(\epsilon_j-\epsilon_n)
+=\biggl[\sum_{m=1}^n|u_m\rangle 
+\prod_{j=m}^{n-1}\frac{1}{(\epsilon_j-\epsilon_n)}
+\biggr]\prod_{k=1}^{n-1}(\epsilon_j-\epsilon_n)
+\end{eqnarray}
+
+%====================================================================
+\subsubsection{Node-reduced partial waves}
+%====================================================================
+Secondly, we define \cite{bloechl12_arxiv1210_5937} a sequence of
+energy-dependent \textbf{node-reduced partial wave}
+\index{node-reduced partial wave} through
+\begin{eqnarray}
+(\hat{h}-\epsilon)|q_n(\epsilon)\rangle=-|u_{n-1}\rangle
+\end{eqnarray}
+with the boundary conditions
+\begin{eqnarray}
+\lim_{\vec{r}\rightarrow0}|
+\frac{\langle\vec{r}|q_n(\epsilon)\rangle}
+{\langle\vec{r}|u_n\rangle}=1
+\qquad\text{for $n>1$}
+\end{eqnarray}
+
+The node-reduced wave functions have $n-1$ nodes less than the true
+wave function. Near the origin, they are very similar to $|u_n\rangle$
+over nearly the entire energy range.
+
+
+The all-electron partial wave can be constructed from the node-reduced
+partial wave and the lower node-less bound states
+as\cite{bloechl12_arxiv1210_5937}
+\begin{eqnarray}
+|\phi(\epsilon)\rangle=\biggl[|q_n(\epsilon)\rangle
++\sum_{m=1}^{n-1}|u_m\rangle\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}
+\biggr]
+\prod_{k=1}^{n-1}(\epsilon_j-\epsilon)
+\label{eq:aephifromnodereduced}
+\end{eqnarray}
+
+
+%====================================================================
+\subsubsection{Series expansion of the node-reduced partial wave}
+%====================================================================
+Let us now define \cite{bloechl12_arxiv1210_5937} a new sequence of
+nodeless functions for given set of energies $\{\epsilon_{n+j}; j\ge1\}$ via
+\begin{eqnarray}
+(\hat{h}-\epsilon)|\bar{q}_{n}^{(j)}(\epsilon)\rangle&=&
+-|\bar{q}_n^{(j-1)}(\epsilon_{n+j-1})\rangle
+\label{eq:qbardiffgl}
+\\
+(\hat{h}-\epsilon)|\bar{q}_{n}^{(0)}(\epsilon)\rangle&=&-|u_{n-1}\rangle 
+\end{eqnarray}
+These equations have great similarity with those of the nodeless
+equations \eq{eq:nodelesseq}.
+
+The sequence defined by \eq{eq:qbardiffgl} can be constructed
+by the recursive equation
+\begin{eqnarray}
+|\bar{q}_{n}^{(j+1)}(\epsilon)\rangle&=&
+\frac{-1}{\epsilon-\epsilon_{n+j}}
+\Bigl(|\bar{q}_n^{(j)}(\epsilon)\rangle
+-|\bar{q}_n^{(j)}(\epsilon_{n+j})\rangle\Bigr)
+\qquad\text{for $\epsilon\ne\epsilon_{n+j}$}
+\nonumber\\
+|\bar{q}_{n}^{(j+1)}(\epsilon_{n+j})\rangle&=&
+-\left.\partial_\epsilon\right|_{\epsilon_{n+j}}|\bar{q}_n^{(j)}(\epsilon)\rangle
+\label{eq:recursionqbar}
+\end{eqnarray}
+
+In the special case that all energies $\epsilon_{n+k}$ are chosen to
+be identical, this series expansion produces the Taylor expansion
+coefficients
+\begin{eqnarray}
+|q_n^{(j)}(\epsilon)\rangle=
+\frac{(-1)^j}{j!}\partial_\epsilon^j|q_n(\epsilon)\rangle
+\label{eq:taylorexpansioncoefficientsqn}
+\end{eqnarray}
+
+
+
+\eq{eq:recursionqbar} is shown recursively: We assume that
+\eq{eq:qbardiffgl} holds for $j$ and show that  \eq{eq:recursionqbar}
+obeys \eq{eq:qbardiffgl} for $j+1$.
+\begin{eqnarray}
+(\hat{h}-\epsilon)|\bar{q}^{(j+1)}_{n}(\epsilon)\rangle
+&\eqrel{eq:recursionqbar}{=}&
+\frac{-1}{\epsilon-\epsilon_{n+j}}
+\Bigl((\hat{h}-\epsilon)|\bar{q}_n^{(j)}(\epsilon)\rangle
+-(\hat{h}-\epsilon_{n+j})|\bar{q}_n^{(j)}(\epsilon_{n+j})\rangle
++(\epsilon-\epsilon_{n+j})|\bar{q}_n^{(j)}(\epsilon_{n+j})\rangle
+\Bigr)
+\nonumber\\
+&\eqrel{eq:qbardiffgl}{=}&
+\frac{-1}{\epsilon-\epsilon_n}
+\Bigl(
+-|\bar{q}_n^{(j-1)}(\epsilon_{n+j-1})\rangle
++|\bar{q}_n^{(j-1)}(\epsilon_{n+j-1})\rangle
++(\epsilon-\epsilon_{n+j})|\bar{q}_n^{(j)}(\epsilon_{n+j})\rangle
+\Bigr)
+\nonumber\\
+&=&
+-|\bar{q}_n^{(j)}(\epsilon_{n+j})\rangle
+\end{eqnarray}
+which is \eq{eq:qbardiffgl} for the next higher value of $j$. This
+completes the proof that $|q_{n}^{(j)}(\epsilon)\rangle$ defined in
+\eq{eq:qbardiffgl} obeys the recursion \eq{eq:recursionqbar}.
+
+
+
+From this series we can again recover the node-reduced partial wave as
+\begin{eqnarray}
+|q_n(\epsilon)\rangle&=&|\bar{q}_n^{(0)}(\epsilon)\rangle
+\nonumber\\
+&=&|\bar{q}_n^{(0)}(\epsilon_n)\rangle
++|\bar{q}_{n}^{(1)}(\epsilon)\rangle(\epsilon_n-\epsilon_)
+\nonumber\\
+&=&|\bar{q}_n^{(0)}(\epsilon_n)\rangle
++|\bar{q}_{n}^{(1)}(\epsilon_{n+1})\rangle(\epsilon_n-\epsilon)
++|\bar{q}_{n}^{(2)}(\epsilon)\rangle
+(\epsilon_{n+1}-\epsilon)(\epsilon_{n}-\epsilon)
+\nonumber\\
+&=&\sum_{k=0}^{j-1}
+|\bar{q}_{n}^{(k)}(\epsilon_{n+k})\rangle
+\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon)
++|\bar{q}_n^{(j)}(\epsilon)\rangle
+\prod_{m=0}^{j-1}(\epsilon_{n+m}-\epsilon)
+\end{eqnarray}
+
+In this derivation, no assumptions have been made regarding the
+energies $\epsilon_{n+j}$. Using all energies equal, results in the
+Taylor expanstion given above. Using bound state energies in sequence
+results in a nodeless construction.
+
+This flexibility can be exploited to set up an expansion with bound
+states and with scattering states. This is important if we wish to
+describe semi-core states, valence states and scattering states on the
+same footing.
+
+From \eq{eq:aephifromnodereduced}, we obtain the expression for the
+full energy-dependent wave function.
+\begin{eqnarray}
+|\phi(\epsilon)\rangle
+\frac{1}{\prod_{k=1}^{n-1}(\epsilon_j-\epsilon)}
+&=&
+\underbrace{
+|\bar{q}_n^{(j)}(\epsilon)\rangle
+\left(\prod_{m=0}^{j-1}(\epsilon_{n+m}-\epsilon)\right)
++
+\sum_{k=0}^{j-1}
+|\bar{q}_{n}^{(k)}(\epsilon_{n+k})\rangle
+\left(\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon)\right)
+}_{|q_n(\epsilon)\rangle}
+\nonumber\\
+&+&
+\underbrace{
+\left(\sum_{m=1}^{n-1}|u_m\rangle\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}\right)
+}_{\text{core contribution}}
+\end{eqnarray}
+
+Interesting is that the energy-dependent function
+$|\bar{q}^{(j)}(\epsilon)\rangle$ does not contribute to the full wave
+function at the energies $\epsilon_{j}$ of the core states and at the
+energies $\epsilon_{n+m}$ with $m<j$.
+
+
+
+%====================================================================
+\subsection{Augmentation from node-reduced wave functions}
+%====================================================================
+%====================================================================
+\subsubsection{Pseudization}
+%====================================================================
+
+The node-reduced wave function have a similar shape over the entire
+energy region. This suggests to change them by the same,
+energy-independent function $|k\rangle$, because this is likely not to
+introduce extra nodes and to produce wave functions that are equally
+suited for a plane wave expansion.
+
+Thus we obtain a definition of our pseudo partial waves over the
+entire energy region
+\begin{eqnarray}
+|\tilde{\phi}(\epsilon)\rangle
+\frac{1}{\prod_{k=1}^{n-1}(\epsilon_j-\epsilon)}
+=|q_n(\epsilon)\rangle+|k\rangle
+\end{eqnarray}
+Having a well behaved representation of the pseudo partial waves, we
+can be quite sure that we do not add ghost states. If each partial
+wave is pseudized individually, one easily obtains a polynomial
+representation of the energy dependent partial wave that contains
+divergences.  The construction of $|k\rangle$ is described in
+section~\ref{sec:determinedeltepseudo}.
+
+%====================================================================
+\subsubsection{Truncation of the series expansion}
+%====================================================================
+In order to obtain individual partial waves, we truncate the expansion
+for the energy dependent partial wave to $N_j$ terms
+\begin{eqnarray}
+|\phi(\epsilon)\rangle
+\frac{1}{\prod_{k=1}^{n-1}(\epsilon_j-\epsilon)}
+&\approx&
+\sum_{k=0}^{N_j-1}
+|\bar{q}_{n}^{(k)}(\epsilon_{n+k})\rangle
+\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon)
++
+\underbrace{
+\sum_{m=1}^{n-1}|u_m\rangle\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}
+}_{\text{core contribution}}
+\nonumber\\
+|\tilde{\phi}(\epsilon)\rangle\frac{1}{\prod_{k=1}^{n-1}(\epsilon_j-\epsilon)}
+&\approx&
+\sum_{k=0}^{N_j-1}
+|\bar{q}_{n}^{(k)}(\epsilon_{n+k})\rangle
+\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon)
++|k\rangle
+\label{eq:truncatedpspartialwithk}
+\end{eqnarray}
+This representation of the energy dependent partial wave is exact for
+the energies $\epsilon_{n+j}$ for $0\le j\le N_j-1$.
+
+A basis set describing the pseudo partial waves is
+\begin{eqnarray}
+|\tilde{\phi}^{(0)}\rangle&=&|q_n(\epsilon_n)\rangle+|k\rangle
+\nonumber\\
+|\tilde{\phi}^{(j)}\rangle&=&|\bar{q}_n^{(j)}(\epsilon_{n+j})\rangle
+\qquad\text{for $1\le j\le N_j-1$}
+\label{eq:tildephijfromqbar}
+\end{eqnarray}
+Note, that only the first pseudo partial wave differs from its
+node-reduced partial wave. This is because the difference $|k\rangle$
+has been chosen energy independent.
+
+%====================================================================
+\subsubsection{Core orthogonalization}
+%====================================================================
+The all-electron partial waves are obtained from the node-reduced
+partial waves $|q_n^{(j)}(\epsilon_{n+j})\rangle$ by explicit
+orthogonalization to the nodeless core states. Here we begin to
+orthogonalize to the highest core state first and then proceed to the
+lowest core state.
+
+Note that we do not include a pseudo core into the pseudo partial
+waves even though we currently still define a pseudo core state. The
+latter shall be used to construct a pseudo core density.
+
+%====================================================================
+\subsubsection{Construction of bare projector functions}
+%====================================================================
+The projector functions must obey the biorthogonality condition and
+the bare projector functions must fulfill the closure relation
+\begin{eqnarray}
+|\bar{p}^{(j)}\rangle=(\tilde{h}-\epsilon_{n+j})
+|\tilde{\phi}(\epsilon_{n+j})\rangle \qquad\text{for $j=0,\ldots,j_x$}
+\end{eqnarray}
+which implies that the scattering properties shall be exactly obeyed at
+the chosen energies $\epsilon_{n+j}$.
+
+The pseudo partial waves at the energies are
+\begin{eqnarray}
+|\tilde{\phi}(\epsilon_{n+p})\rangle
+&\eqrel{eq:truncatedpspartialwithk}{=}&
+\sum_{k=0}^{N_j-1}|\bar{q}_n^{(k)}(\epsilon_{n+k})\rangle
+\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon_{n+p})+|k\rangle
+\nonumber\\
+&=&\sum_{k=0}^{p}|\bar{q}_n^{(k)}(\epsilon_{n+k})\rangle
+\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon_{n+p})+|k\rangle
+\nonumber\\
+&\eqrel{eq:tildephijfromqbar}{=}&\sum_{k=0}^{p}|\tilde{\phi}^{(k)}\rangle
+\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon_{n+p})
+\label{eq:tildepsienplusp}
+\end{eqnarray}
+(the terms that drop out in the second line vanish because of the
+energy factor contains a zero term.)
+
+The expression {eq:tildepsienplusp} holds strictly, as long as there
+are no degernate valued in the sequence $\epsilon_{n+p}$. If two or
+more $\epsilon_{n+p}$ are identical, there is only a single
+independent partial wave for this set of energies. As a result the
+space of bare projector functions derived from these partial waves is
+too small. For each degenerate set of partial waves we need to
+introduce first and higher derivatives of the partial waves.
+
+The bare projector functions are obtained as follows
+\begin{eqnarray}
+(\hat{\tilde{h}}-\epsilon_{n+p})
+|\tilde{\phi}(\epsilon_{n+p})\rangle
+&=&\sum_{k=0}^{p}
+(\hat{\tilde{h}}-\epsilon_{n+p})
+|\tilde{\phi}^{(k)}\rangle
+\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon_{n+p})
+\nonumber\\
+&=&
+(\hat{\tilde{h}}-\epsilon_{n})|\tilde{\phi}^{(0)}\rangle
++|\tilde{\phi}^{(0)}\rangle(\epsilon_n-\epsilon_{n+p})
+\nonumber\\
+&-&
+\underbrace{\sum_{k=1}^{p}
+\overbrace{|q_n^{(k-1)}(\epsilon_{n+k-1})\rangle
+}^{-(\hat{h}-\epsilon_{n+k})|q_n^{(k)}\rangle}
+\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon_{n+p})}
+_{
+\sum_{k=0}^{p-1}
+|q_n^{(k)}(\epsilon_{n+k})\rangle(\epsilon_{n+k}-\epsilon_{n+p})
+\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon_{n+p})
+}
+\nonumber\\
+&+&\sum_{k=1}^{p-1}
+|q_n^{(k)}(\epsilon_{n+k})\rangle(\epsilon_{n+k}-\epsilon_{n+p})
+\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon_{n+p})
+\nonumber\\
+&+&\sum_{k=1}^{p}
+(\hat{\tilde{h}}-\hat{h})
+|q_n^{(k)}(\epsilon_{n+k})\rangle
+\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon_{n+p})
+\nonumber\\
+&=&
+(\hat{\tilde{h}}-\epsilon_{n})|\tilde{\phi}^{(0)}\rangle
++|\tilde{\phi}^{(0)}\rangle(\epsilon_n-\epsilon_{n+p})
+-|q_n^{(0)}(\epsilon_{n})\rangle(\epsilon_{n}-\epsilon_{n+p})
+\nonumber\\
+&+&\sum_{k=1}^{p}
+(\hat{\tilde{h}}-\hat{h})
+|q_n^{(k)}(\epsilon_{n+k})\rangle
+\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon_{n+p})
+\nonumber\\
+&=&
+(\hat{\tilde{h}}-\epsilon_{n})|\tilde{\phi}^{(0)}\rangle
++
+\Bigl[|\tilde{\phi}^{(0)}\rangle-|q_n^{(0)}(\epsilon_{n})\rangle\Bigr]
+(\epsilon_n-\epsilon_{n+p})
+\nonumber\\
+&+&\sum_{k=1}^{p}
+(\hat{\tilde{h}}-\hat{h})
+|q_n^{(k)}(\epsilon_{n+k})\rangle
+\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon_{n+p})
+\nonumber\\
+&=&
+(\hat{\tilde{h}}-\epsilon_{n})|\tilde{\phi}^{(0)}\rangle
++
+(\epsilon_n-\epsilon_{n+p})
+\biggl(
+|\tilde{\phi}^{(0)}\rangle-|q_n^{(0)}(\epsilon_{n})\rangle
++(\hat{\tilde{h}}-\hat{h})
+|q_n^{(1)}(\epsilon_{n+1})\rangle
+\nonumber\\
+&+&\sum_{k=2}^{p}
+(\hat{\tilde{h}}-\hat{h})
+|q_n^{(k)}(\epsilon_{n+k})\rangle
+\prod_{m=1}^{k-1}(\epsilon_{n+m}-\epsilon_{n+p})\biggr)
+\end{eqnarray}
+
+The bare projector functions can be spanned by the $N_j$ independent functions
+\begin{eqnarray}
+|\bar{p}^{(0)}\rangle&=&(\hat{\tilde{h}}-\epsilon_{n})|\tilde{\phi}^{(0)}\rangle
+\nonumber\\
+|\bar{p}^{(1)}\rangle&=&|\tilde{\phi}^{(0)}\rangle-|q_n^{(0)}(\epsilon_n)\rangle
++(\hat{\tilde{h}}-\hat{h})
+|q_n^{(1)}(\epsilon_{n+1})\rangle
+\nonumber\\
+|\bar{p}^{(j)}\rangle&=&(\hat{\tilde{h}}-\hat{h})|q_n^{(j)}(\epsilon_{n+j})\rangle
+\qquad\text{for $j\ge2$}
+\end{eqnarray}
+This selection is independent from the choice of the energies
+$\epsilon_{n+p}$ used to define the sequence of node-reduced wave
+functions. That is the result is equally valid if all these energies
+are identical.
+
+
+%====================================================================
+\subsubsection{Bi-orthogonalization}
+%====================================================================
+The bi-orthogonalization shall establish 
+\begin{eqnarray}
+\langle p^{(j)}|\tilde{\phi}^{(j')}\rangle=\delta_{j,j'}
+\end{eqnarray}
+
+We do this while maintaining the partial waves, i.e.
+\begin{eqnarray}
+|p^{(j)}\rangle=\sum_{n}|p'^{(n)}\rangle
+\Bigl(\langle p'^{(j)}|\tilde{\phi}^{(n)}\rangle\Bigr)_{n,j}
+\end{eqnarray}
+
+\textbf{The biorthogonalization deteriorates quickly, if the number of
+  partial waves is increased.}
+
+
+\petertt{Question: does the integrand for the overlap between
+  projector function and partial wave fall off sufficiently fast with
+  distance? Note, that the partial waves increase exponentially.}
+
+
+%====================================================================
+\subsubsection{Augmentation contribution to matrix elements}
+%====================================================================
+\begin{eqnarray}
+dO_{\alpha,\beta}&=&\langle\phi_\alpha|\phi_\beta\rangle-
+\langle\tilde{\phi}_\alpha|\tilde{\phi}_\beta\rangle
+\nonumber\\
+dT_{\alpha,\beta}&=&\langle\phi_\alpha|\hat{t}|\phi_\beta\rangle-
+\langle\tilde{\phi}_\alpha|\hat{t}|\tilde{\phi}_\beta\rangle
+\end{eqnarray}
+The calculation of these matrix elements becomes substantially more
+involved in the relativistic case.
+
+\petertt{Problem: In order to cancel the tails of the core wave
+  functions, the pseudo partial waves must include a pseudo-core
+  contribution. This, however, is likely to produce ghost states. A
+  remedy could be to change the exponentially increasing behavior of
+  the the node-reduced partial waves artificially such that they do no
+  more grow. In that case, the pseudo-core contribution would not harm.}
+
+%====================================================================
+\subsection{Pseudo wave functions from node-reduced wave functions}
+\label{sec:determinedeltepseudo}
+%====================================================================
+Here, the routine \verb|SETUPS_MAKEPSPHI_MINE| is described. It is used
+to construct a pseudo wave function for the lowest node-reduced
+partial wave.
+
+Starting from a wave function $\phi(\vec{r})$, which shall be
+pseudized, we invert the Schr\"odinger equation to determine
+\begin{eqnarray}
+v-\epsilon_\nu=
+\begin{cases}
+-\frac{1}{\phi(\vec{r})}\hat{t}\phi(\vec{r})&\qquad\text{for $r>r_c$.}
+\\
+-\frac{1}{\phi(\vec{r}_c)}\hat{t}\phi(\vec{r}_c)&\qquad\text{for $r<r_c$.}
+\end{cases}
+\label{eq:invertschrgl}
+\end{eqnarray}
+where $r_c$ is the pseudization radius. $\hat{t}|\phi\rangle$ is a
+short-hand notation for the result of the kinetic energy operator
+acting on the partial wave. In the non-relativistic theory
+$\hat{t}=\frac{\hat{\vec{p}}^2}{2m_0}$, while the expression is more
+complex in the relativistic theory.
+
+With \eq{eq:invertschrgl}, we obtain a potential that is shallow and
+flat inside the pseudization radius. Outside the pseudization radius
+it is chosen such that partial wave obeys the non-relativistic
+Schr\"odinger equation for this potential.
+
+Now, we derive for this potential the radial wave function and its
+first two energy derivatives
+\begin{eqnarray}
+\Bigl[\frac{\vec{p}^2}{2m_0}+v-\epsilon_\nu\Bigr]|f\rangle&=&0
+\nonumber\\
+\Bigl[\frac{\vec{p}^2}{2m_0}+v-\epsilon_\nu\Bigr]|\dot{f}\rangle&=&|f\rangle
+\nonumber\\
+\Bigl[\frac{\vec{p}^2}{2m_0}+v-\epsilon_\nu\Bigr]|\ddot{f}\rangle
+&=&2|\dot{f}\rangle
+\end{eqnarray}
+
+At the same time we determine 
+\begin{eqnarray}
+\hat{t}|f\rangle&=&\frac{\hat{\vec{p}}^2}{2m_e}|f\rangle
+=-(\epsilon-v)|f\rangle
+\nonumber\\
+\hat{t}|\dot{f}\rangle&=&\frac{\hat{\vec{p}}^2}{2m_e}|\dot{f}\rangle
+=|f\rangle-(\epsilon-v)|\dot{f}\rangle
+\nonumber\\
+\hat{t}|\ddot{f}\rangle&=&\frac{\hat{\vec{p}}^2}{2m_e}|\dot{f}\rangle
+=2|\dot{f}\rangle-(\epsilon-v)|\ddot{f}\rangle
+\end{eqnarray}
+
+Finally, we match these three functions onto the node-reduced wave
+function so that
+\begin{eqnarray}
+|\tilde{\phi}\rangle=|f\rangle c_1 
++|\dot{f}\rangle c_2+|\ddot{f}\rangle c_3
+\end{eqnarray}
+so that value, derivative and (if requested) the kinetic energy
+density at the cutoff radius agree.
+
+%====================================================================
+\section{Relativistic effects}
+%====================================================================
+I recommend to read the doctoral thesis entitled ``The ZORA equation''
+of Eric van Lenthe\cite{lenthe96_thesis}, if you can get your hands on
+it.
+
+
+%====================================================================
+\subsection{Dirac equation}
+%====================================================================
+We start from the Dirac equation of an electron in an electric field.
+First we divide the four-component wave function into an upper part
+$\phi=(\Psi_1,\Psi_2)$ and a lower part $\chi=(\Psi_3,\Psi_4)$
+\begin{eqnarray}
+\left(\begin{array}{cc}
+v-\epsilon &\quad \vec{\sigma}\vec{p}c\\
+\vec{\sigma}\vec{p}c &\quad -2m_0c^2+v-\epsilon\end{array}\right)
+\left(\begin{array}{c}|\phi\rangle\\|\chi\rangle\end{array}\right)=0
+\label{eq:dirac2by2withepsilon}
+\end{eqnarray}
+where $\epsilon$ is the energy of the electron relative to the
+rest-energy $m_0c^2$. $\vec{\sigma}$ is a vector of $2\times2$
+matrices formed from the three Pauli matrices
+$\sigma_x,\sigma_y,\sigma_z$.
+
+It will be convenient to introduce the function
+\begin{eqnarray}
+1+D(\vec{r})\defas\Bigl[1+\frac{\epsilon-v(\vec{r})}{2m_0c^2}\Bigr]^{-1}
+\label{eq:defrelativisticfactor}
+\end{eqnarray}
+so that the Dirac equation obtains the form
+\begin{eqnarray}
+\left(\begin{array}{cc}
+v-\epsilon &\quad \vec{\sigma}\vec{p}c\\
+\vec{\sigma}\vec{p}c &\quad \frac{-2m_0c^2}{1+D}\end{array}\right)
+\left(\begin{array}{c}|\phi\rangle\\|\chi\rangle\end{array}\right)=0
+\label{eq:dirac2by2withepsilonb}
+\end{eqnarray}
+
+The small contribution can be extracted from the second equation of
+\eq{eq:dirac2by2withepsilonb}
+\begin{eqnarray}
+|\chi\rangle
+=\frac{1}{2m_0c^2+\epsilon-v}
+\vec{\sigma}\vec{p}c |\phi\rangle
+=\frac{1+D}{2m_0c}
+\vec{\sigma}\vec{p} |\phi\rangle
+\label{eq:defsmallcomponent}
+\end{eqnarray}
+Thus, the small component can be eliminated from the first equation of
+\eq{eq:dirac2by2withepsilonb}, which is turned into a second-order
+differential equation for the large component.
+\begin{eqnarray}
+\Bigl[\vec{\sigma}\vec{p} \frac{1+D}{2m_0}
+\vec{\sigma}\vec{p} +v-\epsilon\Bigr]|\phi\rangle=0
+\label{eq:diraclargebeforemagic}
+\end{eqnarray}
+
+Using the magic equation
+\begin{eqnarray}
+(\vec{\sigma}\vec{a})(\vec{\sigma}\vec{b})
+=\vec{a}\vec{b}+i\vec{\sigma}(\vec{a}\times\vec{b})
+\end{eqnarray}
+we obtain the form
+\begin{eqnarray}
+\Bigl[\vec{p} \frac{1+D}{2m_0}\vec{p} 
++i\vec{\sigma} 
+\Bigl(\vec{p} \frac{1+D}{2m_0}\times\vec{p} \Bigr)
++v-\epsilon\Bigr]|\phi\rangle=0
+\nonumber\\
+\Bigl[\frac{1+D}{2m_0}\vec{p}^2-i\frac{\hbar}{2m_0}(\vec{\nabla}D)\vec{p}
++\vec{S}\Bigl(\frac{\vec{\nabla}D}{m_0}\times\vec{p} \Bigr)
++v-\epsilon\Bigr]|\phi\rangle=0
+\end{eqnarray}
+where $\vec{S}=\frac{\hbar}{2}\vec{\sigma}$ is the spin.  For a
+rotationally symmetric $D(\vec{r})$ , we can
+introduce the orbit angular momentum $\vec{L}=\vec{r}\times\vec{p}$
+and we obtain the Dirac equation in the form
+\begin{eqnarray}
+\Bigl[
+\frac{1+D}{2m_0}\vec{p}^2 
+-i\frac{\hbar\partial_rD}{2m_0|\vec{r}|}\vec{r}\vec{p} 
++i\frac{2}{\hbar}\vec{S} 
+\Bigl(\frac{\hbar}{i}(\underbrace{\vec{\nabla}\frac{1+D}{2m_0}}
+_{\frac{(\partial_r D)}{2m_0}\frac{\vec{r}}{|\vec{r}|}}\times\vec{p} \Bigr)
++v-\epsilon\Bigr]|\phi\rangle=0
+\nonumber\\
+\Rightarrow\Bigl[
+\frac{1+D}{2m_0}\vec{p}^2 
+-i\frac{\hbar\partial_rD}{2m_0|\vec{r}|}\vec{r}\vec{p} 
++ \underbrace{\frac{(\partial_r D)}{m_0|\vec{r}|}\vec{S}\vec{L}}_{\text{spin-orbit}}
++v-\epsilon\Bigr]|\phi\rangle=0
+\nonumber\\
+\end{eqnarray}
+
+
+%====================================================================
+\subsection{Approximation}
+%====================================================================
+%====================================================================
+\subsubsection{Norm and overlap operator}
+%====================================================================
+The Dirac equation is a differential equation with an energy-dependent
+differential operator. 
+\begin{eqnarray}
+\hat{K}(\epsilon)|\phi\rangle=0
+\end{eqnarray}
+For a given energy $\epsilon_0$ the differential operator can be
+linearized in energy yielding
+\begin{eqnarray}
+\Bigl[\hat{h}-\epsilon\hat{o}\Bigr]|\phi\rangle
+=O\Bigr((\epsilon-\epsilon_0)^2\Bigr)
+\end{eqnarray}
+with
+\begin{eqnarray}
+\hat{h}&:=& \hat{K}(\epsilon_0)
+-\left.\frac{d\hat{K}}{d\epsilon}\right|_{\epsilon_0}\epsilon_0
+\nonumber\\
+\hat{o}&:=& -\left.\frac{d\hat{K}}{d\epsilon}\right|_{\epsilon_0}
+\end{eqnarray}
+
+For the Dirac equation \eq{eq:dirac2by2withepsilon}, the overlap
+operator has the form
+\begin{eqnarray}
+\hat{o}=\left(\begin{array}{cc}\mat{1}&\mat{0}\\
+\mat{0}&\mat{1}\end{array}\right)
+\end{eqnarray}
+which is the well-known norm condition.
+
+In the following we will introduce approximations by changing the
+relativistic factor. The rule given above provides us with guidance,
+how the small component is to be treated.
+
+The same procedure, applied to the two-component equation yields the
+normalization equation for the large component: I start from
+\eq{eq:diraclargebeforemagic}
+\begin{eqnarray}
+\hat{K}(\epsilon)&=&
+\vec{\sigma}\vec{p} \frac{1+D}{2m_0}
+\vec{\sigma}\vec{p} +v-\epsilon
+\nonumber\\
+-\partial_\epsilon\hat{K}(\epsilon)&\eqrel{eq:defrelativisticfactor}{=}&
+1+
+\vec{\sigma}\vec{p} \Bigl(\frac{1+D}{2m_0c}\Bigr)^2
+\vec{\sigma}\vec{p}
+\end{eqnarray}
+Thus the overlap can be obtained by constructing the small component
+using the second form of \eq{eq:defsmallcomponent} and then to form
+the squares.
+
+This suggests that the small component shall be set to zero, whenever,
+a energy-independent relativistic factor is chosen.  
+
+%====================================================================
+\subsubsection{Specific approximations}
+%====================================================================
+\begin{itemize}
+\item non-relativistic approximation: We keep the terms of zero'th
+  order in $\frac{|\vec{p}|}{c}$, respectively
+  $\frac{\epsilon-v}{m_0c^2}$. This amounts to (1) setting the
+  relativistic factor $D(r)$ equal to zero. Following the argument
+  given above, also the small component is set to zero. Thus we
+  obtain the Pauli equation, which separates into two Schr\"odinger
+  equations.
+  \begin{eqnarray}
+  \Bigl[ \frac{\vec{p}^2}{2m_0}+v-\epsilon\Bigr]|\phi\rangle=0
+\qquad\text{with}\qquad
+  |\chi\rangle=0
+  \end{eqnarray}
+%
+\item The ZORA (Zero'th Order Relativistic Approximation): The
+  relativistic factor $D^{Z}(r)=D(\bar{\epsilon}(r),r)$ is kept an
+  energy independent function of position.
+\begin{eqnarray}
+\Bigl[
+\frac{1+D^Z}{2m_0}\vec{p}^2 
+-i\frac{\hbar\partial_rD^Z}{2m_0|\vec{r}|}\vec{r}\vec{p} 
++ \underbrace{\frac{(\partial_r D^Z)}{m_0|\vec{r}|}
+\vec{S}\vec{L}}_{\text{spin-orbit}}
++v-\epsilon\Bigr]|\phi\rangle=0
+\qquad\text{with}\qquad
+  |\chi\rangle=0
+\end{eqnarray}
+%
+\item The FORA (First-Order Relativistic Approximation): The
+  relativistic factor $D(r)$ is kept a function 
+\begin{eqnarray}
+D^{F}(\epsilon,r)=
+D(\bar{\epsilon}(r),r))
++\Bigl(\epsilon-\bar{\epsilon}(r)\Bigr)
+\left.\partial_\epsilon D(\epsilon,r)\right|_{\epsilon=\bar{\epsilon}(r)}
+\end{eqnarray}
+of position, which is
+  linear in the density.
+
+\begin{eqnarray}
+\Bigl[
+\frac{1+D^{F}(\epsilon)}{2m_0}\vec{p}^2 
+-i\frac{\hbar\partial_rD^{F}(\epsilon)}{2m_0|\vec{r}|}\vec{r}\vec{p} 
++ \underbrace{\frac{(\partial_r D^{F}(\epsilon))}{m_0|\vec{r}|}
+\vec{S}\vec{L}}_{\text{spin-orbit}}
++v-
+\epsilon
+\Bigr]|\phi\rangle=0
+\nonumber\\
+  |\chi\rangle=\frac{1+D^F(\epsilon,r)}{2m_0c^2}\vec{\sigma}\vec{p}|\phi\rangle
+\end{eqnarray}
+%
+\item The complete relativistic description uses the original
+  relativistic factor without approximation.
+\end{itemize}
+
+The second type of approximation is the scalar relativistic
+approximation.  The scalar relativistic approximation is automatically
+included in the non-relativistic derscription, it is optional in ZORA
+and it is incompatible with FORA and a full relativistic description.
+
+
+Note that we treat the Term ZORA more flexible that the common usage
+in the literature, because we allow for an arbitrary choice of
+$\bar{\epsilon}$.
+\begin{itemize}
+\item the common ZORA uses $\bar{\epsilon}=0$
+\item the non-relativistic approximation uses $\bar{\epsilon}=v(r)$
+\end{itemize}
+
+I recommend the choice (not implemented...)
+\begin{eqnarray}
+\bar{\epsilon}(\vec{r})
+=
+\max\Bigl[v(r),
+\frac{\sum_n f_n |\phi_n(r)|^2 \epsilon_n}{\sum_n f_n |\phi_n(r)|^2}\Bigr]
+\end{eqnarray}
+This choice ensures that from a certain radius outward, the
+relativistic effects are suppressed completely.
+
+%====================================================================
+\subsection{Relativistic augmentation}
+%====================================================================
+It is our goal to separate all relativistic effects out into the
+augmentation contribution, so that we need not consider the
+relativistic effects in the plane-wave part. The plane-wave part does
+not involve large kinetic energies so that their contribution to the
+relativistic effects can be ignored with good confidence.
+
+In the PAW method, we make the following Ansatz for the wave function:
+\begin{eqnarray}
+\left(\begin{array}{c}|\phi\rangle\\|\chi\rangle\end{array}\right)
+=
+\left(
+\begin{array}{c}|\tilde{\psi}\rangle\\\frac{1}{2m_0c}\vec{\sigma}\vec{p}|\tilde\psi\rangle\end{array}\right)
++
+\sum_\alpha
+\left[
+\left(
+\begin{array}{c}|\phi_\alpha\rangle\\
+\frac{1+D}{2m_0c}\vec{\sigma}\vec{p}|\phi_\alpha\rangle\end{array}\right)
+-
+\left(
+\begin{array}{c}|\tilde{\phi}_\alpha\rangle\\
+\frac{1}{2m_0c}\vec{\sigma}\vec{p}|\tilde{\phi}_\alpha\rangle\end{array}\right)
+\right]
+\langle\tilde{p}_\alpha|\tilde\psi\rangle
+\end{eqnarray}
+This ansatz ensures that the wave function is continuous--if $D(r)$
+vanishes smoothly beyond the augmentation radius--and that all-electron and
+pseudo partial waves become identical. 
+
+This mapping from a two-dimensional Pauli spinor onto a four component
+spinor wave function is reminiscent of the Foldy-Wouthuysen
+transformation\cite{foldy50_pr78_29}, which diagonalizes the matrix
+form of the Dirac Hamiltonian.\footnote{Here we distinguish
+  $\vec{\sigma}\vec{p}$ and its hermitean conjugate
+  $(\vec{\sigma}\vec{p})^\dagger$. This refers to the fact that the
+  identity is not valid on a point-per-point basis, but only in
+  connection with certain boundary conditions.}
+\begin{eqnarray}
+\left(\begin{array}{c}\langle\phi|\\
+\langle\chi|\end{array}\right)
+\left(\begin{array}{cc}
+v-\epsilon &\quad (\vec{\sigma}\vec{p}c)^\dagger\\
+\vec{\sigma}\vec{p}c &\quad -2m_0c^2+v-\epsilon\end{array}\right)
+\left(\begin{array}{c}|\phi\rangle\\|\chi\rangle\end{array}\right)=0
+\end{eqnarray}
+
+
+For the pseudo contribution, we change the all-electron potential to
+the pseudo potential $\tilde{v}$ and we set the relativistic factor
+$D$ to zero. 
+
+In addition we introduce the small components of the partial waves 
+\begin{eqnarray}
+|\chi_\alpha\rangle&=&(1+D_\alpha)\frac{\vec{\sigma}\vec{p}}{2m_0c}
+|\phi_\alpha\rangle
+\nonumber\\
+|\tilde{\chi}_\alpha\rangle&=&\frac{\vec{\sigma}\vec{p}}{2m_0c}
+|\tilde{\phi}_\alpha\rangle
+\end{eqnarray}
+The index on the $D_\alpha$ indicates that it has been evaluated with
+the energy $\epsilon_\alpha$, the energy used in the nodeless equation
+for $|\phi_\alpha\rangle$.
+
+For the small pseudo partial wave we made the choice to set $D$ to
+zero, while we keep the finite speed of light.
+
+To extract Hamiltonian and Overlap operator from the Dirac equation, I
+form the matrix element of the Dirac equation with the corresponding
+Bra.
+\begin{eqnarray}
+\Rightarrow
+0&=&\left(\begin{array}{c}\langle\tilde{\psi}|\\
+\langle\tilde{\psi}|\frac{(\vec{\sigma}\vec{p})^\dagger}{2m_0c}\end{array}\right)
+\left(\begin{array}{cc}
+\tilde{v}-\epsilon &\quad (\vec{\sigma}\vec{p}c)^\dagger \\
+\vec{\sigma}\vec{p}c &\quad -2m_0c^2+\tilde{v}-\epsilon\end{array}\right)
+\left(\begin{array}{c}|\psi\rangle\\
+\frac{\vec{\sigma}\vec{p}}{2m_0c}|\tilde{\psi}\rangle\end{array}\right)
+\nonumber\\
+&+&\sum_{\alpha,\beta}\langle\tilde{\psi}|\tilde{p}_\alpha\rangle
+\biggl[
+%
+\left(\begin{array}{c}\langle\phi_\alpha|\\
+\langle\chi_\alpha|
+\end{array}\right)
+\left(\begin{array}{cc}
+v-\epsilon &\quad (\vec{\sigma}\vec{p}c)^\dagger\\
+\vec{\sigma}\vec{p}c &\quad -2m_0c^2+v-\epsilon\end{array}\right)
+\left(\begin{array}{c}|\phi_\beta\rangle\\
+|\chi_\beta\rangle\end{array}\right)
+%
+\nonumber\\
+&&\hspace{2cm}-\left(\begin{array}{c}\langle\tilde{\phi}_\alpha|\\
+\langle\tilde{\chi}_\alpha|
+\end{array}\right)
+\left(\begin{array}{cc}
+\tilde{v}-\epsilon &\quad (\vec{\sigma}\vec{p}c)^\dagger\\
+\vec{\sigma}\vec{p}c &\quad -2m_0c^2+\tilde{v}-\epsilon\end{array}\right)
+\left(\begin{array}{c}|\tilde{\phi}_\beta\rangle\\
+|\tilde{\chi}_\beta\rangle\end{array}\right)
+%
+\biggr]
+\langle\tilde{p}_\beta|\tilde{\psi}\rangle
+\nonumber\\  %==========================================================
+%
+&=&\langle\tilde\psi|
+\frac{\hat{\vec{p}}^2}{2m_0}+\tilde{v}-\epsilon
++
+\underbrace{
+\textcolor{red}{(\vec{\sigma}\vec{p})^\dagger
+\frac{(\tilde{v}-\epsilon)}{(2m_0c)^2}(\vec{\sigma}\vec{p})}}_{\textrm{ignored}}
+|\tilde{\psi}\rangle
+\nonumber\\
+&+&\sum_{\alpha,\beta}\langle\tilde{\psi}|\tilde{p}_\alpha\rangle
+\biggl\lbrace
+\underbrace{\Bigl[
+\overbrace{
+\langle\phi_\alpha|(\vec{\sigma}\vec{p})^\dagger
+\frac{1+D_\alpha}{2m_0}
+}^{\langle\chi_\alpha|}
+(\vec{\sigma}\vec{p})|\phi_\beta\rangle
++\langle\phi_\alpha|
+(\vec{\sigma}\vec{p})^\dagger
+\overbrace{\frac{1+D_\beta}{2m_0}(\vec{\sigma}\vec{p})
+|\phi_\beta\rangle}^{|\chi_\beta\rangle}
+-2m_0c^2\langle\chi_\alpha|\chi_\beta\rangle\Bigr]}_{T_{\alpha,\beta}}
+\nonumber\\
+%
+&&\hspace{1.5cm}
+-\underbrace{\Bigl[
+\overbrace{\langle\tilde{\phi}_\alpha|
+(\vec{\sigma}\vec{p})^\dagger\frac{1}{2m_0}
+}^{\langle\tilde{\chi}_\alpha|}(\vec{\sigma}\vec{p})
++(\vec{\sigma}\vec{p})^\dagger
+\overbrace{
+\frac{1}{2m_0}(\vec{\sigma}\vec{p})
+|\tilde{\phi}_\beta\rangle}^{|\tilde{\chi}_\beta\rangle}
+-2m_0c^2\langle\tilde{\chi}_\alpha
+|\tilde{\chi}_\beta\rangle\Bigr]}_{\tilde{T}_{\alpha,\beta}}
+\nonumber\\
+&&\hspace{1.5cm}+\langle\phi_\alpha|v-\epsilon|\phi_\beta\rangle
++\textcolor{red}{\langle\chi_\alpha|v-\epsilon|\chi_\beta\rangle}
+-\langle\tilde{\phi}_\alpha|
+\tilde{v}-\epsilon|\tilde{\phi}_\beta\rangle
+-
+\textcolor{red}{
+\langle\tilde{\chi}_\alpha|\tilde{v}-\epsilon|\tilde{\chi}_\beta\rangle}
+\biggr\rbrace\langle
+\tilde{p}_\beta|\tilde{\psi}\rangle
+\nonumber\\
+\end{eqnarray}
+We used that $(\vec{\sigma}\vec{p})^2=\vec{p}^2$.
+
+The three terms marked in red are problematic, because
+the first one contributes to plane wave part. The all-electron term is
+not neglegible in the core region, but it also does not vanish in the
+tail region, if the partial waves, and with it their small components,
+diverge with increasing radius. This diverging part does, however, not
+contribute, because it is cancelled by the corresponding one-center
+pseudo term. This is also the reason that the pseudo term needs to be
+included.
+
+
+%========================================================================
+\subsection{Approximation of relativistic effects for the PAW-Hamiltonian}
+%========================================================================
+The pseudo term of the plane wave part marked in red
+\begin{eqnarray}
+\langle\tilde\psi|
+(\vec{\sigma}\vec{p})\frac{(\tilde{v}-\epsilon)}{(2m_0c)^2}(\vec{\sigma}\vec{p})
+|\tilde{\psi}\rangle &=& \langle\tilde\psi|
+\frac{1}{(2m_0c)^2}\frac{\hbar}{i}(\vec{\nabla}\tilde{v})\vec{p}
++\frac{2}{(2m_0c)^2}
+\vec{S}\Bigl((\vec{\nabla}\tilde{v})\times\vec{p}\Bigr)
++\frac{(\tilde{v}-\epsilon)}{c^2} \frac{\vec{p}^2}{2m_0}
+|\tilde{\psi}\rangle \nonumber\\ &=&
+\frac{1}{2m_0c^2}\langle\tilde\psi|
+\frac{-i\hbar}{2m_0}(\vec{\nabla}\tilde{v})\vec{p} +\frac{1}{m_0}
+\vec{S}\Bigl((\vec{\nabla}\tilde{v})\times\vec{p}\Bigr)
++(\tilde{v}-\epsilon)\vec{p}^2 |\tilde{\psi}\rangle
+\label{eq:neglectedrelpart}
+\end{eqnarray}
+is considered to be small and is ignored in the current
+implementation. Let us investigate the size of the error.
+
+In order to estimate its size let us consider the free electron case,
+where the wave functions are simple plane waves.
+\begin{eqnarray*}
+\langle\tilde\psi|
+(\vec{\sigma}\vec{p})\frac{(\tilde{v}-\epsilon)}{(2m_0c)^2}(\vec{\sigma}\vec{p})
+|\tilde{\psi}\rangle
+&=&\frac{(\hbar\vec{G})^2}{2m_0}\frac{\epsilon-v}{2m_0c^2}
+\approx \frac{E_{kin}^2}{2m_0c^2}\approx E^2_{kin} \cdot 2.5
+\times10^{-5}\frac{1}{H}
+\nonumber\\
+&\approx&
+\begin{cases}
+5.00 mH\cdot N_e &\text{for $E_{kin}=30$~Ry}\\
+0.60 mH\cdot N_e &\text{for $E_{kin}=10$~Ry}\\
+0.06 mH\cdot N_e &\text{for $E_{kin}=5$~Ry}\\
+\end{cases}
+\end{eqnarray*}
+where $N_e$ is the number of electrons.
+
+Alternatives: Conceivable is to remove the first term from the pseudo
+one-center part along with ignoring the complete plane wave part of
+the small component. The rational is that this term captures the
+dominant term of the pseudo plane wave part, while it does not have
+the exponentially increasing behavior that needs to be canceled in the
+all-electron term.
+
+%========================================================================
+\subsection{Relativistic PAW-Hamiltonian}
+%========================================================================
+With the neglect of the term Eq.~\ref{eq:neglectedrelpart}, we obtain
+\begin{eqnarray}
+0&=&
+\langle\tilde{\Psi}|\hat{\tilde{H}}-\hat{\tilde{O}}\epsilon|\tilde{\Psi}\rangle
+\nonumber\\
+&=&\langle\tilde\psi|
+\frac{\hat{\vec{p}}^2}{2m_0}+\tilde{v}-\epsilon 
++\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle
+\biggl(dT_{\alpha,\beta}+dV_{\alpha,\beta}-\epsilon dO_{\alpha,\beta}\biggr)
+\langle\tilde{p}_\beta|
+|\tilde{\psi}\rangle
+\nonumber\\
+&=&\langle\tilde\psi|
+\frac{\hat{\vec{p}}^2}{2m_0}+\tilde{v}-\epsilon
+|\tilde{\psi}\rangle
+\nonumber\\
+&+&\sum_{\alpha,\beta}\langle\tilde{\psi}|\tilde{p}_\alpha\rangle
+\biggl\lbrace
+\underbrace{\Bigl[
+\overbrace{
+\langle\phi_\alpha|(\vec{\sigma}\vec{p})^\dagger
+\frac{1+D_\alpha}{2m_0}
+}^{\langle\chi_\alpha|}
+(\vec{\sigma}\vec{p})|\phi_\beta\rangle
++\langle\phi_\alpha|
+(\vec{\sigma}\vec{p})^\dagger
+\overbrace{\frac{1+D_\beta}{2m_0}(\vec{\sigma}\vec{p})
+|\phi_\beta\rangle}^{|\chi_\beta\rangle}
+-2m_0c^2\langle\chi_\alpha|\chi_\beta\rangle\Bigr]}_{T_{\alpha,\beta}}
+\nonumber\\
+%
+&&\hspace{1.5cm}
+-\underbrace{\Bigl[
+\overbrace{\langle\tilde{\phi}_\alpha|
+(\vec{\sigma}\vec{p})^\dagger\frac{1}{2m_0}
+}^{\langle\tilde{\chi}_\alpha|}(\vec{\sigma}\vec{p})
++(\vec{\sigma}\vec{p})^\dagger
+\overbrace{
+\frac{1}{2m_0}(\vec{\sigma}\vec{p})
+|\tilde{\phi}_\beta\rangle}^{|\tilde{\chi}_\beta\rangle}
+-2m_0c^2\langle\tilde{\chi}_\alpha
+|\tilde{\chi}_\beta\rangle\Bigr]}_{\tilde{T}_{\alpha,\beta}}
+\nonumber\\
+&&\hspace{1.5cm}+\langle\phi_\alpha|v-\epsilon|\phi_\beta\rangle
++\textcolor{red}{\langle\chi_\alpha|v-\epsilon|\chi_\beta\rangle}
+-\langle\tilde{\phi}_\alpha|
+\tilde{v}-\epsilon|\tilde{\phi}_\beta\rangle
+-
+\textcolor{red}{
+\langle\tilde{\chi}_\alpha|\tilde{v}-\epsilon|\tilde{\chi}_\beta\rangle}
+\biggr\rbrace\langle
+\tilde{p}_\beta|\tilde{\psi}\rangle
+\nonumber\\
+\end{eqnarray}
+
+\begin{itemize}
+\item Thus we obtain pseudo kinetic energy operator as
+\begin{eqnarray}
+\hat{\tilde{T}}&=&
+\frac{\hat{\vec{p}}^2}{2m_0}
++\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle 
+dT_{\alpha,\beta}\langle\tilde{p}_\beta|
+\nonumber\\
+dT_{\alpha,\beta}&=&
+\underbrace{
+\langle\phi_\alpha|
+(\vec{\sigma}\vec{p})\frac{1+D_\alpha}{2m_0}(\vec{\sigma}\vec{p})
+}_{\langle g_\alpha|-\langle\phi_\alpha|(v-\epsilon_\alpha)}
+|\phi_\beta\rangle
++\langle\phi_\alpha|
+\underbrace{(\vec{\sigma}\vec{p})\frac{1+D_\beta}{2m_0}(\vec{\sigma}\vec{p})
+|\phi_\beta\rangle}_{|g_\beta\rangle-(v-\epsilon_\beta)|\phi_\beta\rangle}
+-2m_0c^2\langle\chi_\alpha|\chi_\beta\rangle
+\nonumber\\
+&-&
+\underbrace{
+\langle\tilde{\phi}_\alpha|\frac{\hat{\vec{p}}^2}{2m_0}
+}_{\langle \tilde{g}_\alpha|-\langle\tilde{\phi}_\alpha|(\tilde{v}-\epsilon_\alpha)}
+|\tilde{\phi}_\beta\rangle
+-\langle\tilde{\phi}_\alpha|
+\underbrace{
+\frac{\hat{\vec{p}}^2}{2m_0}|\tilde{\phi}_\beta\rangle
+}_{|\tilde{g}_\beta\rangle-(\tilde{v}-\epsilon_\beta)|\tilde{\phi}_\beta\rangle}
++2m_0c^2\langle\tilde{\chi}_\alpha|\tilde{\chi}_\beta\rangle
+\nonumber\\
+\end{eqnarray}
+Here we exploit that the partial waves are constructed from a radial
+Dirac equation of the form
+\begin{eqnarray}
+\biggl[(\vec{\sigma}\vec{p})\frac{1+D_\beta}{2m_0}(\vec{\sigma}\vec{p})
++v-\epsilon_\beta\biggr]|\phi_\beta\rangle&=&|g_\beta\rangle
+\nonumber\\
+\biggl[
+\frac{\hat{\vec{p}}^2}{2m_0}+\tilde{v}-\epsilon_\beta\biggr]
+|\tilde{\phi}_\beta\rangle
+&=&|\tilde{g}_\beta\rangle
+\end{eqnarray}
+
+\item The relativistic pseudo overlap operator has the form
+\begin{eqnarray}
+\hat{\tilde{O}}&=&1+
+\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle dO_{\alpha,\beta}\langle\tilde{p}_\beta|
+\nonumber\\
+dO_{\alpha,\beta}&=&
+\langle\phi_\alpha|\phi_\beta\rangle+\langle\chi_\alpha|\chi_\beta\rangle
+-\langle\tilde{\phi}_\alpha|\tilde{\phi}_\beta\rangle
+-\langle\tilde{\chi}_\alpha|\tilde{\chi}_\beta\rangle
+\end{eqnarray}
+
+\item The potential energy has the form
+\begin{eqnarray}
+\hat{\tilde{v}}&=&\hat{v}+
+\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle dV_{\alpha,\beta}\langle\tilde{p}_\beta|
+\nonumber\\
+dV_{\alpha,\beta}&=&
+\langle\phi_\alpha|\hat{v}|\phi_\beta\rangle
++\langle\chi_\alpha|\hat{v}|\chi_\beta\rangle
+-\langle\tilde{\phi}_\alpha|\tilde{v}|\tilde{\phi}_\beta\rangle
+-\langle\tilde{\chi}_\alpha|\tilde{v}|\tilde{\chi}_\beta\rangle
+\end{eqnarray}
+
+
+From the expression of the potential energy, we obtain a
+representation for the density, namely
+\begin{eqnarray}
+n(\vec{r})=
+\underbrace{
+\sum_n f_n \tilde{\psi}_n^2(\vec{r})+\tilde{n}_c}_{\tilde{n}(\vec{r})}
+&+&\underbrace{
+\sum_{\alpha,\beta}\theta_{\alpha,\beta}
+\biggl(\phi^*_\beta(\vec{r})\phi^*_\alpha(\vec{r})
++\chi^*_\beta(\vec{r})\chi^*_\alpha(\vec{r})\biggr)
++n_c(\vec{r})}_{n^1(\vec{r})}
+\nonumber\\
+&-&\underbrace{
+\sum_{\alpha,\beta}\theta_{\alpha,\beta}
+\biggl(\tilde{\phi}^*_\beta(\vec{r})\tilde{\phi}^*_\alpha(\vec{r})
++\tilde{\chi}^*_\beta(\vec{r})\tilde{\chi}^*_\alpha(\vec{r})
+\biggr)+\tilde{n}_c(\vec{r})}_{\tilde{n}^1(\vec{r})}
+\end{eqnarray}
+Here $n_c(\vec{r})$ is the core electron density and
+$\tilde{n}_c(\vec{r})$ is the core pseudo electron density.
+
+The one-center density matrix $\theta_{\alpha,\beta}$ is defined as
+\begin{eqnarray}
+\theta_{\alpha,\beta}=\sum_n\langle\tilde{p}_\alpha|\tilde{\psi}_n\rangle f_n
+\langle\tilde{p}_\beta\rangle
+\end{eqnarray}
+\end{itemize}
+
+
+%====================================================================
+\subsection{Nodeless construction for the Dirac equation}
+%====================================================================
+We generalize \eq{eq:nodelesseq} to the Dirac equation, which yields
+\begin{eqnarray}
+\left(\begin{array}{cc}
+v-\epsilon_n &\quad \vec{\sigma}\vec{p}c\\
+\vec{\sigma}\vec{p}c &\quad -2m_0c^2+v-\epsilon_n\end{array}\right)
+\left(\begin{array}{c}|u_n\rangle\\|v_n\rangle\end{array}\right)
+&=&-\left(\begin{array}{c}|u_{n-1}\rangle\\|v_{n-1}\rangle\end{array}\right)
+\end{eqnarray}
+where the small component of a nodeless function is denoted by $|v_n\rangle$.
+
+We resolve for the small component $|v_n\rangle$
+\begin{eqnarray}
+|v_n\rangle=\frac{1+D_n}{2m_0c}(\vec{\sigma}\vec{p})|u_n\rangle
++\frac{1+D_n}{2m_0c^2}|v_{n-1}\rangle
+\label{eq:nodelessdiracsmall}
+\end{eqnarray}
+and insert the result into the first equation
+\begin{eqnarray}
+(v-\epsilon)|u_n\rangle
++(\vec{\sigma}\vec{p})c|v_n\rangle&=&-|u_{n-1}\rangle 
+\nonumber\\
+\Bigl[(\vec{\sigma}\vec{p})
+\frac{1+D_n}{2m_0}(\vec{\sigma}\vec{p})
++v-\epsilon_n\Bigr]|u_n\rangle
+&=&-|u_{n-1}\rangle -(\vec{\sigma}\vec{p})\frac{1+D_n}{2m_0c}|v_{n-1}\rangle
+\nonumber\\
+\Bigl[
+(1+D_n)\frac{\vec{p}^2}{2m_0}
++\frac{\hbar}{i}
+\frac{\vec{\nabla}D_n}{2m_0}\vec{p}
++\vec{S}\Bigl(\frac{\vec{\nabla}D_n}{m_0}\times\vec{p}\Bigr)
++v-\epsilon_n\Bigr]|u_n\rangle
+&=&-|u_{n-1}\rangle -(\vec{S}\vec{p})\frac{1+D_n}{\hbar m_0c}|v_{n-1}\rangle
+\nonumber\\
+\label{eq:nodelessdirac1}
+\end{eqnarray}
+
+
+%====================================================================
+\subsection{Spinor harmonics}
+%====================================================================
+For a spherical atom, the spin and orbit angular momenta are no more
+conserved independently, but only the total angular momentum is
+conserved. Therefore we need to introduce spinor harmonics.
+
+The spinor harmonics obey the eigenvalue equations
+\begin{eqnarray}
+\left(\hat{\vec{L}}+\hat{\vec{S}}\right)^2|\chi_{\kappa,j_z}\rangle
+&=&|\chi_{\kappa,j_z}\rangle\quad
+\underbrace{\hbar^2(\kappa^2-\frac{1}{2})}_{\hbar^2j(j+1)}
+\\
+\hat{\vec{L}}^2|\chi_{\kappa,j_z}\rangle
+&=&|\chi_{\kappa,j_z}\rangle\quad\hbar^2\kappa(\kappa+1)
+\\
+\hat{\vec{S}}^2|\chi_{\kappa,j_z}\rangle
+&=&|\chi_{\kappa,j_z}\rangle\quad\hbar^2\frac{3}{4}
+\\
+\hat{\vec{L}}\hat{\vec{S}}|\chi_{\kappa,j_z}\rangle
+&=&|\chi_{\kappa,j_z}\rangle
+\quad\left(-\hbar^2\frac{\kappa+1}{2}\right)
+\label{eq:lsspinorharmonic}
+\\
+\left(\hat{L}_z+\hat{S}_z\right)|\chi_{\kappa,j_z}\rangle
+&=&|\chi_{\kappa,j_z}\rangle\quad\hbar j_z
+\\
+\frac{1}{|\vec{r}|}\vec{r}\;\vec{\sigma}\chi_{\kappa,j_z}&=&-\chi_{-\kappa,j_z}
+\end{eqnarray}
+where the quantum numbers $\kappa$ can assume any integer value except zero.
+\begin{eqnarray}
+\kappa&=&\ldots,-2,-1,\qquad 1,2,\ldots
+\\
+j_z&=&-|\kappa|+\frac{1}{2},-|\kappa|+\frac{3}{2},\ldots,|\kappa|-\frac{1}{2}
+\\
+j&=& |\kappa|-\frac{1}{2}
+\\
+\ell&=&|\kappa+\frac{1}{2}|-\frac{1}{2}
+\\
+\left(\begin{array}{c} m_{\uparrow}\\m_{\downarrow}\end{array}\right)
+&=&\left(\begin{array}{c} j_z-\frac{1}{2}\\j_z+\frac{1}{2}\end{array}\right)
+\end{eqnarray}
+Furthermore, 
+\begin{eqnarray}
+\vec{L}\vec{S}
+\begin{cases}
+<0 & \text{ for $\kappa >0$}\\
+=0 & \text{ for $\kappa =-1$, i.e. for $\ell=0$}\\
+>0 & \text{ for $\kappa <-1$}
+\end{cases}
+\end{eqnarray}
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+\hline
+$\kappa$ & -4 & -3 & -2 & -1 & - & 1 & 2 & 3 \\
+\hline
+$\ell$   &  3 &  2 &  1 &  0 & - & 1 & 2 & 3 \\
+\hline
+$\ell$   &  f &  d &  p &  s & - & p & d & f \\
+\hline
+\end{tabular}
+\end{center}
+
+
+The spinor harmonics have the form
+\begin{eqnarray}
+|\chi_{\kappa,j_z}\rangle
+\stackrel{\kappa<0}{=}\left(
+\begin{array}{c}
+|Y_{-\kappa-1,j_z-\frac{1}{2}}\rangle
+\sqrt{\frac{-\kappa+j_z-\frac{1}{2}}{-2\kappa-1}}\\
+|Y_{-\kappa-1,j_z+\frac{1}{2}}\rangle
+\sqrt{\frac{-\kappa-j_z-\frac{1}{2}}{-2\kappa-1}}\end{array}\right)
+\qquad
+|\chi_{\kappa,j_z}\rangle
+\stackrel{\kappa>0}{=}\left(
+\begin{array}{c}
+-|Y_{\kappa,j_z-\frac{1}{2}}\rangle
+\sqrt{\frac{\kappa-j_z+\frac{1}{2}}{2\kappa+1}}\\
+|Y_{\kappa,j_z+\frac{1}{2}}\rangle
+\sqrt{\frac{\kappa+j_z+\frac{1}{2}}{2\kappa+1}}\end{array}\right)
+\label{eq:spinorharmonicskappa_a}
+\\
+\underbrace{\chi_{-\ell-1,m+\frac{1}{2}}}_{\Omega_{\ell+\frac{1}{2},\ell,m+\frac{1}{2}}}
+=\left(
+\begin{array}{c}
+|Y_{\ell,m}\rangle\sqrt{\frac{\ell+m+1}{2\ell+1}}\\
+|Y_{\ell,m+1}\rangle\sqrt{\frac{\ell-m}{2\ell+1}}\end{array}\right)
+\qquad
+\underbrace{\chi_{\ell,m+\frac{1}{2}}}_{\Omega_{\ell-\frac{1}{2},\ell,m+\frac{1}{2}}}
+=\left(
+\begin{array}{c}
+-|Y_{\ell,m}\rangle\sqrt{\frac{\ell-m}{2\ell+1}}\\
+|Y_{\ell,m+1}\rangle\sqrt{\frac{\ell+m+1}{2\ell+1}}\end{array}\right)
+\label{eq:spinorharmonicskappa}
+\end{eqnarray}
+
+Then spinor harmonics describe states with the spin parallel or
+antiparallel to the orbit angular momentum.
+
+%====================================================================
+\subsection{Spherical Dirac equations in spinor harmonics}
+%====================================================================
+The wave function of an electron is a four-component spinor function
+consisting of a two-dimensional large and a two-dimensional small
+component. Each has again a spin-up and a spin-down component.
+\begin{eqnarray}
+\left(\begin{array}{c}\phi(\epsilon,\vec{r})\\\chi(\epsilon,\vec{r})
+\end{array}\right) =
+\left(\begin{array}{c}g_{\kappa,j_z}(\epsilon,\vec{r})
+\chi_{\kappa,j_z}(\vec{r})\\ if_{-\kappa,j_z}(\epsilon,\vec{r})
+\chi_{-\kappa,j_z}(\vec{r})\\ \end{array}\right) 
+\end{eqnarray} 
+
+This Ansatz can be inserted into \eq{eq:nodelessdirac1}
+and \eq{eq:nodelessdiracsmall}
+
+
+\begin{eqnarray}
+\Bigl[
+(1+D_n)\frac{\vec{p}^2}{2m_0}
++\frac{\hbar}{i}
+\frac{\partial_rD_n}{2m_0|\vec{r}}\vec{r}\vec{p}
++\frac{\partial_rD_n}{m_0|\vec{r}|} \vec{S}\underbrace{
+\Bigl(\vec{r}\times\vec{p}\Bigr)}_{\vec{L}}
++v-\epsilon_n\Bigr]|u_n\rangle
+&=&-|u_{n-1}\rangle -(\vec{S}\vec{p})\frac{1+D_n}{\hbar m_0c}|v_{n-1}\rangle
+\nonumber\\
+|v_n\rangle=\frac{1+D_n}{2 m_0}
+\Bigl[\frac{2}{\hbar c}
+(\vec{S}\vec{p})|u_n\rangle
++\frac{1}{c^2}|v_{n-1}\rangle\Bigr]
+\end{eqnarray}
+which yields with \eq{eq:lsspinorharmonic}
+
+\begin{eqnarray}
+&&\hspace{-2cm}\biggl(
+(1+D)\frac{-\hbar^2}{2m_0}\biggl(\frac{1}{r}\partial_r^2r
+-\frac{\ell(\ell+1)}{r^2}\biggr)
+-\frac{\hbar^2(\partial_r D)}{2m_0}
+\biggl[\partial_r
++\frac{\kappa+1}{|\vec{r}|}\biggr]
++v-\epsilon \biggr)g^{(n)}_{\kappa,j_z}(\epsilon,r)
+\nonumber\\
+&=&
+-g^{(n-1)}_{\kappa,j_z}(\epsilon_{n-1},r)
++
+\frac{\hbar}{c}\biggl[\partial_r+\frac{-\kappa+1}{|\vec{r}|}\biggr]
+\frac{1+D}{ 2m_0 }
+f_{-\kappa,j_z}^{(n-1)}(\epsilon_{n-1},r)
+\nonumber\\
+f_{-\kappa,j_Z}^{(n)}(\epsilon,r)
+&=&\frac{1+D(\epsilon)}{2 m_0}
+\biggl(\frac{\hbar}{c}\biggl[\partial_r+\frac{\kappa+1}{|\vec{r}|}\biggr]
+g_{\kappa,j_z}^{(n)}(\epsilon,r)
++
+\frac{1}{c^2}f_{-\kappa,j_z}^{(n-1)}(\epsilon_{n-1},r)\biggr)
+\end{eqnarray}
+Compare with Eq.~5.49-5.51 of the master thesis of Robert
+Schade\cite{schade12_thesis}.  (Note, however, that I changed the sign
+of $f_{n}$ relative to that of $f_{n-1}$, etc. relative to my earlier
+notes.)
+
+%======================================================================
+\section{Pseudization}
+\label{sec:pseudiation}
+%======================================================================
+%======================================================================
+\subsection{Pseudization of core density and potential}
+%======================================================================
+For an all-electron quantity $f(\vec{r})$ we determine a pseudized
+quantity $\tilde{f}(\vec{r})$ according to the following procedure.
+\begin{eqnarray*}
+\tilde{f}(r)=
+\left\lbrace\begin{array}{ll}
+a+br^\lambda+cr^{\lambda+2}&\quad\textrm{for}\qquad r<r_c\\
+f(r)&\quad\textrm{for}\qquad r>r_c
+\end{array}
+\right.
+\end{eqnarray*}
+The parameters $a$, $b$ and $c$ are determined such that the pseudo
+quantity $\tilde{f}$ is differentiable.
+
+The construction depends on three parameters:
+\begin{itemize}
+\item $\tilde{v}(r=0)$
+\item $r_c$
+\item $\lambda$
+\end{itemize}
+
+%======================================================================
+\section{Nucleus with finite size}
+%======================================================================
+The nucleus is considered as a homogeneously charged sphere. The
+volume of the nucleus is proportional to the number of nucleons.  This
+allows to relate the radius directly to the mass of the
+nucleus.\cite{cooper53_pr92_801,hofstadter56_rmp28_214}
+\begin{eqnarray*}
+r_{nuc}=\sqrt[3]{\frac{M}{u}}\cdot1.2\cdot 10^{15} m 
+=\sqrt[3]{\frac{M}{m_e}}\cdot1.85635065215\cdot 10^{-6}  a_0
+\end{eqnarray*}
+where $M$ is the mass of the nucleus and
+$u=\frac{1}{12}m(C^{12})$. 
+
+The potential of the nucleus is therefore
+\begin{eqnarray*}
+v_{nuc}(r)=
+\left\lbrace
+\begin{array}{cc}
+\frac{-Ze^2}{r_{nuc}}\left(\frac{3}{2}-\frac{1}{2}\frac{r^2}{r_{nuc}^2}\right)
+&\textrm{for}\qquad r<r_{nuc}\\
+\frac{-Ze^2}{r}
+&\textrm{for}\qquad r>r_{nuc}
+\end{array}\right.
+\end{eqnarray*}
+
+%====================================================================
+\section{Fock term}
+%====================================================================
+We wish to replace part of the exchange correlation potential by the
+full exchange potential, that is by the Fock operator. We face the
+problem that, now, there is a fully non-local potential\footnote{The
+  energy for a fully nonlocal potential must be expressed as $\int
+  d^3r\int d^3r'\;
+  \psi^*(\vec{r})v(\vec{r},\vec{r'})\psi(\vec{r})$.} in the
+  Hamiltonian, which makes the radial Schr\"odinger equation
+  substantially more complex.
+
+The total energy has the form
+\begin{eqnarray*}
+E&=&E_{GGA}[n]+\alpha\left(-\frac{1}{2}\sum_{n,m,\sigma,\sigma'}
+\int dr\int dr'\;
+\frac{e^2\Psi^*_n(\vec{r},\sigma)\Psi^*_m(\vec{r}\,',\sigma')
+\Psi_m(\vec{r},\sigma)\Psi_n(\vec{r}\,',\sigma')}{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+-E_{GGA,X}[n]\right)
+\\
+n(\vec{r})&=&\sum_{n,\sigma}\Psi_n^*(\vec{r},\sigma)\Psi_n(\vec{r},\sigma)
+\end{eqnarray*}
+We treat each wave function as a Pauli spinor wave function
+with a spin up and a spin down component. Usually (without spin-orbit
+coupling) a state has either a pure spin up or a spin down component.
+The sum over $n$ runs over all electrons.
+The term $E_{GGA,x}$ is the exchange only contribution to the exchange
+functional.
+
+Formulate problem in the form $h_0$, $w$. etc. Define all variables.
+%====================================================================
+\subsection{Generalized perturbation theory}
+\label{sec:gpt}
+%====================================================================
+While we are able to obtain the solutions of the Schr\"odinger
+equation for a spherical, local or semi-local potential efficiently,
+the solution for a completely non-local potential is cumbersome even
+if it is spherical. Here we use an iterative approach, which obtains
+the result from an approximate solution. 
+
+The basic idea is inspired by perturbation theory.  In contrast to
+first order perturbation theory however, we do not require that the
+approximate solution obeys a Schr\"odinger equation for some kind of
+local hamiltonian exactly. This makes it more convenient for a
+self-consistent, iterative procedure.
+
+Probably, it is more related to the Green's function approach.
+
+Our goal is to find a solution for the inhomogeneous Schr\"odinger
+equation
+\begin{eqnarray*}
+\left(\hat{h}_0+\hat{w}-\varepsilon\right)
+|\phi\rangle&=&|I\rangle
+\end{eqnarray*}
+The hamiltonian shall be divided into an approximate hamiltonian
+$\hat{h}_0$, having a local potential only, and $\hat{w}$ is a
+correction including the non-local potential.
+
+We start with an approximate solution $|\phi_0\rangle$, and
+approximate energy $\varepsilon_0$. 
+\begin{eqnarray*}
+\left(\hat{h}_0+\hat{w}-\varepsilon_0-\delta\varepsilon\right)
+|\phi_0+\delta\phi\rangle&=&|I\rangle
+\\
+\Rightarrow\qquad
+\left(\hat{h}_0+\hat{w}-\varepsilon_0-\delta\varepsilon\right)
+|\delta\phi\rangle
+&=&-\left(\hat{h}_0+\hat{w}-\epsilon_0-\delta\varepsilon\right)
+|\phi_0\rangle
++|I\rangle
+\end{eqnarray*}
+Now we assume that $(\hat{w}-\delta\varepsilon)|\delta\phi\rangle$
+is small. We neglect it and arrive at
+\begin{eqnarray*}
+\left(\hat{h}_0-\varepsilon_0\right)
+|\delta\phi\rangle
+=-\left(\hat{h}_0+\hat{w}-\epsilon_0-\delta\varepsilon\right)
+|\phi_0\rangle
++|I\rangle
+\end{eqnarray*}
+The value of $\delta\varepsilon$ is determined by the boundary
+conditions. 
+
+\begin{myshadowminipage}{Iterative solution of the Schr\"odinger equation}
+In practice we determine $|\phi'\rangle$ and $|\partial_\epsilon
+\phi\rangle$ from
+\begin{eqnarray*}
+\left(\hat{h}_0-\varepsilon_0\right)
+|\phi\prime\rangle
+&=&-\left(\hat{h}_0+\hat{w}-\varepsilon_0\right)
+|\phi_0\rangle
++|I\rangle
+\\
+\left(\hat{h}_0-\varepsilon_0\right)
+|\partial_\varepsilon\phi\rangle
+&=&|\phi_0\rangle
+\\
+(\hat{h}_0-\epsilon_0)|\phi_{hom}\rangle&=&0
+\end{eqnarray*}
+We have explicitely also included the homogeneous solution, which may
+be admixed into the two states $|\phi'\rangle$ and
+$|\partial_\epsilon\phi\rangle$.
+
+With these objects we can improve our solution
+\begin{eqnarray*}
+|\phi\rangle=|\phi_0\rangle+|\phi'\rangle
++|\partial_\varepsilon\phi\rangle\delta\epsilon+|\phi_{hom}\rangle \alpha
+\end{eqnarray*}
+The parameters $\delta\epsilon$ and $\alpha$ are determined according
+to the boundary conditions: value, derivative at the integration
+bounds or energy or norm.
+The new state $|\phi\rangle$ is not yet the correct result, because we
+neglected second-order terms, but we can use it as new trial solution
+$|\phi_0\rangle$ in an iterative procedure.
+\end{myshadowminipage}
+
+Let us test the result
+\begin{eqnarray*}
+&&\left(\hat{h}_0+\hat{w}-\varepsilon_0-\delta\varepsilon\right)
+\Bigl(|\phi_0\rangle+|\phi'\rangle
++|\partial_\varepsilon\phi\rangle\delta\varepsilon
++|\phi_{hom}\rangle\alpha\Bigr)-|I\rangle
+\\
+&=&\left(\hat{h}_0+\hat{w}-\varepsilon_0-\delta\varepsilon\right)|\phi_0\rangle
+-|I\rangle
+\\
+&+&
+\underbrace{\left(\hat{h}_0-\varepsilon_0\right)|\phi'\rangle}
+_{-(\hat{h}_0+\hat{w}-\epsilon_0)|\phi_0\rangle+|I\rangle}
++\left(\hat{w}-\delta\varepsilon\right)|\phi'\rangle
+\\
+&+&
+\underbrace{\left(\hat{h}_0-\varepsilon_0\right)
+|\partial_\varepsilon\phi\rangle}_{|\phi_0\rangle}\delta\epsilon
++\left(\hat{w}-\delta\varepsilon\right)
+|\partial_\varepsilon\phi\rangle\delta\epsilon
+\\
+&+&
+\underbrace{\left(\hat{h}_0-\varepsilon_0\right)
+|\phi_{hom}\rangle}_{=0}\alpha
++\left(\hat{w}-\delta\varepsilon\right)
+|\phi_{hom}\rangle\alpha
+\\
+&=&
+\left(\hat{w}-\delta\varepsilon\right)
+\Bigl(|\phi'\rangle
++|\partial_\varepsilon\phi\rangle\delta\epsilon
++|\phi_{hom}\rangle\alpha\Bigr)
+\end{eqnarray*}
+We can use various boundary conditions: If we set
+$\delta\varepsilon=0$ then we obtain a fixed energy solution at
+$\epsilon=\varepsilon_0$. 
+
+
+On the other hand, we can also adjust $\delta\varepsilon$ to enforce
+boundary condition at some outer radius. This boundary condition could
+be that the value at some radius vanishes, or it could be that the
+solution has a specified logarithmic derivative
+$D=\partial_r\phi/\phi$ at some radius.
+
+Before we start imposing the boundary conditions we decompose the
+logarithmic derivative into a value $\phi_0$ and a derivative
+$\partial_r\phi$ at the given radius. These values do not need to be
+extracted from the initial wave function $\phi_0$ used above. We work
+with value and derivative in order to be able to deal with infinite
+logarithmic derivatives, which correspond to the particyularly
+interesting boundary condition of a hard box.
+\begin{eqnarray*}
+\frac{\partial_r\phi}{\phi}&\stackrel{!}{=}&\frac{\partial_r\phi_0}{\phi_0}
+\\
+\frac{\partial_r\phi_0+\partial_r\phi\prime
++\partial_r\partial_\epsilon\phi\delta\epsilon
++\partial_r\phi_{hom}\alpha}
+{\phi_0+\phi\prime+\partial_\epsilon\phi\delta\epsilon+\phi_{hom}\alpha}
+&=&\frac{\partial_r\phi_0}{\phi_0}
+\\
+\phi_0\partial_r\phi_0+\phi_0\partial_r\phi\prime
++\phi_0\partial_r\partial_\epsilon\phi\delta\epsilon
++\phi_0\partial_r\phi_{hom}\alpha
+&=&
+\phi_0\partial_r\phi_0+\phi\prime\partial_r\phi_0
++\partial_\epsilon\phi\partial_r\phi_0\delta\epsilon+\phi_{hom}\partial_r\phi_0 \alpha
+\end{eqnarray*}
+With the definition of the \textbf{Wronskian}\index{Wronskian}
+\begin{eqnarray*}
+W[f,g]\defas f\partial_r g-g\partial_r f
+\end{eqnarray*}
+we obtain
+\begin{eqnarray*}
+0&=&W[\phi_0,\phi_0+\phi']
++W[\phi_0,\partial_\epsilon\phi]\delta \epsilon
++W[\phi_0,\phi_{hom}]\alpha
+\\
+\delta\epsilon&=&
+-\frac{W[\phi_0,\phi_0+\phi']}{W[\phi_0,\partial_\epsilon\phi]}
+-\frac{W[\phi_0,\phi_{hom}]}{W[\phi_0,\partial_\epsilon\phi]}\alpha
+\end{eqnarray*}
+It is important to resolve the equation for $\delta\epsilon$ because
+both $W[\phi_0,\phi_0+\phi']$ and $W[\phi_0,\phi_{hom}]$ approach zero
+upon convergence, which would create a divide-by-zero.
+
+Thus the solution can be written as
+\begin{eqnarray*}
+|\phi\rangle&=&
+\Bigl(|\phi_0\rangle+|\phi'\rangle-|\partial_\epsilon\phi\rangle
+\frac{W[\phi_0,\phi_0+\phi']}{W[\phi_0,\partial_\epsilon\phi]}\Bigr)
++\Bigl(|\phi_{hom}\rangle-|\partial_\epsilon\phi\rangle
+\frac{W[\phi_0,\phi_{hom}]}{W[\phi_0,\partial_\epsilon\phi]}\Bigr)\alpha
+\end{eqnarray*}
+The boundary condition at the outer boundary is fulfilled for any
+value of $\alpha$. The value of $\alpha$ is then determined such that
+the wave function starts with the lowest possible order. The
+homogeneous solution always starts with $r^\ell$. Thus we can only
+remove that contribution from the inhomogeneous solution.
+
+
+%================================================================
+\subsubsection{Relation to nodeless wave functions}
+%================================================================
+We can look upon the nodeless construction in the following way: For
+each wave function we superimpose the wave functions with less nodes,
+so that the wave function starts with the lowest possible power.
+
+For our normal Hamiltonian, this implies that the node-less wave
+function starts as $r^{\ell+2n}$. The Knotensatz garantees that these
+wave functions are also nodeless (not proven!).
+
+With the Fock term, we can still form wave functions that begin like
+$r^{\ell+2n}$. We assume here that the radial part of a wave function
+only contains even orders in its power series expansion, which is a
+consequence of inversion symmetry (weak argument!). However it is not
+clear from this argument if the resulting state is also nodeless.
+
+
+
+
+
+%================================================================
+\subsubsection{Relation to Greens functions}
+%================================================================
+For the sake of completeness let me show here the relation in terms of
+Green's functions. This section does not produce funcamentally new
+insights.
+
+First we define a full Green's function $\hat{G}(\varepsilon)$ and an
+approximate Green's function $\hat{G}_0(\varepsilon)$ as follows:
+\begin{eqnarray*}
+\left(\hat{h}_0+\hat{w}-\varepsilon\right)\hat{G}(\varepsilon)&=&\hat{1}
+\\
+\left(\hat{h}_0-\varepsilon\right)\hat{G}_0(\varepsilon)&=&\hat{1}
+\end{eqnarray*}
+
+Then we express the full Green's function by the approximate one.
+\begin{eqnarray*}
+(\hat{G}_0^{-1}+\hat{w})\hat{G}&=&\hat{1}
+\\
+(1+\hat{G}_0\hat{w})\hat{G}&=&\hat{G}_0
+\\
+\hat{G}&=&\hat{G}_0-\hat{G}_0\hat{w}\hat{G}
+\\
+\hat{G}^{(n+1)}&=&\hat{G}_0-\hat{G}_0\hat{w}\hat{G}^{(n)}
+\end{eqnarray*}
+Here we introduced a series of Green's function, which converges to
+the full Green's function, if it converges.
+
+The inhomogeneous Schr\"odinger equation has the form
+\begin{eqnarray*}
+|\phi\rangle&=&\hat{G}|I\rangle
+\\
+|\phi^{(n+1)}\rangle&=&\hat{G}^{(n+1)}|I\rangle
+\\
+&=&\left(\hat{G}_0-\hat{G}_0\hat{w}\hat{G}^{(n)}\right)|I\rangle
+\\
+&=&\hat{G}_0|I\rangle-\hat{G}_0\hat{w}|\phi^{(n)}\rangle
+\\
+\hat{G}_0^{-1}
+\underbrace{\left(|\phi^{(n+1)}\rangle-|\phi^{(n)}\rangle\right)
+}_{|\delta\phi\rangle}
+&=&
+|I\rangle-\hat{w}|\phi^{(n)}\rangle
++\hat{G}_0^{-1}|\phi^{(n)}\rangle
+=
+-\Bigl[\left(\hat{G}_0^{-1}+\hat{w}\right)|\phi^{(n)}\rangle
+-|I\rangle\Bigr]
+\\
+(\hat{h}_0-\varepsilon)|\delta\phi\rangle&=&-
+\Bigl[\left(\hat{h}_0+\hat{w}-\varepsilon\right)|\phi^{(n)}\rangle
+-|I\rangle\Bigr]
+\end{eqnarray*}
+
+
+
+
+%====================================================================
+\subsection{Apply Fock potential to a function}
+%====================================================================
+\petertt{The Fock potential is not yet generalized to include the
+  small component nor spin-orbit coupling.}
+
+
+
+The Fock operator can be written in the form
+\begin{eqnarray*}
+V_{X}(\vec{r},\sigma,\vec{r'},\sigma')
+&=&-\sum_{j=1}^N \frac{e^2 \phi_j(\vec{r},\sigma)\phi^*_j(\vec{r'},\sigma')}
+{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+\end{eqnarray*}
+Here $\phi_j(\vec{r},\sigma)$ are spin
+orbitals. $\sigma\in\{\uparrow,\downarrow\}$. Usually, the wave
+functions have nonzero elements either for spin up or for
+spin-down components, but not both.
+
+If there are partially filled angular momentum shells, 
+the occupied and the unoccupied wave functions in the same shell
+have different shape and energies. Because only the occupied states
+determine energy and density, we use only the equations for the
+occupied states. 
+
+Now we want to apply this non-local potential to a function
+$f(\vec{r},\sigma)=f(|\vec{r}|)Y_{L_f}(\vec{r})\delta_{\sigma,\sigma_f}$
+with defined angular momentum and $s_z$ character.  Thus
+\begin{eqnarray*}
+f(\vec{r},\sigma)&=&\delta_{\sigma,\sigma_f}f(|\vec{r}|)Y_{L_f}(\vec{r})
+\\
+\phi_j(\vec{r},\sigma)&=&\delta_{\sigma,\sigma_j}\phi_j(|\vec{r}|)Y_{L_j}(\vec{r})
+\\
+g(\vec{r},\sigma)&=&\delta_{\sigma,\sigma_f}f(|\vec{r}|)Y_{L_f}(\vec{r})
+\end{eqnarray*}
+where it needts to be confirmed that $g$ can be represented by a
+single angular momentum and spin channel.
+
+
+\begin{eqnarray*}
+g(\vec{r},\sigma)&=&\sum_{\sigma'}\int d^3r'\;
+V_X(\vec{r},\sigma,\vec{r'},\sigma') f(\vec{r'},\sigma')
+\\
+&=&-\sum_{\sigma'}\int d^3r'\; 
+\sum_{j=1}^N\frac{e^2 \phi_j(\vec{r},\sigma)\phi^*_j(\vec{r'},\sigma')}
+{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+f(\vec{r'},\sigma')
+\\
+&=&
+-\sum_{\sigma'}\sum_{j=1}^N
+\underbrace{\phi_j(|\vec{r}|)Y_{L_j}(\vec{r})\delta_{\sigma,\sigma_j}
+}_{\phi_j(\vec{r},\sigma)}
+\int d^3r'\; \frac{e^2}
+{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+\underbrace{
+\phi^*_j(|\vec{r'}|)Y^*_{L_j}(\vec{r'})\delta_{\sigma',\sigma_j}
+}_{\phi^*_j(\vec{r'},\sigma')}
+\underbrace{
+f(|\vec{r'}|)Y_{L_f}(\vec{r'})\delta_{\sigma',\sigma_f}
+}_{f(\vec{r'},\sigma')}
+ \\
+&=&
+-\sum_{j=1}^N
+\underbrace{
+\underbrace{
+\left[\sum_{\sigma'}\delta_{\sigma',\sigma_j}\delta_{\sigma',\sigma_f}\right]
+}_{\delta_{\sigma_j,\sigma_f}}
+\delta_{\sigma,\sigma_j}
+}_{\delta_{\sigma_j,\sigma_f}\delta_{\sigma,\sigma_f}}
+\phi_j(|\vec{r}|)Y_{L_j}(\vec{r})
+\int d^3r'\; \frac{e^2}
+{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+\phi_j(|\vec{r'}|)
+f(|\vec{r'}|)
+\underbrace{
+Y^*_{L_j}(\vec{r'})Y_{L_f}(\vec{r'})
+}_{\sum_{L_\rho}C^*_{L_f,L_j,L_\rho}Y^*_{L_\rho}(\vec{r'})}
+\\
+&=&
+-\delta_{\sigma,\sigma_f}\sum_{j=1}^N\delta_{\sigma_j,\sigma_f}
+\phi_j(|\vec{r}|)Y_{L_j}(\vec{r})
+\sum_{L_\rho}C^*_{L_f,L_j,L_\rho}
+\int d^3r'\; \frac{e^2}
+{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+\phi^*_j(|\vec{r'}|)f(|\vec{r'}|)Y^*_{L_\rho}(\vec{r'})
+\\
+&=&
+-\delta_{\sigma,\sigma_f}\sum_{j=1}^N\delta_{\sigma_j,\sigma_f}
+\phi_j(|\vec{r}|)Y_{L_j}(\vec{r})
+\sum_{L_\rho}C^*_{L_f,L_j,L_\rho} Y_{L_\rho}(\vec{r})
+\\
+&&\times
+\underbrace{
+\int d^3r'\;\Bigl[Y^*_{L_\rho}(\vec{r'})\frac{1}{|\vec{r'}|^2}\delta(|\vec{r}|-|\vec{r'}|)
+\Bigl[\int d^3r''\; \frac{e^2}
+{4\pi\epsilon_0|\vec{r'}-\vec{r''}|}
+\phi_j(|\vec{r''}|)f(|\vec{r''}|)Y_{L_\rho}(\vec{r''})\Bigr]\Bigr]^*
+}_{=:v_{L_\rho}^{(j,f)}(|\vec{r}|)}
+\\
+&=&
+-\delta_{\sigma,\sigma_f}\sum_{j=1}^N\delta_{\sigma_j,\sigma_f}
+\phi_j(|\vec{r}|)
+\sum_{L_\rho}C^*_{L_f,L_j,L_\rho} 
+\underbrace{Y_{L_j}(\vec{r})Y^*_{L_\rho}(\vec{r})}_{\sum_{L_g}C_{L_\rho,L_j,L_g}Y_{L_g}}
+v_{L_\rho}^{(j,f)}(|\vec{r}|)
+\\
+&=&-\sum_{L_g}Y_{L_g}(\vec{r})\delta_{\sigma,\sigma_f}
+\sum_{j=1}^N\delta_{\sigma_j,\sigma_f}
+\sum_{L_\rho}C^*_{L_f,L_j,L_\rho} C_{L_\rho,L_j,L_g}
+\phi_j^*(|\vec{r}|)v_{L_\rho}^{(j,f)}(|\vec{r}|)
+\end{eqnarray*}
+where $C_{L,L',L''}:=\int d\Omega\;
+Y^*_L(\vec{r})Y_{L'}(\vec{r})Y_{L''}(\vec{r})$ is the Gaunt
+coefficient, so that
+\begin{eqnarray*}
+Y^*_L(\vec{r})Y_{L'}(\vec{r})=\sum_{L''}C_{L,L',L''}Y_{L''}(\vec{r})
+\end{eqnarray*}
+and the potential is defined as
+\begin{eqnarray*}
+v_{L_\rho}^{j,f}(\vec{r})&=&\int d^3r'\;
+\frac{e^2\phi_j(|\vec{r'}|)f(|\vec{r'}|)Y_{L_{\rho}(\vec{r'})}}
+{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+\end{eqnarray*}
+The potential has a pure $L_\rho$ character and is obtained using
+RADIAL\$POISSON.
+
+Furthermore we used the identity
+\begin{eqnarray*}
+\int d^3r'\;  \Bigl[Y^*_L(\vec{r'})\frac{1}{|\vec{r'}|^2}
+\delta(r-|\vec{r'}|)\Bigr]f(\vec{r})
+&=&\int d^3r'\;  
+\Bigl[Y^*_L(\vec{r'})\frac{1}{|\vec{r'}|^2}\delta(r-|\vec{r'}|)\Bigr]
+\Bigl[\sum_{L'}f_{L'}(|\vec{r'}|)Y_{L'}(\vec{r'})\Bigr]
+\\
+&=&\sum_{L'}
+\underbrace{\Bigl[\int d\Omega\; Y_{L'}(\vec{r'}) Y^*_L(\vec{r'})\Bigr]}_{\delta_{L,L'}}
+\Bigl[\int dr'\;r'^2 f_L'(r')\frac{1}{{r'}^2}\delta(r-r')\Bigr]
+\\
+&=&\Bigl[\int dr'\;f_L(r')\delta(r-r')\Bigr]
+=f_L(r)
+\end{eqnarray*}
+
+
+Now we exploit that the radial functions $\phi_j$ do not depend on
+$m_j$ and $\sigma_j$, so that we can average over $m_j$ and
+$\sigma_j$. Note that here we assume that we average over complete
+angular momentm shells, which is not necessarily the case. Here
+caution is required.
+\begin{eqnarray*}
+g(\vec{r},\sigma)
+&=&-\sum_{L_g}Y_{L_g}(\vec{r})\delta_{\sigma,\sigma_f}
+\sum_{j=1}^N
+\sum_{\ell_\rho}
+\left(\frac{1}{2(2\ell_j+1)}
+\sum_{m_j}\sum_{m_\rho}C_{L_j,L_f,L_\rho} C_{L_j,L_g,L_\rho}\right)
+\phi_j^*(|\vec{r}|)v_{L_\rho}^{(j,f)}(|\vec{r}|)
+\end{eqnarray*}
+
+The next step is only physically motivated and implies
+\begin{eqnarray*}
+\frac{4\pi}{ (2\ell_1+1)(2\ell_2+1)}
+\sum_{m_1,m_2}C_{L_1,L_2,L_3} C_{L_1,L_2,L'_3}&=&K_{\ell_1,\ell_2,\ell_3}\delta_{L_3,L'_3}
+\\
+\qquad\text{with}\qquad K_{\ell_1,\ell_2,\ell_3}&=&
+\frac{4\pi\sum_{m_1,m_2,m_3}C_{L_1,L_2,L_3}^2}
+{(2\ell_1+1)(2\ell_2+1)(2\ell_3+1)}
+\end{eqnarray*}
+It has been tested empirically using the routine SPHERICAL\$TESTGAUNTREL.
+
+\begin{eqnarray*}
+g(\vec{r},\sigma)
+&=&-\sum_{L_g}Y_{L_g}(\vec{r})\delta_{\sigma,\sigma_f}
+\sum_{j=1}^N
+\sum_{\ell_\rho}\frac{2\ell_\rho+1}{8\pi}K_{\ell_j,\ell_\rho,\ell_f}\delta_{L_f,L_g}
+\phi_j^*(|\vec{r}|)v_{L_\rho}^{(j,f)}(|\vec{r}|)
+\\
+&=&\left[-\sum_{j=1}^N
+\sum_{\ell_\rho}\frac{2\ell_\rho+1}{8\pi}K_{\ell_j,\ell_\rho,\ell_f}
+\phi_j^*(|\vec{r}|)v_{L_\rho}^{(j,f)}(|\vec{r}|)\right]
+Y_{L_g}(\vec{r})\delta_{\sigma,\sigma_f}
+\\
+&=&\left[-\sum_{j=1}^N
+\sum_{\ell_\rho}\frac{2\ell_\rho+1}{8\pi}K_{\ell_j,\ell_\rho,\ell_f}
+\phi_j^*(|\vec{r}|)v_{L_\rho}^{(j,f)}(|\vec{r}|)\right]
+Y_{L_g}(\vec{r})\delta_{\sigma,\sigma_f}
+\end{eqnarray*}
+In the last step we exploited that the radial functions of
+$|\phi_j\rangle$ do not depend on the spin index. Because ths sum is
+always performed over complete shells including the spin multiplet,
+the $\delta$-function has been replaced by a factor $\frac{1}{2}$.
+This step needs to be reconsidered when spin orbit coupling is
+introduced.
+
+Thus we find, as expected from the rotational symmetry, that the
+potential preserves angular momentum and spin and that
+\begin{eqnarray*}
+g_{L_f,\sigma_f}(|\vec{r}|)&=&
+-\sum_{j=1}^N
+\sum_{\ell_\rho}
+\left(\frac{2\ell_\rho+1}{8\pi}K_{\ell_j,\ell_f,\ell_\rho}\right)
+\phi_j^*(|\vec{r}|) v_{L_\rho}^{(j,f)}(|\vec{r}|)
+\end{eqnarray*}
+
+The recipe goes as follows 
+\begin{enumerate}
+\item First we determine
+\begin{eqnarray*}
+K(\ell_j,\ell_\rho,\ell_f)\defas
+\frac{4\pi}{(2\ell_j+1)(2\ell_\rho+1)}\sum_{m_j,m_\rho}C_{L_j,L_\rho,L_f}^2
+\end{eqnarray*}
+
+\item Then we determine
+\begin{eqnarray*}
+v_{L_\rho}(|\vec{r}|)&=&
+\int d^3r'\;\Bigl[Y^*_{L_\rho}(\vec{r'}\frac{1}{|\vec{r'}|^2}\delta(|\vec{r}|-|\vec{r'}|)\Bigr]
+\Bigl[\int d^3r''\; \frac{e^2}
+{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+\phi_j(|\vec{r''}|)f(|\vec{r''}|)Y_{L_\rho}(\vec{r''})\Bigr]
+\end{eqnarray*}
+
+The routine radial\$poisson solves
+\begin{eqnarray*}
+v(\vec{r})&=&\int d^3r'\;\frac{e^2\rho(\vec{r'})}{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+\\
+\rho(\vec{r})&=&\rho_L(|\vec{r}|)Y_L(\vec{r})
+\\
+v(\vec{r})&=&v_L(|\vec{r}|)Y_L(\vec{r})
+\\
+v_L(\vec{r})
+&=&\int d^3r'; \Bigl[Y^*_L(\vec{r})\frac{1}{|\vec{r'}^2}
+\delta(|\vec{r}|-|\vec{r'}|)\Bigr]
+v(\vec{r})
+\\
+&=&\int d^3r'; \Bigl[Y^*_L(\vec{r})\frac{1}{|\vec{r'}^2}
+\delta(|\vec{r}|-|\vec{r'}|)\Bigr]
+\int d^3r^{''}\;\frac{e^2\rho_L(|\vec{r''}|)Y_L(\vec{r''})}{4\pi\epsilon_0|\vec{r'}-\vec{r''}|}
+\end{eqnarray*}
+
+\item Finally we obtain the radial part of the result as
+\begin{eqnarray*}
+g_{L_f}(|\vec{r}|)&=&-\sum_{j}f_j\sum_{\ell_\rho}
+\frac{(2\ell_\rho+1)}{8\pi}K_{\ell_j,\ell_\rho,\ell_f}
+\phi_j(|\vec{r}|)v_{L_\rho}(|\vec{r}|)
+\end{eqnarray*}
+In our notation the
+occupation $f_j$ is unity, because the sum over j runs over all
+states.  The occupation $f_j$ has been introduced so that the sum over
+j can also be considered a sum over all shells.
+\end{enumerate}
+
+%=====================================================================
+\chapter{Code structure}
+%=====================================================================
+%=====================================================================
+\section{Flowchart of the paw\_setups object}
+%=====================================================================
+\petertt{This is lifted from my notes and needs to be updated.}
+
+
+\begin{enumerate}
+\item collect input data
+\begin{itemize}
+\item AEZ: atomic number
+\item ZV:  Number of valence electros
+\item $r_{c,\ell}$,$\lambda_\ell$: Parameters for pseudo-partial-wave
+  construction
+\item $r_{c,small}$: The compensation density is proportional to
+  $\e{-(r/r_{c,small})^2}$
+\item $r_{c,big}=1/\sqrt{0.218}$. The extended compensation density is
+  proportional to $\e{-(r/r_{c,big})^2}$ (currently hardwired,
+  probably too small.)
+\item $\lambda,r_c,f(r=0)$: Parameters for pseudopotential construction 
+\item $\lambda,r_c,f(r=0)$: Parameters for pseudocore construction 
+\item The radial grid is encoded in grid-id ``GID''
+\item Atomic mass
+\item PSG2,PSG4
+\item NPRO number of partial waves per l-channel
+\item LRHOX density is expanded up to maximum angular momentum LRHOX
+\end{itemize}
+\item AESCF performs an all-electron self-consistent DFT calculation: The
+  boundary condition is a hard box with radius equal to the third-last
+  radial grid point. The calculation considers only spherical
+  densities and ignores spin-polarization. This is important so that the
+  setup construction does not artificially break the symmetry of the
+  environment.
+
+  One obtains the potential $v(\vec{r})$ of the all-electron atom, the
+  all-electron wave functions $|\psi_n\rangle$., the one-particle
+  energies $\epsilon_n$
+
+  The procedure is described in more detail in section
+  \ref{sec:atomlibaescf}.
+
+\item ISCATT is a variable that is zero for the occupied partial wave
+  with the highest energy for a given angular momentum. ISCATT=-1
+  identifies a semi-core state, and ISCATT=1 identifies a scattering
+  state.
+\item calculate all-electron core density $n^C(\vec{r})$.
+\item calculate pseudo core density pscore $\tilde{n}^C(\vec{r})$ from
+  the all-electron core density. The method is described in section
+  \ref{sec:pseudiation}.
+\item MAKEPARTIALWAVES
+\begin{itemize}
+\item \textbf{pseudo potential:} construct pseudopotential PSPOT from
+  the all-electron potential in a hard box with radius ROUT, provided
+  on input. The method is described in section~\ref{sec:pseudiation}.
+%
+\item \textbf{nodeless atomic wave functions:} construct nodeless wave
+  functions UOFI.  Even for calculations with a Fock contribution,
+  UOFI will be determined here only for the local potential and it
+  will be updated later with the Fock potential.
+\begin{eqnarray*}
+\left[\hat{h}_{loc}-\epsilon_n\right]|u_n\rangle&=&|u_{n-1}\rangle
+\\
+u_n(0)=\partial_r u_n(0)&=&0\qquad\text{for}\qquad n>0
+\end{eqnarray*}
+%
+\item \textbf{nodeless partial waves:} construct nodeless partial
+  waves NLPHI.  The lowest partial wave for each $\ell$ will be
+  constructed with a hard sphere potential at radius ROUT, just as the
+  nodeless wave function constructed above.  The higher partial waves
+  will be constructed with the same logarithmic derivative at RBND as
+  the first partial wave for the same $\ell$.
+
+  The lowest partial wave for each $\ell$ uses the highest core state
+  as inhomogneity, while the higher partial waves use the next lower
+  partial wave as inhomogeneity. Thus a sequence of nodeless partial
+  waves in introduced. One potential disadvantage of this
+  construction is that the inhomogeneity extends further out with each
+  partial wave.
+
+\begin{eqnarray*}
+\left[\hat{h}_{loc}-\bar{\epsilon}_n\right]|\phi^{nl}_{n}\rangle&=&
+|\phi^{nl}_{n-1}\rangle
+\\
+\hat{t}|\phi^{nl}_n\rangle
+&=&|\phi^{nl}_{n-1}\rangle+(\bar{\epsilon}_n-v)|\phi^{nl}_n\rangle
+\end{eqnarray*}
+where $|\phi^{nl}_{-1}\rangle=|u_c\rangle$ is the nodeless wave
+function of the highest core state. The energies $\bar{\epsilon}_n$
+for the partial waves are EOFLN. (The energies of the atomic wave
+functions are EOFI).
+
+  (Using the parameter TSMALLBOX=T the boundary conditions can be
+  changed so that all partial waves experience a hard sphere at
+  RBND. This choice has the disadvantage that the lowest partial wave
+  is chosen at a fairly high energy.)
+%
+\item \textbf{add Fock term to nodeless wave functions:} This step is
+  only done for Fock contribution in the potential: Starting from the
+  nodeless wave function obtained for the local potential only, the
+  nodeless atomic wave functions are constructed with the Fock
+  contribution.
+  \begin{eqnarray*}
+  \left(\hat{h}_{loc}-\epsilon_0\right)|\phi'\rangle&=&
+  -\left(\hat{h}_{loc}+v_{nl}-\epsilon_0\right)|\phi_0\rangle+|g\rangle
+\\
+  \left(\hat{h}_{loc}-\epsilon'\right)|\dot{\phi}\rangle&=&|\phi_0\rangle
+\\
+  \left(\hat{h}_{loc}-\epsilon'\right)|\phi_{hom}\rangle&=&0
+\\
+|\phi\rangle&=&|\phi_0\rangle+|\phi'\rangle
++|\dot{\phi}\rangle\delta\epsilon+|\phi_{hom}\rangle\alpha
+  \end{eqnarray*}
+  The variables are adjusted to fulfill the boundary conditions.  The
+  inhomogeneity is adapted as well.  The basic equation is derived
+  later in Section~\ref{sec:gpt}.
+%
+\item \textbf{add Fock term to partial waves:} This step is only done
+  for Fock contribution in the potential: Starting from the nodeless
+  partial waves and the inhomogeneity constructed consistently with
+  the Fock potential the nodeless partial waves are updated.
+%
+\item \textbf{rescale:} rescale wave functions and partial waves such
+  that the first partial wave is normalized. Only one scale factor per
+  $\ell$ is allowed!
+%
+\item For plotting purposes, we introduce factors
+  $f^\phi_n=$\verb|PHISCALE| for the partial waves and
+  $f^\psi_n=$\verb|PSISCALE| for the energy eigenstates, so that
+  $|u_n\rangle f_n$. have about the same size.
+   \begin{eqnarray*}
+    f^{\psi}_n=\prod_{j=1}^n(\epsilon_j-\epsilon_n)
+   \\
+    f^{\phi}_\alpha=\prod_{j=c+1}^\alpha(\bar{\epsilon}_j-\bar{\epsilon}_\alpha)
+  \end{eqnarray*}
+   where the sum includs only states with the same angular momentum.
+%
+\item \textbf{node-reduced partial waves:} construct
+  $|q_{c+1}(\epsilon_{n})\rangle$ functions, named \verb|QN|. Here
+  $c$ is the index of the highest state treated explicitely as core
+  state. Thus the index $c+1$ refers to the first wave function
+  included in the valence shell. The functions
+  $|q_{c+1}(\epsilon_{n+i})\rangle$ are not necessarily nodeless.  The
+  number of nodes for the $|q_{c+1}(\epsilon)\rangle$ function is
+  equal to the number of nodes of the corresponding all-electron
+  partial wave $|\phi(\epsilon)\rangle$ minus the number of core
+  states with the same angular momentum.
+
+We use \eq{eq:qmofepsilonanandnodeless} which is repeated below:
+\begin{eqnarray*}
+|q_{c+1}(\epsilon_n)\rangle&\eqrel{eq:qmofepsilonanandnodeless}{=}&
+\sum_{i=c+1}^n|\phi^{nl}_i\rangle
+\prod_{j=c+1}^{i-1}(\bar{\epsilon}_n-\bar{\epsilon}_j)
+\end{eqnarray*}
+This implies that the $|q_{c+1}(\epsilon_{n})\rangle$ and $|\phi^{nl}_n\rangle$
+functions are scaled such that their long-range tails differ.
+The long range parts behave as
+\begin{eqnarray*}
+|q_{c+1}(\epsilon_{n})\rangle\leftrightarrow
+|\phi^{nl}_{n}\rangle
+\prod_{j=c+1}^{n-1}(\epsilon_{n}-\epsilon_j)
+\end{eqnarray*}
+Thus we introduce a factor
+$qbyu_n=\prod_{j=c+1}^{n-1}\frac{1}{\bar{\epsilon}_{n}-\bar{\epsilon}_j}$.  
+
+
+A matrix $\mat{T}$ is constructed that describes the transformation
+from the nodeless partial waves to the $|q_{c+1}(\epsilon_n)\rangle$
+functions.
+\begin{eqnarray*}
+|q_{c+1}(\epsilon_n)\rangle&=&\sum_m|\phi^{nl}_m\rangle T_{m,n}
+\end{eqnarray*}
+This matrix will later allow to perform the back transform.
+%
+\item \textbf{rescale nodeless partial waves:} The nodeless
+  $|\phi^{nl}_n\rangle$ functions are now rescaled so that that their
+  long-range-behavior matches that of
+  $|q_{c+1}(\epsilon_{n+i})\rangle$. The scale factor is
+  \verb|ubyq|$=1/T_{n,n}$,
+  i.e. $|\phi^{nl}_n\rangle\leftarrow|\phi^{nl}_n\rangle T_{n,n}$.
+
+  The scaling of $|q_{c+1}(\epsilon_n)\rangle$ has been adopted
+  because the pseudization has to depend on the
+  q-function. Pseudization to nodeless functions does not work over
+  several bands.
+
+  From now on we \textbf{must no more use} the relation
+  $(\hat{h}-\epsilon_n)|\phi^{nl}_n\rangle=|\phi^{nl}_{n-1}\rangle$!
+
+\item \textbf{all-electron partial waves:} Construct all-electron
+  partial waves by mixing in the core states. We use the nodeless
+  construction instead of reorthogonalization. (The two methods differ
+  because the small component is ignored.)
+
+  We use \eq{eq:fromqntophi} which has the form
+  \begin{eqnarray*}
+    |\phi(\epsilon_n)\rangle&=& |q_{c+1}(\epsilon_n)\rangle+\sum_{i=1}^{c}
+    |u_i\rangle\prod_{j=i}^{c}\frac{1}{\bar{\epsilon}_n-\epsilon_j}
+    \label{eq:fromqntophi}
+  \end{eqnarray*}
+%
+\item \textbf{pseudo partial waves:} Construct pseudo partial waves
+\begin{itemize}
+\item Type HBS: The technique is analogous to the procedure of Hamann
+  Bachelet Schl\"uter.
+The equation 
+\begin{eqnarray*}
+\left[\frac{\vec{p}^2}{2m}+\tilde{v}
++ A\e{-\left(\frac{r}{r_{c,\alpha}}\right)^{\lambda_\alpha}}-\epsilon_\alpha\right]
+|\tilde\phi_\alpha\rangle=0
+\end{eqnarray*}
+is solved iteratively with differing $A$ until the logaritmic
+derivative and the number of nodes of the pseudo and true partial wave
+are identical. The logarithmic derivative is taken at a radius beyond
+which the following two conditions are fulfilled
+\begin{eqnarray*}
+\left|\frac{1}{\langle\vec{r}|q_n(\epsilon_\alpha)\rangle}
+\langle\vec{r}|
+\frac{p^2}{2m}+\tilde{v}-\epsilon_\alpha|q_n(\epsilon_\alpha)\rangle\right|
+<10^{-5}
+\\
+\e{-\left(\frac{r}{r_{c,\alpha}}\right)^{\lambda_\alpha}}<10^{-8}
+\end{eqnarray*}
+Note that this does not require the all-electron and the pseudo
+potential or partial waves to be identical! The partial waves may
+differ by an admixture of the core wave functions.
+
+Number of nodes and logarithmic derivative are encoded in the function
+\begin{eqnarray*}
+\alpha(\epsilon)\defas
+\frac{1}{2}-\frac{1}{\pi}
+\atan(\frac{\partial_r\phi(\epsilon,r)}{\phi(\epsilon,r)})+NN
+\end{eqnarray*}
+which I will name generalized phaseshift.  According to the Wigner
+rule, a band would lie between an half-integer and an integer value of
+this generalized phaseshift. 
+\begin{eqnarray*}
+\partial_r\phi=0&\qquad\Rightarrow\qquad&\alpha= NN+\frac{1}{2}\qquad\text{bond}
+\\
+\phi=0&\qquad\Rightarrow\qquad&\alpha=NN+1\qquad\text{antibond}
+\end{eqnarray*}
+
+
+\item Type Kerker:
+\end{itemize}
+\item construct bare projectors $\langle\bar{p}_\alpha|$:
+\begin{eqnarray*}
+|\bar{p}_\alpha\rangle
+&=&\left[\frac{\vec{p}^2}{2m}+\tilde{v}-\epsilon_\alpha\right]
+|\tilde{\phi}_\alpha\rangle
+\end{eqnarray*}
+This is a result of the closure relation that the PAW equations are
+exactly fulfilled for the pseudo partial waves.
+\item Biorthogonality
+  $\langle\tilde{p}_\alpha|\tilde{\phi}_\beta\rangle=\delta_{\alpha,\beta}$:
+
+The biorthogonality is enforced by a Gram-Schmidt-like procedure
+\begin{eqnarray*}
+|\tilde{\phi}'_\alpha\rangle&=&\sum_\beta |\tilde{\phi}_\beta\rangle A_{\beta\alpha}
+\\
+|\tilde{p}'_\alpha\rangle&=&\sum_\beta |\bar{p}_\beta\rangle B_{\beta,\alpha}
+\end{eqnarray*}
+so that 
+\begin{eqnarray*}
+\langle\tilde{p'}_\alpha|\tilde{\phi'}_\beta\rangle=\delta_{\alpha,\beta}
+\end{eqnarray*}
+The matrices $\mat{A}$ and $\mat{B}$ are triangular, i.e. $A_{i,j}=0$
+for $i>j$ and similar for $\mat{B}$.
+
+So-far, only the matrices $\mat{A}$ and $\mat{B}$ have been computed. The partial waves and
+projector functions are not updated.  
+Once the matrices $A$ and $B$ have been computed we cal
+\begin{eqnarray*}
+|\tilde{\phi}^{new}_\alpha\rangle&=&|\tilde{\phi}_\alpha\rangle
+\\
+|\tilde{p}^{new}_\alpha\rangle&=&\sum_\beta |\bar{p}_\beta\rangle C_{\beta,\alpha}
+\qquad\text{with $\mat{C}=\mat{B}\mat{A}^{\dagger}$}
+\end{eqnarray*}
+
+
+Only the projector functions are transformed. The partial waves remain
+unchanged and keep their physical meaning.
+
+\item Determine 
+\begin{eqnarray*}
+dT_{\alpha,\beta}&=&
+\langle\phi_\alpha|\frac{\vec{p}^2}{2m}|\phi_\beta\rangle
+-\langle\tilde{\phi}_\alpha|\frac{\vec{p}^2}{2m}|\tilde{\phi}_\beta\rangle
+\\
+dO_{\alpha,\beta}&=&
+\langle\phi_\alpha|\phi_\beta\rangle
+-\langle\tilde{\phi}_\alpha|\tilde{\phi}_\beta\rangle
+\\
+dH_{\alpha,\beta}&=&
+\langle\phi_\alpha|\frac{\vec{p}^2}{2m}+v|\phi_\beta\rangle
+-\langle\tilde{\phi}_\alpha|\frac{\vec{p}^2}{2m}+\tilde{v}|\tilde{\phi}_\beta\rangle
+\end{eqnarray*}
+In practive we do not use the kinetic energy operator
+$\hat{t}=\frac{\hat{\vec{p}}^2}{2m}$, but the expression
+$\hat{t}|\phi_\alpha
+\rangle=(\epsilon_\alpha-v)|\phi_\alpha\rangle$. There are two reasons
+for it. Applying a differential operator to a function stored on a
+grid, introduces numerical noise. The differential operator as used by
+us is strictly consistent with the Schr\"odinger equation including
+all numeric errors. Last but not least, our method automatically
+incorporates relativistic effects in the PAW method.
+\item construct scattering wave functions:
+
+First the nodeless scattering wave function is constructed
+\begin{eqnarray*}
+(\hat{h}-\epsilon_\gamma)|u^{scatt}\rangle=|u_n\rangle
+\end{eqnarray*}
+The scattering wave function $|q^{scatt}_{c+1}\rangle$
+and the pseudo version of the scattering wave function are set equal
+to $|u^{scatt}\rangle$. The reason is that both must not include any
+contribution from the head function. Remember that they do not obey
+the equations of the corresponding energy derivative wave functions!
+Then we project out the core wave function to obtain the all-electron
+version of scattering wave function
+\begin{eqnarray*}
+|q_{c+1}^{scatt}\rangle&=&|u^{scatt}\rangle
+\\
+|\tilde{\phi}^{scatt}\rangle&=&|u^{scatt}\rangle
+\\
+|\phi^{scatt}\rangle&=&|u^{scatt}\rangle-\sum_{i=1}^c |\phi_i\rangle\langle\phi_i|u^{scatt}\rangle
+\end{eqnarray*}
+
+\item calculate pseudo density: 
+\begin{itemize}
+\item We determine the PAW bound states
+  using the same boundary conditions as the all-electron calculation
+  (typically a hard box with radius equal to the third grid point from
+  the outside.)
+\begin{eqnarray*}
+\left[\frac{\vec{p}^2}{2m}+v-\epsilon_n
+\right]|\psi_n\rangle&=&0
+\\
+\left[\frac{\vec{p}^2}{2m}+\tilde{v}-\epsilon_n
++\sum_{\alpha,\beta}|\tilde{p}_\alpha\Bigl(
+dH_{\alpha,\beta}-\epsilon_n dO_{\alpha,\beta}\Bigr)
+\langle\tilde{p}_\beta|\right]|\tilde\psi_n\rangle&=&0
+\end{eqnarray*}
+The energies are determined independently. A deviation of the PAW
+bound energy from the original all-electron energy larger than
+$10^{-2}$~H, will cause an error message.
+
+\item Determine projections $\langle\tilde{p}_\alpha|\tilde\psi_n\rangle$.
+
+\item Normalize the all-electron and pseudo wave functions so that
+\begin{eqnarray*}
+\langle\tilde{\psi}_n|\tilde{\psi}_n\rangle
++\sum_{\alpha,\beta}\langle\tilde{\psi}_n|\tilde{p}_\alpha\rangle dO_{\alpha,\beta}
+\langle\tilde{p}_\beta|\tilde{\psi}_n\rangle &=&1
+\\
+\langle\psi_n|\psi_n\rangle&=&1
+\end{eqnarray*}
+The sign of the all-electron wave function is changed if it is
+inconsistent with the corresponding pseudo wave function.
+
+\item The densities are determined
+\begin{eqnarray*}
+n(\vec{r})&=&\sum_n f_n\psi^*_n(\vec{r})\psi_n(\vec{r})
+\\
+\tilde{n}(\vec{r})&=&\sum_n f_n\tilde{\psi}^*_n(\vec{r})\tilde{\psi}_n(\vec{r})
+\end{eqnarray*}
+\end{itemize}
+\item unscreening: The potential $\bar{v}(\vec{r})$ is constructed sich that
+\begin{eqnarray*}
+\tilde{v}(\vec{r})=\bar{v}(\vec{r})+\int d^3r'\;
+\frac{e^2\tilde{n}(\vec{r'})+e^2Z(\vec{r'})}{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
++\mu_{xc}([\tilde{n}],\vec{r})
+\end{eqnarray*}
+\end{itemize}
+\end{enumerate}
+
+
+
+
+%======================================================================
+\section{ATOMLIB\$AESCF}
+\label{sec:atomlibaescf}
+%======================================================================
+This routine performs a selfconsistent all-electron calculation for a
+spherical, non-spin-polarized all-electron atom.
+
+The boundary conditions are chosen such that there is a node at ROUT,
+which is currently set (outside the routine) to the third radial grid
+point from the end.
+
+The operation of the subroutine is directed by a text variable ``key''.
+\begin{itemize}
+\item NONREL or REL: specified a relativistic or non-relativistic
+  calculation.
+\item NONSO or SO: switches spin orbit coupling on or off. (the option
+  SO is not implemented.)
+\item START: initializes occupations, angular momenta, starting
+  potential, etc.
+\end{itemize}
+
+The orbitals are filled in the sequence
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+n & $\ell$\\
+\hline
+1 & 0 \\
+2 & 0,1\\
+3 & 0,1 \\
+4 & 0,2,1 \\
+5 & 0,2,1 \\
+6 & 0,3,2,1 \\
+7 & 0,3,2,1\\
+\hline
+\end{tabular}
+\end{center}
+for spin-orbit coupling each multiplet is divided into a $2\ell$
+states with antiparallel spin and orbit and $2\ell+2$ parallel states.
+
+In the end of the self-consistent calculations the states are ordered
+according to increasing energues.
+
+%======================================================================
+\subsubsection{Dirac equation}
+%======================================================================
+The Dirac equation for the large component has the form
+\begin{eqnarray*}
+\left\lbrace
+(1+D)\frac{\hat{p}^2}{2m}+V-\epsilon
+-\frac{\hbar^2}{2m_0}[\partial_r,D]_-\partial_r
++\frac{[\partial_r,D]_-}{m_0|\vec{r}|}\vec{L}\vec{S}
+\right\rbrace|\phi\rangle=0
+\end{eqnarray*}
+where $D$ is the measure for relativistic effects
+\begin{eqnarray*}
+D(r)=\frac{m_0}{M}-1=\frac{-1}{1+\frac{2m_0c^2}{\epsilon-V(\vec{r})}}
+\end{eqnarray*}
+with $M$ the relativistic mass. $D(\vec{r})$ is recalculated in each
+step for the corresponding energy. For non-relativistic calculations
+$D(r)$ is set to zero.
+
+For a spherical potential we obtain the radial Dirac equation for the
+large component.
+\begin{eqnarray*}
+\left\lbrace
+(1+D)\left[-\frac{1}{2r}\partial_r^2 r+\frac{\ell(\ell+1)}{2r^2}\right]
+-\frac{1}{2}D'\partial_r+\frac{X}{2r}D'+V-e\right\rbrace R(r)=0
+\end{eqnarray*}
+where $D'(r)=\partial_rD(r)$ and
+\begin{eqnarray}
+X=\left\lbrace\begin{array}{ll}
+\ell &\qquad\textrm{for parallel spin and orbital angular momentum}\\
+-\ell-1 &\qquad\textrm{for anti-parallel spin and orbital angular momentum}\\
+0&\qquad\textrm{for a scalar relativistic equation}
+	      \end{array}\right.
+\end{eqnarray}
+
+\textbf{Attention!} At this point the small component is neglected
+both for the normalization and for the charge density.
+
+%======================================================================
+\subsubsection{Potential of the nucleus}
+%======================================================================
+The nucleus is considered as a homogeneously charged sphere. The
+volume of the nucleus is proportional to the number of nucleons.  This
+allows to relate the radius directly to the mass of the nucleus.\cite{cooper53_pr92_801,hofstadter56_rmp28_214}
+\begin{eqnarray*}
+r_{nuc}=\sqrt[3]{\frac{M}{u}}\cdot1.2\cdot 10^{15} m 
+=\sqrt[3]{\frac{M}{m_e}}\cdot1.85635065215\cdot 10^{-6}  a_0
+\end{eqnarray*}
+where $M$ is the mass of the nucleus and
+$u=\frac{1}{12}m(C^{12})$. 
+
+The potential of the nucleus is therefore
+\begin{eqnarray*}
+v_{nuc}(r)=
+\left\lbrace
+\begin{array}{cc}
+\frac{-Ze^2}{r_{nuc}}\left(\frac{3}{2}-\frac{1}{2}\frac{r^2}{r_{nuc}^2}\right)
+&\textrm{for}\qquad r<r_{nuc}\\
+\frac{-Ze^2}{r}
+&\textrm{for}\qquad r>r_{nuc}
+\end{array}\right.
+\end{eqnarray*}
+
+%======================================================================
+\subsubsection{Potential: ATOMLIB\$BOXVOFRHO}
+%======================================================================
+Calculates the output potential for a given chargedensity. 
+
+The integrations are performed only up to a selected radius RAD. In
+order to do the interpolation properly, the density must have a zero
+at the radius, and it must be specified for two grid points beyond
+RAD.
+
+
+First we determine Hartree energy and potential:
+
+Determine total charge
+\begin{eqnarray*}
+Q=\int d^3r\;\rho(\vec{r})-Z
+\end{eqnarray*}
+and then determine 
+\begin{eqnarray*}
+v_H(\vec{r})&=&\left\lbrace
+\begin{array}{ll}
+v_{nuc}(\vec{r})+\int d^3r'\;
+\frac{e^2\rho(\vec{r'})}{4\pi|\vec{r}-\vec{r'}|}
++\Delta_H &\qquad\text{for}\qquad r<RAD\\
+\\
+-\frac{Q}{|\vec{r}|} &\qquad\text{for}\qquad r>RAD\\
+\end{array}\right.
+\\
+E_H&=&
+\frac{1}{2}\int d^3r\; \frac{e^2\rho(\vec{r})\rho(\vec{r'})}
+{4\pi|\vec{r}-\vec{r'}|}
++\int d^3r\; \rho(\vec{r})v_{nuc}(\vec{r})
+\\
+&=& \frac{1}{2}\int d^3r\; \rho(\vec{r})v_{H}(\vec{r})
++\frac{1}{2}\int d^3r\; \rho(\vec{r})v_{nuc}(\vec{r})
+\end{eqnarray*}
+The variable $\Delta_H$ is determined such that $v_{nuc}$ is
+continuous at RAD. The first expression for the Hartree energy is one
+that is easily recognized, while the second expression is the way it
+is actually calculated.
+
+Now we determine the exchange-correlation energy and potential:
+
+The routine that determines exchange-correlation and potential and
+energy takes the arguments: $\rho_t,\rho_s. (\vec{\nabla}\rho_t)^2
+,(\vec{\nabla}\rho_s)^2,(\vec{\nabla}\rho_t)(\vec{\nabla}\rho_s)$.
+Because the calculation does not include spin, only the arguments
+$\rho_t$ and $(\vec{\nabla}\rho_t)^2$ will be required. Because the
+density is spherical we can furthermore use
+$(\vec{\nabla}\rho_t)^2=(\partial_r\rho_t)^2$.
+
+\begin{eqnarray*}
+E_{xc}&=&\int d^3r\; F(\rho,(\vec{\nabla}\rho)^2)
+\\
+dE_{xc}
+&=&\int d^3r\; \left[
+\frac{\partial F}{\partial\rho}d\rho
++\frac{\partial F}{\partial(\vec{\nabla}\rho)^2)}(2\vec{\nabla}\rho)
+\vec{\nabla}d\rho\right]
+\\
+&=&\int_\Omega d^3r\; \left[
+\frac{\partial F}{\partial\rho}d\rho
+-\vec{\nabla}\left(\frac{\partial F}{\partial(\vec{\nabla}\rho)^2)}(2\vec{\nabla}\rho)\right)
+d\rho
++
+\vec{\nabla}\left(\frac{\partial F}{\partial(\vec{\nabla}\rho)^2)}(2\vec{\nabla}\rho)d\rho\right)
+\right]
+\\
+&=&\int d^3r\; \theta_\Omega(\vec{r})\left[
+ \frac{\partial F}{\partial\rho}d\rho
+-\vec{\nabla}\left(\frac{\partial F}{\partial(\vec{\nabla}\rho)^2)}(2\vec{\nabla}\rho)\right)
+d\rho\right]
+-\int d^3r\;\Bigl(\vec{\nabla}\theta_\Omega(\vec{r})\Bigr)
+\left(\frac{\partial F}{\partial(\vec{\nabla}\rho)^2)}
+(2\vec{\nabla}\rho)d\rho\right)
+\end{eqnarray*}
+Here $\theta_\Omega(\vec{r})$ is a step function which is equal to one
+within the integration volume $\Omega$ and zero outside. Its gradient
+is a $\delta$ function on the surface of the integration volume
+multiplies with an \textbf{inward-pointing} normal vector.  The delta
+like contribution to the potential at the sphere surface is ignored.
+The simple reason is that the density vanishes at the surface, and it
+is hoped that $F$, and its derivative behave similarly.  The more
+solid argument, which however is not very straightforward, is that the
+variation of the density at the sphere surface vanishes. This implies
+that the Lagrange parameter, the potential, is not needed at this
+point, and that any potential would not contribute to energy
+eigenvalues, for example.
+
+The potential is determined as
+\begin{eqnarray*}
+v_{xc}(\vec{r})
+&=& \frac{\partial F}{\partial\rho}
+-\vec{\nabla}\left(\frac{\partial F}{\partial(\vec{\nabla}\rho)^2)}2\vec{\nabla}\rho\right)
+\\
+&=& \frac{\partial F}{\partial\rho}
+- \vec{\nabla}\left(\frac{\partial F}{\partial(\vec{\nabla}\rho)^2)}
+2\frac{\vec{r}}{|\vec{r}|}\partial_r\rho\right)
+\\
+&=& \frac{\partial F}{\partial\rho}
+- \left[\vec{\nabla}\frac{\vec{r}}{|\vec{r}|}\right]
+\left(\frac{\partial F}{\partial(\vec{\nabla}\rho)^2)}
+2\partial_r\rho\right)
+- \frac{\vec{r}}{|\vec{r}|}\vec{\nabla}
+\left(\frac{\partial F}{\partial(\vec{\nabla}\rho)^2)}
+2\partial_r\rho\right)
+\\
+&=& \frac{\partial F}{\partial\rho}
+- \left[\frac{2}{r}\right]
+\left(\frac{\partial F}{\partial(\vec{\nabla}\rho)^2)}
+2\partial_r\rho\right)
+- \partial_r
+\left(\frac{\partial F}{\partial(\vec{\nabla}\rho)^2)}
+2\partial_r\rho\right)
+\end{eqnarray*}
+
+The exchange correlation potential is set to zero if the density falls
+below a minimum of $10^{-6}~a_0^{-3}$.
+
+
+
+%=====================================================================
+\section{Setups\_newpro}
+%=====================================================================
+%=====================================================================
+\subsection{Input variables}
+%=====================================================================
+The major input parameters are:
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+L    & main angular-momentum quantum number\\
+SO   & spin-orbit allignment $\sgn(\vec{S}\vec{L})$ (SO$\in\{-1,0,1\}$)\\
+ROUT & bound states are calculates in a box with radius ROUT\\
+RC   & cutoff for pseudization of partial waves\\
+ENU  & energy for Taylor expansion of partial waves\\
+\hline
+\end{tabular}
+\end{center}
+
+%=====================================================================
+\subsection{Flow chart}
+%=====================================================================
+The flow of the subroutine is as follows:
+\begin{enumerate}
+\item nodeless core wave functions \verb|UCORE|
+\item coefficients \verb|QN| for the expansion of node-reduced partial waves 
+\item energy dertivative partial wave of highest partial wave \verb|QNDOT|
+\item pseudo core wave functions \verb|PSCORE|
+\item pseudo partial waves \verb|PSPHI| (without core tails)
+\item all-electron partial waves \verb|AEPHI| by core orthogonalization
+\item bare projector functions \verb|PRO|
+\item bi-orthogonalization
+\item matrix elements \verb|DTKIN| \verb|DOVER|
+\end{enumerate}
+
+%=====================================================================
+\subsubsection{Pseudo core wave functions}
+%=====================================================================
+We construct the function
+\begin{eqnarray}
+f_1&=&r^\ell
+\nonumber\\
+f_2&=& r^{\ell+2}
+\nonumber\\
+f_3&=& r^{\ell+4}
+\end{eqnarray}
+to the nodeless core wave function so that value and derivative agree
+at the pseudization radius.
+
+\appendix
+%=====================================================================
+\chapter{Remarks}
+%=====================================================================
+\begin{itemize}
+\item The small contribution introduces nodes for the nodeless wave
+  functions that lie near the nucleus which must not be counted. It is
+  a consequence of treating the small component. This is taken care
+  off by changing \verb|schroedinger$phaseshift| so that nodes are
+  counted starting with a minimum radius. Schade\cite{schade12_thesis}
+  gives the minimum radus of 0.07~a$_0$ for the core states and
+  0.09~a$_0$ for the valence states.
+%
+\item Zora avoids the small component.?? Scalar relativistic
+  calculations should treat the small component.
+%
+\item Currently the pseudo partial waves do not contain a pseudo core
+  contribution. The pseudo core contribution can introduce ghost
+  states.  On the other hand the pseudo core part lets the
+  all-electron and pseudo partial waves to deviate at larger
+  distances. Does this affect introduce an effect between core states
+  and exponentially increasing partial waves?
+%
+\item The Taylor and the Secant equation are closely related. The
+  equations differ only by the value of the chosen energy which is
+  $\epsilon_\nu$ in one case and $\epsilon_{n+j}$ in the other. Can
+  this be exploited?
+%
+\item we need a criterion for the quality of the augmentation: The
+  Taylor expansion of $|q_n(\epsilon)\rangle$ may have a radially
+  dependent convergence radius $\epsilon_c(r)$. For a truncated Taylor
+  expansion there is a radius where it is better to leave out a term
+  than to include it. Similar problems occur for the secant
+  construction usually employed in the PAW method.
+
+  We could use something like
+  \begin{eqnarray}
+  Q(\epsilon)\defas\min_{\vec{c}}
+\sum_n\Bigl|\langle f_n|\Bigl[\tilde{h}-\epsilon+
+\sum_\alpha|\tilde{p}_\alpha\rangle(dH_{\alpha,\beta}-\epsilon dO_{\alpha,\beta})
+\langle\tilde{p}_\beta|\Bigr]|q'_n(\vec{c},\epsilon)\rangle\Bigr|^2
+  \end{eqnarray}
+  where $|f_n\rangle$ is some orthonormal basisset and
+  $q'_n(\vec{c},\epsilon)\rangle$ is some kind of expansion for the
+  partial waves with coefficients $\vec{c}$.
+%
+\item I need a section about the finite nuclear size
+%
+\item The fock contribution is not yet included in the new version.
+%
+\item for a semi-core state one should include a bound state for
+  semi-core and for the valence state. The equations are very similar
+  so that formulations can be integrated well. 
+%
+\end{itemize}
+
+
+
+
+%=====================================================================
+\chapter{Useful formulas}
+%=====================================================================
+\begin{eqnarray}
+(\vec{\sigma}\vec{a})(\vec{\sigma}\vec{b})
+&=&\vec{a}\vec{b}+i\vec{\sigma}(\vec{a}\times\vec{b})
+\\
+\vec{r}\vec{\sigma}\chi_{\kappa,j_z}&=&-|\vec{r}|\chi_{-\kappa,j_z}
+\\
+\vec{S}\vec{p}R(|\vec{r}|)\chi_{\kappa,j_z}
+&=&\frac{i\hbar^2}{2}\Bigl[\partial_r+\frac{\kappa+1}{|\vec{r}|}\Bigr]
+R(|\vec{r}|)\chi_{-\kappa,j_z}
+\\
+1+D&=&\frac{1}{1+\frac{\epsilon-v}{2m_0c^2}}
+\\
+\kappa(\ell,so)&=&-1+so\cdot\Bigl(\ell+\frac{so-1}{2}\Bigr)
+=
+\begin{cases}
+-\ell-1&\text{for $\vec{L}\vec{S}\ge0$ .i.e. $so=1$ }\\
+\ell&\text{for $\vec{L}\vec{S}<0$ .i.e. $so=-1$}\\
+-1&\text{for $\vec{L}\vec{S}=0$ .i.e. $so=0$}\\
+\end{cases}
+\end{eqnarray}
+
+%=====================================================================
+\chapter{Taylor expansion of node-reduced partial waves}
+\label{app:tayloraephi} 
+%=====================================================================
+Here we derive the coefficients $c_{m,j}$ used to determine the Taylor
+coeffcieients \eq{eq:taylorexpansioncoefficientsaephi} of the
+all-electron partial waves from the nodeless core wave functions and
+the Taylor expansion coefficients \eq{eq:taylorexpansioncoefficientsqn}
+of the node-reduced wave functions.
+
+\begin{eqnarray}
+|\phi_n^{(j)}(\epsilon_\nu)\rangle
+&\eqrel{eq:taylorexpansioncoefficientsaephi}{=}&
+\frac{(-1)^j}{j!}\left.\partial_\epsilon^{j}\right|_{\epsilon_\nu}
+\biggl[|\phi_n(\epsilon)\rangle
+\frac{1}{\prod_{k=1}^{n-1}(\epsilon_j-\epsilon)}\biggr]
+\nonumber\\
+&\eqrel{eq:aephifromnodereduced}{=}&
+\frac{(-1)^j}{j!}\left.\partial_\epsilon^{j}\right|_{\epsilon_\nu}
+\biggl[
+|q_n(\epsilon)\rangle
++\sum_{m=1}^{n-1}|u_m\rangle\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}
+\biggr]
+\nonumber\\
+&\eqrel{eq:taylorexpansioncoefficientsqn}{=}&
+|q_n^{(j)}(\epsilon_\nu)\rangle
++\sum_{m=1}^{n-1}|u_m\rangle
+\biggl(
+\underbrace{\frac{(-1)^j}{j!}\left.\partial_\epsilon^{j}\right|_{\epsilon_\nu}
+\biggl[\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}
+\biggr]}_{c_{m,j}}\Biggr)
+\end{eqnarray}
+
+It is our goal to work out the coeffcients $c_{m,j}$. To explore the
+structure of the expressions let us evaluate the first two
+derivatives of the product terms
+\begin{eqnarray}
+\underbrace{\left.\partial_\epsilon^{0}\right|_{\epsilon_\nu}
+\biggl[\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}\biggr]}_{b_{m,0}}
+&=&
+\underbrace{\biggl[\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon_\nu}\biggr]
+}_{b_{m,0}}
+\nonumber\\
+\underbrace{\left.\partial_\epsilon^{1}\right|_{\epsilon_\nu}
+\biggl[\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}\biggr]}_{b_{m,1}}
+&=&\underbrace{\biggl[\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon_\nu}\biggr]
+}_{b_{m,0}}
+\underbrace{\biggl[\sum_{k=m}^{n-1}\frac{1}{\epsilon_j-\epsilon_\nu}\biggr]
+}_{a_{m,0}}
+\label{eq:taylorphicm1}
+\end{eqnarray}
+Let us now introduce the new symbols
+\begin{eqnarray}
+b_{m,j}&\defas&\left.\partial_\epsilon^{j}\right|_{\epsilon_\nu}
+\biggl[\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}\biggr]
+\nonumber\\
+a_{m,j}&\defas&\left.\partial_\epsilon^{j}\right|_{\epsilon_\nu}
+\biggl[\sum_{k=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}\biggr]
+\end{eqnarray}
+
+Thus we obtain
+\begin{eqnarray}
+b_{m,1}&=&b_{m,0}a_{m,0}
+\nonumber\\
+b_{m,2}&=&b_{m,1}a_{m,0}+b_{m,0}a_{m,1}
+\nonumber\\
+b_{m,2}&=&b_{m,2}a_{m,0}+2b_{m,1}a_{m,1}+b_{m,0}a_{m,2}
+\nonumber\\
+b_{m,j}&=&\sum_{k=0}^{j-1}\binom{j-1}{k}b_{m,j-k-1}a_{m,k}
+\nonumber\\
+\underbrace{\frac{(-1)^j}{j!}b_{m,j}}_{c_{m,j}}
+&=&
+\sum_{k=0}^{j-1}
+\frac{(-1)^j}{j!}\underbrace{\frac{j-1)!}{(j-k-1)!k!}}
+_{\binom{j-1}{k}}b_{m,j-k-1}a_{m,k}
+\nonumber\\
+&=&
+\sum_{k=0}^{j-1}
+\frac{+1}{j}
+\underbrace{\Bigl[\frac{(-1)^{j-k-1}}{(j-k-1)!}b_{m,j-k-1}\Bigr]}_{c_{m,j-k-1}}
+\Bigl[-\frac{(-1)^k}{k!}a_{m,k}\Bigr]
+\end{eqnarray}
+
+The coefficients $a_{m,k}$ are obtained as follows
+\begin{eqnarray}
+a_{m,j}&=&\left.\partial_\epsilon^{j}\right|_{\epsilon_\nu}
+\biggl[\sum_{k=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}\biggr]
+=\biggl[\sum_{k=m}^{n-1}\frac{j!}{(\epsilon_j-\epsilon_\nu)^{j+1}}\biggr]
+\end{eqnarray}
+so that
+\begin{eqnarray}
+-\frac{(-1)^j}{j!}a_{m,j}&=&
++\sum_{k=m}^{n-1}\frac{1}{(\epsilon_\nu-\epsilon_j)^{j+1}}
+\end{eqnarray}
+
+Thus we obtain the following recursive set of equations
+\begin{eqnarray}
+c_{m,0}&=&\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}
+\\
+c_{m,j}&=&\frac{1}{j}\sum_{k=0}^{j-1}  c_{m,j-k-1}d_{m,k}
+\qquad\text{for $j=1,\ldots,\infty$}
+\nonumber\\
+d_{m,j}&=&
+\biggl[\sum_{k=m}^{n-1}\frac{1}{(\epsilon_j-\epsilon_\nu)^{j+1}}\biggr]
+\qquad\text{for $j=0,\ldots,\infty$}
+\end{eqnarray}
+with which we can evaluate the true wave functions in the form
+\begin{eqnarray}
+|\phi_n^{(j)}(\epsilon_\nu)\rangle
+&=&
+|q_n^{(j)}(\epsilon_\nu)\rangle+\sum_{m=1}^{n-1}|u_m\rangle c_{j,m}
+\end{eqnarray}
+
+%=====================================================================
+\chapter{Derivation of inhomogeneity for the radial Dirac equation}
+\label{app:inhomraddirac}
+%=====================================================================
+Here I make the derivation of the inhomogenity of the radial Dirac
+equation very explicit so that one can follow all the signs. This is
+because I changed the sign convention of the nodeless construction,
+which may cause a mixup with earlier results.
+
+\begin{eqnarray}
+&&-|u_{n-1}\rangle-(\vec{S}\vec{p})\frac{1+D}{\hbar m_0c}|v_{n-1}\rangle
+\nonumber\\
+&&
+-g_{\kappa,j_z}^{n-1}-\frac{i\hbar^2}{2}
+\Bigl(\partial_r+\frac{1-\kappa}{|\vec{r}|}\Bigr)\frac{1+D}{\hbar m_0c} 
+\Bigl(if_{-\kappa,j_z}^{n-1}\Bigr)
+\nonumber\\
+&&\Bigl(-g_{\kappa,j_z}^{n-1}\Bigr)-\frac{\hbar}{c}
+\Bigl(\partial_r+\frac{1-\kappa}{|\vec{r}|}\Bigr)\frac{1+D}{2m_0} 
+\Bigl(-f_{-\kappa,j_z}^{n-1}\Bigr)
+\end{eqnarray}
+
+\begin{eqnarray}
+|v_n\rangle&=&\frac{1+D}{2m}
+\Bigl[\frac{2}{\hbar c}(\vec{S}\vec{p})|u_n\rangle+\frac{1}{c}v_n\rangle
+\nonumber\\
+if_{-\kappa,j_z}^{n}&=&\frac{1+D}{2m}
+\Bigl[\frac{2}{\hbar c}\frac{i\hbar^2}{2}
+\Bigl[\partial_r+\frac{1+\kappa|}{|\vec{r}|}\Bigr]
+g_{\kappa,j_z}^{(n)}
++\frac{1}{c^2}\Bigl(if_{-\kappa,j_z}^{(n)}\Bigr)\Bigr]
+\nonumber\\
+f_{-\kappa,j_z}^{n}&=&\frac{1+D}{2m}
+\Bigl[\frac{\hbar}{c}
+\Bigl[\partial_r+\frac{1+\kappa|}{|\vec{r}|}\Bigr]
+g_{\kappa,j_z}^{(n)}
++\frac{1}{c^2}\Bigl(f_{-\kappa,j_z}^{(n)}\Bigr)\Bigr]
+\nonumber\\
+\end{eqnarray}
+
+%======================================================================
+\chapter{Parameters for the Setup construction}
+%======================================================================
+%======================================================================
+\subsection{Parameters for the HBS-type construction}
+%======================================================================
+\begin{verbatim}
+  !SETUP ID='CA_HBS' EL='CA'  ZV=2   
+     RBOX/RCOV=2.0  RCSM/RCOV=0.25     
+     TYPE='HBS' 
+     RCL/RCOV=0.75 0.75 0.75 LAMBDA=6. 6. 6. 
+     !GRID DMIN=5.E-6 DMAX=0.1 RMAX=7.2 !END
+     !POT   POW=3. VAL0=-1.2 RC/RCOV=0.67 !END
+     !CORE  POW=2. VAL0= 0.1 RC/RCOV=0.67 !END
+  !END
+
+  !SETUP ID='CA_SC_HBS' EL='CA'  ZV=10.  
+     RBOX/RCOV=2. RCSM/RCOV=0.25 
+     TYPE='HBS'
+     RCL/RCOV=0.5 0.5 0.5 0.5  LAMBDA=6. 6. 6. 6.
+     !GRID DMIN=5.E-6 DMAX=0.1 RMAX=7. !END
+     !POT   POW=3. VAL0=-2.2 RC/RCOV=0.5 !END
+     !CORE  POW=2. VAL0= 0.1 RC/RCOV=0.5 !END
+  !END
+\end{verbatim}
+
+For valence-only setups use the following set for the partial waves
+$r_c=0.75 r_{cov}$, $\lambda=6$.
+
+For semi-core setups use the following set ofr the partial waves
+$r_c=0.55 r_{cov}$, $\lambda=6$.
+
+The decay parameter for the compensation charge density should be set
+to $0.25 r_{cov}$.
+
+It is beneficial if the pseudopotential follows the all-electron
+potential inward further than the covalent radius.
+
+Usually, we do not specify the parameter VAL0 for the potential. This
+however causes problems for transition metals, where we obtain ghost
+states.
+
+
+\printindex
+\bibliographystyle{unsrtnat}
+\bibliography{all}
+\end{document}  
+
+
+
