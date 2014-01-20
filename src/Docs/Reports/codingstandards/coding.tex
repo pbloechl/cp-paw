@@ -1,0 +1,193 @@
+\documentclass[11pt,a4paper]{report}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                 %%
+%%    Header file for the Phi-S-X Series                           %%
+%%                                                                 %%
+%%    german version header_gm.tex is derived from header.tex      %%
+%%    by uncommenting the line ``\setboolean{german}{true}'' below %%
+%%                                                                 %%
+%%    Never edit the german version! all changes must be done      %%
+%%    in the english version header.tex                            %%
+%%                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{../header}
+\hypersetup{pdftitle=paw_brillouin}
+\begin{document}
+\begin{titlepage}
+\begin{center}
+\vspace*{3.5cm}
+{\huge \textbf{Coding standards for the CP-PAW code}}\\
+\vspace{0.5cm}
+{\large Peter E. Bl\"ochl}
+\vspace{0.5cm} 
+\end{center}
+
+\vfill
+\begin{center}
+Copyright Peter E. Bl\"ochl; Sept.2, 2013-\today\\
+{\small
+Institute of Theoretical Physics;
+Clausthal University of Technology;\\ 
+D-38678 Clausthal Zellerfeld; Germany;\\
+http://www.pt.tu-clausthal.de/atp/}
+\end{center}
+\end{titlepage}
+\noindent            
+\tableofcontents
+%====================================================================
+\chapter{Coding Standards of the PAW project}
+%====================================================================
+%====================================================================
+\section{SHELL scripting}
+%====================================================================
+\cite{1}
+\begin{itemize}
+\item specify the \verb|SHELL| variable: start the script with
+  \verb|#!/bin/bash|. You may use another shell, but bash is
+  preferred.
+%
+\item Define a variable \verb|USAGE| describing the function and
+  options. Example:
+\begin{verbatim}
+export $USAGE="Usage of $0\n"
+USAGE="$USAGE description \n"
+\end{verbatim}
+%
+\item pass arguments as variables to options. You may allow for one
+  special argument that is provided behind the options. Analyze
+  options with getopts. Example
+\begin{verbatim}
+while getopts :h0b:p: OPT ; do
+  case $OPT in
+    x)   # executable
+      EXCTBLE=$OPTARG
+      shift
+      ;; 
+    b)   # directory holding paw executables
+      PAWXDIR=$OPTARG  
+      shift
+      ;; 
+    p)   # project name
+      PROJECT=$OPTARG
+      echo argument projectname=${NAME}
+      shift
+      ;;
+    0)   # dry run only
+      DRYRUN=yes
+      echo option dry-run=${DRYRUN}
+      shift
+      ;;
+    h)   # help
+      echo -e $USAGE
+      exit 1
+      ;;
+    \?)   # unknown option (placed into OPTARG, if OPTSTRING starts with :)
+      echo "error in $0" >&2
+      echo "invalid option -$OPTARG" >&2
+      echo "retrieve argument list with:" >&2
+      echo "$0 -h" >&2
+      exit 1
+      ;;
+    :)    # no argument passed to option requiring one
+      echo "error in $0" >&2
+      echo "option -$OPTARG requires an additional argument" >&2
+      exit 1
+      ;;  esac
+  esac
+done
+shift $(($OPTIND - 1)) # shift so that following arguments are $1, $2, etc.
+if [ -z $1 ] ; then echo ``error in $0: missing argument'' >&2
+ARG=$1
+\end{verbatim}
+% 
+\item check if all mandatory arguments have been passed.
+%
+\item for every error, that has been captured, exit with a non-zero
+  return code, i.e. by \verb|exit 1|, and issue an error message to
+  ``error out''=\&2.
+\begin{verbatim}
+echo "error in $0: message" >&2
+exit 1
+\end{verbatim}
+%
+\item finish the script with \verb|exit 0|
+\end{itemize}
+
+%====================================================================
+\subsection{List of recommended option id's}
+%====================================================================
+The following list shall not be used, except with the meaning
+described here. Some of these choices are inspired by
+\url{http://www.faqs.org/docs/artu/ch10s05.html}.
+\begin{description}
+\item[a] All.
+\item[c] name of the control file
+\item[f] input file (other than a control file)
+\item[l] list
+\item[o] output file
+\item[p] root name of the paw project 
+\item[e] executable
+\item[b] directory holding the executables (to select a specific paw
+  distribution)
+\item[0] dry run
+\item[v] verbose
+\item[V] version
+\item[q] quiet
+\item[h] issue help message
+\end{description}
+
+%====================================================================
+\subsection{Brief description of getopts}
+%====================================================================
+The bash command getopts process the argument list in a standardized
+manner and allows for automatized error handling.
+
+The bash command 
+\begin{center}
+\verb|getopts| \$OPTSTRING OPT
+\end{center}
+processes an option string OPTSTRING, and returns true or false
+depending of whether it encountered a valid option in teh calling
+sequence of the calling bash script. It returns the id of the option
+as \$OPT and it sets the variable OPTARG with the argument of the
+option. In case of an error OPTARG contains the name of the option, if
+OPTSTRING starts with a colon ``:''.
+
+The option string is a string of option letters. An option with an
+argument is followed by a colon ``:''. An initial ``:'' switches
+getopts into the quiet mode, which also changes the error
+handling. Therefore capture all errors and work in quiet mode.
+
+\begin{itemize}
+\item A double dash ``--'' signifies the end of the options
+%
+\item Options may be grouped such as \verb|-abc| which is identical to
+\verb|-a -b -c|.
+%
+\item Options may only be single letters or numerals.
+%
+\item OPTIND is another variable used by getopts and it identifies the
+  number of items in the argument list that has been processed by
+  getopts. With the command \verb|shift $(($OPTIND - 1))| the first
+  item following the option list is $1.
+\end{itemize}
+
+%====================================================================
+\subsection{Default environment}
+%====================================================================
+\begin{itemize}
+\item the current PAW directory can be obtained via
+\begin{verbatim}
+export PAWXDIR=$(which paw_fast.x); PAWXDIR=${PAWXDIR%paw_fast.x}
+\end{verbatim}
+%
+\item The current directory is captured with
+\begin{verbatim}
+THISDIR=$(pwd)   # current directory
+\end{verbatim}
+\end{itemize}
+\clearpage
+
+\bibliographystyle{unsrtnat}
+\bibliography{../all}
+\end{document}  
