@@ -43,15 +43,19 @@ http://www.pt.tu-clausthal.de/atp/}
 \cite{1}
 \begin{itemize}
 \item specify the \verb|SHELL| variable: start the script with
-  \verb|#!/bin/bash|. You may use another shell, but bash is
-  preferred.
+  \verb|#!/bin/bash| as first line. You may use another shell instead
+  of bash, but bash is preferred.
 %
-\item Define a variable \verb|USAGE| describing the function and
-  options. Example:
+\item Define a variable named \verb|USAGE| describing the function of
+  the script and its options. Example:
 \begin{verbatim}
 export $USAGE="Usage of $0\n"
 USAGE="$USAGE description \n"
 \end{verbatim}
+(\verb|\$0| expands into the name of the script.). Insert the
+description in place of the string description. Several lines can be
+added similar to the second one given here.
+
 %
 \item pass arguments as variables to options. You may allow for one
   special argument that is provided behind the options. Analyze
@@ -169,7 +173,7 @@ handling. Therefore capture all errors and work in quiet mode.
 \item OPTIND is another variable used by getopts and it identifies the
   number of items in the argument list that has been processed by
   getopts. With the command \verb|shift $(($OPTIND - 1))| the first
-  item following the option list is $1.
+  item following the option list is \verb|$1|.
 \end{itemize}
 
 %====================================================================
@@ -186,8 +190,168 @@ export PAWXDIR=$(which paw_fast.x); PAWXDIR=${PAWXDIR%paw_fast.x}
 THISDIR=$(pwd)   # current directory
 \end{verbatim}
 \end{itemize}
-\clearpage
 
+%====================================================================
+\subsection{Other shell rules}
+%====================================================================
+\begin{itemize}
+\item Make temporary files:  Check first if the environment variable
+  TMPDIR is set and use this one. If it is not set, use /tmp.  Create
+  temporary file using mktemp. Check error code of mktemp. Delete the
+  file when done.
+%
+\item do not use non-printing characters nor include them in the
+  files. Use tabs only, when the syntax requires it, such as in make.
+%
+\item indent with two spaces for each level.
+
+\end{itemize}
+
+%====================================================================
+\section{Fortran codes}
+%====================================================================
+\begin{itemize}
+\item I start with code at column 7 similar to the ancient fixed file
+  format of Fortran. The first few spaces are for code that is written
+  for debugging only and that should be removed in the final code.
+%
+\item Keep lines within 80 characters. Longer lines usually break when
+  they are printed, which makes the printout ugly.
+%
+\item The general style for subroutines is as follows. (the line with
+  the numbers does not belong to the style.)
+\begin{verbatim}
+12345678901234567890123456789012345678901234567890123456789012345678901234567890
+!
+!     ...1.........2.........3.........4.........5.........6.........7.........8
+      Subroutine doing(n,b,c)
+!     **************************************************************************
+!     **  description of doing here                                           **
+!     **************************************************************************
+      implicite none
+      integer(4),intent(in) :: n
+      real(8)   ,intent(in) :: a(n) !comment on variable a here
+      real(8)   ,intent(out):: b(n)
+!     **************************************************************************
+!
+!     ==========================================================================
+!     == section comment                                                      ==
+!     ==========================================================================
+!
+!     ==minor structuring comment===============================================
+
+!     __explaining comment/remark_______________________________________________
+
+print*,'a ',a   ! statement used for testing 
+
+      return
+      end
+\end{verbatim}
+%
+\item modules are not indented to the seventh column but are typed
+ starting at the first column.
+%
+\item Always use \verb|implicit none|. Try to start the names of integers with
+ letters, i,j,k,l,m,n, and the name of logical variables with t.
+%
+\item declare one variable per line. Do note use "DIMENSION", but use
+\begin{verbatim}
+   real(8)              :: a(n)   ! good
+   real(8),dimension(n) :: a(n)    ! bad
+\end{verbatim}
+%
+\item use variable and subroutine names that are as descriptive as
+ possible.
+%
+\item avoid functions in favor of subroutines
+%
+\item Define parameters such as as tolerances, maximum iteration
+ numbers with the parameter statement in the header section, and NOT
+ in the code itself.
+%
+\item Do not introduce size limitations. Instead allocate arrays
+ dynamically.
+%
+\item if an error has been detected let the code stop. Give it a
+ sensible error message if possible. If the crash is due to a user
+ error, provide info on how to correct it.
+%
+\item Continuation lines: use a \& both at the end of the continued
+ line and at the beginning (column 6) of the continuing line.
+%
+\item write any comments in english.
+%
+\item write the code so that it can be made uppercase without changing
+ its meaning. Thus the value string variable must be uppercase, or it
+ must be made lowercase for example using the string object of the PAW
+ library.
+%
+\item use descriptive filenames
+%
+\item add a comment to each "enddo" or "end if", if the loop or if
+ statement has been long.
+%
+\item Never use special characters or blanks in a file name.
+\end{itemize}
+
+%====================================================================
+\subsection{Object oriented coding}
+%====================================================================
+An object is a fortran module holding a set of data and a set of
+ subroutines operating on them. (It could be a class in ++)
+
+The main feature of an object is that it exposes only a well defined and
+ minimal interface to the outside and hides data and internal
+ technicalities from the "user" of the object. 
+
+Data will be exchanged almost exclusively during function calls or
+ using explicit interfaces such as
+\begin{verbatim}
+  subroutine objnm$setr8a(id,len,val)
+  use objnm_module, only : this,that
+  implicit none
+  character(*),intent(in) :: id
+  real(8)     ,intent(in) :: val(len)
+  if(id.eq.'this') then
+    thisdata=val
+  else if(id.eq.'that') then
+    thatdata=val
+  else
+    call error$msg('id not recognized')
+    call error$chval('id',id)
+    call error$r8val('val',val)
+    call error$stop('objnm$setr8')
+  end
+  return
+  end
+\end{verbatim}
+\begin{itemize}
+\item For scalar variables the letter ``a'' is dropped from the name and the
+variable ``len''. 
+%
+\item ``R8'' stands for real(8). Other possibilities are ``I4''
+  (integer(4)), ``L4'' logical(4), ``C8'' complex(8).
+%
+\item in addition to the set routines there are analogous get routines.
+\end{itemize}
+
+The object modul MUST NEVER be used outside the object!
+
+Each object has a name such as \verb|objnm|. The corresponding object module
+has the name \verb|objnm_module|. The subrouitines that may be used
+externally, wave names \verb|objnm\$subname|, where the dollar sign
+separates the object name from the function name. The dollar sign will
+be replaced by a double underscore during compilation. Subroutines
+that are to be used only from subroutines of the object, will be named
+as \verb|objnm\_subnm|, where the function part is separated by an
+underscore from the main part.
+
+
+
+
+
+
+\clearpage
 \bibliographystyle{unsrtnat}
 \bibliography{../all}
 \end{document}  
