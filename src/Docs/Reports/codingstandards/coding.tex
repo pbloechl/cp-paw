@@ -37,6 +37,19 @@ http://www.pt.tu-clausthal.de/atp/}
 %====================================================================
 \chapter{Coding Standards of the PAW project}
 %====================================================================
+Coding and maintainance of large code projects are made more
+efficient, if one is guided by recurring patterns. Therefore, a style
+guide for coding projects is adviseable.
+
+The style guide is, as the name says, a guide and not a law. Thus it
+is permitted to deviate from it if there is good reason.
+
+While such rules appear to the beginnner as administrative overhead,
+they pay off in larger code projects.
+
+Some of the principles have been inspired by the GNU Coding Standards\\
+\url{http://www.gnu.org/prep/standards}.
+%
 %====================================================================
 \section{SHELL scripting}
 %====================================================================
@@ -215,8 +228,8 @@ THISDIR=$(pwd)   # current directory
   format of Fortran. The first few spaces are for code that is written
   for debugging only and that should be removed in the final code.
 %
-\item Keep lines within 80 characters. Longer lines usually break when
-  they are printed, which makes the printout ugly.
+\item Keep lines within 80 characters. \textit{Rationale: Longer lines
+  usually break when they are printed, which makes the printout ugly.}
 %
 \item The general style for subroutines is as follows. (the line with
   the numbers does not belong to the style.)
@@ -251,47 +264,107 @@ print*,'a ',a   ! statement used for testing
 \item modules are not indented to the seventh column but are typed
  starting at the first column.
 %
-\item Always use \verb|implicit none|. Try to start the names of integers with
- letters, i,j,k,l,m,n, and the name of logical variables with t.
+\item Always use \verb|implicit none|. Try to start the names of
+  integers with letters, i,j,k,l,m,n, and the name of logical
+  variables with t. \textit{Rationale: with ``implicit none'',
+    typos become apparent quickly.}
+%
+\item For all variables in the argument list, declare the intent as
+  \verb|intent(in)|, \verb|intent(out)| or \verb|intent(inout)|.
 %
 \item declare one variable per line. Do note use "DIMENSION", but use
 \begin{verbatim}
-   real(8)              :: a(n)   ! good
-   real(8),dimension(n) :: a(n)    ! bad
+   real(8)              :: a(n)    ! good
+   real(8),dimension(n) :: a       ! bad
+\end{verbatim}
+\textit{Rationale: Dimensions are declared more efficiently together
+  with the variable. The explicit dimension statement takes space away
+  that can be used better for comments.}
+%
+\item Specify the used module variables explicitly using the
+  \verb|only| statement. Preferably break the line after each variable
+  in the \verb|only|-list, so that a descriptive comment can be added.
+\begin{verbatim}
+   use xxx_module, only : variable1 & !(n1,n2) first variable
+  &                      ,variable2   ! second variable
+
 \end{verbatim}
 %
-\item use variable and subroutine names that are as descriptive as
- possible.
+\item Keep the following sequence in the declaration section of the
+  code.
+  \begin{enumerate}
+     \item \verb|use| statements
+     \item \verb|implicit none|
+     \item Derived type definitions
+     \item declarations of variables in the argument list
+     \item declare parameters
+     \item declare other variables
+     \item keep loop variables towards the end of the declaration
+       section. 
+  \end{enumerate}
 %
-\item avoid functions in favor of subroutines
+\item variable and subroutine names shall be as descriptive as
+  possible.
 %
-\item Define parameters such as as tolerances, maximum iteration
- numbers with the parameter statement in the header section, and NOT
- in the code itself.
+\item avoid functions in favor of subroutines. \textit{Rationale:
+  Functions calls can easily be mistaken as variables. Subroutines
+  offer the same functionality as functions, but are more
+  explicit. Functions offer two competing ways of returning variables,
+  which seems to be a design flaw.}
 %
-\item Do not introduce size limitations. Instead allocate arrays
- dynamically.
+\item define parameters such as as tolerances, maximum iteration
+  numbers with the parameter statement in the declaration section of a
+  subroutine, and NOT in the code section itself.
 %
-\item if an error has been detected let the code stop. Give it a
+\item do not introduce size limitations, if they can change. Instead
+  allocate arrays dynamically.
+%
+\item if an error has been detected, let the code stop. Give it a
  sensible error message if possible. If the crash is due to a user
  error, provide info on how to correct it.
 %
 \item Continuation lines: use a \& both at the end of the continued
  line and at the beginning (column 6) of the continuing line.
 %
+\item Place a connecting symbol such as an operator ``+'',''*'',
+  etc. or separator ``,'', ``//'' on the continued line instead of the
+  continuing line. \textit{Rationale: This symbol has only meaning
+    with the following element and it looses its meaning when the
+    continuing element is removed. Thus it belongs conceptually to the
+    latter.}
+%
 \item write any comments in english.
 %
 \item write the code so that it can be made uppercase without changing
- its meaning. Thus the value string variable must be uppercase, or it
- must be made lowercase for example using the string object of the PAW
- library.
+  its meaning. Thus the value string variable must be uppercase, or it
+  must be made lowercase for example using the string object of the
+  PAW library. Case conversion can be done with the operators ``+''
+  and ``-'' defined in the paw\_strings object of the paw
+  code. \textit{Rationale: Fortran is case insensitive. To be
+    consistent, case conversion shall not change the meaning of the
+    code. Some programmers prefer to type uppercase and others
+    lowercase. Case conversion shall therefore be without
+    consequence.}
 %
 \item use descriptive filenames
 %
 \item add a comment to each "enddo" or "end if", if the loop or if
- statement has been long.
+ statement has been long, such as
+\begin{verbatim}
+   enddo   ! end of loop over atoms (iat)
+\end{verbatim}
 %
-\item Never use special characters or blanks in a file name.
+\item Never use special characters or blanks in a file
+  name. \textit{Rationale: These characters cannot be easily
+    identified with any editor. Blanks act as separator for shell
+    arguments. A blank must escaped with a backslash. Thus files in
+    blanks are a common source of error.}
+%
+\item statements that are inserted for debugging purposes start in
+  the first instead of the 7-th column. \textit{Rationale: Statements
+    starting in he first column are easily identified and removed, when
+    they become obsolete.}
+
 \end{itemize}
 
 %====================================================================

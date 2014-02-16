@@ -1,0 +1,314 @@
+\documentclass[11pt,a4paper]{report}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                 %%
+%%    Header file for the Phi-S-X Series                           %%
+%%                                                                 %%
+%%    german version header_gm.tex is derived from header.tex      %%
+%%    by uncommenting the line ``\setboolean{german}{true}'' below %%
+%%                                                                 %%
+%%    Never edit the german version! all changes must be done      %%
+%%    in the english version header.tex                            %%
+%%                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{../header}
+\hypersetup{pdftitle=paw_brillouin}
+\begin{document}
+\begin{titlepage}
+\begin{center}
+\vspace*{3.5cm}
+{\huge \textbf{The LMTO object of the CP-PAW code}}\\
+\vspace{0.5cm}
+{\large Peter E. Bl\"ochl}
+\vspace{0.5cm} 
+\end{center}
+
+\vfill
+\begin{center}
+Copyright Peter E. Bl\"ochl; Sept.2, 2013-\today\\
+{\small
+Institute of Theoretical Physics;
+Clausthal University of Technology;\\ 
+D-38678 Clausthal Zellerfeld; Germany;\\
+http://www.pt.tu-clausthal.de/atp/}
+\end{center}
+\end{titlepage}
+\noindent            
+\tableofcontents
+%====================================================================
+\chapter{Purpose and theoretical background of the LMTO Object}
+%====================================================================
+The LMTO object maps the wave functions expressed in augmented plane
+waves into a basiset of natural tight-binding orbitals. The natural
+tight-binding orbitals are a kind of LMTO's, screened such that the
+tails exhibit only scattering character in the context of nodeless
+wave functions\cite{bloechl12_arxiv1210_5937}.
+
+%====================================================================
+\subsection{Bare structure constants}
+%====================================================================
+The bare structure constants are the expansion constants for an
+off-site expansion of spherical Hankel functions.
+\begin{eqnarray}
+|K_{\alpha}^\infty\rangle=|K^\Omega_{\alpha}\rangle
+-\sum_{\beta}|J^\Omega_{\beta}\rangle S^\dagger_{\beta,\alpha}
++|K^I_{\alpha}\rangle
+\end{eqnarray}
+The index $\alpha$ denotes here an atomic site $R$ and a set of
+angular momenta $L=(\ell,m)$.
+
+In the following we will call $|K^\Omega_{\alpha}\rangle$ head
+function and $|J^\Omega_{\beta}\rangle$ tail functions.
+
+%====================================================================
+\subsection{Screened structure constants}
+%====================================================================
+The node-less scattering partial wave
+$|\dot{\bar{\phi}}_\alpha\rangle$ define the screening constants
+$\bar{Q}_{\alpha}$ such that the screened tail functions
+$|\bar{J}_\alpha\rangle$ match with value and derivative to the
+scattering partial wave
+\begin{eqnarray}
+|\dot{\bar{\phi}}_\alpha\rangle \rightarrow 
+|\bar{J}^{\Omega}_{\alpha}\rangle
+\defas
+|\bar{J}^{\Omega}_{\alpha}\rangle
+-|\bar{K}^{\Omega}_{\alpha}\rangle \bar{Q}_{\alpha}
+\end{eqnarray}
+
+A screened Hankel functions is a superposition of bare Hankel
+functions on a set of atomic positions withe the property that the
+tail functions are made entirely from screened bessel functions, i.e.
+\begin{eqnarray}
+|\bar{K}_{\alpha}^\infty\rangle=|K^\Omega_{\alpha}\rangle
+-\sum_{\beta}|\bar{J}^\Omega_{\beta}\rangle \bar{S}^\dagger_{\beta,\alpha}
++|\bar{K}^I_{\alpha}\rangle
+\label{eq:kbarwithsbar}
+\end{eqnarray}
+
+The screened Hankel functions are defined by a superposition of bare
+Hankel functions
+\begin{eqnarray}
+|\bar{K}^\infty_\alpha\rangle=\sum_\beta|K^\infty_\beta\rangle c_{\beta,\alpha}
+\label{eq:kbarassuperposofkbare}
+\end{eqnarray}
+
+By equating the two expressiones for the screened Hankel functions,
+namely \eq{eq:kbarassuperposofkbare} and \eq{eq:kbarwithsbar}, we can
+extract the screened structure constants and the superposition
+coeffcients.
+\begin{eqnarray}
+\sum_\beta\Bigl[|K^\Omega_{\beta}\rangle
+-\sum_{\gamma}|J^\Omega_{\gamma}\rangle S^\dagger_{\gamma,\beta}
++|K^I_{\beta}\rangle \Bigr]c_{\beta,\alpha}
+=
+|K^\Omega_{\alpha}\rangle
+-\sum_{\beta}
+\underbrace{\Bigl[|J^\Omega_{\beta}\rangle-|K^\Omega_{\beta}\rangle\bar{Q}_\beta\Bigr]}
+_{|\bar{J}^\Omega_{\beta}\rangle} \bar{S}^\dagger_{\beta,\alpha}
++|\bar{K}^I_{\alpha}\rangle
+\nonumber\\
+\sum_\beta
+|K^\Omega_{\beta}\rangle c_{\beta,\alpha}
+-\sum_{\beta,\gamma}|J^\Omega_{\gamma}\rangle S^\dagger_{\gamma,\beta} c_{\beta,\alpha}
+%+\sum_\beta|K^I_{\beta}\rangle c_{\beta,\alpha}
+=
+\sum_{\beta}|K^\Omega_{\beta}\rangle
+\Bigl[\delta_{\beta,\alpha}+
+\bar{Q}_\beta \bar{S}^\dagger_{\beta,\alpha}\Bigr]
+-\sum_{\beta}|J^\Omega_{\beta}\rangle \bar{S}^\dagger_{\beta,\alpha}
+%+|\bar{K}^I_{\alpha}\rangle
+\end{eqnarray}
+By comparing the coefficients, we obtain
+\begin{eqnarray}
+c_{\beta,\alpha}&=&\delta_{\beta,\alpha}+
+\bar{Q}_\beta \bar{S}^\dagger_{\beta,\alpha}
+\nonumber\\
+\bar{S}^\dagger_{\gamma,\alpha}&=&\sum_\beta S^\dagger_{\gamma,\beta} c_{\beta,\alpha}
+\label{eq:definingeqsystemforsbar}
+\end{eqnarray}
+which can be resolved to\footnote{
+\begin{eqnarray}
+\mat{c}&=&\mat{1}
++\mat{\bar{Q}}\mat{\bar{S}}^\dagger
+=\mat{1}+\mat{\bar{Q}}\mat{S}^\dagger\mat{c}
+\qquad
+\Rightarrow\qquad\sum_\gamma \Bigl[\delta_{\beta,\gamma}
+-\bar{Q}_\beta S^\dagger_{\beta,\gamma}\Bigr] c_{\gamma,\alpha}=\delta_{\beta,\alpha}
+\qquad\Rightarrow\qquad
+\mat{c}=[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]^{-1}
+\nonumber\\
+\mat{\bar{S}}^\dagger&=&\mat{S}^\dagger\mat{c}
+=\mat{S}^\dagger[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]^{-1}
+\qquad\Leftrightarrow\qquad
+[\mat{1}-\mat{S}\mat{\bar{Q}}]\mat{\bar{S}}=\mat{S}
+\end{eqnarray}
+The calculation can be done on a cluster of atomic sites for a single
+screened Hankel function. That is, $\alpha$ in
+\eq{eq:definingeqsystemforsbar} may be a single fixed orbital index,
+while the indices $\beta,\gamma$ can take any value on the
+cluster. Thus, $\bar{S}^\dagger$ and the coefficients $c$ can be considered as
+vectors $\vec{s}$ and $\vec{c}$.
+\begin{eqnarray}
+\vec{c}_\alpha&=&\vec{e}_\alpha+\mat{\bar{Q}}\vec{s}_\alpha
+=\vec{e}_\alpha+\mat{\bar{Q}}\mat{S}^\dagger\vec{c}_\alpha
+\qquad
+\Bigl[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger\Bigr]\vec{c}_\alpha=\vec{e}_\alpha
+\qquad\Rightarrow\qquad
+\mat{c}_\alpha=[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]^{-1}\vec{e}_\alpha
+\nonumber\\
+\vec{s}_\alpha&=&\mat{S}^\dagger\vec{c}_\alpha
+=\mat{S}^\dagger[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]^{-1}\vec{e}_\alpha
+\end{eqnarray}
+Thus we first evaluate $\mat{S}^\dagger$ on the cluster, and from that
+$[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]$. Then we solve the equation
+\begin{eqnarray}
+[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]\vec{q}_\alpha=\vec{e}_\alpha
+\end{eqnarray}
+for $\vec{q}_\alpha$.  Multiplication with te bare structure constants
+yields the screened structure constants as
+$\vec{s}_\alpha=\mat{S}^\dagger\vec{q}_\alpha$.  } the defining
+equation of the screened structure constants
+\begin{eqnarray}
+\mat{\bar{S}}^\dagger=\mat{S}^\dagger
+\Bigl[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger\Bigr]^{-1}
+\end{eqnarray}
+and the expression of the screened Hankel functions 
+\begin{eqnarray}
+|\bar{K}^\infty_\alpha\rangle=\sum_\beta |K^\infty_\beta\rangle
+\Bigl[\delta_{\beta,\alpha}+
+\bar{Q}_\beta \bar{S}^\dagger_{\beta,\alpha}\Bigr]
+\;.
+\end{eqnarray}
+
+
+
+
+%====================================================================
+\chapter{Description of Subroutines}
+%====================================================================
+%====================================================================
+\section{LMTO\$STRUCTURECONSTANTS}
+%====================================================================
+\begin{verbatim}
+subroutine lmto$structureconstants(r21,K2,L1x,L2x,S)
+REAL(8)   ,INTENT(IN) :: R21(3) ! EXPANSION CENTER
+INTEGER(4),INTENT(IN) :: L1X
+INTEGER(4),INTENT(IN) :: L2X
+REAL(8)   ,INTENT(IN) :: K2 ! 2ME/HBAR**2
+REAL(8)   ,INTENT(OUT):: S((L1X+1)**2,(L2X+1)**2)
+\end{verbatim}
+
+The bare structure constants are evaluated in 
+\verb|LMTO$STRUCTURECONSTANTS| as
+\begin{eqnarray}
+S_{RL,R'L'}=(-1)^{\ell'+1} 4\pi \sum_{L''} C_{L,L',L''} 
+H_{L''}(\vec{R}'-\vec{R})
+\kappa^{\ell+\ell'-\ell''}
+\end{eqnarray}
+where 
+\begin{eqnarray}
+\kappa=
+\begin{cases}
+-i\sqrt{k^2} &\text{for $k^2\ge0$}\\
+\sqrt{k^2} &\text{for $k^2<0$}\\
+\end{cases}
+\end{eqnarray}
+and where $H_L(k^2,\vec{R})$ is the solid Hankel function calculated
+in \verb|LMTO$SOLIDHANKEL|. The solid Hankel function is the solution
+of the Helmholt equation\footnote{The factors and signs of the
+  inhomogeneity need to be confirmed. The equation has been taken from
+  the Methods book chapter ``working with spherical Hankel and Bessel
+  functions.}
+\begin{eqnarray}
+\Bigl[\vec{\nabla^2}+k^2\Bigr]H_{L}(\vec{r})
+=-4\pi(-1)^\ell\mathcal{Y}(\vec{\nabla})\delta(\vec{r})
+\end{eqnarray}
+Here $\mathcal{Y}_\ell(\vec{r})=r^\ell Y_\ell(\vec{r})$ is a
+polynomial. With a gradient as argument it becomes a differential
+operator.
+
+Near the origin the solid Hankel function behaves, irrespective of the
+value of $k^2$ like
+\begin{eqnarray}
+H_\ell(\vec{r})=(2\ell+1)!! \frac{1}{|\vec{r}|^{\ell+1}}Y_L(\vec{r}) 
+\Bigl(1+O(|\vec{r}|)\Bigr)
+\end{eqnarray}
+More information on the solid Hankel function can be found in
+appendix~\ref{app:solidhankel}.
+
+\appendix
+%=======================================================================
+\chapter{Definition of solid Hankel functions}
+\label{app:solidhankel}
+%=======================================================================
+The solid Hankel function has the form
+\begin{eqnarray}
+H_L(\vec{R})=Y_L(\vec{R})
+\begin{cases}
+n_\ell(\sqrt{k^2}\cdot|\vec{R}|) \cdot \sqrt{k^2}^{\ell+1}
+&\text{for $k^2>0$  (Abramovitz 10.1.26)}\\
+m_\ell(\sqrt{-k^2}\cdot|\vec{R}|) \cdot \sqrt{\frac{2}{\pi}} \sqrt{-k^2}^{\ell+1}
+&\text{for $k^2<0$  (Abramovitz 10.2.4)}\\
+(2\ell-1)!! |\vec{R}|^{-\ell-1} 
+&\text{for $k^2=0$  (Abramovitz 10.2.5)}\\
+\end{cases}
+\end{eqnarray}
+The solid Hankel function is defined such that the boundary conditions
+at the origin are independent of $k^2$.
+
+\begin{itemize}
+\item the function
+\begin{eqnarray}
+n_\ell(r)=r^\ell\Bigl(-\frac{1}{r}\partial_r\Bigr)^\ell\frac{1}{r}\cos(r)
+\label{eq:defneumann}
+\end{eqnarray}
+is the spherical Neumann function (see Eq. 8.175 of Cohen Tannoudhi
+Band 2), which is also called the spherical Bessel function of the
+second kind. Abramowitz defines $n_\ell(r)=-y_\ell(r)$ (compare
+Abramowitz Eq. 10.1.26)
+
+The spherical Neumann function obeys the radial Helmholtz equation
+(Abramowitz Eq. 10.1.1) for positive kinetic energy
+\begin{eqnarray}
+r^2\partial^2_r n_\ell+2r\partial_r n_\ell+\Bigl(r^2-\ell(\ell+1)\Bigr) n_\ell=0
+\nonumber\\
+\Rightarrow\quad
+\Bigl[-\frac{1}{r}\partial_r r +\frac{\ell(\ell+1)}{r^2}\Bigr]
+n_\ell(r)=+n_\ell(r)
+\end{eqnarray}
+
+\textbf{Note that the subroutine SPFUNCTION\$NEUMANN returns the
+  Neumann function with the opposite sign, namely what Abramowitz
+  defines as Bessel function of the second kind. The minus sign is
+  added in the calling routine.}
+%
+\item The function 
+\begin{eqnarray}
+m_\ell(r)=r^\ell\Bigl(-\frac{1}{r}\partial_r\Bigr)^\ell\frac{1}{r}\e{-r}
+\label{eq:defml}
+\end{eqnarray}
+used for $k^2<0$ is obeys the radial Helmholtz equation (Abramowitz
+Eq. 10.2.1) for negative kinetic energy
+\begin{eqnarray}
+r^2\partial^2_r m_\ell
++2r\partial_r m_\ell
+-\Bigl(r^2+\ell(\ell+1)\Bigr) m_\ell=0
+\nonumber\\
+\Rightarrow\quad
+\Bigl[-\frac{1}{r}\partial_r r +\frac{\ell(\ell+1)}{r^2}\Bigr]
+m_\ell(r)=-m_\ell(r)
+\end{eqnarray}
+They are solutions for negative energy and therefore they fall off
+exponentially.  The solution $m_\ell(r)$ is proportional to the
+modified spherical Bessel functions of the third kind as defined by
+Abramowitz\cite{abramowitz64_book} in their Eq. 10.2.4.
+\begin{eqnarray}
+m_\ell(r)=\frac{2}{\pi} \Bigl[\sqrt{\frac{\pi}{2r}} K_{\ell+1}(r)\Bigr]
+\end{eqnarray}
+which can be verified by comparing the defining equation \eq{eq:defml}
+with equations 10.2.24-25 and the definition Eq. 10.2.4 of Abramowitz.
+\end{itemize}
+
+\clearpage
+\bibliographystyle{unsrtnat} \bibliography{../all}
+\end{document}  
