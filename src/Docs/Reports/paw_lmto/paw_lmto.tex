@@ -35,6 +35,23 @@ http://www.pt.tu-clausthal.de/atp/}
 \noindent            
 \tableofcontents
 %====================================================================
+\chapter{Todo}
+%====================================================================
+\begin{itemize}
+\item lmto\_overlapphi calculates the onsite overlap matrix of partial
+  waves in a sphere.
+%
+\item tbc and tbc do not agree after projtontbo, even after
+  potpar1\%phiov has been set equal to the identity matrix, which
+  corresponds to the old construction.
+%
+\item local natural orbitals in lmto\_locnatorb
+%
+\item the core-valence exchange contribution differs from the old version,
+  because it also includes the projection on the phidot functions.
+\end{itemize}
+
+%====================================================================
 \chapter{Purpose and theoretical background of the LMTO Object}
 %====================================================================
 The LMTO object maps the wave functions expressed in augmented plane
@@ -44,10 +61,14 @@ tails exhibit only scattering character in the context of nodeless
 wave functions\cite{bloechl12_arxiv1210_5937}.
 
 %====================================================================
+\section{Structure constants}
+%====================================================================
+%====================================================================
 \subsection{Bare structure constants}
 %====================================================================
 The bare structure constants are the expansion constants for an
-off-site expansion of spherical Hankel functions.
+off-site expansion of solid spherical Hankel functions\index{Hankel
+  function}.
 \begin{eqnarray}
 |K_{\alpha}^\infty\rangle=|K^\Omega_{\alpha}\rangle
 -\sum_{\beta}|J^\Omega_{\beta}\rangle S^\dagger_{\beta,\alpha}
@@ -56,8 +77,19 @@ off-site expansion of spherical Hankel functions.
 The index $\alpha$ denotes here an atomic site $R$ and a set of
 angular momenta $L=(\ell,m)$.
 
-In the following we will call $|K^\Omega_{\alpha}\rangle$ head
-function and $|J^\Omega_{\beta}\rangle$ tail functions.
+The superscript $\infty$ denotes that the function extends over all
+space, a superscript $\Omega$ denotes that the function is truncated
+(set to zero) outside the augmentation sphere $\Omega_{R}$ centerd at
+the site denoted by the index. The superscript $I$ denotes that the
+function is limited to the interstitial region, that is outside all
+augmentation spheres. If the augmentation spheres overlap, the
+function in the interstitial region is defined by subtraction of all
+sphere contributions.
+
+In the following we will call $|K^\Omega_{\alpha}\rangle$ \textbf{head
+  function}\index{head function} and $|J^\Omega_{\beta}\rangle$
+\textbf{tail functions}\index{tail function}.
+
 
 %====================================================================
 \subsection{Screened structure constants}
@@ -184,6 +216,302 @@ and the expression of the screened Hankel functions
 
 
 %====================================================================
+\section{Augmentation and Potential parameters}
+%====================================================================
+%===============================================================================
+\subsection{Local orbitals}
+%===============================================================================
+The local orbitals have the form
+\begin{eqnarray}
+|\chi_\alpha\rangle&=&|\phi^K_\alpha\rangle
+- |\phi^{\bar{J}}_{R,L}\rangle \bar{S}^\dagger_{R,L,R_\alpha,L_\alpha}
+\nonumber\\
+&+&|K^\infty_{R',L'}\rangle\Bigl[ \delta_{R',L',R_\alpha,\L_\alpha}-\bar{Q}_{R',L'}
+\bar{S}^\dagger_{R',L',R_\alpha,L_\alpha}\Bigr]
+\end{eqnarray}
+where, according to \eq{eq:tborbinlmto},
+\begin{eqnarray}
+|\phi^K_\alpha\rangle&=&
+\overbrace{
+|\phi_\alpha\rangle 
+\underbrace{
+\frac{W_\alpha[K,\dot{\bar{\phi}}]}{W_\alpha[\phi,\dot{\bar{\phi}}]}}_{Ktophi}
+-\,|\dot{\bar{\phi}}_\alpha\rangle 
+\underbrace{\frac{W_\alpha[K,\phi]}{W_\alpha[\phi,\dot{\bar{\phi}}]}}_{-Ktophidot}
+}^{\rightarrow |K^\Omega_\alpha\rangle}
+\nonumber\\
+|\phi^{\bar{J}}_{R,L}\rangle
+&=&\overbrace{
+|\dot{\bar{\phi}}_\beta\rangle 
+\underbrace{\biggl(-\frac{W_\beta[\bar{J},\phi]}{W_\beta[\phi,\dot{\bar{\phi}}]}\biggr)}_{JBARtophidot}
+}^{\rightarrow |\bar{J}\;^\Omega_\beta\rangle}
+\end{eqnarray}
+Note that in the factor $JBARTOPHIDOT$ does not depend on the choice
+of $|\phi\rangle$.
+
+Thus, the matrix elements
+$\langle\tilde{p}_\gamma|\tilde{\chi}_\alpha\rangle$ has the form
+\begin{eqnarray}
+\langle\tilde{p}_\gamma|\tilde{\chi}_\alpha\rangle
+=\langle\tilde{p}_\gamma|\tilde{\phi}^K_\alpha\rangle
+-\sum_{R',L'}\langle\tilde{p}_\gamma|\tilde{\phi}^{\bar{J}}_{R',L'}\rangle
+\bar{S}^\dagger_{R,L,R_\alpha,L_\alpha}
+\nonumber\\
+=\langle\tilde{p}_\gamma|\tilde{\phi}^K_\alpha\rangle
+-\langle\tilde{p}_\gamma|\tilde{\phi}^{\bar{J}}_{R_\gamma,L_\gamma}\rangle
+\bar{S}^\dagger_{R_\gamma,L_\gamma,R_\alpha,L_\alpha}
+\end{eqnarray}
+%====================================================================
+\section{Coefficients of the tight-binding orbital}
+%====================================================================
+%===============================================================================
+\subsection{Introduction}
+%===============================================================================
+In this section we describe how to determine the wave functions in
+terms of local orbitals, if the projections onto the pseudo wave
+functions are known.
+
+The basic idea is to find a representation of the wave function in
+local orbitals
+\begin{eqnarray}
+|\psi'_n\rangle=\sum_\alpha |\chi_\alpha\rangle q_\alpha\;,
+\end{eqnarray}
+such that the deviation from the true wave function $|\psi_n\rangle$
+is as small as possible.
+
+Ideally this would amount to minimizing
+\begin{eqnarray*}
+Q[\vec{q}]:=\Bigl(\langle\psi_n|-\sum_\alpha q^*_\alpha\langle\chi_\alpha|\Bigr)
+\Bigl(|\psi_n\rangle-\sum_\alpha |\chi_\beta\rangle q_\beta\Bigr)
+\end{eqnarray*}
+takes a minimum.
+
+Because evaluating the mean square deviation as integral over all
+space we limit the integral to the augmentation spheres.
+\begin{eqnarray}
+Q[\vec{q}]&:=&
+\Bigl(\langle\tilde{\psi}_n|
+-\sum_\alpha q^*_\alpha\langle\tilde{\chi}_\alpha|\Bigr)
+\biggl[\sum_{\delta,\gamma}|\tilde{p}_\delta\rangle\langle\phi_\delta|
+\theta_{\Omega_{R_\delta}}|\phi_\gamma\rangle\langle\tilde{p}_\gamma|\biggr]
+\Bigl(|\tilde{\psi}_n\rangle
+-\sum_\beta |\tilde{\chi}_\beta\rangle q_\beta\Bigr)
+\nonumber\\
+&=&
+\sum_{\gamma}
+\biggl[
+\sum_{\delta}
+\Bigl(\langle\tilde{\psi}_n|\tilde{p}_\delta\rangle
+-\sum_\alpha q^*_\alpha\langle\tilde{\chi}_\alpha|\tilde{p}_\delta\rangle\Bigr)
+\langle\phi_\delta|\theta_{\Omega_{R_\delta}}|\phi_\gamma\rangle
+\biggr]
+\Bigl(\langle\tilde{p}_\gamma|\tilde{\psi}_n\rangle
+-\sum_\beta \langle\tilde{p}_\gamma|\tilde{\chi}_\beta\rangle q_\beta\Bigr)
+\end{eqnarray}
+where $\theta_{\Omega_{R_\delta}}$ is a step function that vanishes
+outside the augmentation sphere at $R_\delta$.
+
+Minimization yields
+\begin{eqnarray}
+\frac{\partial Q}{\partial q^*_\alpha}
+&=&
+-\sum_{\gamma}
+\biggl[
+\sum_{\delta}
+\langle\tilde{\chi}_\alpha|\tilde{p}_\delta\rangle
+\langle\phi_\delta|\theta_{\Omega_{R_\delta}}|\phi_\gamma\rangle
+\biggr]
+\Bigl(\langle\tilde{p}_\gamma|\tilde{\psi}_n\rangle
+-\sum_\beta \langle\tilde{p}_\gamma|\tilde{\chi}_\beta\rangle q_\beta\Bigr)
+\stackrel{!}{=}0
+\nonumber
+\end{eqnarray}
+
+
+\begin{eqnarray}
+\Rightarrow\qquad\sum_{\gamma}
+\biggl[
+\sum_{\delta}
+\langle\tilde{\chi}_\alpha|\tilde{p}_\delta\rangle
+\langle\phi_\delta|\theta_{\Omega_{R_\delta}}|\phi_\gamma\rangle
+\biggr]
+\langle\tilde{p}_\gamma|\tilde{\psi}_n\rangle
+=
+\sum_{\gamma,\beta}
+\biggl[
+\sum_{\delta}
+\langle\tilde{\chi}_\alpha|\tilde{p}_\delta\rangle
+\langle\phi_\delta|\theta_{\Omega_{R_\delta}}|\phi_\gamma\rangle
+\biggr]
+\langle\tilde{p}_\gamma|\tilde{\chi}_\beta\rangle q_\beta\Bigr)
+\nonumber
+\end{eqnarray}
+
+\begin{eqnarray}
+\Rightarrow\qquad
+q_\beta=
+\sum_{\beta}
+\biggl[
+\sum_{\gamma',\delta'}
+\langle\tilde{\chi}_\alpha|\tilde{p}_{\delta'}\rangle
+\langle\phi_{\delta'}|\theta_{\Omega_{R_\delta}}|\phi_{\gamma'}\rangle
+\langle\tilde{p}_{\gamma'}|\tilde{\chi}_\beta\rangle 
+\biggr]^{-1}
+\biggl[
+\sum_{\gamma\delta}
+\langle\tilde{\chi}_\alpha|\tilde{p}_\delta\rangle
+\langle\phi_\delta|\theta_{\Omega_{R_\delta}}|\phi_\gamma\rangle
+\biggr]
+\langle\tilde{p}_\gamma|\tilde{\psi}_n\rangle
+\nonumber\\
+\end{eqnarray}
+
+
+This allows one to write the wave function in the form
+\begin{eqnarray}
+|\psi_n\rangle\approx
+\sum_\alpha|\chi_\alpha\rangle\langle\tilde{\pi}_\alpha|\tilde{\psi}_n\rangle
+\end{eqnarray}
+with
+\begin{eqnarray}
+\langle\tilde{\pi}_\alpha|=
+\sum_\gamma \biggl[
+\sum_{\gamma',\delta'}
+\langle\tilde{\chi}_\alpha|\tilde{p}_{\delta'}\rangle
+\langle\phi_{\delta'}|\theta_{\Omega_{R_\delta}}|\phi_{\gamma'}\rangle
+\langle\tilde{p}_{\gamma'}|\tilde{\chi}_\beta\rangle 
+\biggr]^{-1}
+\biggl[
+\sum_{\delta}
+\langle\tilde{\chi}_\alpha|\tilde{p}_\delta\rangle
+\langle\phi_\delta|\theta_{\Omega_{R_\delta}}|\phi_\gamma\rangle
+\biggr]
+\langle\tilde{p}_\gamma|
+\label{eq:pitilde}
+\end{eqnarray}
+
+This expression works also if the number of local orbitals
+$|\chi_\alpha\rangle$ is smaller than the number of projector
+functions $\langle{p}_\gamma|$. Because of the inversion, this
+expression needs to be evaluated in reciprocal space.
+
+%===============================================================================
+\subsection{Transformation between local-orbital and partial-wave projections}
+%===============================================================================
+In the previous section we derived in \eq{eq:pitilde} a relation
+between orbital and partial wave projector functions.
+\begin{eqnarray}
+\langle\tilde{\pi}_\alpha|\tilde{\psi}_n\rangle
+&=&\sum_\beta M_{\alpha,\beta}\langle\tilde{p}_\alpha|\tilde{\psi}_n\rangle
+\end{eqnarray}
+This operation is performed in \verb|lmto$projtontbo| with \verb|ID='FWRD'|
+
+
+The derivatives are correspondingly derived as 
+\begin{eqnarray}
+dE
+&=&
+\sum_{\alpha,n}\frac{\partial E}{\partial \langle\tilde{\pi}_\alpha|\tilde{\psi}_n\rangle}
+d\langle\tilde{\pi}_\alpha|\tilde{\psi}_n\rangle
+\nonumber\\
+&=&
+\sum_{\alpha,\beta,n}\frac{\partial E}
+{\partial \langle\tilde{\pi}_\alpha|\tilde{\psi}_n\rangle}
+M_{\alpha,\beta}d\langle\tilde{p}_\alpha|\tilde{\psi}_n\rangle
+\nonumber\\
+&=&
+\sum_{\beta,n}
+\biggl[\sum_{\alpha}
+\frac{\partial E}
+{\partial \langle\tilde{\pi}_\alpha|\tilde{\psi}_n\rangle}
+M_{\alpha,\beta}\biggr]d\langle\tilde{p}_\alpha|\tilde{\psi}_n\rangle
+\end{eqnarray}
+This operation is performed in \verb|lmto$projtontbo| with \verb|ID='BACK'|
+
+
+
+%====================================================================
+\section{Core-valence exchange}
+%====================================================================
+The exchange term between core and valence electrons acts like a
+fixed, nonlocal potential acting on the electrons, of the form
+\begin{eqnarray}
+\hat{\tilde{v}}_{x,cv}=\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle 
+M_{\alpha,\beta}\langle\tilde{p}_\beta|
+\end{eqnarray}
+The core-valence exchange is furthermore diagonal in the site indices.
+
+\begin{eqnarray}
+\langle\chi_\alpha|\hat{v}_{x,cv}|\chi_\beta\rangle
+&=&
+\sum_{\gamma,\delta}
+\langle\chi_\alpha|p_\gamma\rangle 
+M_{\gamma,\delta}\langle p_\delta|\chi_\beta\rangle
+\nonumber\\
+&=&
+\sum_{\gamma,\delta}
+\langle\tilde{K}^{aug}_\alpha|\tilde{p}_\gamma\rangle 
+M_{\gamma,\delta}
+\langle\tilde{p}_\delta|\tilde{K}^{aug}_\beta\rangle
+\nonumber\\
+&-&
+\sum_{\gamma,\delta,\beta'}
+\langle\tilde{K}^{aug}_\alpha|\tilde{p}_\gamma\rangle 
+M_{\gamma,\delta}
+\langle\tilde{p}_\delta|\tilde{J}^{aug}_{\beta'}\rangle \bar{S}^\dagger_{\beta',\beta}
+\nonumber\\
+&-&
+\sum_{\gamma,\delta,\alpha',\alpha}
+\bar{S}_{\alpha,\alpha'}\langle\tilde{\bar{J}}^{aug}_{\alpha'}|\tilde{p}_\gamma\rangle 
+M_{\gamma,\delta}
+\langle\tilde{p}_\delta|\tilde{\bar{K}}^{aug}_{\beta}\rangle 
+\nonumber\\
+&+&
+\sum_{\gamma,\delta,\alpha',\alpha}
+\bar{S}_{\alpha,\alpha'}\langle\tilde{\bar{J}}^{aug}_{\alpha'}|\tilde{p}_\gamma\rangle 
+M_{\gamma,\delta}
+\langle\tilde{p}_\delta|\tilde{\bar{J}}^{aug}_{\beta'}\rangle \bar{S}^\dagger_{\beta',\beta}
+\end{eqnarray}
+Here we used the augmented Hankel and screened Bessel fucntions,
+respectively their pseudo versions.
+
+As usual we build the expanded density matrix
+\begin{eqnarray}
+\left(\begin{array}{cc}
+\mat{\rho} & \mat{\rho}\mat{\bar{S}}^\dagger\\
+\mat{\bar{S}}\mat{\rho} & \mat{\bar{S}}\mat{\rho}\mat{\bar{S}}^\dagger\\
+\end{array}\right)
+\end{eqnarray}
+
+The matrix 
+\begin{eqnarray}
+\left(\begin{array}{cc}
+\langle\tilde{K}^{aug}|\tilde{p}\rangle 
+\mat{M}\langle\tilde{p}|\tilde{K}^{aug}\rangle &
+\langle\tilde{K}^{aug}|\tilde{p}\rangle 
+\mat{M}\langle\tilde{p}|\tilde{\bar{J}}^{aug}\rangle \\
+\langle\tilde{\bar{J}}^{aug}|\tilde{p}\rangle 
+\mat{M}\langle\tilde{p}|\tilde{K}^{aug}\rangle &
+\langle\tilde{\bar{J}}^{aug}|\tilde{p}\rangle 
+\mat{M}\langle\tilde{p}|\tilde{\bar{J}}^{aug}\rangle \\
+\end{array}\right)
+\end{eqnarray}
+is calculated first using \verb|potpar1(isp)%prok| and
+\verb|potpar1(isp)%projbar|.
+\footnote{ In the earlier version the contribution from the
+  $\dot{\bar{\phi}}$ has been ignored!!! It has been verified by
+  temporarily switching off the jbar contributiuon to
+  potpar1(isp)\%prok and potpar1(isp)\%projbar. In this old version
+  only potpar(isp)\%ktophi is used to extract the $\phi$
+  contribution.}
+
+
+
+
+
+
+
+%====================================================================
 \chapter{Description of Subroutines}
 %====================================================================
 %====================================================================
@@ -235,6 +563,64 @@ H_\ell(\vec{r})=(2\ell+1)!! \frac{1}{|\vec{r}|^{\ell+1}}Y_L(\vec{r})
 \end{eqnarray}
 More information on the solid Hankel function can be found in
 appendix~\ref{app:solidhankel}.
+
+
+%====================================================================
+\section{Waves object}
+%====================================================================
+The data exchange betweeen the waves object and the lmto object is
+determined by the local-orbital projections
+$\langle\tilde{\pi}_\alpha|\tilde{\psi}_n\rangle$ specified by the
+array \verb|THIS%TBC|, which in turn is obtained from the partial-wave
+projections $\langle\tilde{p}|\tilde{\psi}_n\rangle$.
+
+
+
+In \verb|waves$etot|
+\begin{verbatim}
+CALL WAVES$TONTBO
+-> CALL LMTO$PROJTONTBO('FWRD'...)
+..
+..
+CALL LMTO$ETOT(LMNXX,NDIMD,NAT,DENMAT)
+..
+..
+CALL WAVES$FROMNTBO()
+-> CALL LMTO$PROJTONTBO('BACK'...)
+..
+..
+CALL WAVES$FORCE
+-> CALL WAVES_FORCE_ADDHTBC
+...
+CALL WAVES$HPSI
+\end{verbatim}
+
+
+\begin{eqnarray*}
+\vec{F}&=&
+-\sum_\alpha
+\frac{dE}{d\langle\tilde{p}_\alpha|\psi_n\rangle}
+\langle\vec{\nabla}_R\tilde{p}_\alpha|\psi_n\rangle
++\mathrm{c.c.}
+\nonumber\\
+&=&-\sum_{\alpha,\beta}
+\frac{dE}{d\langle\tilde{\pi}_\beta|\psi_n\rangle}
+\frac{d\langle\tilde{\pi}_\beta|\psi_n\rangle}
+{d\langle\tilde{p}_\alpha|\psi_n\rangle}
+\langle\vec{\nabla}_R\tilde{p}_\alpha|\psi_n\rangle
++\mathrm{c.c.}
+\nonumber\\
+&=&-\sum_{\alpha,\beta}
+\frac{dE}{d\langle\tilde{\pi}_\beta|\psi_n\rangle}
+\frac{d\langle\tilde{\pi}_\beta|\psi_n\rangle}
+{d\langle\tilde{p}_\alpha|\psi_n\rangle}
+\Bigl[-\langle\vec{\nabla}_r\tilde{p}_\alpha|\psi_n\rangle\Bigr]
++\mathrm{c.c.}
+\end{eqnarray*}
+
+
+
+
 
 \appendix
 %=======================================================================
