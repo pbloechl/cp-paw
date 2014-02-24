@@ -41,12 +41,6 @@ http://www.pt.tu-clausthal.de/atp/}
 \item lmto\_overlapphi calculates the onsite overlap matrix of partial
   waves in a sphere.
 %
-\item tbc and tbc do not agree after projtontbo, even after
-  potpar1\%phiov has been set equal to the identity matrix, which
-  corresponds to the old construction.
-%
-\item local natural orbitals in lmto\_locnatorb
-%
 \item the core-valence exchange contribution differs from the old version,
   because it also includes the projection on the phidot functions.
 \end{itemize}
@@ -421,12 +415,94 @@ M_{\alpha,\beta}d\langle\tilde{p}_\alpha|\tilde{\psi}_n\rangle
 \nonumber\\
 &=&
 \sum_{\beta,n}
-\biggl[\sum_{\alpha}
+\biggl[\frac{1}{f_n}\sum_{\alpha}
 \frac{\partial E}
 {\partial \langle\tilde{\pi}_\alpha|\tilde{\psi}_n\rangle}
-M_{\alpha,\beta}\biggr]d\langle\tilde{p}_\alpha|\tilde{\psi}_n\rangle
+M_{\alpha,\beta}\biggr]
+d\Bigl(\langle\tilde{p}_\alpha|\tilde{\psi}_n\rangle f_n\Bigr)
 \end{eqnarray}
-This operation is performed in \verb|lmto$projtontbo| with \verb|ID='BACK'|
+Note, that the treatment of the occupations in the last step is only
+possible, because wave function and occupations always enter in a
+particular combination.  \textbf{Note that f does not enter
+  linearly. is the assumption used still correct?}
+
+
+This operation is performed in
+\verb|lmto$projtontbo| with \verb|ID='BACK'|.
+
+%===============================================================================
+\subsection{From local-orbital coefficients to the density matrix}
+%===============================================================================
+
+%====================================================================
+\subsubsection{Bloch theorem revisited}
+%====================================================================
+The Bloch states are eigenstates of the discrete lattice translation 
+\begin{eqnarray}
+\hat{S}(\vec{t})=\int d^3r\;|\vec{r}+\vec{t}\rangle\langle\vec{r}|
+\end{eqnarray}
+for the discrete lattice vectors $\vec{t}$. The eigenvalue equation has the form
+\begin{eqnarray}
+\hat{S}(\vec{t})|\psi_{\vec{k}}\rangle=|\psi_{\vec{k}}\rangle
+\e{i\vec{k}\vec{r}}
+\end{eqnarray}
+This eigenvalue equation can be recast into the form
+\begin{eqnarray}
+\langle\vec{r}-\vec{t}|\psi_{\vec{k}}\rangle=\langle\vec{r}|\psi_{\vec{k}}\rangle
+\e{i\vec{k}\vec{t}}
+\end{eqnarray}
+This implies that the states can be written  as product of a periodic function and a phase factor
+\begin{eqnarray}
+\langle\vec{r}|\psi_{\vec{k}}\rangle=u_{\vec{k}}(\vec{r})\e{i\vec{k}\vec{r}}
+\end{eqnarray}
+with
+\begin{eqnarray}
+u_{\vec{k}}(\vec{r})=u_{\vec{k}}(\vec{r}+\vec{t})
+\end{eqnarray}
+
+%====================================================================
+\subsubsection{Bloch theorem in a local orbital basis}
+%====================================================================
+With $q_\alpha\defas \langle\pi_\alpha|\psi\rangle$, we obtain
+\begin{eqnarray}
+\hat{S}(\vec{t})\sum_\alpha|\chi_\alpha\rangle q_{\alpha,n}
+&=&
+\sum_\alpha|\chi_\alpha\rangle q_{\alpha,n}\e{i\vec{k}_n\vec{t}}
+\nonumber\\
+\int d^3r\;|\vec{r}+\vec{t}\rangle\langle\vec{r}|
+\sum_\alpha|\chi_\alpha\rangle q_{\alpha,n}
+&=&
+\int d^3r\;|\vec{r}\rangle\langle\vec{r}|
+\sum_\alpha|\chi_\alpha\rangle q_{\alpha,n}\e{i\vec{k}_n\vec{t}}
+\nonumber\\
+\sum_\alpha\langle\vec{r}-\vec{t}|\chi_\alpha\rangle q_{\alpha,n}
+&=&
+\sum_\alpha
+\langle\vec{r}|\chi_\alpha\rangle q_{\alpha,n}\e{i\vec{k}_n\vec{t}}
+\nonumber\\
+\sum_\alpha\langle\vec{r}|\chi_{\alpha+\vec{t}}\rangle q_{\alpha,n}
+&=&
+\sum_\alpha
+\langle\vec{r}|\chi_\alpha\rangle q_{\alpha,n}\e{i\vec{k}_n\vec{t}}
+\nonumber\\
+\sum_{\alpha'}\langle\vec{r}|\chi_{\alpha'}\rangle q_{\alpha'-\vec{t},n}
+&=&
+\sum_\alpha
+\langle\vec{r}|\chi_\alpha\rangle q_{\alpha,n}\e{i\vec{k}_n\vec{t}}
+\nonumber\\
+q_{\alpha+\vec{t},n}&=&q_{\alpha,n}\e{-i\vec{k}_n\vec{t}}
+\end{eqnarray}
+
+%====================================================================
+\subsubsection{Density matrix}
+%====================================================================
+\begin{eqnarray}
+\rho_{\alpha,\beta+\vec{t}}
+&=&
+\sum_n \langle\pi_\alpha|\psi_n\rangle f_n
+\langle\psi_n|\pi_\beta\rangle
+\e{+i\vec{k}_n\vec{t}}
+\end{eqnarray}
 
 
 
@@ -450,27 +526,31 @@ M_{\gamma,\delta}\langle p_\delta|\chi_\beta\rangle
 \nonumber\\
 &=&
 \sum_{\gamma,\delta}
-\langle\tilde{K}^{aug}_\alpha|\tilde{p}_\gamma\rangle 
+\langle\tilde{\phi}^{K}_\alpha|\tilde{p}_\gamma\rangle 
 M_{\gamma,\delta}
-\langle\tilde{p}_\delta|\tilde{K}^{aug}_\beta\rangle
+\langle\tilde{p}_\delta|\tilde{\phi}^{K}_\beta\rangle
 \nonumber\\
 &-&
 \sum_{\gamma,\delta,\beta'}
-\langle\tilde{K}^{aug}_\alpha|\tilde{p}_\gamma\rangle 
+\langle\tilde{\phi}^{K}_\alpha|\tilde{p}_\gamma\rangle 
 M_{\gamma,\delta}
-\langle\tilde{p}_\delta|\tilde{J}^{aug}_{\beta'}\rangle \bar{S}^\dagger_{\beta',\beta}
+\langle\tilde{p}_\delta|\tilde{\phi}^{\bar{J}}_{\beta'}\rangle 
+\bar{S}^\dagger_{\beta',\beta}
 \nonumber\\
 &-&
 \sum_{\gamma,\delta,\alpha',\alpha}
-\bar{S}_{\alpha,\alpha'}\langle\tilde{\bar{J}}^{aug}_{\alpha'}|\tilde{p}_\gamma\rangle 
+\bar{S}_{\alpha,\alpha'}
+\langle\tilde{\phi}^{\bar{J}}_{\alpha'}|\tilde{p}_\gamma\rangle 
 M_{\gamma,\delta}
-\langle\tilde{p}_\delta|\tilde{\bar{K}}^{aug}_{\beta}\rangle 
+\langle\tilde{p}_\delta|\tilde{\phi}^{K}_{\beta}\rangle 
 \nonumber\\
 &+&
 \sum_{\gamma,\delta,\alpha',\alpha}
-\bar{S}_{\alpha,\alpha'}\langle\tilde{\bar{J}}^{aug}_{\alpha'}|\tilde{p}_\gamma\rangle 
+\bar{S}_{\alpha,\alpha'}
+\langle\tilde{\phi}^{\bar{J}}_{\alpha'}|\tilde{p}_\gamma\rangle 
 M_{\gamma,\delta}
-\langle\tilde{p}_\delta|\tilde{\bar{J}}^{aug}_{\beta'}\rangle \bar{S}^\dagger_{\beta',\beta}
+\langle\tilde{p}_\delta|\tilde{\phi}^{\bar{J}}_{\beta'}\rangle 
+\bar{S}^\dagger_{\beta',\beta}
 \end{eqnarray}
 Here we used the augmented Hankel and screened Bessel fucntions,
 respectively their pseudo versions.
@@ -478,22 +558,24 @@ respectively their pseudo versions.
 As usual we build the expanded density matrix
 \begin{eqnarray}
 \left(\begin{array}{cc}
-\mat{\rho} & \mat{\rho}\mat{\bar{S}}^\dagger\\
-\mat{\bar{S}}\mat{\rho} & \mat{\bar{S}}\mat{\rho}\mat{\bar{S}}^\dagger\\
+  \mat{\rho} \qquad& 
+-\mat{\rho}\mat{\bar{S}}^\dagger\\
+-\mat{\bar{S}}\mat{\rho} \qquad& 
+\mat{\bar{S}}\mat{\rho}\mat{\bar{S}}^\dagger\\
 \end{array}\right)
 \end{eqnarray}
 
 The matrix 
 \begin{eqnarray}
 \left(\begin{array}{cc}
-\langle\tilde{K}^{aug}|\tilde{p}\rangle 
-\mat{M}\langle\tilde{p}|\tilde{K}^{aug}\rangle &
-\langle\tilde{K}^{aug}|\tilde{p}\rangle 
-\mat{M}\langle\tilde{p}|\tilde{\bar{J}}^{aug}\rangle \\
-\langle\tilde{\bar{J}}^{aug}|\tilde{p}\rangle 
-\mat{M}\langle\tilde{p}|\tilde{K}^{aug}\rangle &
-\langle\tilde{\bar{J}}^{aug}|\tilde{p}\rangle 
-\mat{M}\langle\tilde{p}|\tilde{\bar{J}}^{aug}\rangle \\
+\langle\tilde{\phi}^{K}|\tilde{p}\rangle 
+\mat{M}\langle\tilde{p}|\tilde{\phi}^{K}\rangle &
+\langle\tilde{\phi}^{K}|\tilde{p}\rangle 
+\mat{M}\langle\tilde{p}|\tilde{\phi}^{\bar{J}}\rangle \\
+\langle\tilde{\phi}^{\bar{J}}|\tilde{p}\rangle 
+\mat{M}\langle\tilde{p}|\tilde{\phi}^{K}\rangle &
+\langle\tilde{\phi}^{\bar{J}}|\tilde{p}\rangle 
+\mat{M}\langle\tilde{p}|\tilde{\phi}^{\bar{J}}\rangle \\
 \end{array}\right)
 \end{eqnarray}
 is calculated first using \verb|potpar1(isp)%prok| and
