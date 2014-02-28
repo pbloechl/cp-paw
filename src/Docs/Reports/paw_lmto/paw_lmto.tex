@@ -47,6 +47,12 @@ http://www.pt.tu-clausthal.de/atp/}
 \item there has been a bug in \verb|lmto$screen|, which has been fixed
   with version 3. It may be better to rewrite all structure constants
   routines with teh transposed structure constants.
+%
+\item using only sp like tight-binding orbitals and local exchange
+  lead to an increase of the band gap of silicon avove 1.3 eV. After
+  adding the d-orbitals to the HF term collapsed the band gap
+  dramatically below the dft value. Core-valence echange seems to have
+  an important effect on the band gap too.
 \end{itemize}
 
 %====================================================================
@@ -59,32 +65,95 @@ tails exhibit only scattering character in the context of nodeless
 wave functions\cite{bloechl12_arxiv1210_5937}.
 
 %====================================================================
-\section{Structure constants}
+\section{Augmentation}
 %====================================================================
 The concept of linear augmented waves is as follows: 
 \begin{enumerate}
-\item At first a so-called envelope function is defined.
+\item At first a so-called \textbf{envelope function}\index{envelope
+  function} $|K^\infty_\alpha\rangle$ is defined.
 %
-\item In a second step this envelope function is expanded about each
-  atomic site into spherical harmonics.
+\item In a second step, this envelope function is expanded about each
+  atomic site into spherical harmonics.  More generally, they are
+  expanded into \textbf{head functions}\index{head function}
+  $|K^\Omega_\alpha\rangle$ and \textbf{tail functions}\index{tail
+    function} $|J^\Omega_\alpha\rangle$. The head function is the
+  dominant contribution and carries the quantum number of the final
+  orbital, while the tail functions are the minor contributions with
+  different quantum numbers. In practice, the head functions are solid
+  Hankel functions and the tail functions are solid Bessel functions.
+
+   The coefficients of the tail functions are called \textbf{structure
+     constants}\index{structure constants}.
+
+  The difference between the full envelope function and its expansion
+  into head and tail functions is the interstitial contribution
+  $|K^I_\alpha\rangle$.
 %
-\item In the third step the spherical-harmonics contributions are
-  replaced differentially at some sphere radius by partial waves of
-  the atomic potential. 
+\item In the third step the head and tail functions are replaced
+  differentially at some sphere radius by partial waves of the atomic
+  potential. For that purpose, we use a solution of the Schr\"odinger
+  equation for some energy, denoted as $|\phi_{\alpha}\rangle$ and its
+  energy derivative function $|\dot{\phi}_\alpha\rangle$.
+
+  The matching parameters are called \textbf{potential
+    parameters}\index{potential parameters}.
 \end{enumerate}
 
 %====================================================================
-\subsection{Envelope functions}
+\section{Structure constants}
 %====================================================================
-The envelope functions used here are solid Hankel functions, defined
-by the inhomogeneous Helmholtz equation
+%====================================================================
+\subsection{Hankel functions as envelope function}
+%====================================================================
+In practice, we will use solid Hankel functions $H_L(\vec{r})$ as
+envelope functions, so that 
+\begin{eqnarray}
+\langle\vec{r}|K^\infty_{R,L}\rangle= H_L(\vec{r}-\vec{R})
+\end{eqnarray}
+
+Solid Hankel functions are irregular solutions of the the
+inhomogeneous Helmholtz equation\footnote{I am not sure whether also
+  the three dimensional differential equation or only the
+  one-dimensional differential equation for the radial part is called
+  Helmholtz equation.}
 \begin{eqnarray}
 \Bigl[\vec{\nabla^2}+k^2\Bigr]H_{L}(\vec{r})
 =-4\pi(-1)^\ell\mathcal{Y}(\vec{\nabla})\delta(\vec{r})
+\label{eq:solidhelmholtzequation}
 \end{eqnarray}
 Here $\mathcal{Y}_\ell(\vec{r})=r^\ell Y_\ell(\vec{r})$ is a
-polynomial. With a gradient as argument it becomes a differential
+polynomial. With a gradient as argument, it becomes a differential
 operator.
+
+Further detail about the Hankel and Bessel functions can be found in
+appendix~\ref{app:solidhankel}.
+
+%====================================================================
+\subsection{Hankel and Bessel functions as head and tail functions}
+%====================================================================
+By defining the envelope function via a isotropic and translationally
+invariant differential equation of second order, has the advantage
+that the solution can be expanded about different centers into regular
+solutions of the same differential equation with specific angular
+momenta. The regular solutions of the Helmholtz equation are the
+Bessel functions.
+
+
+Hankel and Bessel functions are defined so that they behave at the
+origin as
+\begin{eqnarray}
+K^\Omega_{R,L}(\vec{r})&=&
+\Bigl[(2\ell-1)!! \frac{1}{|\vec{r}-\vec{R}|^{\ell+1}} 
++...\Bigr]
+Y_L(\vec{r}-\vec{R})\theta_{\Omega_R}(\vec{r})
+\\
+J^\Omega_{R,L}(\vec{r})&=&
+\biggl[\frac{1}{(2\ell+1)!!} |\vec{r}-\vec{R}|^{\ell+1} 
++...\Bigr]Y_L(\vec{r}-\vec{R})\theta_{\Omega_R}(\vec{r})
+\end{eqnarray}
+$\theta_{\Omega_R}(\vec{r})$ is a step function that is one within the
+augmentation region $\Omega_R$ centered at site $R$, while it vanishes
+outside. The terms neglected are higher orders in $|\vec{r}-\vec{R}|$.
 
 %====================================================================
 \subsection{Bare structure constants}
@@ -111,10 +180,32 @@ augmentation spheres. If the augmentation spheres overlap, the
 function in the interstitial region is defined by subtraction of all
 sphere contributions.
 
-In the following we will call $|K^\Omega_{\alpha}\rangle$ \textbf{head
-  function}\index{head function} and $|J^\Omega_{\beta}\rangle$
-\textbf{tail functions}\index{tail function}.
 
+
+\begin{myshadowminipage}{Bare structure constants}
+The bare structure constants have the form
+\begin{eqnarray}
+S_{RL,R'L'}=(-1)^{\ell'+1} 4\pi \sum_{L''} C_{L,L',L''} 
+H_{L''}(\vec{R}'-\vec{R})
+\begin{cases}
+(-ik)^{\ell+\ell'-\ell''}&\text{for $k^2>0$}\\
+\delta_{\ell+\ell'-\ell''}&\text{for $k^2=0$}\\
+\kappa^{\ell+\ell'-\ell''}&\text{for $k^2=-\kappa^2<0$}\\
+\end{cases}
+\label{eq:fortmulaforbarestructureconstants}
+\end{eqnarray}
+\end{myshadowminipage}
+
+
+The bare structure constants are hermitean\footnote{We use that
+  $H_L(\vec{r})=(-1)^\ell H_L(-\vec{r})$ and that the Gaunt
+  coefficients $C_{L,L',L''}$ vanish unless $\ell+\ell'+\l''$ is
+  even.}, i.e.
+\begin{eqnarray}
+S_{RL,R'L'}=S_{R'L',RL}
+\end{eqnarray}
+This is however not true for each angular-momentum block individually,
+i.e. in general we have $S_{RL,R'L'}\neq S_{R,L',R'L}$.
 
 %====================================================================
 \subsection{Screened structure constants}
@@ -128,8 +219,8 @@ scattering partial wave
 |\dot{\bar{\phi}}_\alpha\rangle \rightarrow 
 |\bar{J}^{\Omega}_{\alpha}\rangle
 \defas
-|\bar{J}^{\Omega}_{\alpha}\rangle
--|\bar{K}^{\Omega}_{\alpha}\rangle \bar{Q}_{\alpha}
+|J^{\Omega}_{\alpha}\rangle
+-|K^{\Omega}_{\alpha}\rangle \bar{Q}_{\alpha}
 \end{eqnarray}
 
 A screened solid Hankel function $|\bar{K}_{\alpha}^\infty\rangle$ is
@@ -209,7 +300,7 @@ equation of the screened structure constants
 \begin{myshadowminipage}{screened structure constants}
 \begin{eqnarray}
 \mat{\bar{S}}^\dagger=\mat{S}^\dagger
-\Bigl[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger\Bigr]^{-1}
+\Bigl[\mat{1}-\mat{S}^\dagger\mat{\bar{Q}}\Bigr]^{-1}
 \label{eq:defscreenedstructureconstants}
 \end{eqnarray}
 and the expression of the screened Hankel functions 
@@ -219,10 +310,17 @@ and the expression of the screened Hankel functions
 \bar{Q}_\beta \bar{S}^\dagger_{\beta,\alpha}\Bigr]
 \;.
 \end{eqnarray}
+
+Because, we calculate the screened structure constants on finite
+clusters, \eq{eq:defscreenedstructureconstants} should be considered
+of only formal value and should not be used in the actual
+calculations. Rather, the defining equations
+\eq{eq:definingeqsystemforsbarb} shall be used as shown in the
+following section.
 \end{myshadowminipage}{}
 
 %====================================================================
-\section{Calculate screened structure constants on clusters}
+\section{Screening on finite clusters}
 %====================================================================
 The screened structure constants are calculated on a cluster of atomic
 sites. The calculation can in principle be done for each single
@@ -283,13 +381,15 @@ contribution of these vectors with a unit matrix.
 
 
 \begin{myshadowminipage}{Calculation of screened structure constants}
-Thus we first evaluate the bare structure constants $\mat{S}^\dagger$
+Thus, we first evaluate the bare structure constants $\mat{S}^\dagger$
 on the cluster, and from that
 $[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]$. Then we solve the equation
 \begin{eqnarray}
 [\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]\vec{c}_\alpha&=&\vec{e}_\alpha
+\label{eq:forscreenedsa}
 \nonumber\\
 \vec{s}_\alpha&=&\mat{S}^\dagger\vec{c}_\alpha
+\label{eq:forscreenedsb}
 \end{eqnarray}
 for $\vec{c}_\alpha$ first using a standard routine for linear
 equation systems. From the result $\vec{c}_\alpha$, we obtain the
@@ -302,11 +402,8 @@ Finally we obtain the screened structure constants as
 \end{eqnarray}
 \end{myshadowminipage}
 
-
-
-
-
-
+Note that the screened structure constants calculated on finite
+clusters are no more exactly hermitean.
 
 
 
@@ -341,7 +438,7 @@ where, according to \eq{eq:tborbinlmto},
 \underbrace{\biggl(-\frac{W_\beta[\bar{J},\phi]}{W_\beta[\phi,\dot{\bar{\phi}}]}\biggr)}_{JBARtophidot}
 }^{\rightarrow |\bar{J}\;^\Omega_\beta\rangle}
 \end{eqnarray}
-Note that in the factor $JBARTOPHIDOT$ does not depend on the choice
+Note, that in the factor $JBARTOPHIDOT$ does not depend on the choice
 of $|\phi\rangle$.
 
 Thus, the matrix elements
@@ -503,108 +600,60 @@ between orbital and partial wave projector functions.
 This operation is performed in \verb|lmto$projtontbo| with \verb|ID='FWRD'|
 
 
+
+
 The derivatives are correspondingly derived as 
 \begin{eqnarray}
-dE
-&=&
-\sum_{\alpha,n}\frac{\partial E}{\partial \langle\tilde{\pi}_\alpha|\tilde{\psi}_n\rangle}
-d\langle\tilde{\pi}_\alpha|\tilde{\psi}_n\rangle
+dE&=&\sum_{\alpha,\beta}\underbrace{\frac{dE}{d\rho_{\alpha,\beta}}}
+_{=:h_{\beta,\alpha}}d\rho_{\alpha,\beta}
 \nonumber\\
-&=&
-\sum_{\alpha,\beta,n}\frac{\partial E}
-{\partial \langle\tilde{\pi}_\alpha|\tilde{\psi}_n\rangle}
-M_{\alpha,\beta}d\langle\tilde{p}_\alpha|\tilde{\psi}_n\rangle
+&=&\sum_{\alpha,\beta}h_{\beta,\alpha}
+\Bigl[
+\sum_n\langle\pi_\alpha|d\psi_n\rangle f_n\langle\psi_n|\pi_\beta\rangle
++\sum_n\langle\pi_\alpha|\psi_n\rangle f_n\langle{d}\psi_n|\pi_\beta\rangle
+\Bigr]
 \nonumber\\
-&=&
-\sum_{\beta,n}
-\biggl[\frac{1}{f_n}\sum_{\alpha}
-\frac{\partial E}
-{\partial \langle\tilde{\pi}_\alpha|\tilde{\psi}_n\rangle}
-M_{\alpha,\beta}\biggr]
-d\Bigl(\langle\tilde{p}_\alpha|\tilde{\psi}_n\rangle f_n\Bigr)
+&=&\sum_n\sum_{\alpha}
+f_n
+\underbrace{\sum_{\beta}
+\langle\psi_n|\pi_\beta\rangle h_{\beta,\alpha}}_{HTBC^\dagger_{n,\alpha}}
+\langle\pi_\alpha|d\psi_n\rangle 
++
+\sum_n\sum_{\beta}
+\langle{d}\psi_n|\pi_\beta\rangle 
+\underbrace{\sum_{\alpha}h_{\beta,\alpha} \langle\pi_\alpha|\psi_n\rangle}_{HTBC_{\beta,n}} f_n
+\nonumber\\
+&=&\sum_n\sum_{\gamma}
+f_n
+\underbrace{\sum_{\alpha}
+\underbrace{\sum_{\beta}
+\langle\psi_n|\pi_\beta\rangle h_{\beta,\alpha}}_{HTBC^\dagger_{n,\alpha}}
+M_{\alpha,\gamma}}_{HPROJ^\dagger_{n,\gamma}}
+\langle\tilde{p}_\gamma|d\tilde{\psi}_n\rangle 
+\nonumber\\
+&+&
+\sum_n\sum_{\gamma}
+\langle{d}\tilde{\psi}_n|\tilde{p}_\gamma\rangle 
+\underbrace{
+\sum_{\beta}M^\dagger_{\gamma,\beta}
+\underbrace{\sum_{\alpha}h_{\beta,\alpha} \langle\pi_\alpha|\psi_n\rangle}_{HTBC_{\beta,n}}}_{HPROJ_{\gamma,n}} f_n
 \end{eqnarray}
-Note, that the treatment of the occupations in the last step is only
-possible, because wave function and occupations always enter in a
-particular combination.  \textbf{Note that f does not enter
-  linearly. is the assumption used still correct?}
+
+Thus, we first define the Hamiltonian $\mat{h}$ (HAMIL) 
+\begin{eqnarray}
+\underbrace{h_{\alpha,\beta}}_{HAMIL}&=&\frac{dE}{\rho_{\beta,\alpha}}
+\nonumber\\
+HTBC_{\beta,n}&=&
+\sum_\alpha \underbrace{h_{\beta,\alpha}}_{HAMIL}
+\underbrace{\langle\tilde{\pi}_\alpha|\tilde{\psi}_n\rangle}_{TBC_{\alpha,n}}
+\nonumber\\
+HPROJ_{\gamma,n}&=&\sum_\beta M^\dagger_{\gamma,\beta}\cdot HTBC_{\beta,n}
+\end{eqnarray}
 
 
 This operation is performed in
 \verb|lmto$projtontbo| with \verb|ID='BACK'|.
 
-%===============================================================================
-\subsection{From local-orbital coefficients to the density matrix}
-%===============================================================================
-
-%====================================================================
-\subsubsection{Bloch theorem revisited}
-%====================================================================
-The Bloch states are eigenstates of the discrete lattice translation 
-\begin{eqnarray}
-\hat{S}(\vec{t})=\int d^3r\;|\vec{r}+\vec{t}\rangle\langle\vec{r}|
-\end{eqnarray}
-for the discrete lattice vectors $\vec{t}$. The eigenvalue equation has the form
-\begin{eqnarray}
-\hat{S}(\vec{t})|\psi_{\vec{k}}\rangle=|\psi_{\vec{k}}\rangle
-\e{i\vec{k}\vec{r}}
-\end{eqnarray}
-This eigenvalue equation can be recast into the form
-\begin{eqnarray}
-\langle\vec{r}-\vec{t}|\psi_{\vec{k}}\rangle=\langle\vec{r}|\psi_{\vec{k}}\rangle
-\e{i\vec{k}\vec{t}}
-\end{eqnarray}
-This implies that the states can be written  as product of a periodic function and a phase factor
-\begin{eqnarray}
-\langle\vec{r}|\psi_{\vec{k}}\rangle=u_{\vec{k}}(\vec{r})\e{i\vec{k}\vec{r}}
-\end{eqnarray}
-with
-\begin{eqnarray}
-u_{\vec{k}}(\vec{r})=u_{\vec{k}}(\vec{r}+\vec{t})
-\end{eqnarray}
-
-%====================================================================
-\subsubsection{Bloch theorem in a local orbital basis}
-%====================================================================
-With $q_\alpha\defas \langle\pi_\alpha|\psi\rangle$, we obtain
-\begin{eqnarray}
-\hat{S}(\vec{t})\sum_\alpha|\chi_\alpha\rangle q_{\alpha,n}
-&=&
-\sum_\alpha|\chi_\alpha\rangle q_{\alpha,n}\e{i\vec{k}_n\vec{t}}
-\nonumber\\
-\int d^3r\;|\vec{r}+\vec{t}\rangle\langle\vec{r}|
-\sum_\alpha|\chi_\alpha\rangle q_{\alpha,n}
-&=&
-\int d^3r\;|\vec{r}\rangle\langle\vec{r}|
-\sum_\alpha|\chi_\alpha\rangle q_{\alpha,n}\e{i\vec{k}_n\vec{t}}
-\nonumber\\
-\sum_\alpha\langle\vec{r}-\vec{t}|\chi_\alpha\rangle q_{\alpha,n}
-&=&
-\sum_\alpha
-\langle\vec{r}|\chi_\alpha\rangle q_{\alpha,n}\e{i\vec{k}_n\vec{t}}
-\nonumber\\
-\sum_\alpha\langle\vec{r}|\chi_{\alpha+\vec{t}}\rangle q_{\alpha,n}
-&=&
-\sum_\alpha
-\langle\vec{r}|\chi_\alpha\rangle q_{\alpha,n}\e{i\vec{k}_n\vec{t}}
-\nonumber\\
-\sum_{\alpha'}\langle\vec{r}|\chi_{\alpha'}\rangle q_{\alpha'-\vec{t},n}
-&=&
-\sum_\alpha
-\langle\vec{r}|\chi_\alpha\rangle q_{\alpha,n}\e{i\vec{k}_n\vec{t}}
-\nonumber\\
-q_{\alpha+\vec{t},n}&=&q_{\alpha,n}\e{-i\vec{k}_n\vec{t}}
-\end{eqnarray}
-
-%====================================================================
-\subsubsection{Density matrix}
-%====================================================================
-\begin{eqnarray}
-\rho_{\alpha,\beta+\vec{t}}
-&=&
-\sum_n \langle\pi_\alpha|\psi_n\rangle f_n
-\langle\psi_n|\pi_\beta\rangle
-\e{+i\vec{k}_n\vec{t}}
-\end{eqnarray}
 
 
 
@@ -699,8 +748,69 @@ is calculated first using \verb|potpar1(isp)%prok| and
 \chapter{Description of Subroutines}
 %====================================================================
 %====================================================================
-\section{LMTO\$STRUCTURECONSTANTS}
+\section{Workflow}
 %====================================================================
+\begin{verbatim}
+---initialization-----
+POTPAR = potential parameters
+SBAR = screened structureconstants
+<ptilde|chitilde>
+tailed partial waves
+  overlap (Onsite) 
+  utensor (Onsite)
+  utensor (offsite)
+...
+----cycle-----------
+TBC=<pi-tilde|psi> from PROJ=<ptilde|psitide>
+DENMAT density matrix in local orbitals
+...
+total energy and derivatives
+HAMIL hamiltonian matrix in tight-binding orbitals
+...
+HTBC = de/dtbc * 1/f
+HPROJ = de/dproj * 1/f
+\end{verbatim}
+
+%====================================================================
+\section{LMTO\$CLUSTERSTRUCTURECONSTANTS}
+%====================================================================
+\verb|LMTO\$CLUSTERSTRUCTURECONSTANTS| calculates the screened
+structure constants \verb|SBAR| ($\mat{\bar{S}}$) for a cluster of
+\verb|NAT| atomic sites \verb|RPOS|, of which the first site is called
+the central site of the cluster. The number of angular momenta on each
+site is defined by \verb|LX|. The screening is defined by the vector
+\verb|QBAR| ($\bar{Q}$). \verb|K2| ($\vec{k}^2=-\kappa^2$) is the
+squared wave vector. (For envelope functions that fall off
+exponentially, this parameter is negative.)
+
+\begin{verbatim}
+SUBROUTINE LMTO$CLUSTERSTRUCTURECONSTANTS(K2,NAT,RPOS,LX,QBAR,NORB,N,SBAR)
+REAL(8)   ,INTENT(IN) :: K2          
+INTEGER(4),INTENT(IN) :: NAT         ! NUMBER OF ATOMS ON THE CLUSTER
+REAL(8)   ,INTENT(IN) :: RPOS(3,NAT) ! ATOMIC POSITIONS ON THE CLUSTER
+INTEGER(4),INTENT(IN) :: LX(NAT)     ! X(ANGULAR MOMENTUM ON EACH CLUSTER)
+INTEGER(4),INTENT(IN) :: N
+REAL(8)   ,INTENT(IN) :: QBAR(N)
+INTEGER(4),INTENT(IN) :: NORB
+REAL(8)   ,INTENT(INOUT):: SBAR(NORB,N)
+\end{verbatim}
+
+
+
+
+First, the bare structure constants are evaluates on the cluster using
+\verb|LMTO\$STRUCTURECONSTANTS| and then the structure constants are
+screened using \verb|LMTO\$SCREEN|.
+
+%====================================================================
+\subsection{LMTO\$STRUCTURECONSTANTS}
+%====================================================================
+\verb|LMTO\$STRUCTURECONSTANTS| calculates the bare structure
+constants for a pair of sites. The first site is at the origin, where
+the Hankel function is centered, and the second site at $\vec{R}$
+specified by \verb|R21|, is the center of the expansion into solid
+Bessel functions.
+
 \begin{verbatim}
 subroutine lmto$structureconstants(r21,K2,L1x,L2x,S)
 REAL(8)   ,INTENT(IN) :: R21(3) ! EXPANSION CENTER
@@ -713,48 +823,71 @@ REAL(8)   ,INTENT(OUT):: S((L1X+1)**2,(L2X+1)**2)
 The bare structure constants are evaluated in 
 \verb|LMTO$STRUCTURECONSTANTS| as
 \begin{eqnarray}
-S_{RL,R'L'}=(-1)^{\ell'+1} 4\pi \sum_{L''} C_{L,L',L''} 
+S_{RL,R'L'}\eqrel{eq:fortmulaforbarestructureconstants}{=}
+(-1)^{\ell'+1} 4\pi \sum_{L''} C_{L,L',L''} 
 H_{L''}(\vec{R}'-\vec{R})
-\kappa^{\ell+\ell'-\ell''}
-\end{eqnarray}
-where 
-\begin{eqnarray}
-\kappa=
 \begin{cases}
--i\sqrt{k^2} &\text{for $k^2\ge0$}\\
-\sqrt{-k^2} &\text{for $k^2<0$}\\
+(-ik)^{\ell+\ell'-\ell''}&\text{for $k^2>0$}\\
+\delta_{\ell+\ell'-\ell''}&\text{for $k^2=0$}\\
+\kappa^{\ell+\ell'-\ell''}&\text{for $k^2=-\kappa^2<0$}\\
 \end{cases}
+\label{eq:fortmulaforbarestructureconstantscopy1}
 \end{eqnarray}
-and where $H_L(k^2,\vec{R})$ is the solid Hankel function calculated
-in \verb|LMTO$SOLIDHANKEL|. The solid Hankel function is the solution
-of the Helmholtz equation\footnote{The factors and signs of the
-  inhomogeneity need to be confirmed. The equation has been taken from
-  the methods book, chapter \textit{``Working with spherical Hankel and Bessel
-  functions.}}
-\begin{eqnarray}
-\Bigl[\vec{\nabla^2}+k^2\Bigr]H_{L}(\vec{r})
-=-4\pi(-1)^\ell\mathcal{Y}(\vec{\nabla})\delta(\vec{r})
-\end{eqnarray}
-Here $\mathcal{Y}_\ell(\vec{r})=r^\ell Y_\ell(\vec{r})$ is a
-polynomial. With a gradient as argument it becomes a differential
-operator.
+where $H_L(k^2,\vec{R})$ is the solid Hankel function calculated in
+\verb|LMTO$SOLIDHANKEL|. The solid Hankel function is the solution of
+the Helmholtz equation, \eq{eq:solidhelmholtzequation}.\footnote{The
+  factors and signs of the inhomogeneity need to be confirmed. The
+  equation has been taken from the methods book, chapter
+  \textit{``Working with spherical Hankel and Bessel functions.}}
 
-Near the origin the solid Hankel function behaves, irrespective of the
-value of $k^2$ like
-\begin{eqnarray}
-H_\ell(\vec{r})=(2\ell+1)!! \frac{1}{|\vec{r}|^{\ell+1}}Y_L(\vec{r}) 
-\Bigl(1+O(|\vec{r}|)\Bigr)
-\end{eqnarray}
 More information on the solid Hankel function can be found in
 appendix~\ref{app:solidhankel}.
 
+Remark: Because the Gaunt coefficients vanish for odd
+$\ell+\ell'-\ell''$, the structure constants are real even for
+$k^2>0$.
+
+
 %====================================================================
-\section{LMTO\$SCREEN}
+\subsection{LMTO\$SCREEN}
 %====================================================================
+\textit{I describe here what has been implemented as ``version 3''.}
 
+\verb|LMTO$SCREEN| takes the bare structure constants $S_{RL,R'L'}$
+connecting all orbitals on a specific cluster with each other and the
+screening constants $\bar{Q}$ for all orbitals on the cluster. It
+returns the screened structure constants connecting the orbitals on
+the central (first) site (1st index) with all orbitals (2nd index).
 
+The structure constants are defined so that
+\begin{eqnarray}
+\langle K_{RL}|=-\sum_{L'} S_{RL,R'L'}\langle J_{R'L'}|
+\qquad\text{for $R'\neq R$}
+\end{eqnarray}
 
+First we evaluate 
+\begin{eqnarray}
+\mat{A}=\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger
+\end{eqnarray}
+and the vectors $\vec{e}_\alpha$ defined by
+$(\vec{e}_\alpha)_\beta=\delta_{\beta,\alpha}$. Note that the number
+of vectors corresponds to the number of orbitals on the central site
+only. Therefore, these vectors do not build up a complete unit matrix.
 
+Then we solve the equation system
+\begin{eqnarray}
+\mat{A}\vec{c}_\alpha
+&\eqrel{eq:forscreenedsa}{=}&
+\vec{e}_\alpha
+\end{eqnarray}
+for $\vec{c}_\alpha$ and
+\begin{eqnarray}
+\vec{s}_\alpha&\eqrel{eq:forscreenedsb}{=}&
+\mat{S}^\dagger\vec{c}_\alpha
+\end{eqnarray}
+$\Bigl(\vec{s}_\alpha\Bigr)_\beta=\bar{S}^\dagger_{\beta,\alpha}$
+contains the transposed screened structure constants. After
+transposition, $\bar{S}$ is returned.
 
 %====================================================================
 \section{Waves object}
@@ -888,6 +1021,141 @@ with equations 10.2.24-25 and the definition Eq. 10.2.4 of Abramowitz.
 
 
 %=======================================================================
+\section{Bare structure constants}
+%=======================================================================
+\textit{ This section is copied from Methods-book, Section ``Working
+  with spherical Hankel and Bessel functions'', Peter Bl\"ochl, private
+  communication.}
+
+The bare structure constants have been determined first by
+Segall\cite{segall57_pr105_108}. He uses the
+theorem\cite{korringa47_physica13_392} that supposedy goes back to
+Kasterin (N. Kasterin, Proc. Acad. Sci Amsterdam 6, 460 (1897/98));
+see Seegall\cite{segall57_pr105_108}, Eq. B4)
+\begin{eqnarray}
+h_\ell^{(1)}(\kappa r)Y_{\ell,m}(\vec{r})=i^{-\ell}
+\mathcal{Y}_{\ell,m}(\vec{\nabla}_r)h_0^{(1)}(\kappa r)
+\label{eq:hlfromh0}
+\end{eqnarray}
+where $h^{(1)}_\ell(x)$ i the spherical Hankel function of the first
+kind (see \eq{eq:defsphericalhankelfirstkind} below)
+and where (Eq. B5 of Segall\cite{segall57_pr105_108})
+\begin{eqnarray}
+\mathcal{Y}_{\ell,m}(\vec{\nabla})
+&=&\sqrt{\frac{2\ell+1}{4\pi}\frac{(\ell-m)!}{(\ell+m)!}}
+\biggl(\frac{1}{ik}\biggr)^{|m|}\biggl(\partial_x\pm i\partial_y\biggr)
+\mathcal{P}_\ell^{|m|}\left(\frac{1}{ik}\partial_z\right)
+\end{eqnarray}
+where the positive sign applies for nonzero $m$ and the negative sign
+for negative $m$. Furthermore (see Segall\cite{segall57_pr105_108}
+Eq.~B5)
+\begin{eqnarray*}
+\mathcal{P}_\ell^{|m|}(z)=\frac{d^{|m|}P_\ell(z)}{dz^{|m|}}
+\end{eqnarray*}
+where $P_\ell(z)$ is the conventional Legendre polynomial.
+
+In addition Segall\cite{segall57_pr105_108} refers in his Eq. B7 to
+Morse and Feshbach\cite{morse53_book} (part II, p. 1574) for
+\begin{eqnarray}
+h_0^{(1)}(\kappa|\vec{r}-\vec{r'}|)&=&
+4\pi\sum_L \biggl( h^{(1)}_\ell(\kappa|\vec{r'}|)Y_L(\vec{r'})\biggr)
+j_\ell(\kappa|\vec{r}|)Y_L^*(\vec{r})
+\label{eq:structureconstant0}
+\end{eqnarray}
+which is valid for $|\vec{r'}|>|\vec{r}|$.
+
+The two equations, \eq{eq:hlfromh0} and \eq{eq:structureconstant0},
+can be combined into
+\begin{eqnarray*}
+h_\ell^{(1)}(\kappa |\vec{r}|)Y_{\ell,m}(\vec{r})
+&\eqrel{eq:hlfromh0}{=}&
+i^{-\ell}\mathcal{Y}_{\ell,m}(\vec{\nabla}_r)h_0^{(1)}(\kappa |\vec{r}|)
+\\
+&=&
+i^{-\ell}\mathcal{Y}_{\ell,m}(\vec{\nabla}_r)
+h_0^{(1)}(\kappa |(\vec{r}-\vec{R})+\vec{R}|)
+\\
+&\eqrel{eq:structureconstant0}{=}&
+i^{-\ell}\mathcal{Y}_{\ell,m}(\vec{\nabla}_r)
+\biggl[
+4\pi\sum_{L'}\biggl( h^{(1)}_{\ell'}(\kappa|\vec{R}|)Y_{L'}(-\vec{R})\biggr)
+j_{\ell'}(\kappa|\vec{r}-\vec{R}|)Y_{L'}^*(\vec{r}-\vec{R})
+\biggr]
+\\
+&\eqrel{eq:helper1forprestructureconstants}{=}&
+4\pi\sum_{L'}\biggl(i^{-\ell}
+\mathcal{Y}_{\ell,m}(\vec{\nabla}_R) 
+h^{(1)}_{\ell'}(\kappa|\vec{R}|)Y_{L'}(-\vec{R})\biggr)
+j_{\ell'}(\kappa|\vec{r}-\vec{R}|)Y_{L'}^*(\vec{r}-\vec{R})
+\end{eqnarray*}
+Here we used that 
+\begin{eqnarray}
+\vec{\nabla}_r \bigl[f(\vec{R})g(\vec{r}-\vec{R})\bigr]
+&=&f(\vec{R})\vec{\nabla}_rg(\vec{r}-\vec{R})
+=-f(\vec{R})\vec{\nabla}_Rg(\vec{r}-\vec{R})
+\\
+&=&-\underbrace{\vec{\nabla}_R\overbrace{\bigl[f(\vec{R})g(\vec{r}-\vec{R})\bigr]
+}^{h(\vec{r})}}_{=0}
++\Bigl[\vec{\nabla}_Rf(\vec{R})\Bigr]g(\vec{r}-\vec{R})\bigr]
+\label{eq:helper1forprestructureconstants}
+\end{eqnarray}
+
+We summarize the final result
+\begin{myshadowminipage}{Condition for structure constants (positive energies)}
+\begin{eqnarray}
+h_\ell^{(1)}(\kappa |\vec{r}|)Y_{\ell,m}(\vec{r})
+&=&
+4\pi\sum_{L'}\biggl(i^{-\ell}
+\mathcal{Y}_{\ell,m}(\vec{\nabla}_R) 
+h^{(1)}_{\ell'}(\kappa|\vec{R}|)Y_{L'}(-\vec{R})\biggr)
+j_{\ell'}(\kappa|\vec{r}-\vec{R}|)Y_{L'}^*(\vec{r}-\vec{R})
+\nonumber\\
+\label{eq:prestructureconstants}
+\end{eqnarray}
+where $h^{(1)}(x)$ is the spherical Hankel function of the first kind
+defined in Abramowitz and Stegun (AS)\cite{abramowitz}
+\begin{eqnarray}
+h_\ell^{(1)}(x)\stackrel{AS 10.1.1}{=}j_\ell(x)+iy_\ell(x)
+\stackrel{AS10.1.26}{=}
+x^\ell\biggl(-\frac{1}{x}\partial_x\biggr)^\ell\frac{\sin(x)-i\cos(x)}{x}
+\label{eq:defsphericalhankelfirstkind}
+\end{eqnarray}
+\end{myshadowminipage}
+
+
+
+%
+%====================================================================
+\subsubsection{Expression for the structure constants}
+%====================================================================
+By comparing our notation to that of Daniel Grieger and using his
+expression for the Structure constants, we arrive at the following
+expression for the structure constants in our notation.
+
+There was a misunderstanding with the sign of the structure
+constants. Here I follow the signconvention $K=-\sum JS$, which is
+opposite to the one I and Daniel had earlier.
+
+\begin{eqnarray}
+S_{R',L',R,L}
+&=&
+-4\pi \sum_{L''} H^B_{L''}(\vec{R'}-\vec{R}) C_{L,L'',L} 
+\left\lbrace
+\begin{array}{c}
+(-1)^{\ell'}
+(-ik)^{\ell+\ell'-\ell''}
+\\
+(-1)^{\ell'}\delta_{\ell+\ell',\ell''}
+\\
+(-1)^{\ell'}\kappa^{\ell+\ell'-\ell''}
+\end{array}\right\rbrace 
+\label{eq:expressionstructureconstants}
+\end{eqnarray}
+
+
+
+
+%=======================================================================
 \section{Consistency checks}
 %=======================================================================
 We consider the case with $\kappa=0$, for which the solid Bessel and Hankel functions are
@@ -911,54 +1179,170 @@ J_{\vec{0},p_x}(\vec{r})&=&\frac{1}{3}\sqrt{\frac{3}{4\pi}} x
 Now we extract the structure constants from the off-site expansion
 \begin{eqnarray}
 K_{\vec{0},s}^\infty(\vec{r})&=&
--J_s(\vec{r}-\vec{R}) S^\dagger_{\vec{R},s;\vec{0},s}
+-S_{\vec{0},s;\vec{R},s} J_s(\vec{r}-\vec{R}) 
 \nonumber\\
-&&-J_{p_x}(\vec{r}-\vec{R}) S^\dagger_{\vec{R},p_x;\vec{0},s}
--J_{p_y}(\vec{r}-\vec{R}) S^\dagger_{\vec{R},p_y;\vec{0},s}
--J_{p_z}(\vec{r}-\vec{R}) S^\dagger_{\vec{R},p_z;\vec{0},s}
-\\
+&&-S_{\vec{0},s;\vec{R},p_x} J_{p_x}(\vec{r}-\vec{R}) 
+-S_{\vec{0},s;\vec{R},p_y} J_{p_y}(\vec{r}-\vec{R}) 
+-S_{\vec{0},s;\vec{R},p_z} J_{p_z}(\vec{r}-\vec{R}) 
+\end{eqnarray}
+which allows us to evaluate the structure constants directly
+calculating value and derivatives at the second center and by
+exploiting selection rules\footnote{Only an s-function has a finite
+  value at the origin, only a p-function has a finite first derivative
+  at the center, etc.}
+\begin{eqnarray}
 K_{\vec{0},s}^\infty(\vec{R})&=&\frac{1}{\sqrt{4\pi}}\frac{1}{|\vec{R}|}
 =-
+\underbrace{\Bigl(-\frac{1}{|\vec{R}|}\Bigr)}_{S_{\vec{0},s,\vec{R},s}}
 \underbrace{\frac{1}{\sqrt{4\pi}}}_{J_{\vec{R},s}(\vec{R})} 
-\underbrace{\Bigl(-\frac{1}{|\vec{R}|}\Bigr)
-}_{S^\dagger_{\vec{R},s;\vec{0},s}}
 \\
 \left.\partial_x\right|_{\vec{R}}K_{\vec{0},s}^\infty&=&
 -\frac{1}{\sqrt{4\pi}}\frac{X}{|\vec{R}|^3}
-=-\underbrace{\frac{1}{3}\sqrt{\frac{3}{4\pi}}}_{\partial_x J_{\vec{R},p_x}(\vec{R})}
-\underbrace{\sqrt{3}\frac{X}{|\vec{R}|^3}}_{S^\dagger_{\vec{R},p_x,\vec{0},s}}
+=-
+\underbrace{\sqrt{3}\frac{X}{|\vec{R}|^3}}_{S_{\vec{0},s;\vec{R},p_x}}
+\underbrace{\frac{1}{3}\sqrt{\frac{3}{4\pi}}}_{\partial_x J_{\vec{R},p_x}(\vec{R})}
 \\
 K_{\vec{0},p_x}(\vec{R})&=&\sqrt{\frac{3}{4\pi}}\frac{X}{|\vec{R}|^3}
-=-\underbrace{\frac{1}{\sqrt{4\pi}}}_{J_{\vec{R},s}(\vec{R})}
+=-
 \underbrace{\Bigl(-\sqrt{3}\frac{X}{|\vec{R}|^3}\Bigr)
-}_{S^\dagger_{\vec{R},s,\vec{0},p_x}}
+}_{S_{\vec{0},p_x;\vec{R},s}}
+\underbrace{\frac{1}{\sqrt{4\pi}}}_{J_{\vec{R},s}(\vec{R})}
+\nonumber\\
+\left.\partial_x\right|_{\vec{R}}K_{\vec{0},p_x}^\infty&=&
+\sqrt{\frac{3}{4\pi}}
+\left(\frac{1}{|\vec{R}|^3}-3\frac{X^2}{|\vec{R}|^5}\right)
+=
+-\underbrace{3\frac{3X^2-\vec{R}^2}{|\vec{R}|^2}}_{S_{\vec{0},p_x,\vec{R},p_x}}
+\underbrace{\frac{1}{3}\sqrt{\frac{3}{4\pi}}|\vec{R}|^{-3}
+}_{\left.\partial_x\right|_{\vec{R}} J_{\vec{R},p_x}}
 \end{eqnarray}
 
-For $\kappa=0$ the structure constants have the form
+Thus, the matrix of structure constants in the (s,p$_x$) subspace is
+\begin{eqnarray}
+\mat{S}_{\vec{0},\vec{R}}=\left(\begin{array}{cc}
+-|\vec{R}|^{-1} & \sqrt{3}X/|\vec{R}|^3\\
+-\sqrt{3}X/|\vec{R}|^3 & 
+3[3X^2/R^2-1]\\
+\end{array}\right)
+\end{eqnarray}
+
+We compare this result now for the one obtained from the direct
+formula for $\kappa=0$. These structure constants have the form
 \begin{eqnarray}
 S_{RL,R'L'}=(-1)^{\ell'+1} 4\pi \sum_{L''} C_{L,L',L''} 
 H_{L''}(\vec{R}'-\vec{R})
-\underbrace{\kappa^{\ell+\ell'-\ell''}}_{=1\text{ for $\kappa=0$}}
-\nonumber\\
-S^\dagger_{RL,R'L'}=(-1)^{\ell+1} 4\pi \sum_{L''} C_{L,L',L''} 
-H_{L''}(\vec{R}-\vec{R}')
-\underbrace{\kappa^{\ell+\ell'-\ell''}}_{=1\text{ for $\kappa=0$}}
+\delta^{\ell+\ell'-\ell''}
 \end{eqnarray}
 The structure constants obtained from this equation are
 \begin{eqnarray}
-S^\dagger_{\vec{R},s,\vec{0},s}&=&(-1) 4\pi \frac{1}{\sqrt{4\pi}}
-\cdot\frac{1}{\sqrt{4\pi}}\frac{1}{|\vec{R}|}=-\frac{1}{|\vec{R}|}
+S_{\vec{0},s;\vec{R},s}&=&(-1) 4\pi \underbrace{\frac{1}{\sqrt{4\pi}}}_{C_{sss}}
+\cdot\underbrace{\frac{1}{\sqrt{4\pi}}\frac{1}{|\vec{R}|}}_{H_s(\vec{R})}
+=-\frac{1}{|\vec{R}|}
 \nonumber\\
-S^\dagger_{\vec{R},p_x,\vec{0},s}&=& 4\pi
+S_{\vec{0},s;\vec{R},p_x}&=& 4\pi
 \underbrace{\frac{1}{\sqrt{4\pi}}}_{C_{p_x,s,p_x}}
-\sqrt{\frac{3}{4\pi}}\frac{X}{|\vec{R}|^3}=\sqrt{3}\frac{X}{|\vec{R}|^3}
+\underbrace{
+\sqrt{\frac{3}{4\pi}}\frac{X}{|\vec{R}|^3}}
+_{H_{p_x}(\vec{R})}
+=\sqrt{3}\frac{X}{|\vec{R}|^3}
 \nonumber\\
-S^\dagger_{\vec{R},s,\vec{0},p_x}&=& (-1)4\pi
+S_{\vec{0},p_x;\vec{R},s}&=& (-1)4\pi
 \underbrace{\frac{1}{\sqrt{4\pi}}}_{C_{p_x,s,s}}\sqrt{\frac{3}{4\pi}}
 \frac{X}{|\vec{R}|^3}=-\sqrt{3}\frac{X}{|\vec{R}|^3}
+\nonumber\\
+S_{\vec{0},p_x;\vec{R},p_x}&=& 4\pi
+\underbrace{\frac{1}{\sqrt{5\pi}}}_{C_{p_x,p_x,d_{3x^2-r^2}}}
+\underbrace{
+\overbrace{\sqrt{\frac{5}{16\pi}} \frac{3X^2-R^2}{|\vec{R}|^2}}^{Y_{3x^2-r^2}}
+\frac{3}{|\vec{R}|^{3}}
+}_{H_{3x^2-r^2}(\vec{R})}
+=3\frac{3X^2-R^2}{|R^5|}
+\end{eqnarray}
+For Gaunt coefficients see footnote.\footnote{
+\begin{eqnarray}
+Y_{p_x}Y_{p_x}=\frac{3}{4\pi}\frac{x^2}{r^2}
+=\frac{1}{4\pi}\frac{x^2}{r^2} +\frac{1}{4\pi}\frac{3x^2-r^2}{r^2}
+=\frac{1}{\sqrt{4\pi}}Y_s +\frac{1}{4\pi}\sqrt{\frac{16\pi}{5}}
+Y_{3x^2-r^2}
+=\frac{1}{\sqrt{4\pi}}Y_s +\sqrt{\frac{1}{5\pi}}Y_{3x^2-r^2}
+\nonumber\\
+\Rightarrow 
+C_{p_x,p_x,s}=\frac{1}{\sqrt{4\pi}}\qquad\text{and}\qquad
+C_{p_x,p_x,d_{3x^2-r^2}}=\frac{1}{\sqrt{5\pi}}
+\end{eqnarray}}
+
+
+
+
+%====================================================================
+\chapter{Bloch theorem revisited}
+%====================================================================
+The Bloch states are eigenstates of the discrete lattice translation 
+\begin{eqnarray}
+\hat{S}(\vec{t})=\int d^3r\;|\vec{r}+\vec{t}\rangle\langle\vec{r}|
+\end{eqnarray}
+for the discrete lattice vectors $\vec{t}$. The eigenvalue equation has the form
+\begin{eqnarray}
+\hat{S}(\vec{t})|\psi_{\vec{k}}\rangle=|\psi_{\vec{k}}\rangle
+\e{i\vec{k}\vec{r}}
+\end{eqnarray}
+This eigenvalue equation can be recast into the form
+\begin{eqnarray}
+\langle\vec{r}-\vec{t}|\psi_{\vec{k}}\rangle=\langle\vec{r}|\psi_{\vec{k}}\rangle
+\e{i\vec{k}\vec{t}}
+\end{eqnarray}
+This implies that the states can be written  as product of a periodic function and a phase factor
+\begin{eqnarray}
+\langle\vec{r}|\psi_{\vec{k}}\rangle=u_{\vec{k}}(\vec{r})\e{i\vec{k}\vec{r}}
+\end{eqnarray}
+with
+\begin{eqnarray}
+u_{\vec{k}}(\vec{r})=u_{\vec{k}}(\vec{r}+\vec{t})
 \end{eqnarray}
 
+%====================================================================
+\subsubsection{Bloch theorem in a local orbital basis}
+%====================================================================
+With $q_\alpha\defas \langle\pi_\alpha|\psi\rangle$, we obtain
+\begin{eqnarray}
+\hat{S}(\vec{t})\sum_\alpha|\chi_\alpha\rangle q_{\alpha,n}
+&=&
+\sum_\alpha|\chi_\alpha\rangle q_{\alpha,n}\e{i\vec{k}_n\vec{t}}
+\nonumber\\
+\int d^3r\;|\vec{r}+\vec{t}\rangle\langle\vec{r}|
+\sum_\alpha|\chi_\alpha\rangle q_{\alpha,n}
+&=&
+\int d^3r\;|\vec{r}\rangle\langle\vec{r}|
+\sum_\alpha|\chi_\alpha\rangle q_{\alpha,n}\e{i\vec{k}_n\vec{t}}
+\nonumber\\
+\sum_\alpha\langle\vec{r}-\vec{t}|\chi_\alpha\rangle q_{\alpha,n}
+&=&
+\sum_\alpha
+\langle\vec{r}|\chi_\alpha\rangle q_{\alpha,n}\e{i\vec{k}_n\vec{t}}
+\nonumber\\
+\sum_\alpha\langle\vec{r}|\chi_{\alpha+\vec{t}}\rangle q_{\alpha,n}
+&=&
+\sum_\alpha
+\langle\vec{r}|\chi_\alpha\rangle q_{\alpha,n}\e{i\vec{k}_n\vec{t}}
+\nonumber\\
+\sum_{\alpha'}\langle\vec{r}|\chi_{\alpha'}\rangle q_{\alpha'-\vec{t},n}
+&=&
+\sum_\alpha
+\langle\vec{r}|\chi_\alpha\rangle q_{\alpha,n}\e{i\vec{k}_n\vec{t}}
+\nonumber\\
+q_{\alpha+\vec{t},n}&=&q_{\alpha,n}\e{-i\vec{k}_n\vec{t}}
+\end{eqnarray}
 
+%====================================================================
+\subsubsection{Density matrix}
+%====================================================================
+\begin{eqnarray}
+\rho_{\alpha,\beta+\vec{t}}
+&=&
+\sum_n \langle\pi_\alpha|\psi_n\rangle f_n
+\langle\psi_n|\pi_\beta\rangle
+\e{+i\vec{k}_n\vec{t}}
+\end{eqnarray}
 
 
 \clearpage
