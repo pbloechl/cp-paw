@@ -53,6 +53,14 @@ http://www.pt.tu-clausthal.de/atp/}
   adding the d-orbitals to the HF term collapsed the band gap
   dramatically below the dft value. Core-valence echange seems to have
   an important effect on the band gap too.
+%
+\item in \verb|lmto$makestructureconstants|, the structure constants
+  have not been calculated because the parallelzation was wrong.  in
+  13403f6.
+\begin{verbatim}
+-       IF(MOD(IAT1-1,NTASKS).NE.THISTASK-1) THEN
++       IF(MOD(IAT1-1,NTASKS).eq.THISTASK-1) THEN
+\end{verbatim}
 \end{itemize}
 
 %====================================================================
