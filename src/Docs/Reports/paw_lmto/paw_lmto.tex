@@ -61,6 +61,10 @@ http://www.pt.tu-clausthal.de/atp/}
 -       IF(MOD(IAT1-1,NTASKS).NE.THISTASK-1) THEN
 +       IF(MOD(IAT1-1,NTASKS).eq.THISTASK-1) THEN
 \end{verbatim}
+%
+\item double counting in \verb|paw_lmto| and \verb|paw_dmft| is in
+  error. It takes the partial wave density matrix do do it
+  properly. currently only the density of AEF is used.
 \end{itemize}
 
 %====================================================================
