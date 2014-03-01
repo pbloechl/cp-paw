@@ -60,7 +60,7 @@ The grand potential has the form
 \biggr\rbrace
 \label{eq:gcpdm2}
 \end{eqnarray}
-where the density matrix functional is expressed with the
+where the density-matrix functional is expressed with the
 Luttinger-Ward functional\cite{luttinger60_pr118_1417}
 $\Phi^{LW}[\mat{G},\hat{W}]$ as
 \begin{eqnarray}
@@ -93,8 +93,9 @@ $\Phi^{LW}[\mat{G},\hat{W}]$ as
 Here, $|\psi_n\rangle$ are one-particle wave functions. They play the
 role of natural orbitals, the eigenstates of the one-particle density
 matrix $\mat{\rho}$. $f_n$ are the occupations, the eigenvalues of the
-one-particle density matrix. The chemical potential is $\mu$. The
-Hamiltonian consists of a non-interacting part $\hat{h}$ and an
+one-particle density matrix. The chemical potential is $\mu$ and
+$\beta=1/(k_BT)$. The Hamiltonian consists of a non-interacting part
+$\hat{h}=\frac{\hat{p}^2}{2m_0}+\hat{v}_{ext}$ and an
 electron-electron interaction $\hat{W}$.
 
 The Matsubara sum runs over the Matsubara frequencies 
@@ -118,13 +119,14 @@ is the self energy. The Green's function is related to the density matrix by
 \sum_\nu\e{i\beta\hbar\omega_\nu0^+}\mat{G}(i\omega_\nu)
 \label{eq:rhoofg}
 \end{eqnarray}
-
+as a consequence of the startionarity with respect to the Lagrange
+multiplier $\mat{h}'$
 
 
 %====================================================================
 \subsubsection{Helmholtz potential}
 %====================================================================
-In practice we calculate the Helmholtz potential
+In practice, we calculate the Helmholtz potential
 \begin{eqnarray}
 A_{\beta,N}[\hat{h}+\hat{W}]
 &=&\stat_\mu\Bigl\lbrace\Omega_{\beta,\mu}+\mu N_\mu\Bigr\rbrace
@@ -182,7 +184,12 @@ Q^{\hat{W}}_\beta[\mat{\rho}]
 %====================================================================
 In order to integrate DMFT into the DFT code, we define first a local
 basis set of orbitals $|\chi_a\rangle$. These orbitals are in general
-not orthogonal. The decomposition of the Kohn-Sham wave functions,
+not orthogonal. The orbitals are spin orbitals, that is each is a two
+component wave function with a spin-up and a spin-down component. If
+the spin orbitals are eigenstates of $\hat{S}_z$ one or the other of
+the components vanishes.
+
+The decomposition of the Kohn-Sham wave functions,
 which in the the context of rDMFT are the natural orbitals, is
 obtained via the projector functions $\langle\pi_a|$ as
 \begin{eqnarray}
@@ -266,7 +273,7 @@ The purpose of the DMFT object is to add
 \end{eqnarray}
 in the local approximation, that is for a Luttinger-Ward functional,
 that is a sum over local terms. This approximation is consistent with
-dynamical mean field theory. In the long run, the DMFT object will
+dynamical mean-field theory. In the long run, the DMFT object will
 only contribute the dynamical terms, while the Hartree-Fock term is
 taken care of in the LMTO object. This will allow to include the
 non-local Hartree-Fock terms, while the DMFT object is limited to site
@@ -444,9 +451,9 @@ orthonormal one-particle basisset. These orbitals are two-component
 spinor orbitals. The order of the orbitals is arbitrary, and there is
 not necessarily a division between spin-up and spin-down orbitals.
 
-Note, also the the nature of the orbitals and also their order may
+Note also, that the nature of the orbitals and also their order may
 change arbitrarily from one iteration to the next. However, the
-orbitals stay  the same during the evaluation of a density
+orbitals stay the same during the evaluation of a density
 matrix functional for a given density matrix $\mat{\rho}$.
 
 
@@ -462,7 +469,7 @@ functional can be calculated directly from the density matrix given by
 \end{eqnarray}
 
 
-Similarly the self energy and its Laurent expansion terms follow from
+Similarly, the self energy and its Laurent expansion terms follow from
 \begin{eqnarray}
 \Delta\Sigma_{a,b}(i\omega_\nu)&=&
 \beta\frac{\partial\Phi^{LW}}{\partial G_{b,a}(i\omega_\nu)}
