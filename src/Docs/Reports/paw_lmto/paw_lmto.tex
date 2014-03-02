@@ -1039,6 +1039,83 @@ LMTO_TWOCENTER
 \end{verbatim}
 
 
+%=======================================================================
+\section{Routines for reporting}
+%=======================================================================
+\begin{verbatim}
+LMTO$REPORT(NFIL)
+..
+LMTO$REPORTOVERLAP(NFIL)
+LMTO$REPORTSBAR(NFIL)
+LMTO$REPORTDENMAT(NFIL)
+LMTO$REPORTHAMIL(NFIL)
+LMTO$REPORTPERIODICMAT(NFIL,NAME,NNS,SBAR)
+...
+LMTO$WRITEPHI(FILE,GID,NR,NPHI,PHI)
+\end{verbatim}
+
+%=======================================================================
+\section{Routines for plotting orbitals}
+%=======================================================================
+\begin{verbatim}
+LMTO_PLOTTAILED()  [OK]
+    LMTO_TAILEDORBLM(IAT,IORB,NR,LMX,ORB)
+LMTO_GRIDPLOT_TAILED(1)  [ok]
+    LMTO_GRIDORB_CUBEGRID(R0(:,IAT0),RANGE,N1,N2,N3,ORIGIN,TVEC,P)
+    LMTO_GRIDORB_STARGRID(R0(:,IAT0),RANGE,NDIR,DIR,NRAD,X1D,P)
+    LMTO_TAILED_NTBOOFR(TYPE,IAT,iORB,NP,P,chi)
+        LMTO_TAILEDORBLM(IAT,IORB,NR,LMX,ORB)
+    LMTO_WRITECUBEFILE
+..
+LMTO_PLOTNTBO(TYPE,IATORB,LMNORB)
+    LMTO_GRIDORB_CUBEGRID(CENTER,RADIUS,N1,N2,N3,ORIGIN,TVEC,P)
+    LMTO_GRIDORB_STARGRID(CENTER,RADIUS,NDIR,DIR,NR,X1D,P)
+LMTO_GRIDPLOT_UNTAILED(IAT0)
+    LMTO_GRIDORB_CUBEGRID(R0(:,IAT0),RANGE,N1,N2,N3,ORIGIN,TVEC,P)
+    LMTO_GRIDORB_STARGRID(R0(:,IAT0),RANGE,NDIR,DIR,NRAD,X1D,P)
+    LMTO_GRIDENVELOPE(RBAS,NAT,R0,IAT0,LMX,NP,P,ENV,ENV1)
+    LMTO_GRIDAUGMENT(RBAS,NAT,R0,IAT0,LMX,NP,P,ORB1,ENV1)
+    LMTO_GRIDGAUSS(RBAS,NAT,R0,IAT0,LMX,NP,P,ORBG)
+    LMTO_WRITECUBEFILE(NFIL,NATCLUSTER,ZCLUSTER,RCLUSTER &
+LMTO_PLOTLOCORB(IAT0)
+    LMTO_GRIDENVELOPE(RBAS,NAT,R0,IAT0,LM1X,NP,P,ENV,ENV1)
+    LMTO_GRIDAUGMENT(RBAS,NAT,R0,IAT0,LM1X,NP,P,ORB1,ENV1)
+    LMTO_GRIDGAUSS(RBAS,NAT,R0,IAT0,LM1X,NP,P,ORBG)
+    LMTO_WRITECUBEFILE
+LMTO_PLOTNTBO(TYPE,IATORB,LMNORB)
+    LMTO_GRIDORB_CUBEGRID(CENTER,RADIUS,N1,N2,N3,ORIGIN,TVEC,P)
+    LMTO_GRIDORB_STARGRID(CENTER,RADIUS,NDIR,DIR,NR,X1D,P)
+    LMTO_TAILED_NTBOOFR(TYPE,IATORB,LMNORB,NP,P,ORB)
+    LMTO_NTBOOFR(TYPE,IATORB,LMNORB,NP,P,ORB)
+..
+LMTO_NTBOOFR(TYPE,IATORB,LMNORB,NP,P,ORB)
+LMTO_TAILED_NTBOOFR(TYPE,IATORB,LMNORB,NP,P,ORB)
+LMTO$PLOTWAVE(NFIL,IDIM0,IB0,IKPT0,ISPIN0,NR1,NR2,NR3)
+    LMTO$PLOTWAVE_TAILED(NFIL,IDIM0,IB0,IKPT0,ISPIN0,NR1,NR2,NR3)
+        WRITEWAVEPLOTC(NFIL,TITLE,RBAS,NAT,R0,ZAT,Q,NAME,XK,NR1,NR2,NR3,WAVE)
+\end{verbatim}
+
+\begin{itemize}
+\item \verb|LMTO_TAILEDORBLM(IAT,IORB,NR,LMX,ORB)| calculates a
+  specific orbital on radial grids in a spherical harmonics
+  representation.
+%
+\item \verb|LMTO_PLOTTAILED()| writes the tailed local orbitals in a
+  spherical harmonics expanion to file, so that the componenst can be
+  viewed by xmgrace. Each orbital is written to a file \verb|CHI5_3.DAT|
+  where 5 is the atom index and 3 is the orbital index.
+%
+\item \verb|LMTO_TAILED_NTBOOFR(IAT,iORB,NP,P,chi)| calculates a
+  specific tailed orbital on a set of real space points.
+%
+\item \verb|LMTO_GRIDPLOT_TAILED(IAT0)| writes the orbitals for the
+  specified site to file. It supports a 3D representation with cube
+  files, and one-dimensional representation on a star grid.
+\end{itemize}
+
+
+
+
 \appendix
 %=======================================================================
 \chapter{Definition of solid Hankel functions}
@@ -1451,7 +1528,8 @@ removed in 7501a0g from Feb.2, 2013 (svn revision 1116 from Nov. 20,
 \item \verb|LMTO_EXPANDPRODS|
 \end{itemize}
 
-
+The routines related to Gaussians have been moved into the file
+\verb|paw_lmto_stuffwithgaussians.f90|
 
 \begin{verbatim}
 !!$      CALL LMTO_TAILEDPRODUCTS()
