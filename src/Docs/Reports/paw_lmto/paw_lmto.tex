@@ -955,7 +955,88 @@ CALL WAVES$HPSI
 \end{eqnarray*}
 
 
+%=======================================================================
+\section{Offsite matrix elements}
+%=======================================================================
+The offsite matrix elements are kept in the data type 
+\begin{verbatim}
+TYPE OFFSITEX_TYPE
+ INTEGER(4)         :: NDIS
+ INTEGER(4)         :: NF
+ REAL(8)   ,POINTER :: OVERLAP(:,:)  ! OVERLAP MATRIX ELEMENTS
+ REAL(8)   ,POINTER :: X22(:,:)      !
+ REAL(8)   ,POINTER :: X31(:,:)
+ REAL(8)   ,POINTER :: BONDU(:,:)
+ REAL(8)   ,POINTER :: DIS(:)
+ REAL(8)   ,POINTER :: LAMBDA(:)
+END TYPE OFFSITEX_TYPE
+\end{verbatim}
 
+The matrix elements are initialized in \verb|LMTO_initialize|
+\begin{verbatim}
+LMTO_TAILEDGAUSSFIT()
+   GAUSSIAN_FITGAUSS(GID,NR,W,L,AUX,NE,NPOW2,E,C(:NPOW2,:,LN))
+   LMTO_TAILEDGAUSSORBTOYLM()
+LMTO_OFFXINT
+    LMTO_OFFSITEOVERLAPSETUP  !O(AB)  ->OFFSITEX%OVERLAP
+       LMTO_TWOCENTER
+    LMTO_OFFSITEX22SETUP      !U(AABB) ->OFFSITEX%X22
+       LMTO_TWOCENTER
+    LMTO_OFFSITEX31SETUP      !U(AAAB) ->OFFSITEX%X31
+       LMTO_TWOCENTER
+    LMTO_TAILEDGAUSSOFFSITEU  !U(ABAB) ->OFFSITEX%BONDU
+       GAUSSIAN$ZDIRECTION_FOURCENTER(NIJKA,NEA,EA,LMNXA,ORBA &
+    LMTO_OFFSITEXCONVERT()
+\end{verbatim}
+
+The energy contibution is then calculated using offsitex as follows
+\begin{verbatim}
+LMTO_OFFSITEXEVAL_NEW(EX)  
+    LMTO_EXPANDNONLOCAL
+    LMTO_EXPANDLOCAL
+    SPHERICAL$ROTATEYLM(LMX,ROT,YLMROT)
+    LMTO_OFFSITEX22U(ISPA,ISPB, DIS,LMNXTA,LMNXTB,U22,DU22)
+       lmto_offsitexvalue
+    LMTO_OFFSITEX31U(ISPA,ISPB, DIS,LMNXTA,LMNXTB,U3A1B,DU3A1B)
+       lmto_offsitexvalue
+    LMTO_OFFSITEX31U(ISPB,ISPA,-DIS,LMNXTB,LMNXTA,U3B1A,DU3B1A)
+       lmto_offsitexvalue
+    LMTO_OFFSITEXBONDU(ISPA,ISPB,DIS,LMNXTA,LMNXTB,BONDU,DBONDU)
+       lmto_offsitexvalue
+\end{verbatim}
+
+%=======================================================================
+\section{Matrix elements using Gaussians}
+%=======================================================================
+\verb|LMTO_TAILEDGAUSSOFFSITEU| uses the gauss decomposition of the
+tailed orbitals in \verb|potpar%tailed%gaussnlf|.  In
+\verb|tailedgaussfit| the following data structure is prepared.
+\begin{verbatim}
+POTPAR%TAILED%GAUSSNLF%NIJK
+POTPAR%TAILED%GAUSSNLF%NORB
+POTPAR%TAILED%GAUSSNLF%NPOW
+POTPAR%TAILED%GAUSSNLF%NE
+POTPAR%TAILED%GAUSSNLF%E
+POTPAR%TAILED%GAUSSNLF%C
+\end{verbatim}
+
+
+
+
+%=======================================================================
+\section{Matrix elements on an adaptive grid}
+%=======================================================================
+\verb|lmto_twocenter|
+
+\begin{verbatim}
+MODULE LMTO_TWOCENTER_MODULE
+LMTO_TWOCENTER
+    ADAPT$EVALUATE
+       ADAPTINI
+       ADAPT_BASICRULE
+           ADAPT_INTEGRAND
+             LMTO_TWOCENTER_MYFUNC
+\end{verbatim}
 
 
 \appendix
@@ -1355,6 +1436,32 @@ q_{\alpha+\vec{t},n}&=&q_{\alpha,n}\e{-i\vec{k}_n\vec{t}}
 \langle\psi_n|\pi_\beta\rangle
 \e{+i\vec{k}_n\vec{t}}
 \end{eqnarray}
+
+%=======================================================================
+\chapter{Offsite matrix elements using Gaussian integrals}
+%=======================================================================
+In \verb|LMTO_INITIALIZE| there are non-functional calls for doing the
+integrations in a representation of Gauss orbitals. The routines are
+no more present, except for 
+\begin{itemize}
+\item \verb|LMTO_TAILEDPRODUCTS|. They have been
+removed in 7501a0g from Feb.2, 2013 (svn revision 1116 from Nov. 20,
+2011). \verb|LMTO_TAILEDPRODUCTS| has been removed after 9803b02 on from
+ Mar. 1, 2014.
+\item \verb|LMTO_EXPANDPRODS|
+\end{itemize}
+
+
+
+\begin{verbatim}
+!!$      CALL LMTO_TAILEDPRODUCTS()
+              gaussian_fitgauss
+!!$      CALL LMTO_GAUSSFITKPRIME()
+!!$      CALL LMTO_GAUSSFITKAUGMENT()
+!!$      CALL LMTO_GAUSSFITKJTAILS()
+!!$      CALL LMTO_ONSITEOVERLAP()
+\end{verbatim}
+
 
 
 \clearpage
