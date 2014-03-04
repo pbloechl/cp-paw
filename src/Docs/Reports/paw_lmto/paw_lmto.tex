@@ -65,6 +65,24 @@ http://www.pt.tu-clausthal.de/atp/}
 \item double counting in \verb|paw_lmto| and \verb|paw_dmft| is in
   error. It takes the partial wave density matrix do do it
   properly. currently only the density of AEF is used.
+%
+\item for the tailed orbitals the angular momentum expansion on the
+  central site may not eb sufficient. I should include a on-site
+  structure constants with an increased number of tail functions.
+%
+\item Rule: (1) Each head function has exactly one tail function
+  attributed to it.  Thus we can identify the phidot function uniquely
+  by looking for the tail function with the correct angular momentum.
+ From (1) follows, that there is at most one tail
+  function per site and angular momentum.
+%
+\item In the future, we may extend the tailed representation of
+  tight-binding orbitals by including additional tail functions,
+  ``higher'' partial waves. They correspond to the un-augmented tails
+  of the neighboring sites. These additional tail functions have the
+  character of Bessel functions in the sphere and contain tailes
+  outside the sphere.
+%
 \end{itemize}
 
 %====================================================================
@@ -1057,19 +1075,28 @@ LMTO$WRITEPHI(FILE,GID,NR,NPHI,PHI)
 %=======================================================================
 \section{Routines for plotting orbitals}
 %=======================================================================
+There are a three routines that calculate the orbitals either in a
+spherical-harmonics expansion on radial grids or directly on an array
+of real-space points.
+\begin{verbatim}
+LMTO_TAILEDORBLM(IAT,IORB,NR,LMX,ORB)
+LMTO_TAILED_NTBOOFR(IAT,iORB,NP,P,chi)
+  LMTO_TAILEDORBLM(IAT,IORB,NR,LMX,ORB)
+LMTO_NTBOOFR(IAT,iORB,NP,P,chi)
+\end{verbatim}
+
+
 \begin{verbatim}
 LMTO_PLOTTAILED()  [OK]
     LMTO_TAILEDORBLM(IAT,IORB,NR,LMX,ORB)
-LMTO_GRIDPLOT_TAILED(1)  [ok]
+LMTO_GRIDPLOT(type,iat)  [ok]
     LMTO_GRIDORB_CUBEGRID(R0(:,IAT0),RANGE,N1,N2,N3,ORIGIN,TVEC,P)
     LMTO_GRIDORB_STARGRID(R0(:,IAT0),RANGE,NDIR,DIR,NRAD,X1D,P)
     LMTO_TAILED_NTBOOFR(TYPE,IAT,iORB,NP,P,chi)
         LMTO_TAILEDORBLM(IAT,IORB,NR,LMX,ORB)
+        LMTO_NTBOOFR(IAT,iORB,NP,P,chi)
     LMTO_WRITECUBEFILE
 ..
-LMTO_PLOTNTBO(TYPE,IATORB,LMNORB)
-    LMTO_GRIDORB_CUBEGRID(CENTER,RADIUS,N1,N2,N3,ORIGIN,TVEC,P)
-    LMTO_GRIDORB_STARGRID(CENTER,RADIUS,NDIR,DIR,NR,X1D,P)
 LMTO_GRIDPLOT_UNTAILED(IAT0)
     LMTO_GRIDORB_CUBEGRID(R0(:,IAT0),RANGE,N1,N2,N3,ORIGIN,TVEC,P)
     LMTO_GRIDORB_STARGRID(R0(:,IAT0),RANGE,NDIR,DIR,NRAD,X1D,P)
@@ -1088,12 +1115,15 @@ LMTO_PLOTNTBO(TYPE,IATORB,LMNORB)
     LMTO_TAILED_NTBOOFR(TYPE,IATORB,LMNORB,NP,P,ORB)
     LMTO_NTBOOFR(TYPE,IATORB,LMNORB,NP,P,ORB)
 ..
-LMTO_NTBOOFR(TYPE,IATORB,LMNORB,NP,P,ORB)
-LMTO_TAILED_NTBOOFR(TYPE,IATORB,LMNORB,NP,P,ORB)
 LMTO$PLOTWAVE(NFIL,IDIM0,IB0,IKPT0,ISPIN0,NR1,NR2,NR3)
     LMTO$PLOTWAVE_TAILED(NFIL,IDIM0,IB0,IKPT0,ISPIN0,NR1,NR2,NR3)
         WRITEWAVEPLOTC(NFIL,TITLE,RBAS,NAT,R0,ZAT,Q,NAME,XK,NR1,NR2,NR3,WAVE)
 \end{verbatim}
+
+
+
+
+
 
 \begin{itemize}
 \item \verb|LMTO_TAILEDORBLM(IAT,IORB,NR,LMX,ORB)| calculates a
@@ -1112,6 +1142,46 @@ LMTO$PLOTWAVE(NFIL,IDIM0,IB0,IKPT0,ISPIN0,NR1,NR2,NR3)
   specified site to file. It supports a 3D representation with cube
   files, and one-dimensional representation on a star grid.
 \end{itemize}
+
+%=======================================================================
+\subsubsection{Multicenter expansion}
+%=======================================================================
+
+First the interstitial orbital is determined
+
+\begin{eqnarray}
+|\bar{K}^I_\alpha\rangle&=&|\bar{K}^\infty_\alpha\rangle 
+- \Bigl[ |K^\Omega_\alpha\rangle 
+-\sum_\beta |\bar{J}^\Omega_\beta\rangle \bar{S}^\dagger_{\beta,\alpha}
+\Bigr]
+\nonumber\\
+&=&\sum_\beta |K^\infty_\beta\rangle \Bigl(\delta_{\alpha,\beta}+\bar{Q}_\beta
+\bar{S}^\dagger_{\beta,\alpha}\Bigr)
+- \Bigl[ |K^\Omega_\alpha\rangle 
+-\sum_\beta |\bar{J}^\Omega_\beta\rangle \bar{S}^\dagger_{\beta,\alpha}
+\Bigr]
+\nonumber\\
+&=&\sum_\beta |K^\infty_\beta\rangle \Bigl(\delta_{\alpha,\beta}+\bar{Q}_\beta
+\bar{S}^\dagger_{\beta,\alpha}\Bigr)
+- \Bigl[ |K^\Omega_\alpha\rangle 
+-\sum_\beta 
+\Bigl(
+|J^\Omega_\beta\rangle-|K^\Omega_\beta\rangle\bar{Q}_\beta\Bigr)
+ \bar{S}^\dagger_{\beta,\alpha}
+\Bigr]
+\nonumber\\
+&=&\sum_\beta 
+\Bigl(|K^\infty_\beta\rangle -|K^\Omega_\beta\rangle \Bigr)
+\Bigl(\delta_{\alpha,\beta}+\bar{Q}_\beta
+\bar{S}^\dagger_{\beta,\alpha}\Bigr)
++\sum_\beta 
+|J^\Omega_\beta\rangle\bar{S}^\dagger_{\beta,\alpha}
+\end{eqnarray}
+
+This implies that within the sphere centered at $R_\beta$ only the
+expansion into bare bessel functions survive, while outside only the
+bare Hankel function is considsered.
+
 
 
 
