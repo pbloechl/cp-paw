@@ -83,6 +83,29 @@ http://www.pt.tu-clausthal.de/atp/}
   character of Bessel functions in the sphere and contain tailes
   outside the sphere.
 %
+\item The orbitals in the tailed one-center expansion and as
+  multicenter expansions can be compared using \verb|LMTO_PLOTORBS|.
+  Calculations for hybrogen suggest that a good choice is $K2=-1.$ and
+  $(\lambda_1,\lambda_2)=(4,2)$. The rationale for $K2$ is that the
+  energy of the hydrogen orbital is at
+  $-1Ry=-\frac{1}{2}H=\frac{1}{2}K2$. (see
+  \url{Dummy/Sitest/Test/Occtest/H2test})
+%
+\item The charge sumrule is not correct! The calculation for an H-atom
+  yields $Tr[\rho O]\approx 0.2$. The problem is not the difference
+  between tailed orbitals and the multicenter expansion, because
+  $(r*\chi)^2$ agrees quire well.
+
+%
+\item Suggestion: the largest problem is that the tails often so not
+  get the true extent of teh multicenter expansion correct. A good
+  idea may be to use a Hankel function augmented by bare Bessel
+  functions and $\dot{\bar{\phi}}$ centered on the neighboring
+  site. These functions can be expanded about the central site into
+  spherical harmonics.  These functions must be expandable into the
+  tailed Hankel and Bessel functions.
+
+%
 \end{itemize}
 
 %====================================================================
