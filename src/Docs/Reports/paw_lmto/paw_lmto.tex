@@ -1,0 +1,1640 @@
+\documentclass[11pt,a4paper]{report}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                 %%
+%%    Header file for the Phi-S-X Series                           %%
+%%                                                                 %%
+%%    german version header_gm.tex is derived from header.tex      %%
+%%    by uncommenting the line ``\setboolean{german}{true}'' below %%
+%%                                                                 %%
+%%    Never edit the german version! all changes must be done      %%
+%%    in the english version header.tex                            %%
+%%                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{../header}
+\hypersetup{pdftitle=paw_brillouin}
+\begin{document}
+\begin{titlepage}
+\begin{center}
+\vspace*{3.5cm}
+{\huge \textbf{The LMTO object of the CP-PAW code}}\\
+\vspace{0.5cm}
+{\large Peter E. Bl\"ochl}
+\vspace{0.5cm} 
+\end{center}
+
+\vfill
+\begin{center}
+Copyright Peter E. Bl\"ochl; Sept.2, 2013-\today\\
+{\small
+Institute of Theoretical Physics;
+Clausthal University of Technology;\\ 
+D-38678 Clausthal Zellerfeld; Germany;\\
+http://www.pt.tu-clausthal.de/atp/}
+\end{center}
+\end{titlepage}
+\noindent            
+\tableofcontents
+%====================================================================
+\chapter{Todo}
+%====================================================================
+\begin{itemize}
+\item lmto\_overlapphi calculates the onsite overlap matrix of partial
+  waves in a sphere.
+%
+\item the core-valence exchange contribution differs from the old version,
+  because it also includes the projection on the phidot functions.
+%
+\item there has been a bug in \verb|lmto$screen|, which has been fixed
+  with version 3. It may be better to rewrite all structure constants
+  routines with teh transposed structure constants.
+%
+\item using only sp like tight-binding orbitals and local exchange
+  lead to an increase of the band gap of silicon avove 1.3 eV. After
+  adding the d-orbitals to the HF term collapsed the band gap
+  dramatically below the dft value. Core-valence echange seems to have
+  an important effect on the band gap too.
+%
+\item in \verb|lmto$makestructureconstants|, the structure constants
+  have not been calculated because the parallelzation was wrong.  in
+  13403f6.
+\begin{verbatim}
+-       IF(MOD(IAT1-1,NTASKS).NE.THISTASK-1) THEN
++       IF(MOD(IAT1-1,NTASKS).eq.THISTASK-1) THEN
+\end{verbatim}
+%
+\item double counting in \verb|paw_lmto| and \verb|paw_dmft| is in
+  error. It takes the partial wave density matrix do do it
+  properly. currently only the density of AEF is used.
+%
+\item for the tailed orbitals the angular momentum expansion on the
+  central site may not eb sufficient. I should include a on-site
+  structure constants with an increased number of tail functions.
+%
+\item Rule: (1) Each head function has exactly one tail function
+  attributed to it.  Thus we can identify the phidot function uniquely
+  by looking for the tail function with the correct angular momentum.
+ From (1) follows, that there is at most one tail
+  function per site and angular momentum.
+%
+\item In the future, we may extend the tailed representation of
+  tight-binding orbitals by including additional tail functions,
+  ``higher'' partial waves. They correspond to the un-augmented tails
+  of the neighboring sites. These additional tail functions have the
+  character of Bessel functions in the sphere and contain tailes
+  outside the sphere.
+%
+\item The orbitals in the tailed one-center expansion and as
+  multicenter expansions can be compared using \verb|LMTO_PLOTORBS|.
+  Calculations for hybrogen suggest that a good choice is $K2=-1.$ and
+  $(\lambda_1,\lambda_2)=(4,2)$. The rationale for $K2$ is that the
+  energy of the hydrogen orbital is at
+  $-1Ry=-\frac{1}{2}H=\frac{1}{2}K2$. (see
+  \url{Dummy/Sitest/Test/Occtest/H2test})
+%
+\item The charge sumrule is not correct! The calculation for an H-atom
+  yields $Tr[\rho O]\approx 0.2$. The problem is not the difference
+  between tailed orbitals and the multicenter expansion, because
+  $(r*\chi)^2$ agrees quire well.
+
+%
+\item Suggestion: the largest problem is that the tails often so not
+  get the true extent of teh multicenter expansion correct. A good
+  idea may be to use a Hankel function augmented by bare Bessel
+  functions and $\dot{\bar{\phi}}$ centered on the neighboring
+  site. These functions can be expanded about the central site into
+  spherical harmonics.  These functions must be expandable into the
+  tailed Hankel and Bessel functions.
+
+%
+\end{itemize}
+
+%====================================================================
+\chapter{Purpose and theoretical background of the LMTO Object}
+%====================================================================
+The LMTO object maps the wave functions expressed in augmented plane
+waves into a basiset of natural tight-binding orbitals. The natural
+tight-binding orbitals are a kind of LMTO's, screened such that the
+tails exhibit only scattering character in the context of nodeless
+wave functions\cite{bloechl12_arxiv1210_5937}.
+
+%====================================================================
+\section{Augmentation}
+%====================================================================
+The concept of linear augmented waves is as follows: 
+\begin{enumerate}
+\item At first a so-called \textbf{envelope function}\index{envelope
+  function} $|K^\infty_\alpha\rangle$ is defined.
+%
+\item In a second step, this envelope function is expanded about each
+  atomic site into spherical harmonics.  More generally, they are
+  expanded into \textbf{head functions}\index{head function}
+  $|K^\Omega_\alpha\rangle$ and \textbf{tail functions}\index{tail
+    function} $|J^\Omega_\alpha\rangle$. The head function is the
+  dominant contribution and carries the quantum number of the final
+  orbital, while the tail functions are the minor contributions with
+  different quantum numbers. In practice, the head functions are solid
+  Hankel functions and the tail functions are solid Bessel functions.
+
+   The coefficients of the tail functions are called \textbf{structure
+     constants}\index{structure constants}.
+
+  The difference between the full envelope function and its expansion
+  into head and tail functions is the interstitial contribution
+  $|K^I_\alpha\rangle$.
+%
+\item In the third step the head and tail functions are replaced
+  differentially at some sphere radius by partial waves of the atomic
+  potential. For that purpose, we use a solution of the Schr\"odinger
+  equation for some energy, denoted as $|\phi_{\alpha}\rangle$ and its
+  energy derivative function $|\dot{\phi}_\alpha\rangle$.
+
+  The matching parameters are called \textbf{potential
+    parameters}\index{potential parameters}.
+\end{enumerate}
+
+%====================================================================
+\section{Structure constants}
+%====================================================================
+%====================================================================
+\subsection{Hankel functions as envelope function}
+%====================================================================
+In practice, we will use solid Hankel functions $H_L(\vec{r})$ as
+envelope functions, so that 
+\begin{eqnarray}
+\langle\vec{r}|K^\infty_{R,L}\rangle= H_L(\vec{r}-\vec{R})
+\end{eqnarray}
+
+Solid Hankel functions are irregular solutions of the the
+inhomogeneous Helmholtz equation\footnote{I am not sure whether also
+  the three dimensional differential equation or only the
+  one-dimensional differential equation for the radial part is called
+  Helmholtz equation.}
+\begin{eqnarray}
+\Bigl[\vec{\nabla^2}+k^2\Bigr]H_{L}(\vec{r})
+=-4\pi(-1)^\ell\mathcal{Y}(\vec{\nabla})\delta(\vec{r})
+\label{eq:solidhelmholtzequation}
+\end{eqnarray}
+Here $\mathcal{Y}_\ell(\vec{r})=r^\ell Y_\ell(\vec{r})$ is a
+polynomial. With a gradient as argument, it becomes a differential
+operator.
+
+Further detail about the Hankel and Bessel functions can be found in
+appendix~\ref{app:solidhankel}.
+
+%====================================================================
+\subsection{Hankel and Bessel functions as head and tail functions}
+%====================================================================
+By defining the envelope function via a isotropic and translationally
+invariant differential equation of second order, has the advantage
+that the solution can be expanded about different centers into regular
+solutions of the same differential equation with specific angular
+momenta. The regular solutions of the Helmholtz equation are the
+Bessel functions.
+
+
+Hankel and Bessel functions are defined so that they behave at the
+origin as
+\begin{eqnarray}
+K^\Omega_{R,L}(\vec{r})&=&
+\Bigl[(2\ell-1)!! \frac{1}{|\vec{r}-\vec{R}|^{\ell+1}} 
++...\Bigr]
+Y_L(\vec{r}-\vec{R})\theta_{\Omega_R}(\vec{r})
+\\
+J^\Omega_{R,L}(\vec{r})&=&
+\biggl[\frac{1}{(2\ell+1)!!} |\vec{r}-\vec{R}|^{\ell+1} 
++...\Bigr]Y_L(\vec{r}-\vec{R})\theta_{\Omega_R}(\vec{r})
+\end{eqnarray}
+$\theta_{\Omega_R}(\vec{r})$ is a step function that is one within the
+augmentation region $\Omega_R$ centered at site $R$, while it vanishes
+outside. The terms neglected are higher orders in $|\vec{r}-\vec{R}|$.
+
+%====================================================================
+\subsection{Bare structure constants}
+%====================================================================
+The \textbf{bare structure constants}\index{structure constants !bare}
+$S^\dagger_{\beta,\alpha}$ are the expansion constants for an
+off-center expansion of solid spherical Hankel functions\index{Hankel
+  function} $|K_{\alpha}^\infty\rangle$ into \textbf{solid Bessel
+  functions}\index{Bessel function} $|J^\Omega_{\beta}\rangle$.
+\begin{eqnarray}
+|K_{\alpha}^\infty\rangle=|K^\Omega_{\alpha}\rangle
+-\sum_{\beta}|J^\Omega_{\beta}\rangle S^\dagger_{\beta,\alpha}
++|K^I_{\alpha}\rangle
+\end{eqnarray}
+The index $\alpha$ denotes here an atomic site $R$ and a set of
+angular momenta $L=(\ell,m)$.
+
+The superscript $\infty$ denotes that the function extends over all
+space, a superscript $\Omega$ denotes that the function is truncated
+(set to zero) outside the augmentation sphere $\Omega_{R}$ centerd at
+the site denoted by the index. The superscript $I$ denotes that the
+function is limited to the interstitial region, that is outside all
+augmentation spheres. If the augmentation spheres overlap, the
+function in the interstitial region is defined by subtraction of all
+sphere contributions.
+
+
+
+\begin{myshadowminipage}{Bare structure constants}
+The bare structure constants have the form
+\begin{eqnarray}
+S_{RL,R'L'}=(-1)^{\ell'+1} 4\pi \sum_{L''} C_{L,L',L''} 
+H_{L''}(\vec{R}'-\vec{R})
+\begin{cases}
+(-ik)^{\ell+\ell'-\ell''}&\text{for $k^2>0$}\\
+\delta_{\ell+\ell'-\ell''}&\text{for $k^2=0$}\\
+\kappa^{\ell+\ell'-\ell''}&\text{for $k^2=-\kappa^2<0$}\\
+\end{cases}
+\label{eq:fortmulaforbarestructureconstants}
+\end{eqnarray}
+\end{myshadowminipage}
+
+
+The bare structure constants are hermitean\footnote{We use that
+  $H_L(\vec{r})=(-1)^\ell H_L(-\vec{r})$ and that the Gaunt
+  coefficients $C_{L,L',L''}$ vanish unless $\ell+\ell'+\l''$ is
+  even.}, i.e.
+\begin{eqnarray}
+S_{RL,R'L'}=S_{R'L',RL}
+\end{eqnarray}
+This is however not true for each angular-momentum block individually,
+i.e. in general we have $S_{RL,R'L'}\neq S_{R,L',R'L}$.
+
+%====================================================================
+\subsection{Screened structure constants}
+%====================================================================
+The node-less scattering partial wave
+$|\dot{\bar{\phi}}_\alpha\rangle$ define the screening constants
+$\bar{Q}_{\alpha}$ such that the screened tail functions
+$|\bar{J}_\alpha\rangle$ match with value and derivative to the
+scattering partial wave
+\begin{eqnarray}
+|\dot{\bar{\phi}}_\alpha\rangle \rightarrow 
+|\bar{J}^{\Omega}_{\alpha}\rangle
+\defas
+|J^{\Omega}_{\alpha}\rangle
+-|K^{\Omega}_{\alpha}\rangle \bar{Q}_{\alpha}
+\end{eqnarray}
+
+A screened solid Hankel function $|\bar{K}_{\alpha}^\infty\rangle$ is
+a superposition of bare solid Hankel functions on a set of atomic
+positions
+\begin{eqnarray}
+|\bar{K}^\infty_\alpha\rangle=\sum_\beta|K^\infty_\beta\rangle c_{\beta,\alpha}
+\label{eq:kbarassuperposofkbare}
+\end{eqnarray}
+with the property that the tail functions are made entirely
+from screened Bessel functions $|\bar{J}^\Omega_{\beta}\rangle$, i.e.
+\begin{eqnarray}
+|\bar{K}_{\alpha}^\infty\rangle=|K^\Omega_{\alpha}\rangle
+-\sum_{\beta}|\bar{J}^\Omega_{\beta}\rangle \bar{S}^\dagger_{\beta,\alpha}
++|\bar{K}^I_{\alpha}\rangle
+\label{eq:kbarwithsbar}
+\end{eqnarray}
+The expansion coefficients $\bar{S}$ are the screened structure
+constants\index{Structure constants !screened}.
+
+
+By equating the two expressiones for the screened Hankel functions,
+namely \eq{eq:kbarassuperposofkbare} and \eq{eq:kbarwithsbar}, we can
+extract the screened structure constants and the superposition
+coeffcients.
+\begin{eqnarray}
+\sum_\beta\Bigl[|K^\Omega_{\beta}\rangle
+-\sum_{\gamma}|J^\Omega_{\gamma}\rangle S^\dagger_{\gamma,\beta}
++|K^I_{\beta}\rangle \Bigr]c_{\beta,\alpha}
+=
+|K^\Omega_{\alpha}\rangle
+-\sum_{\beta}
+\underbrace{\Bigl[|J^\Omega_{\beta}\rangle-|K^\Omega_{\beta}\rangle\bar{Q}_\beta\Bigr]}
+_{|\bar{J}^\Omega_{\beta}\rangle} \bar{S}^\dagger_{\beta,\alpha}
++|\bar{K}^I_{\alpha}\rangle
+\nonumber\\
+\sum_\beta
+|K^\Omega_{\beta}\rangle c_{\beta,\alpha}
+-\sum_{\beta,\gamma}|J^\Omega_{\gamma}\rangle S^\dagger_{\gamma,\beta} c_{\beta,\alpha}
+%+\sum_\beta|K^I_{\beta}\rangle c_{\beta,\alpha}
+=
+\sum_{\beta}|K^\Omega_{\beta}\rangle
+\Bigl[\delta_{\beta,\alpha}+
+\bar{Q}_\beta \bar{S}^\dagger_{\beta,\alpha}\Bigr]
+-\sum_{\beta}|J^\Omega_{\beta}\rangle \bar{S}^\dagger_{\beta,\alpha}
+%+|\bar{K}^I_{\alpha}\rangle
+\end{eqnarray}
+By comparing the coefficients, we obtain
+\begin{eqnarray}
+c_{\beta,\alpha}&=&\delta_{\beta,\alpha}+
+\bar{Q}_\beta \bar{S}^\dagger_{\beta,\alpha}
+\label{eq:definingeqsystemforsbara}
+\\
+\bar{S}^\dagger_{\gamma,\alpha}&=&\sum_\beta S^\dagger_{\gamma,\beta} c_{\beta,\alpha}
+\label{eq:definingeqsystemforsbar}
+\label{eq:definingeqsystemforsbarb}
+\end{eqnarray}
+which can be resolved to
+\footnote{
+\begin{eqnarray}
+\mat{c}&=&\mat{1}
++\mat{\bar{Q}}\mat{\bar{S}}^\dagger
+=\mat{1}+\mat{\bar{Q}}\mat{S}^\dagger\mat{c}
+\qquad
+\Rightarrow\qquad\sum_\gamma \Bigl[\delta_{\beta,\gamma}
+-\bar{Q}_\beta S^\dagger_{\beta,\gamma}\Bigr] c_{\gamma,\alpha}=\delta_{\beta,\alpha}
+\qquad\Rightarrow\qquad
+\mat{c}=[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]^{-1}
+\nonumber\\
+\mat{\bar{S}}^\dagger&=&\mat{S}^\dagger\mat{c}
+=\mat{S}^\dagger[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]^{-1}
+\qquad\Leftrightarrow\qquad
+[\mat{1}-\mat{S}\mat{\bar{Q}}]\mat{\bar{S}}=\mat{S}
+\end{eqnarray}
+  } the defining
+equation of the screened structure constants
+\begin{myshadowminipage}{screened structure constants}
+\begin{eqnarray}
+\mat{\bar{S}}^\dagger=\mat{S}^\dagger
+\Bigl[\mat{1}-\mat{S}^\dagger\mat{\bar{Q}}\Bigr]^{-1}
+\label{eq:defscreenedstructureconstants}
+\end{eqnarray}
+and the expression of the screened Hankel functions 
+\begin{eqnarray}
+|\bar{K}^\infty_\alpha\rangle=\sum_\beta |K^\infty_\beta\rangle
+\Bigl[\delta_{\beta,\alpha}+
+\bar{Q}_\beta \bar{S}^\dagger_{\beta,\alpha}\Bigr]
+\;.
+\end{eqnarray}
+
+Because, we calculate the screened structure constants on finite
+clusters, \eq{eq:defscreenedstructureconstants} should be considered
+of only formal value and should not be used in the actual
+calculations. Rather, the defining equations
+\eq{eq:definingeqsystemforsbarb} shall be used as shown in the
+following section.
+\end{myshadowminipage}{}
+
+%====================================================================
+\section{Screening on finite clusters}
+%====================================================================
+The screened structure constants are calculated on a cluster of atomic
+sites. The calculation can in principle be done for each single
+screened Hankel function independently. In practice we do the
+calculations for all atoms centered on a given site in one step.
+
+We go back to the defining equation system
+\eq{eq:definingeqsystemforsbar} and rewrite it in terms of vectors,
+which are defined on the cluster $B$. The index $\alpha$ labeling the
+vectors correspond to the envelope functions centered at the central
+site.
+
+The equations attain the form
+\begin{eqnarray}
+\vec{c}_\alpha&\eqrel{eq:definingeqsystemforsbara}{=}&
+\vec{e}_\alpha+\mat{\bar{Q}}\vec{s}_\alpha
+\label{eq:definingeqsystemforsbarveca}
+\\
+\vec{s}_\alpha&\eqrel{eq:definingeqsystemforsbarb}{=}&
+\mat{S}^\dagger\vec{c}_\alpha
+\label{eq:definingeqsystemforsbarvecb}
+\label{eq:definingeqsystemforsbarvec}
+\end{eqnarray}
+where the vectors $\vec{c}$, $\vec{s}_\alpha$ and $\vec{e}_\alpha$ are
+defined by its components
+\begin{eqnarray}
+\Bigl(\vec{c}_\alpha\Bigr)_\beta&=&c_{\beta,\alpha}
+\nonumber\\
+\Bigl(\vec{s}_\alpha\Bigr)_\beta&=&\bar{S}^\dagger_{\beta,\alpha}
+\nonumber\\
+\Bigl(\vec{e}_\alpha\Bigr)_\beta&=&\delta_{\beta,\alpha}
+\end{eqnarray}
+
+
+\begin{eqnarray}
+\vec{c}_\alpha
+&\eqrel{eq:definingeqsystemforsbarveca}{=}&
+\vec{e}_\alpha+\mat{\bar{Q}}\vec{s}_\alpha
+\eqrel{eq:definingeqsystemforsbarvecb}{=}
+\vec{e}_\alpha+\mat{\bar{Q}}\mat{S}^\dagger\vec{c}_\alpha
+\nonumber\\
+\Rightarrow\qquad
+\Bigl[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger\Bigr]\vec{c}_\alpha&=&\vec{e}_\alpha
+\nonumber\\
+\Rightarrow\qquad
+\vec{c}_\alpha&=&[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]^{-1}\vec{e}_\alpha
+\nonumber\\
+\vec{s}_\alpha
+&\eqrel{eq:definingeqsystemforsbarvecb}{=}&
+\mat{S}^\dagger\vec{c}_\alpha
+=\mat{S}^\dagger[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]^{-1}\vec{e}_\alpha
+\end{eqnarray}
+Interestingly the vector on the right-hand side $\vec{e}_\alpha$ can
+not be simply ignored as the matrix form suggests. This is specific to
+the calculation on the cluster. Because of this we cannot identify the
+contribution of these vectors with a unit matrix.
+
+
+
+\begin{myshadowminipage}{Calculation of screened structure constants}
+Thus, we first evaluate the bare structure constants $\mat{S}^\dagger$
+on the cluster, and from that
+$[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]$. Then we solve the equation
+\begin{eqnarray}
+[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]\vec{c}_\alpha&=&\vec{e}_\alpha
+\label{eq:forscreenedsa}
+\nonumber\\
+\vec{s}_\alpha&=&\mat{S}^\dagger\vec{c}_\alpha
+\label{eq:forscreenedsb}
+\end{eqnarray}
+for $\vec{c}_\alpha$ first using a standard routine for linear
+equation systems. From the result $\vec{c}_\alpha$, we obtain the
+screened structure constants $\vec{s}_\alpha$ by multiplication with
+the screened structure constants.
+
+Finally we obtain the screened structure constants as
+\begin{eqnarray}
+\bar{S}^\dagger_{\gamma,\alpha}=\Bigl(\vec{s}_\alpha\Bigr)_\gamma
+\end{eqnarray}
+\end{myshadowminipage}
+
+Note that the screened structure constants calculated on finite
+clusters are no more exactly hermitean.
+
+
+
+%====================================================================
+\section{Augmentation and Potential parameters}
+%====================================================================
+%===============================================================================
+\subsection{Local orbitals}
+%===============================================================================
+The local orbitals have the form
+\begin{eqnarray}
+|\chi_\alpha\rangle&=&|\phi^K_\alpha\rangle
+- |\phi^{\bar{J}}_{R,L}\rangle \bar{S}^\dagger_{R,L,R_\alpha,L_\alpha}
+\nonumber\\
+&+&|K^I_{R',L'}\rangle\Bigl[ \delta_{R',L',R_\alpha,\L_\alpha}-\bar{Q}_{R',L'}
+\bar{S}^\dagger_{R',L',R_\alpha,L_\alpha}\Bigr]
+\end{eqnarray}
+where, according to \eq{eq:tborbinlmto},
+\begin{eqnarray}
+|\phi^K_\alpha\rangle&=&
+\overbrace{
+|\phi_\alpha\rangle 
+\underbrace{
+\frac{W_\alpha[K,\dot{\bar{\phi}}]}{W_\alpha[\phi,\dot{\bar{\phi}}]}}_{Ktophi}
+-\,|\dot{\bar{\phi}}_\alpha\rangle 
+\underbrace{\frac{W_\alpha[K,\phi]}{W_\alpha[\phi,\dot{\bar{\phi}}]}}_{-Ktophidot}
+}^{\rightarrow |K^\Omega_\alpha\rangle}
+\nonumber\\
+|\phi^{\bar{J}}_{R,L}\rangle
+&=&\overbrace{
+|\dot{\bar{\phi}}_\beta\rangle 
+\underbrace{\biggl(-\frac{W_\beta[\bar{J},\phi]}{W_\beta[\phi,\dot{\bar{\phi}}]}\biggr)}_{JBARtophidot}
+}^{\rightarrow |\bar{J}\;^\Omega_\beta\rangle}
+\end{eqnarray}
+Note, that in the factor $JBARTOPHIDOT$ does not depend on the choice
+of $|\phi\rangle$.
+
+Thus, the matrix elements
+$\langle\tilde{p}_\gamma|\tilde{\chi}_\alpha\rangle$ has the form
+\begin{eqnarray}
+\langle\tilde{p}_\gamma|\tilde{\chi}_\alpha\rangle
+=\langle\tilde{p}_\gamma|\tilde{\phi}^K_\alpha\rangle
+-\sum_{R',L'}\langle\tilde{p}_\gamma|\tilde{\phi}^{\bar{J}}_{R',L'}\rangle
+\bar{S}^\dagger_{R,L,R_\alpha,L_\alpha}
+\nonumber\\
+=\langle\tilde{p}_\gamma|\tilde{\phi}^K_\alpha\rangle
+-\langle\tilde{p}_\gamma|\tilde{\phi}^{\bar{J}}_{R_\gamma,L_\gamma}\rangle
+\bar{S}^\dagger_{R_\gamma,L_\gamma,R_\alpha,L_\alpha}
+\end{eqnarray}
+%====================================================================
+\section{Coefficients of the tight-binding orbital}
+%====================================================================
+%===============================================================================
+\subsection{Introduction}
+%===============================================================================
+In this section we describe how to determine the wave functions in
+terms of local orbitals, if the projections onto the pseudo wave
+functions are known.
+
+The basic idea is to find a representation of the wave function in
+local orbitals
+\begin{eqnarray}
+|\psi'_n\rangle=\sum_\alpha |\chi_\alpha\rangle q_\alpha\;,
+\end{eqnarray}
+such that the deviation from the true wave function $|\psi_n\rangle$
+is as small as possible.
+
+Ideally, this would amount to minimizing the mean square deviation of
+the orbital expansion from the wave function.
+\begin{eqnarray*}
+Q'[\vec{q}]:=\Bigl(\langle\psi_n|-\sum_\alpha q^*_\alpha\langle\chi_\alpha|\Bigr)
+\Bigl(|\psi_n\rangle-\sum_\beta |\chi_\beta\rangle q_\beta\Bigr)
+\end{eqnarray*}
+
+Because evaluating the mean square deviation as integral over all
+space is time consuming, we limit the integral to the augmentation
+spheres.
+\begin{eqnarray}
+Q[\vec{q}]&:=&
+\Bigl(\langle\tilde{\psi}_n|
+-\sum_\alpha q^*_\alpha\langle\tilde{\chi}_\alpha|\Bigr)
+\biggl[\sum_{\delta,\gamma}|\tilde{p}_\delta\rangle\langle\phi_\delta|
+\theta_{\Omega_{R_\delta}}|\phi_\gamma\rangle\langle\tilde{p}_\gamma|\biggr]
+\Bigl(|\tilde{\psi}_n\rangle
+-\sum_\beta |\tilde{\chi}_\beta\rangle q_\beta\Bigr)
+\nonumber\\
+&=&
+\sum_{\gamma}
+\biggl[
+\sum_{\delta}
+\Bigl(\langle\tilde{\psi}_n|\tilde{p}_\delta\rangle
+-\sum_\alpha q^*_\alpha\langle\tilde{\chi}_\alpha|\tilde{p}_\delta\rangle\Bigr)
+\langle\phi_\delta|\theta_{\Omega_{R_\delta}}|\phi_\gamma\rangle
+\biggr]
+\Bigl(\langle\tilde{p}_\gamma|\tilde{\psi}_n\rangle
+-\sum_\beta \langle\tilde{p}_\gamma|\tilde{\chi}_\beta\rangle q_\beta\Bigr)
+\end{eqnarray}
+where $\theta_{\Omega_{R_\delta}}$ is a step function that vanishes
+outside the augmentation sphere at $R_\delta$.
+
+Minimization yields
+\begin{eqnarray}
+\frac{\partial Q}{\partial q^*_\alpha}
+&=&
+-\sum_{\gamma}
+\biggl[
+\sum_{\delta}
+\langle\tilde{\chi}_\alpha|\tilde{p}_\delta\rangle
+\langle\phi_\delta|\theta_{\Omega_{R_\delta}}|\phi_\gamma\rangle
+\biggr]
+\Bigl(\langle\tilde{p}_\gamma|\tilde{\psi}_n\rangle
+-\sum_\beta \langle\tilde{p}_\gamma|\tilde{\chi}_\beta\rangle q_\beta\Bigr)
+\stackrel{!}{=}0
+\nonumber
+\end{eqnarray}
+
+
+\begin{eqnarray}
+\Rightarrow\qquad\sum_{\gamma}
+\biggl[
+\sum_{\delta}
+\langle\tilde{\chi}_\alpha|\tilde{p}_\delta\rangle
+\langle\phi_\delta|\theta_{\Omega_{R_\delta}}|\phi_\gamma\rangle
+\biggr]
+\langle\tilde{p}_\gamma|\tilde{\psi}_n\rangle
+=
+\sum_{\gamma,\beta}
+\biggl[
+\sum_{\delta}
+\langle\tilde{\chi}_\alpha|\tilde{p}_\delta\rangle
+\langle\phi_\delta|\theta_{\Omega_{R_\delta}}|\phi_\gamma\rangle
+\biggr]
+\langle\tilde{p}_\gamma|\tilde{\chi}_\beta\rangle q_\beta\Bigr)
+\nonumber
+\end{eqnarray}
+
+\begin{eqnarray}
+\Rightarrow\qquad
+q_\beta=
+\sum_{\beta}
+\biggl[
+\sum_{\gamma',\delta'}
+\langle\tilde{\chi}_\alpha|\tilde{p}_{\delta'}\rangle
+\langle\phi_{\delta'}|\theta_{\Omega_{R_\delta}}|\phi_{\gamma'}\rangle
+\langle\tilde{p}_{\gamma'}|\tilde{\chi}_\beta\rangle 
+\biggr]^{-1}
+\biggl[
+\sum_{\gamma\delta}
+\langle\tilde{\chi}_\alpha|\tilde{p}_\delta\rangle
+\langle\phi_\delta|\theta_{\Omega_{R_\delta}}|\phi_\gamma\rangle
+\biggr]
+\langle\tilde{p}_\gamma|\tilde{\psi}_n\rangle
+\nonumber\\
+\end{eqnarray}
+
+
+This allows one to write the wave function in the form
+\begin{eqnarray}
+|\psi_n\rangle\approx
+\sum_\alpha|\chi_\alpha\rangle\langle\tilde{\pi}_\alpha|\tilde{\psi}_n\rangle
+\end{eqnarray}
+with
+\begin{eqnarray}
+\langle\tilde{\pi}_\alpha|=
+\sum_\gamma \biggl[
+\sum_{\gamma',\delta'}
+\langle\tilde{\chi}_\alpha|\tilde{p}_{\delta'}\rangle
+\langle\phi_{\delta'}|\theta_{\Omega_{R_\delta}}|\phi_{\gamma'}\rangle
+\langle\tilde{p}_{\gamma'}|\tilde{\chi}_\beta\rangle 
+\biggr]^{-1}
+\biggl[
+\sum_{\delta}
+\langle\tilde{\chi}_\alpha|\tilde{p}_\delta\rangle
+\langle\phi_\delta|\theta_{\Omega_{R_\delta}}|\phi_\gamma\rangle
+\biggr]
+\langle\tilde{p}_\gamma|
+\label{eq:pitilde}
+\end{eqnarray}
+
+This expression works also if the number of local orbitals
+$|\chi_\alpha\rangle$ is smaller than the number of projector
+functions $\langle{p}_\gamma|$. Because of the inversion, this
+expression needs to be evaluated in reciprocal space.
+
+%===============================================================================
+\subsection{Transformation between local-orbital and partial-wave projections}
+%===============================================================================
+In the previous section we derived in \eq{eq:pitilde} a relation
+between orbital and partial wave projector functions.
+\begin{eqnarray}
+\langle\tilde{\pi}_\alpha|\tilde{\psi}_n\rangle
+&=&\sum_\beta M_{\alpha,\beta}\langle\tilde{p}_\alpha|\tilde{\psi}_n\rangle
+\end{eqnarray}
+This operation is performed in \verb|lmto$projtontbo| with \verb|ID='FWRD'|
+
+
+
+
+The derivatives are correspondingly derived as 
+\begin{eqnarray}
+dE&=&\sum_{\alpha,\beta}\underbrace{\frac{dE}{d\rho_{\alpha,\beta}}}
+_{=:h_{\beta,\alpha}}d\rho_{\alpha,\beta}
+\nonumber\\
+&=&\sum_{\alpha,\beta}h_{\beta,\alpha}
+\Bigl[
+\sum_n\langle\pi_\alpha|d\psi_n\rangle f_n\langle\psi_n|\pi_\beta\rangle
++\sum_n\langle\pi_\alpha|\psi_n\rangle f_n\langle{d}\psi_n|\pi_\beta\rangle
+\Bigr]
+\nonumber\\
+&=&\sum_n\sum_{\alpha}
+f_n
+\underbrace{\sum_{\beta}
+\langle\psi_n|\pi_\beta\rangle h_{\beta,\alpha}}_{HTBC^\dagger_{n,\alpha}}
+\langle\pi_\alpha|d\psi_n\rangle 
++
+\sum_n\sum_{\beta}
+\langle{d}\psi_n|\pi_\beta\rangle 
+\underbrace{\sum_{\alpha}h_{\beta,\alpha} \langle\pi_\alpha|\psi_n\rangle}_{HTBC_{\beta,n}} f_n
+\nonumber\\
+&=&\sum_n\sum_{\gamma}
+f_n
+\underbrace{\sum_{\alpha}
+\underbrace{\sum_{\beta}
+\langle\psi_n|\pi_\beta\rangle h_{\beta,\alpha}}_{HTBC^\dagger_{n,\alpha}}
+M_{\alpha,\gamma}}_{HPROJ^\dagger_{n,\gamma}}
+\langle\tilde{p}_\gamma|d\tilde{\psi}_n\rangle 
+\nonumber\\
+&+&
+\sum_n\sum_{\gamma}
+\langle{d}\tilde{\psi}_n|\tilde{p}_\gamma\rangle 
+\underbrace{
+\sum_{\beta}M^\dagger_{\gamma,\beta}
+\underbrace{\sum_{\alpha}h_{\beta,\alpha} \langle\pi_\alpha|\psi_n\rangle}_{HTBC_{\beta,n}}}_{HPROJ_{\gamma,n}} f_n
+\end{eqnarray}
+
+Thus, we first define the Hamiltonian $\mat{h}$ (HAMIL) 
+\begin{eqnarray}
+\underbrace{h_{\alpha,\beta}}_{HAMIL}&=&\frac{dE}{\rho_{\beta,\alpha}}
+\nonumber\\
+HTBC_{\beta,n}&=&
+\sum_\alpha \underbrace{h_{\beta,\alpha}}_{HAMIL}
+\underbrace{\langle\tilde{\pi}_\alpha|\tilde{\psi}_n\rangle}_{TBC_{\alpha,n}}
+\nonumber\\
+HPROJ_{\gamma,n}&=&\sum_\beta M^\dagger_{\gamma,\beta}\cdot HTBC_{\beta,n}
+\end{eqnarray}
+
+
+This operation is performed in
+\verb|lmto$projtontbo| with \verb|ID='BACK'|.
+
+
+
+
+%====================================================================
+\section{Core-valence exchange}
+%====================================================================
+The exchange term between core and valence electrons acts like a
+fixed, nonlocal potential acting on the electrons, of the form
+\begin{eqnarray}
+\hat{\tilde{v}}_{x,cv}=\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle 
+M_{\alpha,\beta}\langle\tilde{p}_\beta|
+\end{eqnarray}
+The core-valence exchange is furthermore diagonal in the site indices.
+
+\begin{eqnarray}
+\langle\chi_\alpha|\hat{v}_{x,cv}|\chi_\beta\rangle
+&=&
+\sum_{\gamma,\delta}
+\langle\chi_\alpha|p_\gamma\rangle 
+M_{\gamma,\delta}\langle p_\delta|\chi_\beta\rangle
+\nonumber\\
+&=&
+\sum_{\gamma,\delta}
+\langle\tilde{\phi}^{K}_\alpha|\tilde{p}_\gamma\rangle 
+M_{\gamma,\delta}
+\langle\tilde{p}_\delta|\tilde{\phi}^{K}_\beta\rangle
+\nonumber\\
+&-&
+\sum_{\gamma,\delta,\beta'}
+\langle\tilde{\phi}^{K}_\alpha|\tilde{p}_\gamma\rangle 
+M_{\gamma,\delta}
+\langle\tilde{p}_\delta|\tilde{\phi}^{\bar{J}}_{\beta'}\rangle 
+\bar{S}^\dagger_{\beta',\beta}
+\nonumber\\
+&-&
+\sum_{\gamma,\delta,\alpha',\alpha}
+\bar{S}_{\alpha,\alpha'}
+\langle\tilde{\phi}^{\bar{J}}_{\alpha'}|\tilde{p}_\gamma\rangle 
+M_{\gamma,\delta}
+\langle\tilde{p}_\delta|\tilde{\phi}^{K}_{\beta}\rangle 
+\nonumber\\
+&+&
+\sum_{\gamma,\delta,\alpha',\alpha}
+\bar{S}_{\alpha,\alpha'}
+\langle\tilde{\phi}^{\bar{J}}_{\alpha'}|\tilde{p}_\gamma\rangle 
+M_{\gamma,\delta}
+\langle\tilde{p}_\delta|\tilde{\phi}^{\bar{J}}_{\beta'}\rangle 
+\bar{S}^\dagger_{\beta',\beta}
+\end{eqnarray}
+Here we used the augmented Hankel and screened Bessel fucntions,
+respectively their pseudo versions.
+
+As usual we build the expanded density matrix
+\begin{eqnarray}
+\left(\begin{array}{cc}
+  \mat{\rho} \qquad& 
+-\mat{\rho}\mat{\bar{S}}^\dagger\\
+-\mat{\bar{S}}\mat{\rho} \qquad& 
+\mat{\bar{S}}\mat{\rho}\mat{\bar{S}}^\dagger\\
+\end{array}\right)
+\end{eqnarray}
+
+The matrix 
+\begin{eqnarray}
+\left(\begin{array}{cc}
+\langle\tilde{\phi}^{K}|\tilde{p}\rangle 
+\mat{M}\langle\tilde{p}|\tilde{\phi}^{K}\rangle &
+\langle\tilde{\phi}^{K}|\tilde{p}\rangle 
+\mat{M}\langle\tilde{p}|\tilde{\phi}^{\bar{J}}\rangle \\
+\langle\tilde{\phi}^{\bar{J}}|\tilde{p}\rangle 
+\mat{M}\langle\tilde{p}|\tilde{\phi}^{K}\rangle &
+\langle\tilde{\phi}^{\bar{J}}|\tilde{p}\rangle 
+\mat{M}\langle\tilde{p}|\tilde{\phi}^{\bar{J}}\rangle \\
+\end{array}\right)
+\end{eqnarray}
+is calculated first using \verb|potpar1(isp)%prok| and
+\verb|potpar1(isp)%projbar|.
+\footnote{ In the earlier version the contribution from the
+  $\dot{\bar{\phi}}$ has been ignored!!! It has been verified by
+  temporarily switching off the jbar contributiuon to
+  potpar1(isp)\%prok and potpar1(isp)\%projbar. In this old version
+  only potpar(isp)\%ktophi is used to extract the $\phi$
+  contribution.}
+
+
+
+
+
+
+
+%====================================================================
+\chapter{Description of Subroutines}
+%====================================================================
+%====================================================================
+\section{Workflow}
+%====================================================================
+\begin{verbatim}
+---initialization-----
+POTPAR = potential parameters
+SBAR = screened structureconstants
+<ptilde|chitilde>
+tailed partial waves
+  overlap (Onsite) 
+  utensor (Onsite)
+  utensor (offsite)
+...
+----cycle-----------
+TBC=<pi-tilde|psi> from PROJ=<ptilde|psitide>
+DENMAT density matrix in local orbitals
+...
+total energy and derivatives
+HAMIL hamiltonian matrix in tight-binding orbitals
+...
+HTBC = de/dtbc * 1/f
+HPROJ = de/dproj * 1/f
+\end{verbatim}
+
+%====================================================================
+\section{LMTO\$CLUSTERSTRUCTURECONSTANTS}
+%====================================================================
+\verb|LMTO\$CLUSTERSTRUCTURECONSTANTS| calculates the screened
+structure constants \verb|SBAR| ($\mat{\bar{S}}$) for a cluster of
+\verb|NAT| atomic sites \verb|RPOS|, of which the first site is called
+the central site of the cluster. The number of angular momenta on each
+site is defined by \verb|LX|. The screening is defined by the vector
+\verb|QBAR| ($\bar{Q}$). \verb|K2| ($\vec{k}^2=-\kappa^2$) is the
+squared wave vector. (For envelope functions that fall off
+exponentially, this parameter is negative.)
+
+\begin{verbatim}
+SUBROUTINE LMTO$CLUSTERSTRUCTURECONSTANTS(K2,NAT,RPOS,LX,QBAR,NORB,N,SBAR)
+REAL(8)   ,INTENT(IN) :: K2          
+INTEGER(4),INTENT(IN) :: NAT         ! NUMBER OF ATOMS ON THE CLUSTER
+REAL(8)   ,INTENT(IN) :: RPOS(3,NAT) ! ATOMIC POSITIONS ON THE CLUSTER
+INTEGER(4),INTENT(IN) :: LX(NAT)     ! X(ANGULAR MOMENTUM ON EACH CLUSTER)
+INTEGER(4),INTENT(IN) :: N
+REAL(8)   ,INTENT(IN) :: QBAR(N)
+INTEGER(4),INTENT(IN) :: NORB
+REAL(8)   ,INTENT(INOUT):: SBAR(NORB,N)
+\end{verbatim}
+
+
+
+
+First, the bare structure constants are evaluates on the cluster using
+\verb|LMTO\$STRUCTURECONSTANTS| and then the structure constants are
+screened using \verb|LMTO\$SCREEN|.
+
+%====================================================================
+\subsection{LMTO\$STRUCTURECONSTANTS}
+%====================================================================
+\verb|LMTO\$STRUCTURECONSTANTS| calculates the bare structure
+constants for a pair of sites. The first site is at the origin, where
+the Hankel function is centered, and the second site at $\vec{R}$
+specified by \verb|R21|, is the center of the expansion into solid
+Bessel functions.
+
+\begin{verbatim}
+subroutine lmto$structureconstants(r21,K2,L1x,L2x,S)
+REAL(8)   ,INTENT(IN) :: R21(3) ! EXPANSION CENTER
+INTEGER(4),INTENT(IN) :: L1X
+INTEGER(4),INTENT(IN) :: L2X
+REAL(8)   ,INTENT(IN) :: K2 ! 2ME/HBAR**2
+REAL(8)   ,INTENT(OUT):: S((L1X+1)**2,(L2X+1)**2)
+\end{verbatim}
+
+The bare structure constants are evaluated in 
+\verb|LMTO$STRUCTURECONSTANTS| as
+\begin{eqnarray}
+S_{RL,R'L'}\eqrel{eq:fortmulaforbarestructureconstants}{=}
+(-1)^{\ell'+1} 4\pi \sum_{L''} C_{L,L',L''} 
+H_{L''}(\vec{R}'-\vec{R})
+\begin{cases}
+(-ik)^{\ell+\ell'-\ell''}&\text{for $k^2>0$}\\
+\delta_{\ell+\ell'-\ell''}&\text{for $k^2=0$}\\
+\kappa^{\ell+\ell'-\ell''}&\text{for $k^2=-\kappa^2<0$}\\
+\end{cases}
+\label{eq:fortmulaforbarestructureconstantscopy1}
+\end{eqnarray}
+where $H_L(k^2,\vec{R})$ is the solid Hankel function calculated in
+\verb|LMTO$SOLIDHANKEL|. The solid Hankel function is the solution of
+the Helmholtz equation, \eq{eq:solidhelmholtzequation}.\footnote{The
+  factors and signs of the inhomogeneity need to be confirmed. The
+  equation has been taken from the methods book, chapter
+  \textit{``Working with spherical Hankel and Bessel functions.}}
+
+More information on the solid Hankel function can be found in
+appendix~\ref{app:solidhankel}.
+
+Remark: Because the Gaunt coefficients vanish for odd
+$\ell+\ell'-\ell''$, the structure constants are real even for
+$k^2>0$.
+
+
+%====================================================================
+\subsection{LMTO\$SCREEN}
+%====================================================================
+\textit{I describe here what has been implemented as ``version 3''.}
+
+\verb|LMTO$SCREEN| takes the bare structure constants $S_{RL,R'L'}$
+connecting all orbitals on a specific cluster with each other and the
+screening constants $\bar{Q}$ for all orbitals on the cluster. It
+returns the screened structure constants connecting the orbitals on
+the central (first) site (1st index) with all orbitals (2nd index).
+
+The structure constants are defined so that
+\begin{eqnarray}
+\langle K_{RL}|=-\sum_{L'} S_{RL,R'L'}\langle J_{R'L'}|
+\qquad\text{for $R'\neq R$}
+\end{eqnarray}
+
+First we evaluate 
+\begin{eqnarray}
+\mat{A}=\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger
+\end{eqnarray}
+and the vectors $\vec{e}_\alpha$ defined by
+$(\vec{e}_\alpha)_\beta=\delta_{\beta,\alpha}$. Note that the number
+of vectors corresponds to the number of orbitals on the central site
+only. Therefore, these vectors do not build up a complete unit matrix.
+
+Then we solve the equation system
+\begin{eqnarray}
+\mat{A}\vec{c}_\alpha
+&\eqrel{eq:forscreenedsa}{=}&
+\vec{e}_\alpha
+\end{eqnarray}
+for $\vec{c}_\alpha$ and
+\begin{eqnarray}
+\vec{s}_\alpha&\eqrel{eq:forscreenedsb}{=}&
+\mat{S}^\dagger\vec{c}_\alpha
+\end{eqnarray}
+$\Bigl(\vec{s}_\alpha\Bigr)_\beta=\bar{S}^\dagger_{\beta,\alpha}$
+contains the transposed screened structure constants. After
+transposition, $\bar{S}$ is returned.
+
+%====================================================================
+\section{Waves object}
+%====================================================================
+The data exchange betweeen the waves object and the lmto object is
+determined by the local-orbital projections
+$\langle\tilde{\pi}_\alpha|\tilde{\psi}_n\rangle$ specified by the
+array \verb|THIS%TBC|, which in turn is obtained from the partial-wave
+projections $\langle\tilde{p}|\tilde{\psi}_n\rangle$.
+
+
+
+In \verb|waves$etot|
+\begin{verbatim}
+CALL WAVES$TONTBO
+-> CALL LMTO$PROJTONTBO('FWRD'...)
+..
+..
+CALL LMTO$ETOT(LMNXX,NDIMD,NAT,DENMAT)
+..
+..
+CALL WAVES$FROMNTBO()
+-> CALL LMTO$PROJTONTBO('BACK'...)
+..
+..
+CALL WAVES$FORCE
+-> CALL WAVES_FORCE_ADDHTBC
+...
+CALL WAVES$HPSI
+\end{verbatim}
+
+
+\begin{eqnarray*}
+\vec{F}&=&
+-\sum_\alpha
+\frac{dE}{d\langle\tilde{p}_\alpha|\psi_n\rangle}
+\langle\vec{\nabla}_R\tilde{p}_\alpha|\psi_n\rangle
++\mathrm{c.c.}
+\nonumber\\
+&=&-\sum_{\alpha,\beta}
+\frac{dE}{d\langle\tilde{\pi}_\beta|\psi_n\rangle}
+\frac{d\langle\tilde{\pi}_\beta|\psi_n\rangle}
+{d\langle\tilde{p}_\alpha|\psi_n\rangle}
+\langle\vec{\nabla}_R\tilde{p}_\alpha|\psi_n\rangle
++\mathrm{c.c.}
+\nonumber\\
+&=&-\sum_{\alpha,\beta}
+\frac{dE}{d\langle\tilde{\pi}_\beta|\psi_n\rangle}
+\frac{d\langle\tilde{\pi}_\beta|\psi_n\rangle}
+{d\langle\tilde{p}_\alpha|\psi_n\rangle}
+\Bigl[-\langle\vec{\nabla}_r\tilde{p}_\alpha|\psi_n\rangle\Bigr]
++\mathrm{c.c.}
+\end{eqnarray*}
+
+
+%=======================================================================
+\section{Offsite matrix elements}
+%=======================================================================
+The offsite matrix elements are kept in the data type 
+\begin{verbatim}
+TYPE OFFSITEX_TYPE
+ INTEGER(4)         :: NDIS
+ INTEGER(4)         :: NF
+ REAL(8)   ,POINTER :: OVERLAP(:,:)  ! OVERLAP MATRIX ELEMENTS
+ REAL(8)   ,POINTER :: X22(:,:)      !
+ REAL(8)   ,POINTER :: X31(:,:)
+ REAL(8)   ,POINTER :: BONDU(:,:)
+ REAL(8)   ,POINTER :: DIS(:)
+ REAL(8)   ,POINTER :: LAMBDA(:)
+END TYPE OFFSITEX_TYPE
+\end{verbatim}
+
+The matrix elements are initialized in \verb|LMTO_initialize|
+\begin{verbatim}
+LMTO_TAILEDGAUSSFIT()
+   GAUSSIAN_FITGAUSS(GID,NR,W,L,AUX,NE,NPOW2,E,C(:NPOW2,:,LN))
+   LMTO_TAILEDGAUSSORBTOYLM()
+LMTO_OFFXINT
+    LMTO_OFFSITEOVERLAPSETUP  !O(AB)  ->OFFSITEX%OVERLAP
+       LMTO_TWOCENTER
+    LMTO_OFFSITEX22SETUP      !U(AABB) ->OFFSITEX%X22
+       LMTO_TWOCENTER
+    LMTO_OFFSITEX31SETUP      !U(AAAB) ->OFFSITEX%X31
+       LMTO_TWOCENTER
+    LMTO_TAILEDGAUSSOFFSITEU  !U(ABAB) ->OFFSITEX%BONDU
+       GAUSSIAN$ZDIRECTION_FOURCENTER(NIJKA,NEA,EA,LMNXA,ORBA &
+    LMTO_OFFSITEXCONVERT()
+\end{verbatim}
+
+The energy contibution is then calculated using offsitex as follows
+\begin{verbatim}
+LMTO_OFFSITEXEVAL_NEW(EX)  
+    LMTO_EXPANDNONLOCAL
+    LMTO_EXPANDLOCAL
+    SPHERICAL$ROTATEYLM(LMX,ROT,YLMROT)
+    LMTO_OFFSITEX22U(ISPA,ISPB, DIS,LMNXTA,LMNXTB,U22,DU22)
+       lmto_offsitexvalue
+    LMTO_OFFSITEX31U(ISPA,ISPB, DIS,LMNXTA,LMNXTB,U3A1B,DU3A1B)
+       lmto_offsitexvalue
+    LMTO_OFFSITEX31U(ISPB,ISPA,-DIS,LMNXTB,LMNXTA,U3B1A,DU3B1A)
+       lmto_offsitexvalue
+    LMTO_OFFSITEXBONDU(ISPA,ISPB,DIS,LMNXTA,LMNXTB,BONDU,DBONDU)
+       lmto_offsitexvalue
+\end{verbatim}
+
+%=======================================================================
+\section{Matrix elements using Gaussians}
+%=======================================================================
+\verb|LMTO_TAILEDGAUSSOFFSITEU| uses the gauss decomposition of the
+tailed orbitals in \verb|potpar%tailed%gaussnlf|.  In
+\verb|tailedgaussfit| the following data structure is prepared.
+\begin{verbatim}
+POTPAR%TAILED%GAUSSNLF%NIJK
+POTPAR%TAILED%GAUSSNLF%NORB
+POTPAR%TAILED%GAUSSNLF%NPOW
+POTPAR%TAILED%GAUSSNLF%NE
+POTPAR%TAILED%GAUSSNLF%E
+POTPAR%TAILED%GAUSSNLF%C
+\end{verbatim}
+
+
+
+
+%=======================================================================
+\section{Matrix elements on an adaptive grid}
+%=======================================================================
+\verb|lmto_twocenter|
+
+\begin{verbatim}
+MODULE LMTO_TWOCENTER_MODULE
+LMTO_TWOCENTER
+    ADAPT$EVALUATE
+       ADAPTINI
+       ADAPT_BASICRULE
+           ADAPT_INTEGRAND
+             LMTO_TWOCENTER_MYFUNC
+\end{verbatim}
+
+
+%=======================================================================
+\section{Routines for reporting}
+%=======================================================================
+\begin{verbatim}
+LMTO$REPORT(NFIL)
+..
+LMTO$REPORTOVERLAP(NFIL)
+LMTO$REPORTSBAR(NFIL)
+LMTO$REPORTDENMAT(NFIL)
+LMTO$REPORTHAMIL(NFIL)
+LMTO$REPORTPERIODICMAT(NFIL,NAME,NNS,SBAR)
+...
+LMTO$WRITEPHI(FILE,GID,NR,NPHI,PHI)
+\end{verbatim}
+
+%=======================================================================
+\section{Routines for plotting orbitals}
+%=======================================================================
+There are a three routines that calculate the orbitals either in a
+spherical-harmonics expansion on radial grids or directly on an array
+of real-space points.
+\begin{verbatim}
+LMTO_TAILEDORBLM(IAT,IORB,NR,LMX,ORB)
+LMTO_TAILED_NTBOOFR(IAT,iORB,NP,P,chi)
+  LMTO_TAILEDORBLM(IAT,IORB,NR,LMX,ORB)
+LMTO_NTBOOFR(IAT,iORB,NP,P,chi)
+\end{verbatim}
+
+
+\begin{verbatim}
+LMTO_PLOTTAILED()  [OK]
+    LMTO_TAILEDORBLM(IAT,IORB,NR,LMX,ORB)
+LMTO_GRIDPLOT(type,iat)  [ok]
+    LMTO_GRIDORB_CUBEGRID(R0(:,IAT0),RANGE,N1,N2,N3,ORIGIN,TVEC,P)
+    LMTO_GRIDORB_STARGRID(R0(:,IAT0),RANGE,NDIR,DIR,NRAD,X1D,P)
+    LMTO_TAILED_NTBOOFR(TYPE,IAT,iORB,NP,P,chi)
+        LMTO_TAILEDORBLM(IAT,IORB,NR,LMX,ORB)
+        LMTO_NTBOOFR(IAT,iORB,NP,P,chi)
+    LMTO_WRITECUBEFILE
+..
+LMTO_GRIDPLOT_UNTAILED(IAT0)
+    LMTO_GRIDORB_CUBEGRID(R0(:,IAT0),RANGE,N1,N2,N3,ORIGIN,TVEC,P)
+    LMTO_GRIDORB_STARGRID(R0(:,IAT0),RANGE,NDIR,DIR,NRAD,X1D,P)
+    LMTO_GRIDENVELOPE(RBAS,NAT,R0,IAT0,LMX,NP,P,ENV,ENV1)
+    LMTO_GRIDAUGMENT(RBAS,NAT,R0,IAT0,LMX,NP,P,ORB1,ENV1)
+    LMTO_GRIDGAUSS(RBAS,NAT,R0,IAT0,LMX,NP,P,ORBG)
+    LMTO_WRITECUBEFILE(NFIL,NATCLUSTER,ZCLUSTER,RCLUSTER &
+LMTO_PLOTLOCORB(IAT0)
+    LMTO_GRIDENVELOPE(RBAS,NAT,R0,IAT0,LM1X,NP,P,ENV,ENV1)
+    LMTO_GRIDAUGMENT(RBAS,NAT,R0,IAT0,LM1X,NP,P,ORB1,ENV1)
+    LMTO_GRIDGAUSS(RBAS,NAT,R0,IAT0,LM1X,NP,P,ORBG)
+    LMTO_WRITECUBEFILE
+LMTO_PLOTNTBO(TYPE,IATORB,LMNORB)
+    LMTO_GRIDORB_CUBEGRID(CENTER,RADIUS,N1,N2,N3,ORIGIN,TVEC,P)
+    LMTO_GRIDORB_STARGRID(CENTER,RADIUS,NDIR,DIR,NR,X1D,P)
+    LMTO_TAILED_NTBOOFR(TYPE,IATORB,LMNORB,NP,P,ORB)
+    LMTO_NTBOOFR(TYPE,IATORB,LMNORB,NP,P,ORB)
+..
+LMTO$PLOTWAVE(NFIL,IDIM0,IB0,IKPT0,ISPIN0,NR1,NR2,NR3)
+    LMTO$PLOTWAVE_TAILED(NFIL,IDIM0,IB0,IKPT0,ISPIN0,NR1,NR2,NR3)
+        WRITEWAVEPLOTC(NFIL,TITLE,RBAS,NAT,R0,ZAT,Q,NAME,XK,NR1,NR2,NR3,WAVE)
+\end{verbatim}
+
+
+
+
+
+
+\begin{itemize}
+\item \verb|LMTO_TAILEDORBLM(IAT,IORB,NR,LMX,ORB)| calculates a
+  specific orbital on radial grids in a spherical harmonics
+  representation.
+%
+\item \verb|LMTO_PLOTTAILED()| writes the tailed local orbitals in a
+  spherical harmonics expanion to file, so that the componenst can be
+  viewed by xmgrace. Each orbital is written to a file \verb|CHI5_3.DAT|
+  where 5 is the atom index and 3 is the orbital index.
+%
+\item \verb|LMTO_TAILED_NTBOOFR(IAT,iORB,NP,P,chi)| calculates a
+  specific tailed orbital on a set of real space points.
+%
+\item \verb|LMTO_GRIDPLOT_TAILED(IAT0)| writes the orbitals for the
+  specified site to file. It supports a 3D representation with cube
+  files, and one-dimensional representation on a star grid.
+\end{itemize}
+
+%=======================================================================
+\subsubsection{Multicenter expansion}
+%=======================================================================
+
+First the interstitial orbital is determined
+
+\begin{eqnarray}
+|\bar{K}^I_\alpha\rangle&=&|\bar{K}^\infty_\alpha\rangle 
+- \Bigl[ |K^\Omega_\alpha\rangle 
+-\sum_\beta |\bar{J}^\Omega_\beta\rangle \bar{S}^\dagger_{\beta,\alpha}
+\Bigr]
+\nonumber\\
+&=&\sum_\beta |K^\infty_\beta\rangle \Bigl(\delta_{\alpha,\beta}+\bar{Q}_\beta
+\bar{S}^\dagger_{\beta,\alpha}\Bigr)
+- \Bigl[ |K^\Omega_\alpha\rangle 
+-\sum_\beta |\bar{J}^\Omega_\beta\rangle \bar{S}^\dagger_{\beta,\alpha}
+\Bigr]
+\nonumber\\
+&=&\sum_\beta |K^\infty_\beta\rangle \Bigl(\delta_{\alpha,\beta}+\bar{Q}_\beta
+\bar{S}^\dagger_{\beta,\alpha}\Bigr)
+- \Bigl[ |K^\Omega_\alpha\rangle 
+-\sum_\beta 
+\Bigl(
+|J^\Omega_\beta\rangle-|K^\Omega_\beta\rangle\bar{Q}_\beta\Bigr)
+ \bar{S}^\dagger_{\beta,\alpha}
+\Bigr]
+\nonumber\\
+&=&\sum_\beta 
+\Bigl(|K^\infty_\beta\rangle -|K^\Omega_\beta\rangle \Bigr)
+\Bigl(\delta_{\alpha,\beta}+\bar{Q}_\beta
+\bar{S}^\dagger_{\beta,\alpha}\Bigr)
++\sum_\beta 
+|J^\Omega_\beta\rangle\bar{S}^\dagger_{\beta,\alpha}
+\end{eqnarray}
+
+This implies that within the sphere centered at $R_\beta$ only the
+expansion into bare bessel functions survive, while outside only the
+bare Hankel function is considsered.
+
+
+
+
+
+\appendix
+%=======================================================================
+\chapter{Definition of solid Hankel functions}
+\label{app:solidhankel}
+%=======================================================================
+The solid Hankel function has the form
+\begin{eqnarray}
+H_L(\vec{R})=Y_L(\vec{R})
+\begin{cases}
+n_\ell(\sqrt{k^2}\cdot|\vec{R}|) \cdot \sqrt{k^2}^{\ell+1}
+&\text{for $k^2>0$  (Abramovitz 10.1.26)}\\
+m_\ell(\sqrt{-k^2}\cdot|\vec{R}|) \cdot \sqrt{\frac{2}{\pi}} \sqrt{-k^2}^{\ell+1}
+&\text{for $k^2<0$  (Abramovitz 10.2.4)}\\
+(2\ell-1)!! |\vec{R}|^{-\ell-1} 
+&\text{for $k^2=0$  (Abramovitz 10.2.5)}\\
+\end{cases}
+\end{eqnarray}
+The solid Hankel function is defined such that the boundary conditions
+at the origin are independent of $k^2$.
+
+\begin{itemize}
+\item the function
+\begin{eqnarray}
+n_\ell(r)=r^\ell\Bigl(-\frac{1}{r}\partial_r\Bigr)^\ell\frac{1}{r}\cos(r)
+\label{eq:defneumann}
+\end{eqnarray}
+is the spherical Neumann function (see Eq. 8.175 of Cohen Tannoudhi
+Band 2), which is also called the spherical Bessel function of the
+second kind. Abramowitz defines $n_\ell(r)=-y_\ell(r)$ (compare
+Abramowitz Eq. 10.1.26)
+
+The spherical Neumann function obeys the radial Helmholtz equation
+(Abramowitz Eq. 10.1.1) for positive kinetic energy
+\begin{eqnarray}
+r^2\partial^2_r n_\ell+2r\partial_r n_\ell+\Bigl(r^2-\ell(\ell+1)\Bigr) n_\ell=0
+\nonumber\\
+\Rightarrow\quad
+\Bigl[-\frac{1}{r}\partial_r r +\frac{\ell(\ell+1)}{r^2}\Bigr]
+n_\ell(r)=+n_\ell(r)
+\end{eqnarray}
+
+\textbf{Note that the subroutine SPFUNCTION\$NEUMANN returns the
+  Neumann function with the opposite sign, namely what Abramowitz
+  defines as Bessel function of the second kind. The minus sign is
+  added in the calling routine.}
+%
+\item The function 
+\begin{eqnarray}
+m_\ell(r)=r^\ell\Bigl(-\frac{1}{r}\partial_r\Bigr)^\ell\frac{1}{r}\e{-r}
+\label{eq:defml}
+\end{eqnarray}
+used for $k^2<0$ is obeys the radial Helmholtz equation (Abramowitz
+Eq. 10.2.1) for negative kinetic energy
+\begin{eqnarray}
+r^2\partial^2_r m_\ell
++2r\partial_r m_\ell
+-\Bigl(r^2+\ell(\ell+1)\Bigr) m_\ell=0
+\nonumber\\
+\Rightarrow\quad
+\Bigl[-\frac{1}{r}\partial_r r +\frac{\ell(\ell+1)}{r^2}\Bigr]
+m_\ell(r)=-m_\ell(r)
+\end{eqnarray}
+They are solutions for negative energy and therefore they fall off
+exponentially.  The solution $m_\ell(r)$ is proportional to the
+modified spherical Bessel functions of the third kind as defined by
+Abramowitz\cite{abramowitz64_book} in their Eq. 10.2.4.
+\begin{eqnarray}
+m_\ell(r)=\frac{2}{\pi} \Bigl[\sqrt{\frac{\pi}{2r}} K_{\ell+1}(r)\Bigr]
+\end{eqnarray}
+which can be verified by comparing the defining equation \eq{eq:defml}
+with equations 10.2.24-25 and the definition Eq. 10.2.4 of Abramowitz.
+\end{itemize}
+
+
+%=======================================================================
+\section{Bare structure constants}
+%=======================================================================
+\textit{ This section is copied from Methods-book, Section ``Working
+  with spherical Hankel and Bessel functions'', Peter Bl\"ochl, private
+  communication.}
+
+The bare structure constants have been determined first by
+Segall\cite{segall57_pr105_108}. He uses the
+theorem\cite{korringa47_physica13_392} that supposedy goes back to
+Kasterin (N. Kasterin, Proc. Acad. Sci Amsterdam 6, 460 (1897/98));
+see Seegall\cite{segall57_pr105_108}, Eq. B4)
+\begin{eqnarray}
+h_\ell^{(1)}(\kappa r)Y_{\ell,m}(\vec{r})=i^{-\ell}
+\mathcal{Y}_{\ell,m}(\vec{\nabla}_r)h_0^{(1)}(\kappa r)
+\label{eq:hlfromh0}
+\end{eqnarray}
+where $h^{(1)}_\ell(x)$ i the spherical Hankel function of the first
+kind (see \eq{eq:defsphericalhankelfirstkind} below)
+and where (Eq. B5 of Segall\cite{segall57_pr105_108})
+\begin{eqnarray}
+\mathcal{Y}_{\ell,m}(\vec{\nabla})
+&=&\sqrt{\frac{2\ell+1}{4\pi}\frac{(\ell-m)!}{(\ell+m)!}}
+\biggl(\frac{1}{ik}\biggr)^{|m|}\biggl(\partial_x\pm i\partial_y\biggr)
+\mathcal{P}_\ell^{|m|}\left(\frac{1}{ik}\partial_z\right)
+\end{eqnarray}
+where the positive sign applies for nonzero $m$ and the negative sign
+for negative $m$. Furthermore (see Segall\cite{segall57_pr105_108}
+Eq.~B5)
+\begin{eqnarray*}
+\mathcal{P}_\ell^{|m|}(z)=\frac{d^{|m|}P_\ell(z)}{dz^{|m|}}
+\end{eqnarray*}
+where $P_\ell(z)$ is the conventional Legendre polynomial.
+
+In addition Segall\cite{segall57_pr105_108} refers in his Eq. B7 to
+Morse and Feshbach\cite{morse53_book} (part II, p. 1574) for
+\begin{eqnarray}
+h_0^{(1)}(\kappa|\vec{r}-\vec{r'}|)&=&
+4\pi\sum_L \biggl( h^{(1)}_\ell(\kappa|\vec{r'}|)Y_L(\vec{r'})\biggr)
+j_\ell(\kappa|\vec{r}|)Y_L^*(\vec{r})
+\label{eq:structureconstant0}
+\end{eqnarray}
+which is valid for $|\vec{r'}|>|\vec{r}|$.
+
+The two equations, \eq{eq:hlfromh0} and \eq{eq:structureconstant0},
+can be combined into
+\begin{eqnarray*}
+h_\ell^{(1)}(\kappa |\vec{r}|)Y_{\ell,m}(\vec{r})
+&\eqrel{eq:hlfromh0}{=}&
+i^{-\ell}\mathcal{Y}_{\ell,m}(\vec{\nabla}_r)h_0^{(1)}(\kappa |\vec{r}|)
+\\
+&=&
+i^{-\ell}\mathcal{Y}_{\ell,m}(\vec{\nabla}_r)
+h_0^{(1)}(\kappa |(\vec{r}-\vec{R})+\vec{R}|)
+\\
+&\eqrel{eq:structureconstant0}{=}&
+i^{-\ell}\mathcal{Y}_{\ell,m}(\vec{\nabla}_r)
+\biggl[
+4\pi\sum_{L'}\biggl( h^{(1)}_{\ell'}(\kappa|\vec{R}|)Y_{L'}(-\vec{R})\biggr)
+j_{\ell'}(\kappa|\vec{r}-\vec{R}|)Y_{L'}^*(\vec{r}-\vec{R})
+\biggr]
+\\
+&\eqrel{eq:helper1forprestructureconstants}{=}&
+4\pi\sum_{L'}\biggl(i^{-\ell}
+\mathcal{Y}_{\ell,m}(\vec{\nabla}_R) 
+h^{(1)}_{\ell'}(\kappa|\vec{R}|)Y_{L'}(-\vec{R})\biggr)
+j_{\ell'}(\kappa|\vec{r}-\vec{R}|)Y_{L'}^*(\vec{r}-\vec{R})
+\end{eqnarray*}
+Here we used that 
+\begin{eqnarray}
+\vec{\nabla}_r \bigl[f(\vec{R})g(\vec{r}-\vec{R})\bigr]
+&=&f(\vec{R})\vec{\nabla}_rg(\vec{r}-\vec{R})
+=-f(\vec{R})\vec{\nabla}_Rg(\vec{r}-\vec{R})
+\\
+&=&-\underbrace{\vec{\nabla}_R\overbrace{\bigl[f(\vec{R})g(\vec{r}-\vec{R})\bigr]
+}^{h(\vec{r})}}_{=0}
++\Bigl[\vec{\nabla}_Rf(\vec{R})\Bigr]g(\vec{r}-\vec{R})\bigr]
+\label{eq:helper1forprestructureconstants}
+\end{eqnarray}
+
+We summarize the final result
+\begin{myshadowminipage}{Condition for structure constants (positive energies)}
+\begin{eqnarray}
+h_\ell^{(1)}(\kappa |\vec{r}|)Y_{\ell,m}(\vec{r})
+&=&
+4\pi\sum_{L'}\biggl(i^{-\ell}
+\mathcal{Y}_{\ell,m}(\vec{\nabla}_R) 
+h^{(1)}_{\ell'}(\kappa|\vec{R}|)Y_{L'}(-\vec{R})\biggr)
+j_{\ell'}(\kappa|\vec{r}-\vec{R}|)Y_{L'}^*(\vec{r}-\vec{R})
+\nonumber\\
+\label{eq:prestructureconstants}
+\end{eqnarray}
+where $h^{(1)}(x)$ is the spherical Hankel function of the first kind
+defined in Abramowitz and Stegun (AS)\cite{abramowitz}
+\begin{eqnarray}
+h_\ell^{(1)}(x)\stackrel{AS 10.1.1}{=}j_\ell(x)+iy_\ell(x)
+\stackrel{AS10.1.26}{=}
+x^\ell\biggl(-\frac{1}{x}\partial_x\biggr)^\ell\frac{\sin(x)-i\cos(x)}{x}
+\label{eq:defsphericalhankelfirstkind}
+\end{eqnarray}
+\end{myshadowminipage}
+
+
+
+%
+%====================================================================
+\subsubsection{Expression for the structure constants}
+%====================================================================
+By comparing our notation to that of Daniel Grieger and using his
+expression for the Structure constants, we arrive at the following
+expression for the structure constants in our notation.
+
+There was a misunderstanding with the sign of the structure
+constants. Here I follow the signconvention $K=-\sum JS$, which is
+opposite to the one I and Daniel had earlier.
+
+\begin{eqnarray}
+S_{R',L',R,L}
+&=&
+-4\pi \sum_{L''} H^B_{L''}(\vec{R'}-\vec{R}) C_{L,L'',L} 
+\left\lbrace
+\begin{array}{c}
+(-1)^{\ell'}
+(-ik)^{\ell+\ell'-\ell''}
+\\
+(-1)^{\ell'}\delta_{\ell+\ell',\ell''}
+\\
+(-1)^{\ell'}\kappa^{\ell+\ell'-\ell''}
+\end{array}\right\rbrace 
+\label{eq:expressionstructureconstants}
+\end{eqnarray}
+
+
+
+
+%=======================================================================
+\section{Consistency checks}
+%=======================================================================
+We consider the case with $\kappa=0$, for which the solid Bessel and Hankel functions are
+\begin{eqnarray}
+K_{\vec{0},L}^\infty(\vec{r})&=&(2\ell-1)!! \frac{1}{|\vec{r}|^{\ell+1}}Y_L(\vec{r})
+\\
+J_{\vec{0},L}(\vec{r})&=&\frac{1}{(2\ell+1)!!}|\vec{r}|^\ell Y_L(\vec{r})
+\end{eqnarray}
+
+The explicit form of the first few is
+\begin{eqnarray}
+K_{\vec{0},s}^\infty(\vec{r})&=&\frac{1}{\sqrt{4\pi}}\frac{1}{|\vec{r}|}
+\\
+K_{\vec{0},p_x}^\infty(\vec{r})&=&\sqrt{\frac{3}{4\pi}}\frac{x}{|\vec{r}|^3}
+\\
+J_{\vec{0},s}(\vec{r})&=&\frac{1}{\sqrt{4\pi}}
+\\
+J_{\vec{0},p_x}(\vec{r})&=&\frac{1}{3}\sqrt{\frac{3}{4\pi}} x
+\end{eqnarray}
+
+Now we extract the structure constants from the off-site expansion
+\begin{eqnarray}
+K_{\vec{0},s}^\infty(\vec{r})&=&
+-S_{\vec{0},s;\vec{R},s} J_s(\vec{r}-\vec{R}) 
+\nonumber\\
+&&-S_{\vec{0},s;\vec{R},p_x} J_{p_x}(\vec{r}-\vec{R}) 
+-S_{\vec{0},s;\vec{R},p_y} J_{p_y}(\vec{r}-\vec{R}) 
+-S_{\vec{0},s;\vec{R},p_z} J_{p_z}(\vec{r}-\vec{R}) 
+\end{eqnarray}
+which allows us to evaluate the structure constants directly
+calculating value and derivatives at the second center and by
+exploiting selection rules\footnote{Only an s-function has a finite
+  value at the origin, only a p-function has a finite first derivative
+  at the center, etc.}
+\begin{eqnarray}
+K_{\vec{0},s}^\infty(\vec{R})&=&\frac{1}{\sqrt{4\pi}}\frac{1}{|\vec{R}|}
+=-
+\underbrace{\Bigl(-\frac{1}{|\vec{R}|}\Bigr)}_{S_{\vec{0},s,\vec{R},s}}
+\underbrace{\frac{1}{\sqrt{4\pi}}}_{J_{\vec{R},s}(\vec{R})} 
+\\
+\left.\partial_x\right|_{\vec{R}}K_{\vec{0},s}^\infty&=&
+-\frac{1}{\sqrt{4\pi}}\frac{X}{|\vec{R}|^3}
+=-
+\underbrace{\sqrt{3}\frac{X}{|\vec{R}|^3}}_{S_{\vec{0},s;\vec{R},p_x}}
+\underbrace{\frac{1}{3}\sqrt{\frac{3}{4\pi}}}_{\partial_x J_{\vec{R},p_x}(\vec{R})}
+\\
+K_{\vec{0},p_x}(\vec{R})&=&\sqrt{\frac{3}{4\pi}}\frac{X}{|\vec{R}|^3}
+=-
+\underbrace{\Bigl(-\sqrt{3}\frac{X}{|\vec{R}|^3}\Bigr)
+}_{S_{\vec{0},p_x;\vec{R},s}}
+\underbrace{\frac{1}{\sqrt{4\pi}}}_{J_{\vec{R},s}(\vec{R})}
+\nonumber\\
+\left.\partial_x\right|_{\vec{R}}K_{\vec{0},p_x}^\infty&=&
+\sqrt{\frac{3}{4\pi}}
+\left(\frac{1}{|\vec{R}|^3}-3\frac{X^2}{|\vec{R}|^5}\right)
+=
+-\underbrace{3\frac{3X^2-\vec{R}^2}{|\vec{R}|^2}}_{S_{\vec{0},p_x,\vec{R},p_x}}
+\underbrace{\frac{1}{3}\sqrt{\frac{3}{4\pi}}|\vec{R}|^{-3}
+}_{\left.\partial_x\right|_{\vec{R}} J_{\vec{R},p_x}}
+\end{eqnarray}
+
+Thus, the matrix of structure constants in the (s,p$_x$) subspace is
+\begin{eqnarray}
+\mat{S}_{\vec{0},\vec{R}}=\left(\begin{array}{cc}
+-|\vec{R}|^{-1} & \sqrt{3}X/|\vec{R}|^3\\
+-\sqrt{3}X/|\vec{R}|^3 & 
+3[3X^2/R^2-1]\\
+\end{array}\right)
+\end{eqnarray}
+
+We compare this result now for the one obtained from the direct
+formula for $\kappa=0$. These structure constants have the form
+\begin{eqnarray}
+S_{RL,R'L'}=(-1)^{\ell'+1} 4\pi \sum_{L''} C_{L,L',L''} 
+H_{L''}(\vec{R}'-\vec{R})
+\delta^{\ell+\ell'-\ell''}
+\end{eqnarray}
+The structure constants obtained from this equation are
+\begin{eqnarray}
+S_{\vec{0},s;\vec{R},s}&=&(-1) 4\pi \underbrace{\frac{1}{\sqrt{4\pi}}}_{C_{sss}}
+\cdot\underbrace{\frac{1}{\sqrt{4\pi}}\frac{1}{|\vec{R}|}}_{H_s(\vec{R})}
+=-\frac{1}{|\vec{R}|}
+\nonumber\\
+S_{\vec{0},s;\vec{R},p_x}&=& 4\pi
+\underbrace{\frac{1}{\sqrt{4\pi}}}_{C_{p_x,s,p_x}}
+\underbrace{
+\sqrt{\frac{3}{4\pi}}\frac{X}{|\vec{R}|^3}}
+_{H_{p_x}(\vec{R})}
+=\sqrt{3}\frac{X}{|\vec{R}|^3}
+\nonumber\\
+S_{\vec{0},p_x;\vec{R},s}&=& (-1)4\pi
+\underbrace{\frac{1}{\sqrt{4\pi}}}_{C_{p_x,s,s}}\sqrt{\frac{3}{4\pi}}
+\frac{X}{|\vec{R}|^3}=-\sqrt{3}\frac{X}{|\vec{R}|^3}
+\nonumber\\
+S_{\vec{0},p_x;\vec{R},p_x}&=& 4\pi
+\underbrace{\frac{1}{\sqrt{5\pi}}}_{C_{p_x,p_x,d_{3x^2-r^2}}}
+\underbrace{
+\overbrace{\sqrt{\frac{5}{16\pi}} \frac{3X^2-R^2}{|\vec{R}|^2}}^{Y_{3x^2-r^2}}
+\frac{3}{|\vec{R}|^{3}}
+}_{H_{3x^2-r^2}(\vec{R})}
+=3\frac{3X^2-R^2}{|R^5|}
+\end{eqnarray}
+For Gaunt coefficients see footnote.\footnote{
+\begin{eqnarray}
+Y_{p_x}Y_{p_x}=\frac{3}{4\pi}\frac{x^2}{r^2}
+=\frac{1}{4\pi}\frac{x^2}{r^2} +\frac{1}{4\pi}\frac{3x^2-r^2}{r^2}
+=\frac{1}{\sqrt{4\pi}}Y_s +\frac{1}{4\pi}\sqrt{\frac{16\pi}{5}}
+Y_{3x^2-r^2}
+=\frac{1}{\sqrt{4\pi}}Y_s +\sqrt{\frac{1}{5\pi}}Y_{3x^2-r^2}
+\nonumber\\
+\Rightarrow 
+C_{p_x,p_x,s}=\frac{1}{\sqrt{4\pi}}\qquad\text{and}\qquad
+C_{p_x,p_x,d_{3x^2-r^2}}=\frac{1}{\sqrt{5\pi}}
+\end{eqnarray}}
+
+
+
+
+%====================================================================
+\chapter{Bloch theorem revisited}
+%====================================================================
+The Bloch states are eigenstates of the discrete lattice translation 
+\begin{eqnarray}
+\hat{S}(\vec{t})=\int d^3r\;|\vec{r}+\vec{t}\rangle\langle\vec{r}|
+\end{eqnarray}
+for the discrete lattice vectors $\vec{t}$. The eigenvalue equation has the form
+\begin{eqnarray}
+\hat{S}(\vec{t})|\psi_{\vec{k}}\rangle=|\psi_{\vec{k}}\rangle
+\e{i\vec{k}\vec{r}}
+\end{eqnarray}
+This eigenvalue equation can be recast into the form
+\begin{eqnarray}
+\langle\vec{r}-\vec{t}|\psi_{\vec{k}}\rangle=\langle\vec{r}|\psi_{\vec{k}}\rangle
+\e{i\vec{k}\vec{t}}
+\end{eqnarray}
+This implies that the states can be written  as product of a periodic function and a phase factor
+\begin{eqnarray}
+\langle\vec{r}|\psi_{\vec{k}}\rangle=u_{\vec{k}}(\vec{r})\e{i\vec{k}\vec{r}}
+\end{eqnarray}
+with
+\begin{eqnarray}
+u_{\vec{k}}(\vec{r})=u_{\vec{k}}(\vec{r}+\vec{t})
+\end{eqnarray}
+
+%====================================================================
+\subsubsection{Bloch theorem in a local orbital basis}
+%====================================================================
+With $q_\alpha\defas \langle\pi_\alpha|\psi\rangle$, we obtain
+\begin{eqnarray}
+\hat{S}(\vec{t})\sum_\alpha|\chi_\alpha\rangle q_{\alpha,n}
+&=&
+\sum_\alpha|\chi_\alpha\rangle q_{\alpha,n}\e{i\vec{k}_n\vec{t}}
+\nonumber\\
+\int d^3r\;|\vec{r}+\vec{t}\rangle\langle\vec{r}|
+\sum_\alpha|\chi_\alpha\rangle q_{\alpha,n}
+&=&
+\int d^3r\;|\vec{r}\rangle\langle\vec{r}|
+\sum_\alpha|\chi_\alpha\rangle q_{\alpha,n}\e{i\vec{k}_n\vec{t}}
+\nonumber\\
+\sum_\alpha\langle\vec{r}-\vec{t}|\chi_\alpha\rangle q_{\alpha,n}
+&=&
+\sum_\alpha
+\langle\vec{r}|\chi_\alpha\rangle q_{\alpha,n}\e{i\vec{k}_n\vec{t}}
+\nonumber\\
+\sum_\alpha\langle\vec{r}|\chi_{\alpha+\vec{t}}\rangle q_{\alpha,n}
+&=&
+\sum_\alpha
+\langle\vec{r}|\chi_\alpha\rangle q_{\alpha,n}\e{i\vec{k}_n\vec{t}}
+\nonumber\\
+\sum_{\alpha'}\langle\vec{r}|\chi_{\alpha'}\rangle q_{\alpha'-\vec{t},n}
+&=&
+\sum_\alpha
+\langle\vec{r}|\chi_\alpha\rangle q_{\alpha,n}\e{i\vec{k}_n\vec{t}}
+\nonumber\\
+q_{\alpha+\vec{t},n}&=&q_{\alpha,n}\e{-i\vec{k}_n\vec{t}}
+\end{eqnarray}
+
+%====================================================================
+\subsubsection{Density matrix}
+%====================================================================
+\begin{eqnarray}
+\rho_{\alpha,\beta+\vec{t}}
+&=&
+\sum_n \langle\pi_\alpha|\psi_n\rangle f_n
+\langle\psi_n|\pi_\beta\rangle
+\e{+i\vec{k}_n\vec{t}}
+\end{eqnarray}
+
+%=======================================================================
+\chapter{Offsite matrix elements using Gaussian integrals}
+%=======================================================================
+In \verb|LMTO_INITIALIZE| there are non-functional calls for doing the
+integrations in a representation of Gauss orbitals. The routines are
+no more present, except for 
+\begin{itemize}
+\item \verb|LMTO_TAILEDPRODUCTS|. They have been
+removed in 7501a0g from Feb.2, 2013 (svn revision 1116 from Nov. 20,
+2011). \verb|LMTO_TAILEDPRODUCTS| has been removed after 9803b02 on from
+ Mar. 1, 2014.
+\item \verb|LMTO_EXPANDPRODS|
+\end{itemize}
+
+The routines related to Gaussians have been moved into the file
+\verb|paw_lmto_stuffwithgaussians.f90|
+
+\begin{verbatim}
+!!$      CALL LMTO_TAILEDPRODUCTS()
+              gaussian_fitgauss
+!!$      CALL LMTO_GAUSSFITKPRIME()
+!!$      CALL LMTO_GAUSSFITKAUGMENT()
+!!$      CALL LMTO_GAUSSFITKJTAILS()
+!!$      CALL LMTO_ONSITEOVERLAP()
+\end{verbatim}
+
+
+
+\clearpage
+\bibliographystyle{unsrtnat} \bibliography{../all}
+\end{document}  

@@ -1,0 +1,1152 @@
+\documentclass[11pt,a4paper]{report}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                 %%
+%%    Header file for the Phi-S-X Series                           %%
+%%                                                                 %%
+%%    german version header_gm.tex is derived from header.tex      %%
+%%    by uncommenting the line ``\setboolean{german}{true}'' below %%
+%%                                                                 %%
+%%    Never edit the german version! all changes must be done      %%
+%%    in the english version header.tex                            %%
+%%                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{../header}
+\hypersetup{pdftitle=paw_brillouin}
+\begin{document}
+\begin{titlepage}
+\begin{center}
+\vspace*{3.5cm}
+{\huge \textbf{The SPINOR object of the CP-PAW code}}\\
+\vspace{0.5cm}
+{\large Peter E. Bl\"ochl}
+\vspace{0.5cm} 
+\end{center}
+
+\vfill
+\begin{center}
+Copyright Peter E. Bl\"ochl; Sept.2, 2013-\today\\
+{\small
+Institute of Theoretical Physics;
+Clausthal University of Technology;\\ 
+D-38678 Clausthal Zellerfeld; Germany;\\
+http://www.pt.tu-clausthal.de/atp/}
+\end{center}
+\end{titlepage}
+\noindent            
+\tableofcontents
+%====================================================================
+\newpage
+%====================================================================
+\chapter{SPINOR object}
+%ATTENTION: This is derived from the section Working wity 
+%Spin orbitals of the methods book
+%====================================================================
+%====================================================================
+%\chapter{Working with spin orbitals}
+\label{sec:spinorb}
+%====================================================================
+%====================================================================
+\section{Spin orbitals}
+\label{sec:spinorbitals}
+%====================================================================
+An electron is specified by a position and a spin. We combine position
+and spin into a pseudo-fourdimensional vector
+\begin{eqnarray}
+\vec{x}=(\vec{r},\sigma)
+\label{eq:spinorbdefx}
+\end{eqnarray}
+where $\sigma\in\{\uparrow,\downarrow\}$.
+
+An electron wave function naturally obtains a two-component form
+\begin{eqnarray}
+\psi(\vec{x})=\psi(\vec{r},\sigma)=\langle\vec{r},\sigma|\psi\rangle
+=\langle\vec{x}|\psi\rangle
+\label{eq:spinorbdefpsi}
+\end{eqnarray}
+
+Similarly, we combine sum over spin indices and integration over
+position into a quasi-fourdimensional integration
+\begin{eqnarray}
+\int d^4x\;=\sum_\sigma\int d^3r\;
+\label{eq:spinorbdefint}
+\end{eqnarray}
+
+The identity operator has the form
+\begin{eqnarray}
+\hat{1}=\int d^4x\;|\vec{x}\rangle\langle\vec{x}|
+\label{eq:spinorbunity}
+\end{eqnarray}
+
+%====================================================================
+\section{Pauli matrices and observables}
+%====================================================================
+All hermitean matrices in the two-dimensional spinor space can be
+represented as a superposition of the unit matrix and the three Pauli
+matrices.  In other words, the Pauli matrices including the unit
+element are a complete basis in the space of all complex, hermitean
+$2\times2$ matrices.
+
+\begin{eqnarray}
+\mat{1}=\mat{\sigma}^{(0)}=\left(\begin{array}{rr}1&0\\0&1\end{array}\right)
+&\qquad\text{and}\qquad&
+\mat{\sigma}_x=\mat{\sigma}^{(1)}=\left(\begin{array}{cc}0&1\\1&0\end{array}\right)
+\nonumber\\
+\mat{\sigma}_y=\mat{\sigma}^{(2)}=\left(\begin{array}{rr}0&-i\\i&0\end{array}\right)
+&\qquad\text{and}\qquad&
+\mat{\sigma}_z=\mat{\sigma}^{(3)}=\left(\begin{array}{rr}1&0\\0&-1\end{array}\right)
+\label{eq:defpaulimatrices}
+\end{eqnarray}
+
+
+The total density can be expressed by the unit matrix as
+\begin{eqnarray*}
+\rho(\vec{r})
+&=&
+-e^2 \sum_{\sigma,\sigma'}
+\langle \psi|\vec{r},\sigma\rangle
+\sigma^{(0)}_{\sigma,\sigma'}\langle\vec{r},\sigma'|\psi\rangle
+=
+-e^2 
+\langle \psi|\Bigl[|\vec{r}\rangle\langle\vec{r}|\circ \hat{\sigma}^{(0)}\Bigr]
+|\psi\rangle
+\end{eqnarray*}
+where $\hat{\sigma}^{(0)}$ is an operator in the two-dimensional
+spinor state.  with the symbol $\circ$ we denote the product where
+each operator acts in its own Hilbert space.
+
+
+Similarly we obtain the spin density in the form
+\begin{eqnarray*}
+S_j(\vec{r})
+&=&
+\frac{\hbar}{2}\sum_{\sigma,\sigma'}
+\langle \psi|\vec{r},\sigma\rangle
+\sigma^{(j)}_{\sigma,\sigma'}\langle\vec{r},\sigma'|\psi\rangle
+=
+\frac{\hbar}{2}\sum_{\sigma,\sigma'}
+\langle \psi|\Bigl[|\vec{r}\rangle\langle\vec{r}|\circ\hat{\sigma}^{(j)}\Bigr]
+|\psi\rangle
+\end{eqnarray*}
+
+
+
+%===================================================================
+\subsubsection{Eigenvectors of Pauli matrices}
+%===================================================================
+The eigenvalue equation is
+\begin{eqnarray}
+\sigma^{(j)}\xi^{(+j)}=\xi^{(+j)}
+\qquad\text{and}\qquad
+\sigma^{(j)}\xi^{(-j)}=-\xi^{(-j)}
+\end{eqnarray}
+Thus the eigenvalues are $+1$ and $-1$.
+
+The eigenvectors of the Pauli matrices
+$\mat{\sigma}_x,\mat{\sigma}_y,\mat{\sigma}_z$ are
+\begin{eqnarray}
+\xi^{(\pm x)}=\frac{1}{\sqrt{2}}\left(\begin{array}{c}1\\\pm1\end{array}\right)
+\qquad\text{and}\qquad
+\xi^{(\pm y)}=\frac{1}{\sqrt{2}}\left(\begin{array}{c}1\\\pm i\end{array}\right)
+\qquad\text{and}\qquad
+\xi^{(\pm z)}=\frac{1}{2}\left(\begin{array}{c}1\pm1\\1\mp1\end{array}\right)
+\label{eq:spineigenstatesxyz}
+\end{eqnarray}
+for the eigenvalues $\pm1$. 
+
+
+More explicitely, 
+\begin{eqnarray}
+\xi^{(+ x)}=\frac{1}{\sqrt{2}}\left(\begin{array}{r}1\\1\end{array}\right)
+\qquad\text{and}\qquad
+\xi^{(+ y)}=\frac{1}{\sqrt{2}}\left(\begin{array}{r}1\\+ i\end{array}\right)
+\qquad\text{and}\qquad
+\xi^{(+ z)}=\left(\begin{array}{c}1\\0\end{array}\right)
+\nonumber\\
+\xi^{(- x)}=\frac{1}{\sqrt{2}}\left(\begin{array}{r}1\\-1\end{array}\right)
+\qquad\text{and}\qquad
+\xi^{(- y)}=\frac{1}{\sqrt{2}}\left(\begin{array}{r}1\\- i\end{array}\right)
+\qquad\text{and}\qquad
+\xi^{(- z)}=\left(\begin{array}{c}0\\1\end{array}\right)
+\end{eqnarray}
+
+
+
+
+%====================================================================
+\section{Representation of a matrices in terms of Pauli matrices}
+%====================================================================
+%====================================================================
+\subsubsection{Definition}
+%====================================================================
+Now we introduce a transformation between the two-dimensional matrix
+representation and the total-spin-vector representation for matrices
+\begin{myshadowminipage}{Transformation of matrices between 
+$(\uparrow,\downarrow)$ and $(t,x,y,z)$ representation}
+\begin{eqnarray}
+\underbrace{\rho_{\alpha,\beta,\sigma,\sigma'}=\frac{1}{2}
+\sum_{j=0}^3\bar{\rho}^{(j)}_{\alpha,\beta}\sigma^{(j)}_{\sigma,\sigma'}
+}_{\text{back transform}}
+\qquad\stackrel{Eqs.~\ref{eq:pauliorthonormality},\ref{eq:paulidyadicsum}}
+{\Longleftrightarrow}\qquad
+\underbrace{\bar{\rho}^{(j)}_{\alpha,\beta}\defas\sum_{\sigma,\sigma'} 
+\rho_{\alpha,\beta,\sigma,\sigma'}\Bigr(\sigma^{(j)}_{\sigma,\sigma'}\Bigr)^*
+}_{\text{forward transform}}
+\label{eq:defdensitymatrixwithspindeptotandcart}
+\end{eqnarray}
+\end{myshadowminipage}
+
+
+%====================================================================
+\subsubsection{Conversion of a matrix from $\uparrow,\downarrow$ 
+into $t,x,y,z$ representation and vice versa}
+%====================================================================
+We transform a matrix using
+to \eq{eq:defdensitymatrixwithspindeptotandcart}, which yields for the
+forward transformation
+\begin{eqnarray}
+\rho^{(0)}_{a,b}&=&\rho_{a,b,\uparrow,\uparrow}+\rho_{a,b,\downarrow,\downarrow}
+\nonumber\\
+\rho^{(x)}_{a,b}&=&\rho_{a,b,\downarrow,\uparrow}+\rho_{a,b,\uparrow,\downarrow}
+\nonumber\\
+\rho^{(y)}_{a,b}&=&-i
+\Bigl(\rho_{a,b,\downarrow,\uparrow}-\rho_{a,b,\uparrow,\downarrow}\Bigr)
+\nonumber\\
+\rho^{(z)}_{a,b}&=&\rho_{a,b,\uparrow,\uparrow}-\rho_{a,b,\downarrow,\downarrow}
+\end{eqnarray}
+and for the backward transformation
+\begin{eqnarray}
+\rho_{a,b,\uparrow,\uparrow}&=&\frac{1}{2}\Bigl(\rho^{(0)}_{a,b}+\rho^{(z)}_{a,b}\Bigr)
+\nonumber\\
+\rho_{a,b,\downarrow,\uparrow}&=&\frac{1}{2}\Bigl(\rho^{(x)}_{a,b}+i\rho^{(y)}_{a,b}\Bigr)
+\nonumber\\
+\rho_{a,b,\uparrow,\downarrow}&=&\frac{1}{2}\Bigl(\rho^{(x)}_{a,b}-i\rho^{(y)}_{a,b}\Bigr)
+\nonumber\\
+\rho_{a,b,\downarrow,\downarrow}&=&\frac{1}{2}\Bigl(\rho^{(0)}_{a,b}-\rho^{(z)}_{a,b}\Bigr)
+\end{eqnarray}
+
+In practice we distinguish the three cases, namely non spin-polarized,
+collinear spin-polarized, and non-collinear.
+
+
+
+%===============================================================
+\subsubsection{Motivation}
+%===============================================================
+The convention to apply the factor $1/2$ on the back transformation of
+\eq{eq:defdensitymatrixwithspindeptotandcart} is motivated as follows:
+For a collinear spin density in $z$-direction, the total density is
+defined as $n_t=n_{\uparrow,\uparrow}+n_{\downarrow,\downarrow}$ and
+the spin density is defined as
+$n_s=n_{\uparrow,\uparrow}-n_{\downarrow,\downarrow}$. In that case,
+the density matrix would have the form
+\begin{eqnarray*}
+n_{\sigma,\sigma'}=\frac{1}{2}n^{(0)}\sigma^{(0)}_{\sigma,\sigma'}
++\frac{1}{2}n^{(4)}\sigma^{(4)}_{\sigma,\sigma'}
+=\left(\begin{array}{cc}\frac{1}{2}n^{(0)}+\frac{1}{2}n^{(4)}&0
+\\0&\frac{1}{2}n^{(0)}-\frac{1}{2}n^{(4)}
+\end{array}\right)
+\end{eqnarray*}
+which allows to identify $n^{(0)}=n_t$ with the total density and
+$n^{(4)}=n_s$ with the spin density.
+
+
+
+
+This yields
+\begin{myshadowminipage}{Spin dependence of the density matrix}
+\begin{eqnarray}
+\rho(\vec{x},\vec{x'})
+&=&\sum_{\alpha,\beta}\rho_{\alpha,\beta,\sigma,\sigma'}
+\bar{\chi}_{\alpha}(\vec{r})\bar{\chi}_{\beta}(\vec{r'})
+\\
+&=&\frac{1}{2}\sum_{j=0}^3\sum_{\alpha,\beta}\rho_{\alpha,\beta}^{(j)}\sigma^{(j)}_{\sigma,\sigma'}
+\bar{\chi}_{\alpha}(\vec{r})\bar{\chi}_{\beta}(\vec{r'})
+\label{eq:denmatspindepcart}
+\end{eqnarray}
+\end{myshadowminipage}
+
+
+
+%====================================================================
+\subsection{Identity in a spinor representation}
+%====================================================================
+The identity matrix in up-down representation is
+\begin{eqnarray}
+\left(\begin{array}{cc}
+\mat{\rho}_{\uparrow,\uparrow}&\mat{\rho}_{\uparrow,\downarrow}\\
+\mat{\rho}_{\downarrow,\uparrow}&\mat{\rho}_{\downarrow,\downarrow}\\
+\end{array}\right)
+=
+\left(\begin{array}{cc}
+\mat{1}_{\uparrow,\uparrow}&\mat{0}_{\uparrow,\downarrow}\\
+\mat{0}_{\downarrow,\uparrow}&\mat{1}_{\downarrow,\downarrow}\\
+\end{array}\right)
+\end{eqnarray}
+
+After conversion into the spinor representation we obtain
+\begin{eqnarray}
+\mat{\rho}^{(0)}=2\cdot\mat{1};\qquad
+\mat{\rho}^{(1)}=\mat{0};\qquad
+\mat{\rho}^{(2)}=\mat{0};\qquad
+\mat{\rho}^{(3)}=\mat{0}
+\end{eqnarray}
+
+%====================================================================
+\subsection{Hermitean conjugate  in a spinor representation}
+%====================================================================
+The identity matrix in up-down representation is
+\begin{eqnarray}
+\left(\begin{array}{cc}
+\left(\mat{\rho}^\dagger\right)_{\uparrow,\uparrow}
+&\left(\mat{\rho}^\dagger\right)_{\uparrow,\downarrow}\\
+\left(\mat{\rho}^\dagger\right)_{\downarrow,\uparrow}
+&\left(\mat{\rho}^\dagger\right)_{\downarrow,\downarrow}\\
+\end{array}\right)
+=
+\left(\begin{array}{cc}
+ \left(\mat{\rho}_{\uparrow,\uparrow}    \right)^\dagger
+&\left(\mat{\rho}_{\downarrow,\uparrow}  \right)^\dagger\\
+ \left(\mat{\rho}_{\uparrow,\downarrow}  \right)^\dagger
+&\left(\mat{\rho}_{\downarrow,\downarrow}\right)^\dagger\\
+\end{array}\right)
+\end{eqnarray}
+
+After conversion into the spinor representation we obtain
+\begin{eqnarray}
+\left(\mat{\rho}^\dagger\right)^{(0)}=\left(\mat{\rho}^{(0)}\right)^\dagger
+;\qquad
+\left(\mat{\rho}^\dagger\right)^{(x)}=\left(\mat{\rho}^{(x)}\right)^\dagger
+;\qquad
+\left(\mat{\rho}^\dagger\right)^{(y)}=\left(\mat{\rho}^{(y)}\right)^\dagger
+;\qquad
+\left(\mat{\rho}^\dagger\right)^{(z)}=\left(\mat{\rho}^{(z)}\right)^\dagger
+\nonumber\\
+\end{eqnarray}
+
+%====================================================================
+\subsection{Multiplication of matrices in a spinor representation}
+%====================================================================
+Consider to matrices in spinor representation
+\begin{eqnarray*}
+f_{a,b,\sigma,\sigma'}=\frac{1}{2}\sum_{j=0}^3
+\mat{f}^{(j)}_{a,b}\sigma^{(j)}_{\sigma,\sigma'}
+\end{eqnarray*}
+
+now we wish to perform a matrix multiplication
+\begin{eqnarray*}
+\sum_{c,\sigma''}
+f_{a,c,\sigma,\sigma''}g_{c,b,\sigma'',\sigma'}
+&=&
+\biggl(\frac{1}{2}\sum_{j=0}^3
+\mat{f}^{(j)}_{a,c}\sigma^{(j)}_{\sigma,\sigma''}\biggr)
+\biggl(\frac{1}{2}\sum_{j=0}^3
+\mat{g}^{(j')}_{c,b}\sigma^{(j')}_{\sigma'',\sigma'}\biggr)
+\nonumber\\
+&=&
+\biggl(\frac{1}{2}\sum_{i=0}^3
+f^{(i)}_{a,c}\sigma^{(i)}_{\sigma,\sigma''}\biggr)
+\biggl(\frac{1}{2}\sum_{j=0}^3
+g^{(j)}_{c,b}\sigma^{(j)}_{\sigma'',\sigma'}\biggr)
+\nonumber\\
+&=&
+\frac{1}{4}\sum_{i,j=0}^3
+f^{(i)}_{a,c}g^{(j)}_{c,b}
+\Bigl(\sigma^{(i)}_{\sigma,\sigma''}
+\sigma^{(j)}_{\sigma'',\sigma'}\Bigr)
+\nonumber\\
+&\eqrel{eq:producttablepaulimatrices}{=}&
+\frac{1}{2}
+\biggl(\frac{1}{2}\sum_{j=0}^3f^{(j)}_{a,c}g^{(j)}_{c,b}\biggr)
+\sigma^{(0)}_{\sigma,\sigma'}
++\frac{1}{2}\sum_{k=1}^3
+\biggl(\frac{1}{2}\sum_{i=1}^3
+\Bigl(f^{(0)}_{a,c}g^{(k)}_{c,b}
++f^{(k)}_{a,c}g^{(0)}_{c,b}\Bigr)
++\frac{i}{2}\sum_{i,j=1}^3\epsilon_{i,j,k}f^{(i)}_{a,c}g^{(j)}_{c,b}
+\biggr)
+\sigma^{(k)}_{\sigma,\sigma'}
+\end{eqnarray*}
+
+Thus if we denote the multiplication as defined above with the symbol
+$\square$, we obtain
+\begin{eqnarray}
+\Bigl(\mat{f}\square\mat{g}\Bigr)^{(0)}
+&=&\frac{1}{2}\sum_{j=0}^3f^{(j)}_{a,c}g^{(j)}_{c,b}
+\\
+\Bigl(\mat{f}\square\mat{g}\Bigr)^{(j)}
+&=&\frac{1}{2}\sum_{i=1}^3
+\Bigl(f^{(0)}_{a,c}g^{(k)}_{c,b}
++f^{(k)}_{a,c}g^{(0)}_{c,b}\Bigr)
++\frac{i}{2}\sum_{i,j=1}^3\epsilon_{i,j,k}f^{(i)}_{a,c}g^{(j)}_{c,b}
+\qquad\text{for $j>0$}
+\end{eqnarray}
+
+This expression requires 16 matrix multiplication in the
+$a,b,c,\ldots$ space, just as if the operations would be done in the
+$\uparrow.,\downarrow$ representation.
+
+%====================================================================
+\subsection{Inversion of a matrix in a spinor representation}
+%====================================================================
+The inversion is done by first bringing the matrix into the
+$\uparrow,\downarrow$ representation
+using \eq{eq:defdensitymatrixwithspindeptotandcart}.
+
+The problem can then be formulated as a matrix inversion in the
+(orbital/spin) space
+\begin{eqnarray}
+\left(\begin{array}{cc}
+\mat{A}_{11}&\mat{A}_{12}\\\mat{A}_{21}&\mat{A}_{22}
+\end{array}\right)
+\left(\begin{array}{cc}
+\mat{B}_{11}&\mat{B}_{12}\\\mat{B}_{21}&\mat{B}_{22}
+\end{array}\right)
+=
+\left(\begin{array}{cc}
+\mat{1}&\mat{0}\\\mat{0}&\mat{1}
+\end{array}\right)
+\end{eqnarray}
+
+In components, we obtain
+\begin{eqnarray}
+\mat{A}_{11}\mat{B}_{11}+\mat{A}_{12}\mat{B}_{21}&=&\mat{1}
+\nonumber\\
+\mat{A}_{11}\mat{B}_{12}+\mat{A}_{12}\mat{B}_{22}&=&\mat{0}
+\nonumber\\
+\mat{A}_{21}\mat{B}_{11}+\mat{A}_{22}\mat{B}_{21}&=&\mat{0}
+\nonumber\\
+\mat{A}_{21}\mat{B}_{12}+\mat{A}_{22}\mat{B}_{22}&=&\mat{1}
+\end{eqnarray}
+which leads to
+\begin{eqnarray}
+\mat{B}_{12}&=&\underbrace{-\mat{A}_{11}^{-1}\mat{A}_{12}}_{a_{12}}\mat{B}_{22}
+\nonumber\\
+\mat{B}_{21}&=&\underbrace{-\mat{A}_{22}^{-1}\mat{A}_{21}}_{a_{21}}\mat{B}_{11}
+\nonumber\\
+\mat{B}_{11}&=&\Bigl(\mat{A}_{11}
+-\mat{A}_{12}\underbrace{\mat{A}_{22}^{-1}\mat{A}_{21}}_{-a_{21}}\Bigr)^{-1}
+\nonumber\\
+\mat{B}_{22}&=&\Bigl(\mat{A}_{22}
+-\mat{A}_{21}\underbrace{\mat{A}_{11}^{-1}\mat{A}_{12}}_{a_{12}}\Bigr)^{-1}
+\nonumber
+\end{eqnarray}
+
+The operations are done in the following order
+\begin{eqnarray*}
+\mat{C}_{11}&=&\mat{A}_{11}^{-1}
+\nonumber\\
+\mat{C}_{12}&=&-\mat{C}_{11}\mat{A}_{12}=-\mat{A}_{11}^{-1}\mat{A}_{12}
+\nonumber\\
+\mat{C}_{22}&=&\mat{A}_{22}+\mat{A}_{21}\mat{C}_{12}
+=\mat{A}_{22}-\mat{A}_{21}\mat{A}_{11}^{-1}\mat{A}_{12}
+\nonumber\\
+\mat{B}_{22}&=&\mat{C}_{22}^{-1}
+=\Bigl(\mat{A}_{22}-\mat{A}_{21}\mat{A}_{11}^{-1}\mat{A}_{12}\Bigr)^{-1}
+\nonumber\\
+\mat{B}_{12}&=&\mat{C}_{12}\mat{B}_{22}
+\nonumber\\
+\mat{C}_{22}&=&\mat{A}_{22}^{-1}
+\nonumber\\
+\mat{C}_{21}&=&-\mat{C}_{22}\mat{A}_{21}=-\mat{A}_{22}^{-1}\mat{A}_{21}
+\nonumber\\
+\mat{C}_{11}&=&\mat{A}_{11}+\mat{A}_{12}\mat{C}_{21}
+=\mat{A}_{11}-\mat{A}_{12}\mat{A}_{22}^{-1}\mat{A}_{21}
+\nonumber\\
+\mat{B}_{11}&=&\mat{C}_{11}^{-1}
+=\Bigl(\mat{A}_{11}-\mat{A}_{12}\mat{A}_{22}^{-1}\mat{A}_{21}\Bigr)^{-1}
+\nonumber\\
+\mat{B}_{21}&=&\mat{C}_{21}\mat{B}_{11}
+\nonumber\\
+\end{eqnarray*}
+The matrix $\mat{A}_{11}^{-1}$ can be overlayed with $\mat{B}_{11}$,
+$\mat{A}_{22}^{-1}$ can be overlayed with $\mat{B}_{22}$,
+$\mat{C}_{12}$ can be overlayed with $\mat{B}_{12}$,
+and $\mat{C}_{21}$ can be overlayed with $\mat{B}_{21}$.
+
+
+The operations can be done with 4 matrix inversions and 6 matrix
+multiplications for a general non-collinear problem. (Operations that
+scale better than the cube behavior are ignored.)
+
+
+It may be interestint to analyze the scaling behavior.  Consider that
+the computational effort for an inversion of a matrix with dimension
+$n$ is $an^3$. The effort for a matrix multiplication shall be $bn^3$.
+Thus the scaling will be
+\begin{eqnarray}
+a(2n)^3=4a^3+6bn^3+cn^2\qquad\rightarrow\qquad a=\frac{3}{2}b+\frac{c}{4n}
+\end{eqnarray}
+This implies that a matrix inversion takes about 1.5 times the
+computational effort of a matrix multiplication.
+
+%====================================================================
+\subsection{Hermitean Matrices}
+%====================================================================
+A matrix that is hermitean in spin-up-down representation, that is
+\begin{eqnarray}
+\rho_{a,b,\sigma,\sigma'}=\rho^*_{b,a,\sigma',\sigma}
+\Leftrightarrow
+\rho^{(j)}_{a,b}=\left(\rho^{(j)}_{b,a}\right)^*
+\end{eqnarray}
+has hermitean matrices in total-spin representation, and vice versa
+
+
+
+This is derived in the following. First we show that 
+\begin{eqnarray}
+\rho^{(j)}_{a,b}=\left(\rho^{(j)}_{b,a}\right)^*
+\label{eq:hermiteanspinorcomponents}
+\end{eqnarray}
+can be obtained from the hermitean property in spin space, namely
+\begin{eqnarray}
+\rho_{a,b,\sigma,\sigma'}=\rho^*_{b,a,\sigma',\sigma}
+\label{eq:spinspinhermitean}
+\end{eqnarray}
+
+This is shown as follows
+\begin{eqnarray}
+\rho^{(j)}_{a,b}
+&\eqrel{eq:defdensitymatrixwithspindeptotandcart}{=}&
+\sum_{\sigma\sigma'}\rho_{a,b,\sigma,\sigma'}
+\left(\sigma^{(j)}_{\sigma,\sigma'}\right)^*
+\eqrel{eq:spinspinhermitean}{=}
+\sum_{\sigma\sigma'}\rho^*_{b,a,\sigma',\sigma}
+\left(\sigma^{(j)}_{\sigma,\sigma'}\right)^*
+\stackrel{\mat{\sigma}^{(j)}=\mat{\sigma}^{(j),\dagger}}{=}
+\sum_{\sigma\sigma'}\rho^*_{b,a,\sigma',\sigma}
+\left(\sigma^{(j)}_{\sigma',\sigma}\right)
+\nonumber\\
+&\eqrel{eq:defdensitymatrixwithspindeptotandcart}{=}&
+\left(\rho^{(j)}_{b,a}\right)^*
+\end{eqnarray}
+
+Now we derive the opposite direction:
+\begin{eqnarray}
+\rho_{a,b,\sigma,\sigma'}
+&\eqrel{eq:defdensitymatrixwithspindeptotandcart}{=}&
+\frac{1}{2}\sum_{j=0}^3\rho^{(j)}_{a,b}\sigma^{(j)}_{\sigma,\sigma'}
+\eqrel{eq:hermiteanspinorcomponents}{=}
+\frac{1}{2}\sum_{j=0}^3\Bigl(\rho^{(j)}_{b,a}\Bigr)^*\sigma^{(j)}_{\sigma,\sigma'}
+\stackrel{\mat{\sigma}^{(j)}=\mat{\sigma}^{(j),\dagger}}{=}
+\Bigl(\frac{1}{2}\sum_{j=0}^3\rho^{(j)}_{b,a}\sigma^{(j)}_{\sigma',\sigma}\Bigr)^*
+\nonumber\\
+&\eqrel{eq:defdensitymatrixwithspindeptotandcart}{=}&
+\Bigl(\rho_{b,a,\sigma',\sigma}\Bigr)^*
+\end{eqnarray}
+
+
+%====================================================================
+\section{Density matrices and spin orbitals with defined spin}
+%====================================================================
+Let us choose a basis set $\{|\chi_\alpha\rangle\}$ with states that
+are product states of a spatial orbital $\bar{\chi}_\alpha(\vec{r})$
+and a spin orbital $\xi_\alpha$, such as
+\begin{eqnarray}
+\chi_\alpha(\vec{x})=\bar{\chi}_\alpha(\vec{r})\xi_\alpha(\sigma)
+\label{eq:chiasproductofspaceandspin}
+\end{eqnarray}
+Typically, the spin orbitals are eigenstates to $\mat{\sigma}_z$ so
+that $\xi_\alpha(\sigma)=\delta_{\sigma,\sigma_\alpha}$ and
+$\sigma_\alpha\in\{\uparrow,\downarrow\}=\{(1,0),(0,1)\}$.
+
+In that case we can write the density matrix
+\begin{eqnarray}
+\rho(\vec{x},\vec{x'})
+&=&\sum_{\alpha,\beta}\chi_{\alpha}(\vec{x})\rho_{\alpha,\beta}\chi^*_{\beta}(\vec{x'})
+\nonumber\\
+&=&\sum_{\alpha,\beta}\bar{\chi}_{\alpha}(\vec{r})
+\underbrace{\xi_\alpha(\sigma)\rho_{\alpha,\beta}\xi^*_\beta(\sigma')}
+_{\rho_{\alpha,\beta,\sigma,\sigma'}}
+\bar{\chi}^*_{\beta}(\vec{r'})
+\nonumber\\
+&=&\sum_{\alpha,\beta}\bar{\chi}_{\alpha}(\vec{r})\rho_{\alpha,\beta,\sigma,\sigma'}
+\bar{\chi}^*_{\beta}(\vec{r'})
+\label{eq:densitymatrixxxprimebyssigmaprime}
+\end{eqnarray}
+
+Here we have defined the density matrix with explicit spin dependence
+\begin{eqnarray}
+\rho_{\alpha,\beta,\sigma,\sigma'}\defas\xi_\alpha(\sigma)\rho_{\alpha,\beta}\xi^*_\beta(\sigma')
+\label{eq:defdensitymatrixwithspindep}
+\end{eqnarray}
+
+The density matrices
+$\rho_{\sigma,\sigma'}=\xi(\sigma)\xi^*(\sigma')$ for the spin
+eigenstates \eq{eq:spineigenstatesxyz}
+are
+\begin{eqnarray*}
+\mat{\rho}(\pm x)=\frac{1}{2}\left(\begin{array}{cc}1&\pm1\\\pm1&1\end{array}\right)
+\qquad\text{and}\qquad
+\mat{\rho}(\pm y)=\frac{1}{2}\left(\begin{array}{cc}1&\mp i\\\pm i&1\end{array}\right)
+\qquad\text{and}\qquad
+\mat{\rho}(\pm z)=\frac{1}{2}\left(\begin{array}{cc}1\pm1& 0\\0&1\mp1\end{array}\right)
+\end{eqnarray*}
+They obey $\Tr[\mat{\rho}(\pm
+  j)\mat{\sigma}^{(j')}]=\pm\delta_{j,j'}$ for $j,j'\in\{x,y,z\}$ and 
+$\Tr[\mat{\rho}(\pm j)\mat{\sigma}^{(0)}]=1$.
+
+
+
+
+
+
+%====================================================================
+\section{Potentials and spin orbitals}
+%====================================================================
+
+%====================================================================
+\subsubsection{General definition of a potential for a complex matrix quantity}
+%====================================================================
+\begin{myshadowminipage}{Potential as energy derivative}
+The potential of a matrix quantity must be written in the following
+form
+\begin{eqnarray*}
+V=\frac{dE}{dn^*}
+\end{eqnarray*}
+For Hermitean quantities, this yields 
+\begin{eqnarray*}
+V_{\alpha,\beta}=\frac{dE}{d\rho_{\alpha,\beta}^*}=\frac{dE}{d\rho_{\beta,\alpha}}
+\end{eqnarray*}
+\end{myshadowminipage}
+
+This has the following reasons
+\begin{itemize}
+\item The trace formula comes from
+\begin{eqnarray*}
+dE=\Tr[\hat{V}d\hat{\rho}]
+=\sum_{\alpha,\beta}
+\langle\alpha|\hat{V}|\beta\rangle
+\langle\beta|d\hat{\rho}|\alpha\rangle
+=\sum_{\alpha,\beta}
+V_{\alpha,\beta}d\rho_{\beta,\alpha}
+\stackrel{\rho=\rho^\dagger}{=}\sum_{\alpha,\beta}
+V_{\alpha,\beta}d\rho^*_{\alpha,\beta}
+\qquad\Rightarrow\qquad
+\frac{\partial E}{\partial\rho_{\alpha,\beta}^*}=V_{\alpha,\beta}
+\end{eqnarray*}
+%------------------------------------------------------------------------------
+\item Another form
+\begin{eqnarray*}
+E&=&F[\underbrace{\sum_{\alpha,\beta}\chi_\alpha(\vec{x})\rho_{\alpha,\beta}\chi^*_\beta(\vec{x'})}
+_{\rho(\vec{x},\vec{x'})}]
+\\
+V_{\alpha,\beta}&=&
+\frac{\partial E}{\partial\rho_{\alpha,\beta}^*}
+=\biggl(\frac{\partial E}{\partial\rho_{\alpha,\beta}}\biggr)^*
+\eqrel{eq:densitymatrixxxprimebyssigmaprime}{=}\biggl(\int d^4x\int d^4x'\;
+\frac{\partial E}{\partial\rho(\vec{x},\vec{x'})}
+\chi_\alpha(\vec{x})\chi^*_\beta(\vec{x'})]\biggr)^*
+\\
+&=&\int d^4x\int d^4x'\;
+\chi^*_\alpha(\vec{x})
+\underbrace{\frac{\partial E}{\partial\rho^*(\vec{x},\vec{x'})}}_{v(\vec{x},\vec{x'})}
+\chi_\beta(\vec{x})
+=\int d^4x\int d^4x'\;\chi^*_\alpha(\vec{x})v(\vec{x},\vec{x'})\chi_\beta(\vec{x'})
+\\
+&=&\langle\chi_\alpha|\hat{V}|\chi_\beta\rangle
+\end{eqnarray*}
+%------------------------------------------------------------------------------
+\item
+Similarly, we obtain
+\begin{eqnarray*}
+E&=&F[\sum_n\langle\pi_\alpha|\psi_n\rangle f_n\langle\psi_n|\pi_\beta\rangle]
+\\
+\frac{\partial E}{\partial\langle\psi_n|}
+&=&
+\sum_{\alpha,\beta}|\pi_\beta\rangle \frac{\partial F}{\partial\rho_{\alpha,\beta}}
+\langle\pi_\alpha|\psi_n\rangle f_n
+=\sum_{\alpha,\beta}|\pi_\beta\rangle \frac{\partial F}{\partial\rho^*_{\beta,\alpha}}
+\langle\pi_\alpha|\psi_n\rangle f_n
+\\
+&=&\sum_{\alpha,\beta}|\pi_\beta\rangle V_{\beta,\alpha}
+\langle\pi_\alpha|\psi_n\rangle f_n
+\end{eqnarray*}
+\item with k-points: The density matrix is defined as
+\begin{eqnarray*}
+\rho_{\alpha,\beta}(\vec{t}_\beta)=\frac{1}{N_k}\sum_{\vec{k}} 
+\langle\pi_\alpha|\psi_n(\vec{k})\rangle f_n(\vec{k})
+\langle\psi_n(\vec{k})|\pi_\beta\rangle\e{i\vec{k}\vec{t}_\beta}
+\end{eqnarray*}
+The density matrix connects an orbital $|\chi_\alpha\rangle$ at
+$\vec{R}_\alpha$ with an orbital $|\chi_\beta\rangle$ at
+$\vec{R}_\beta+\vec{t}_\beta$.
+
+
+\begin{eqnarray*}
+\frac{dF}{d\langle\psi_n(\vec{k})|}
+&=&
+\sum_{\alpha,\beta,\vec{t}_\beta}
+ \frac{dF}{d\rho_{\alpha,\beta}(\vec{t}_\beta)}
+\frac{d}{d\langle\psi_n(\vec{k})|}
+\left[\frac{1}{N_k}\sum_{\vec{k}}
+\sum_n\langle\pi_\alpha|\psi_n(\vec{k})\rangle f_n(\vec{k})
+\langle\psi_n(\vec{k})|\pi_\beta\rangle\e{i\vec{k}\vec{t}_\beta}\right]
+\\
+&=&
+\frac{1}{N_k}\sum_{\vec{k}}\sum_{\alpha,\beta,\vec{t}_\beta} 
+|\pi_\beta\rangle
+\biggl[
+\frac{dF}{d\rho_{\alpha,\beta}(\vec{t}_\beta)}\e{i\vec{k}\vec{t}_\beta}
+\langle\pi_\alpha|\psi_n(\vec{k})\rangle f_n(\vec{k})
+\\
+&=&
+\frac{1}{N_k}\sum_{\vec{k}}\sum_{\beta}
+|\pi_\beta\rangle
+\biggl[\sum_{\alpha,\vec{t}_\beta} 
+\underbrace{\frac{dF}{d\rho_{\alpha,\beta}(\vec{t}_\beta)}}
+_{=V_{\beta,\alpha(\vec{t}_\alpha)}}
+\e{i\vec{k}\vec{t}_\beta}
+\langle\pi_\alpha|\psi_n(\vec{k})\rangle\biggr] f_n(\vec{k})
+\end{eqnarray*}
+In the implementation, I am using the variable hamil sometimes as $V$
+and sometimes as derivative of the functional. The two are hermitean
+adjuncts of each other,
+i.e. $V_{\alpha,\beta}(\vec{t})=V_{\beta,\alpha}^*(-\vec{t})$.
+
+\end{itemize}
+
+%====================================================================
+\subsubsection{Spin potentials}
+%====================================================================
+Let us now return to the potentials obtained as derivative with
+respect to the different forms of the density matrix.
+\begin{eqnarray*}
+\bar{V}^{(j)}_{\alpha,\beta}&=&\frac{\partial E}{\partial \bar{\rho}^{(j)*}_{\alpha,\beta}}
+\\
+V_{\alpha,\beta,\sigma,\sigma'}&=&\frac{\partial E}{\partial\rho_{\alpha,\beta,\sigma,\sigma'}^*}
+=\sum_j\frac{\partial E}{\partial \bar{\rho}^{(j)*}_{\alpha,\beta}}
+\frac{\partial\bar{\rho}^{(j)*}_{\alpha,\beta}}{\partial\rho_{\alpha,\beta,\sigma,\sigma'}^*}\
+=\sum_j\bar{V}_{\alpha,\beta}^{(j)}
+\left(\frac{\partial\bar{\rho}^{(j)}_{\alpha,\beta}}{\partial\rho_{\alpha,\beta,\sigma,\sigma'}}\right)^*
+\\
+&\eqrel{eq:defdensitymatrixwithspindeptotandcart}{=}&
+\sum_j\bar{V}_{\alpha,\beta}^{(j)}\biggl(\sigma^{(j)}_{\sigma,\sigma'}\biggr)^*
+\end{eqnarray*}
+
+
+\begin{myshadowminipage}{Transformation from a total-spin 
+to an up-down representation}
+\begin{minipage}{0.45\linewidth}
+\begin{eqnarray*}
+  \rho^{(t)}&=&\rho_{\uparrow,\uparrow}+\rho_{\downarrow,\downarrow}\biggl.\biggr.
+  \\
+  \rho^{(x)}&=&\rho_{\uparrow,\downarrow}+\rho_{\downarrow,\uparrow}\biggl.\biggr.
+  \\
+  \rho^{(y)}&=&i(\rho_{\uparrow,\downarrow}-\rho_{\downarrow,\uparrow})\biggl.\biggr.
+  \\
+  \rho^{(z)}&=&\rho_{\uparrow,\uparrow}-\rho_{\downarrow,\downarrow}\biggl.\biggr.
+\end{eqnarray*}
+\end{minipage}
+\begin{minipage}{0.45\linewidth}
+\begin{eqnarray*}
+\rho_{\uparrow,\uparrow}&=&\frac{1}{2}(\rho^{(t)}+\rho^{(z)})
+\\
+\rho_{\uparrow,\downarrow}&=&\frac{1}{2}(\rho^{(x)}-i\rho^{(y)})
+\\
+\rho_{\downarrow,\uparrow}&=&\frac{1}{2}(\rho^{(x)}+i\rho^{(y)})
+\\
+\rho_{\downarrow,\downarrow}&=&\frac{1}{2}(\rho^{(t)}-\rho^{(z)})
+\end{eqnarray*}
+\end{minipage}\\
+For the potentials $v=\left(\frac{\partial E}{\partial\rho}\right)^*$ 
+we obtain\\
+\begin{minipage}{0.45\linewidth}
+\begin{eqnarray*}
+v^{(t)}&=&\frac{1}{2}\biggl(v_{\uparrow,\uparrow}+v_{\downarrow,\downarrow}\biggr)
+\\
+v^{(x)}&=&\frac{1}{2}\biggl(v_{\uparrow,\downarrow}+v_{\downarrow,\uparrow}\biggr)
+\\
+v^{(y)}&=&\frac{i}{2}\biggl(v_{\uparrow,\downarrow}-v_{\downarrow,\uparrow}\biggr)
+\\
+v^{(z)}&=&\frac{1}{2}\biggl(v_{\uparrow,\uparrow}-v_{\downarrow,\downarrow}\biggr)
+\end{eqnarray*}
+\end{minipage}
+\begin{minipage}{0.45\linewidth}
+\begin{eqnarray*}
+v_{\uparrow,\uparrow}&=&v^{(t)}+v^{(z)}\biggl.\biggr.
+\\
+v_{\uparrow,\downarrow}&=&v^{(x)}-iv^{(y)}\biggl.\biggr.
+\\
+v_{\downarrow,\uparrow}&=&v^{(x)}+iv^{(y)}\biggl.\biggr.
+\\
+v_{\downarrow,\downarrow}&=&v^{(t)}-v^{(z)}\biggl.\biggr.
+\end{eqnarray*}
+\end{minipage}
+\end{myshadowminipage}
+
+These transformations are used in \verb|LDAPLUSU_edft|,
+\verb|LDAPLUSU_SPINDENMAT|, \verb|LMTO_NTBODENMAT|,
+\verb|LMTO_NTBODENMATDER|, \verb|WAVES_DENMAT|, \verb|WAVES_DENSITY|.
+
+%====================================================================
+\section{Description of Subroutines}
+%====================================================================
+\cite{bloechl94_prb50_17953}
+
+We consider a Hilbert space of two-component spinor wave functions.  A
+real-space-spin basis is $|\vec{r},\sigma\rangle$. Instead of the real
+space position we may also use a set of orbitals
+$|\alpha,\sigma\rangle$, which are spin eigenstates with the spatial
+dependence defined by $\alpha$, that is
+$\langle\vec{r},\sigma|\alpha,\sigma\rangle=
+\langle\vec{r},\sigma'|\alpha,\sigma'\rangle$ and
+$\langle\vec{r},\sigma|\alpha,\sigma'\rangle=0$ for
+$\sigma\neq\sigma'$.
+
+
+In this basisset a matrix element has the form
+\begin{eqnarray*}
+A_{\alpha,\beta,\sigma,\sigma'}&=&\langle\alpha,\sigma|\hat{A}|\beta,\sigma'\rangle
+\nonumber\\
+\hat{A}&=&\sum_{\alpha,\beta,\sigma,\sigma'}
+|\alpha,\sigma\rangle A_{\alpha,\beta,\sigma,\sigma'} 
+\langle\beta,\sigma'|
+\end{eqnarray*}
+
+An expectation value is obtained by
+\begin{eqnarray}
+\langle A\rangle
+&=&\sum_nf_n\langle\psi_n|\hat{A}|\psi_n\rangle
+\nonumber\\
+&=&
+\sum_{\alpha,\beta,\sigma,\sigma'}
+\underbrace{
+\Bigl(\sum_n
+\langle\beta,\sigma'|\psi_n\rangle f_n\langle\psi_n|\alpha,\sigma\rangle\Bigr)
+}_{\rho_{\beta,\alpha,\sigma',\sigma}}
+A_{\alpha,\beta,\sigma,\sigma'} 
+\nonumber\\
+&=&
+\sum_{\alpha,\beta,\sigma,\sigma'}
+\rho_{\beta,\alpha,\sigma',\sigma}
+A_{\alpha,\beta,\sigma,\sigma'} 
+\end{eqnarray}
+
+This defines the matrix elements of the density matrix as
+\begin{eqnarray}
+\rho_{\alpha,\beta,\sigma,\sigma'}&=&
+\langle\beta,\sigma'|\psi_n\rangle f_n\langle\psi_n|\alpha,\sigma\rangle
+\end{eqnarray}
+
+%==================================================
+\subsubsection{(t,x,y,z) representation}
+%==================================================
+Let us transform the matrix elements 
+\begin{eqnarray}
+A^{(j)}_{\alpha,\beta}=\sum_{\sigma,\sigma'} 
+A_{\alpha,\beta,\sigma,\sigma'} \sigma^{(j)}_{\sigma',\sigma}
+\nonumber\\
+\rho^{(j)}_{\alpha,\beta}=\sum_{\sigma,\sigma'} 
+\rho_{\alpha,\beta,\sigma,\sigma'} \sigma^{(j)}_{\sigma',\sigma}
+\end{eqnarray}
+
+The back transformation is correspondingly
+\begin{eqnarray}
+A_{\alpha,\beta,\sigma,\sigma'}
+&=&\frac{1}{2}\sum_{j=0}^3A^{(j)}_{\alpha,\beta}
+\sigma^{(j)}_{\sigma,\sigma'}
+\nonumber\\
+\rho_{\alpha,\beta,\sigma,\sigma'}
+&=&\frac{1}{2}\sum_{j=0}^3\rho^{(j)}_{\alpha,\beta}
+\sigma^{(j)}_{\sigma,\sigma'}
+\end{eqnarray}
+
+Proof:
+\begin{eqnarray}
+\frac{1}{2}\sum_{j=0}^3\rho^{(j)}_{\alpha,\beta}
+\sigma^{(j)}_{\sigma,\sigma'}
+&=&
+\frac{1}{2}\sum_{j=0}^3
+\underbrace{\Bigl(\sum_{\sigma'',\sigma'''} 
+\rho_{\alpha,\beta,\sigma'',\sigma'''} \sigma^{(j)}_{\sigma''',\sigma''}
+\Bigr)}_{\rho^{(j)}_{\alpha,\beta}}
+\sigma^{(j)}_{\sigma,\sigma'}
+\nonumber\\
+&=&
+\sum_{\sigma'',\sigma'''} 
+\rho_{\alpha,\beta,\sigma'',\sigma'''} 
+\underbrace{\Bigl(
+\frac{1}{2}\sum_{j=0}^3
+\sigma^{(j)}_{\sigma''',\sigma''}
+(\sigma^{(j)}_{\sigma',\sigma})^*
+\Bigr)}_{\delta_{\sigma''',\sigma'}\delta_{\sigma'',\sigma}}
+\nonumber\\
+&=&
+\rho_{\alpha,\beta,\sigma,\sigma'} 
+\end{eqnarray}
+
+\subsubsection{Expectation value by trace}
+
+Now we need the expression for the expectation value
+\begin{eqnarray*}
+\langle{A}\rangle
+&=&\Tr\Bigl(\hat{\rho}\;\hat{A}\Bigr)
+=
+\sum_{\alpha,\beta,\sigma,\sigma'}
+\rho_{\alpha,\beta,\sigma,\sigma'} A_{\beta,\alpha,\sigma',\sigma}
+=\sum_{\alpha,\beta,\sigma,\sigma'}
+\underbrace{\frac{1}{2}\sum_{j=0}^3 
+\bar{\rho}^{(j)}_{\alpha,\beta}
+\sigma^{(j)}_{\sigma,\sigma'}}
+_{\rho_{\alpha\beta,\sigma,\sigma'}} A_{\beta,\alpha,\sigma',\sigma}
+\nonumber\\
+&=&\frac{1}{2}
+\sum_{j=0}^3 
+\sum_{\alpha,\beta}
+\bar{\rho}^{(j)}_{\alpha,\beta}
+\underbrace{
+\Bigl(
+\sum_{\sigma,\sigma'}
+A_{\beta,\alpha,\sigma',\sigma}\sigma^{(j)}_{\sigma,\sigma'}\Bigr)}
+_{A^{(j)}_{\beta,\alpha}}
+=\frac{1}{2}
+\sum_{j=0}^3 
+\sum_{\alpha,\beta}
+\bar{\rho}^{(j)}_{\alpha,\beta}A^{(j)}_{\beta,\alpha}
+\end{eqnarray*}
+
+%====================================================================
+\subsubsection{Physical}
+%====================================================================
+Total density
+\begin{eqnarray}
+\rho_t=\rho^{(0)}&=&\rho_{\uparrow,\uparrow}+\rho_{\downarrow,\downarrow}
+\\
+\rho_x=\rho^{(0)}&=&\rho_{\uparrow,\downarrow}+\rho_{\downarrow,\uparrow}
+\\
+\rho_y=\rho^{(0)}&=&-i\Bigl(\rho_{\uparrow,\downarrow}-\rho_{\downarrow,\uparrow}\Bigr)
+\\
+\rho_z=\rho^{(0)}&=&\rho_{\uparrow,\uparrow}-\rho_{\downarrow,\downarrow}
+\end{eqnarray}
+
+An expectation value is
+\begin{eqnarray}
+A_{\uparrow,\uparrow}&=&\frac{1}{2}\Bigl(A^{(t)}+A^{(z)}\Bigr)
+\nonumber\\
+A_{\uparrow,\downarrow}&=&\frac{1}{2}\Bigl(A^{(x)}-iA^{(y)}\Bigr)
+\nonumber\\
+A_{\downarrow,\uparrow}&=&\frac{1}{2}\Bigl(A^{(x)}+iA^{(y)}\Bigr)
+\nonumber\\
+A_{\downarrow,\downarrow}&=&\frac{1}{2}\Bigl(A^{(t)}-A^{(z)}\Bigr)
+\end{eqnarray}
+
+\begin{eqnarray}
+dE&=&
+\sum_{\alpha,\beta,\sigma,\sigma'}
+\frac{dE}{d\rho_{\beta,\alpha,\sigma',\sigma}}
+d\rho_{\beta,\alpha,\sigma',\sigma}
+\nonumber\\
+&=&\sum_{\alpha,\beta,\sigma,\sigma'}
+\sum_{j=0}^3\frac{dE}{d\rho^{(j)}_{\beta,\alpha}}
+\frac{d\rho^{(j)}_{\beta,\alpha}}{d\rho_{\beta,\alpha,\sigma',\sigma}}
+d\rho_{\beta,\alpha,\sigma',\sigma}
+\nonumber\\
+&=&\sum_{j=0}^3
+\sum_{\alpha,\beta}
+\frac{dE}{d\rho^{(j)}_{\beta,\alpha}}
+\Bigl(
+\sum_{\sigma,\sigma'}
+\sigma^{(j)}_{\sigma,\sigma'}
+d\rho_{\beta,\alpha,\sigma',\sigma}
+\Bigr)
+\nonumber\\
+&=&\sum_{j=0}^3
+\sum_{\alpha,\beta}
+\Bigl(\frac{dE}{d\rho^{(j)}_{\beta,\alpha}}\Bigr)
+d\rho^{(j)}_{\beta,\alpha}
+\end{eqnarray}
+
+There is an ambiguity becauae of the trace formula
+\begin{eqnarray}
+A=\frac{1}{2}\sum_{j=0}^3 \rho^{(j)} A^{(j)}
+\\
+dE=\sum_{j=0}^3 \frac{dE}{d\rho^{(j)}}d\rho^{(j)}
+\end{eqnarray}
+
+\begin{eqnarray}
+v^{(j)}=2\frac{dE}{d\rho^{(j)}}
+\end{eqnarray}
+Using the transformation equation for expectation values
+\begin{eqnarray}
+v_{\sigma,\sigma'}
+=\frac{1}{2}\sum_{j=0}^3 v^{(j)}\sigma^{(j)}_{\sigma,\sigma'}
+=\sum_{j=0}^3 \frac{dE}{d\rho^{(j)}}
+\sigma^{(j)}_{\sigma,\sigma'}
+\end{eqnarray}
+
+\begin{eqnarray}
+v_{\uparrow,\uparrow}&=&\frac{1}{2}(v_t+v_z)
+\nonumber\\
+v_{\uparrow,\downarrow}&=&\frac{1}{2}(v_x-iv_y)
+\nonumber\\
+v_{\downarrow,\uparrow}&=&\frac{1}{2}(v_x+iv_y)
+\nonumber\\
+v_{\downarrow,\downarrow}&=&\frac{1}{2}(v_t-v_z)
+\end{eqnarray}
+
+
+%====================================================================
+\subsection{\texttt{SPINOR\$CONVERT}}
+%====================================================================
+Converts a density matrix from the  (t,x,y,z) into the (uu,ud,du,dd)
+representation. Converting a 
+
+
+\begin{eqnarray}
+A^{(j)}_{\alpha,\beta}&=&
+\frac{1}{2}
+\sum_{\sigma,\sigma'}
+A_{\alpha,\beta,\sigma,\sigma'}\sigma^{(j)}_{\sigma',\sigma}
+\nonumber\\
+\rho^{(j)}_{\alpha,\beta}&=&
+\sum_{\sigma,\sigma'}
+\rho_{\alpha,\beta,\sigma,\sigma'}\sigma^{(j)}_{\sigma',\sigma}
+\end{eqnarray}
+
+
+\begin{itemize}
+\item \verb|ID='FWRD'|: (TOUPDN=.false.) transforms the density matrix from 
+
+(uu,ud,du,dd)$\rightarrow$(t,x,y,z)
+\item \verb|ID='BACK'|: (TOUPDN=.true.) (t,x,y,z)$\rightarrow$ (uu,ud,du,dd)
+\end{itemize}
+
+
+\appendix
+%====================================================================
+\chapter{Vector representation of Pauli matrices}
+%====================================================================
+Pauli matrices can be represented as vectors in four dimensions.  
+\begin{eqnarray}
+\mat{\sigma}^{(j)}\hat{=}\vec{\sigma}^{(j)}:=
+\left(\begin{array}{c}\sigma^{(j)}_{11}\\\sigma^{(j)}_{12}\\\sigma^{(j)}_{21}\\\sigma^{(j)}_{22}\end{array}\right)
+\label{eq:vectorrepresentationpaulimatrices}
+\end{eqnarray}
+
+The usefullness of this representation is that the scalar project of
+two such vectors can be related to the trace of the corresponding
+Pauli matrices
+\begin{eqnarray}
+\Bigl(\vec{\sigma}^{(j)}\Bigr)^*\cdot\vec{\sigma}^{(j')}
+=\sum_{\sigma,\sigma'}\Bigl(\sigma^{(j)}_{\sigma,\sigma'}\Bigr)^*
+\sigma^{(j')}_{\sigma,\sigma'}
+=\sum_{\sigma,\sigma'}\sigma^{(j)}_{\sigma',\sigma}
+\sigma^{(j')}_{\sigma,\sigma'}
+=\Tr\Bigl[\mat{\sigma}^{(j)}
+\mat{\sigma}^{(j')}\Bigr]
+\label{eq:vectorrepresentationpaulimatricesscalarproduct}
+\end{eqnarray}
+We have exploited that a complex conjugation of the Pauli matrices is
+identical to a transposition, which follows directly from their
+being hermitean.
+
+
+The vector representation of the  Pauli matrices is
+\begin{eqnarray*}
+\mat{\sigma}^{(0)}\hat{=}
+\left(\begin{array}{c}1\\0\\0\\1\end{array}\right)
+\qquad
+\mat{\sigma}^{(1)}\hat{=}
+\left(\begin{array}{c}0\\1\\1\\0\end{array}\right)
+\qquad
+\mat{\sigma}^{(2)}\hat{=}
+\left(\begin{array}{r}0\\-i\\i\\0\end{array}\right)
+\qquad
+\mat{\sigma}^{(3)}\hat{=}
+\left(\begin{array}{r}1\\0\\0\\-1\end{array}\right)
+\end{eqnarray*}
+These vectors have length $\sqrt{2}$ and they are mutually orthogonal
+to each other in the sense
+\begin{eqnarray}
+\frac{1}{2}\Bigl(\vec{\sigma}^{(j)}\Bigr)^*\cdot\vec{\sigma}^{(j')}=\delta_{j,j'}
+\label{eq:pauliorthonormality1}
+\end{eqnarray}
+
+The orthonormality \eq{eq:pauliorthonormality1} of these vectors
+together with the expression
+\eq{eq:vectorrepresentationpaulimatricesscalarproduct} for their
+scalar product establishes\\
+\myshadowbox{
+\begin{eqnarray}
+\frac{1}{2}\Tr\biggl[\mat{\sigma}^{(j)}\mat{\sigma}^{(j')}\biggr]=\delta_{j,j'}
+\label{eq:pauliorthonormality}
+\end{eqnarray}
+}
+
+The expression for the scalar products can be generalized to dyadic
+products in the vector representation.
+Let us consider the Product
+\begin{eqnarray}
+\sum_{\sigma,\sigma',\bar{\sigma},\bar{\sigma}'} 
+A_{\sigma,\sigma'} \sigma^{(j)}_{\sigma,\sigma'}
+\left(\sigma^{(j')}_{\bar{\sigma},\bar{\sigma}'} \right)^*
+B_{\bar{\sigma},\bar{\sigma}'} 
+&=&\Bigl[\vec{A}\cdot\vec{\sigma}^{(j)}\Bigr]
+\Bigl[\Bigl(\vec{\sigma}^{(j')}\Bigr)^*\cdot\vec{B}\Bigr]
+=\vec{A}\Bigl[\Bigl(\vec{\sigma}^{(j)}\Bigr)^*\otimes\vec{\sigma}^{(j')}\Bigr]\vec{B}
+\nonumber\\
+\Rightarrow\qquad\sigma^{(j)}_{\sigma,\sigma'}
+\left(\sigma^{(j')}_{\bar{\sigma},\bar{\sigma}'} \right)^*
+&=&\Bigl[\Bigl(\vec{\sigma}^{(j)}\Bigr)^*\otimes\vec{\sigma}^{(j')}\Bigr]
+_{\sigma,\sigma';\bar{\sigma},\bar{\sigma}'}
+\label{eq:paulivectorrepresentationmeaningouterproduct}
+\end{eqnarray}
+
+
+The sum of the outer products of the Pauli matrices in the vector
+representation \eq{eq:vectorrepresentationpaulimatrices} gives the
+identiy matrix.
+\begin{eqnarray}
+\frac{1}{2}\sum_{j=0}^3\vec{\sigma}^{(j)}\otimes\Bigl(\vec{\sigma}^{(j)}\Bigr)^*
+=\left(\begin{array}{cccc}
+1&0&0&0\\
+0&1&0&0\\
+0&0&1&0\\
+0&0&0&1
+\end{array}\right)
+\label{eq:paulidyadicsum1}
+\end{eqnarray}
+
+Together with \eq{eq:paulivectorrepresentationmeaningouterproduct},
+tha above result \eq{eq:paulidyadicsum1} provides the second important
+relation
+\myshadowbox{
+\begin{eqnarray}
+\frac{1}{2}\sum_j\sigma^{(j)}_{\sigma,\sigma'}
+\Bigl(\sigma^{(j)}_{\bar{\sigma},\bar{\sigma}'}\Bigr)^*=\delta_{\sigma,\bar{\sigma}}
+\delta_{\sigma',\bar{\sigma}'}
+\label{eq:paulidyadicsum}
+\end{eqnarray}
+}
+
+
+%===================================================================
+\subsubsection{Product table of Pauli matrices}
+%===================================================================
+The product table of the Pauli matrices including the unit matrix as
+element with $j=0$.
+\begin{eqnarray}
+\mat{\sigma}^{(i)}\mat{\sigma}^{(j)}
+&=&\left(\begin{array}{cccc}
+\mat{\sigma}^{(0)}& \mat{\sigma}^{(x)}  &\mat{\sigma}^{(y)}&\mat{\sigma}^{(z)}\\
+\mat{\sigma}^{(x)}& \mat{\sigma}^{(0)} &i\mat{\sigma}^{(z)}&-\mat{\sigma}^{(y)}\\
+\mat{\sigma}^{(y)}&-i\mat{\sigma}^{(z)}&\mat{\sigma}^{(0)} &-\mat{\sigma}^{(x)}\\
+\mat{\sigma}^{(z)}& i\mat{\sigma}^{(y)}&-i\mat{\sigma}^{(x)}&\mat{\sigma}^{(0)}\\
+\end{array}\right)
+\nonumber\\
+&=&
+\sum_k\Bigl(\delta_{i,j}\delta_{k,0}+
+\delta_{i,0}\delta_{j,k}+\delta_{i,k}\delta_{j,0}
+-2\delta_{i,0}\delta_{j,0}\delta_{k,0}
+\\
+&+&i(1-\delta_{i,0})(1-\delta_{j,0})(1-\delta_{k,0})\epsilon_{i,j,k}
+\Bigr)\mat{\sigma}^{(k)}
+\label{eq:producttablepaulimatrices}
+\end{eqnarray}
+Do not get confused, because $i$ is used as index and as $\sqrt{-1}$.
+
+
+\clearpage
+\bibliographystyle{unsrtnat}
+\bibliography{../all}
+\end{document}  

@@ -60,7 +60,7 @@ The grand potential has the form
 \biggr\rbrace
 \label{eq:gcpdm2}
 \end{eqnarray}
-where the density matrix functional is expressed with the
+where the density-matrix functional is expressed with the
 Luttinger-Ward functional\cite{luttinger60_pr118_1417}
 $\Phi^{LW}[\mat{G},\hat{W}]$ as
 \begin{eqnarray}
@@ -93,9 +93,10 @@ $\Phi^{LW}[\mat{G},\hat{W}]$ as
 Here, $|\psi_n\rangle$ are one-particle wave functions. They play the
 role of natural orbitals, the eigenstates of the one-particle density
 matrix $\mat{\rho}$. $f_n$ are the occupations, the eigenvalues of the
-one-particle density matrix. The chemical potential is $\mu$. The
-Hamiltonian consists of a non-interacting part $\hat{h}$ and an
-electron-electron interation $\hat{W}$.
+one-particle density matrix. The chemical potential is $\mu$ and
+$\beta=1/(k_BT)$. The Hamiltonian consists of a non-interacting part
+$\hat{h}=\frac{\hat{p}^2}{2m_0}+\hat{v}_{ext}$ and an
+electron-electron interaction $\hat{W}$.
 
 The Matsubara sum runs over the Matsubara frequencies 
 \begin{eqnarray}
@@ -118,13 +119,14 @@ is the self energy. The Green's function is related to the density matrix by
 \sum_\nu\e{i\beta\hbar\omega_\nu0^+}\mat{G}(i\omega_\nu)
 \label{eq:rhoofg}
 \end{eqnarray}
-
+as a consequence of the startionarity with respect to the Lagrange
+multiplier $\mat{h}'$
 
 
 %====================================================================
 \subsubsection{Helmholtz potential}
 %====================================================================
-In practice we calculate the Helmholtz potential
+In practice, we calculate the Helmholtz potential
 \begin{eqnarray}
 A_{\beta,N}[\hat{h}+\hat{W}]
 &=&\stat_\mu\Bigl\lbrace\Omega_{\beta,\mu}+\mu N_\mu\Bigr\rbrace
@@ -143,7 +145,7 @@ A_{\beta,N}[\hat{h}+\hat{W}]
 \end{eqnarray}
 where $Q$ is the density matrix functional without the entropy
 contribution.  The entropy contribution is taken care of with the
-Mermin functional to describe dft calculations with electrons at
+Mermin functional to describe DFT calculations with electrons at
 finite temperature.
 \begin{eqnarray}
 Q^{\hat{W}}_\beta[\mat{\rho}]
@@ -182,7 +184,12 @@ Q^{\hat{W}}_\beta[\mat{\rho}]
 %====================================================================
 In order to integrate DMFT into the DFT code, we define first a local
 basis set of orbitals $|\chi_a\rangle$. These orbitals are in general
-not orthogonal. The decomposition of the Kohn-Sham wave functions,
+not orthogonal. The orbitals are spin orbitals, that is each is a two
+component wave function with a spin-up and a spin-down component. If
+the spin orbitals are eigenstates of $\hat{S}_z$ one or the other of
+the components vanishes.
+
+The decomposition of the Kohn-Sham wave functions,
 which in the the context of rDMFT are the natural orbitals, is
 obtained via the projector functions $\langle\pi_a|$ as
 \begin{eqnarray}
@@ -194,7 +201,7 @@ where the projector functions obey the bi-orthogonality condition
 \langle\pi_a|\chi_b\rangle=\delta_{a,b}\;,
 \end{eqnarray}
 and $|\delta\psi_n\rangle$ is a remainder which is left over if the
-local orbiatls do not form a complete basis set. This remainder has
+local orbitals do not form a complete basis set. This remainder has
 the property
 \begin{eqnarray}
 \langle\pi_a|\delta\psi_n\rangle=0
@@ -203,7 +210,7 @@ the property
 %====================================================================
 \subsubsection{Double counting}
 %====================================================================
-In order to integrate correlations into a DFT-like framwork, we split
+In order to integrate correlations into a DFT-like framework, we split
 off the Helmholtz potential of a DFT calculation, so that the
 Helmholtz potential has the form of a DFT term and a correction.
 \begin{eqnarray}
@@ -240,8 +247,8 @@ n(\vec{r})&=&\sum_\sigma n(\vec{r},\sigma,\sigma)
 f_n\langle\psi|\pi_b\rangle 
 \end{eqnarray}
 
-The Hartree Fock term $Q^{\hat{W}}_{X,\beta}$ is $Q^{\hat{W}}_\beta$
-  obtained when only the first-order term of the Luttinger Ward
+The Hartree-Fock term $Q^{\hat{W}}_{X,\beta}$ is $Q^{\hat{W}}_\beta$
+  obtained when only the first-order term of the Luttinger-Ward
   functional in the interaction is considered.
 It is obtained as
 \begin{eqnarray}
@@ -257,7 +264,7 @@ U_{a,b,c,d}=\frac{e^2\chi^*_a(\vec{r})\chi^*_b(\vec{r'})
 
 The dynamical term $Q_{\text{dyn},\beta}^{\hat{W}}$
 is simply the difference of the complete term minus
-the Hartree Fock contribution.
+the Hartree-Fock contribution.
 
 The purpose of the DMFT object is to add
 \begin{eqnarray}
@@ -266,11 +273,106 @@ The purpose of the DMFT object is to add
 \end{eqnarray}
 in the local approximation, that is for a Luttinger-Ward functional,
 that is a sum over local terms. This approximation is consistent with
-dynamical mean field theory. In the long run, the DMFT object will
-only contribute the dynamical terms, while the Hartree Fock term is
+dynamical mean-field theory. In the long run, the DMFT object will
+only contribute the dynamical terms, while the Hartree-Fock term is
 taken care of in the LMTO object. This will allow to include the
-non-local Hartree Fock terms, while the DMFT object is limited to site
-local terms for the Luttinger Ward functional.
+non-local Hartree-Fock terms, while the DMFT object is limited to site
+local terms for the Luttinger-Ward functional.
+
+%====================================================================
+\subsubsection{Solver}
+%====================================================================
+The loop of solver takes as input a local Greens function and a
+U-tensor. It produces the value of the Luttinger-Ward functional, and
+its derivatives of the Luttinger-Ward functional with respect to
+Greens function and U-tensor.
+
+
+The algorithm is the following
+\begin{enumerate}
+\item choose a hybridization function $\Delta^{in}(i\omega_\nu)$
+\item calculate an output Greens function $\mat{G}^{out}$ as
+  follows\footnote{(D. Vollhardt \textit{Dynamical Mean Field Theory
+      for Strongly Correlated Materials} in \textit{The LDA+DMFT
+      Approach to Strongly Correlated Materials'} E. Pavarini,
+    E. Koch, D. Vollhardt and A. Lichtenstein Eds, Forschungszentrum
+    Juelich 2011. Eq. 23.ff)}: \textcolor{red}{\texttt{Caution, I
+      generalized Dieter's Equations without checking. Signs, factors,
+      indices, etc. may be wrong!}}
+\begin{eqnarray*}
+G^{out}_{\alpha,\beta}(i\omega_\nu)&:=&
+-\frac{1}{Z}\int\prod_{\gamma} Dc^*_\gamma Dc_\gamma\;
+c_\alpha(i\omega_\nu)c^*_\beta(i\omega_\nu) \e{-S_{loc}}
+\\
+Z&=&\int\prod_{\gamma} Dc^*_\gamma Dc_\gamma\;\e{-S_{loc}}
+\\
+S_{loc}&=&-\int_0^\beta d\tau_1\int_0^\beta d\tau_2\;
+\sum_{\alpha,\beta}c^*_\alpha(\tau_1)
+\Bigl[
+i\hbar\omega_\nu\delta_{\alpha,\beta}-\Delta^{in}_{\alpha,\beta}(i\omega_\nu)
+\Bigr]
+c_\beta(\tau_2)
+\nonumber\\
+&&-\int_0^\beta d\tau \sum_{\alpha,\beta,\gamma,\delta}
+U_{\alpha,\beta,\delta,\gamma}
+ c^*_\alpha c^*_\beta c_\gamma c_\delta
+\end{eqnarray*}
+Note, that only the hybridization function $\mat{\Delta}^{in}$ and the
+  U-tensor enter in this calculation. The only result is the output
+  Greens function $\mat{G}^{out}$.
+%
+\item Convert the Green's function into a self energy $\mat{\Sigma}^{out}$
+  using Dyson's equation
+\begin{eqnarray}
+\Sigma^{out}_{\alpha,\beta}(i\omega_\nu)
+:=-\Bigl(G^{out}(i\omega_\nu)\Bigr)^{-1}_{\alpha,\beta}
++i\hbar\omega_\nu\delta_{\alpha,\beta}
+-\Delta^{in}_{\alpha,\beta}(i\omega_\nu)
+\label{eq:sigmaout}
+\end{eqnarray}
+%
+\item Use the Greens function $\mat{G}$ passed
+  to the solver as input argument (not
+  $\mat{G}^{out}$!)  to extract a new
+  hybridization function $\mat{\Delta}^{out}$
+\begin{eqnarray}
+\Delta^{out}_{\alpha,\beta}(i\omega_\nu)
+:=-\Bigl(G(i\omega_\nu)\Bigr)^{-1}_{\alpha,\beta}
++i\hbar\omega_\nu\delta_{\alpha,\beta}-\Sigma^{out}_{\alpha,\beta}(i\omega_\nu)
+\label{eq:deltaout}
+\end{eqnarray}
+\end{enumerate}
+
+
+The steps given above yield a unique mapping from $\Delta^{in}$ to
+$\Delta^{out}$. In other words the output hybridization function is a
+unique functional of the input hybridization function, the input
+Greens function and the U-tensor.
+\begin{eqnarray}
+\mat{\Delta}^{out}=F[\mat{\Delta}^{in},\mat{G},\mat{U}]
+\end{eqnarray}
+
+
+The mapping depends on exactly two quantities, namely
+the input Green's function and the U-tensor. Self-consistency yields the 
+fixed point $\Delta^{out}=\Delta^{in}$ of this mapping.
+At this fixed point, \eq{eq:deltaout} and \eq{eq:sigmaout} yield
+\begin{eqnarray}
+G^{out}_{\alpha,\beta}(i\omega_\nu)&=&G_{\alpha,\beta}(i\omega_\nu)
+\end{eqnarray}
+and 
+\begin{eqnarray}
+G_{\alpha,\beta}(i\omega_\nu)
+=\biggl[
+i\hbar\omega_\nu\mat{1}
+-\mat{\Sigma}^{out}(i\omega_\nu)
+-\mat{\Delta}^{in}(i\omega_\nu)
+\biggr]^{-1}_{\alpha,\beta}
+\;.
+\end{eqnarray}
+
+
+
 
 %====================================================================
 \section{Usage}
@@ -343,21 +445,21 @@ subblocks.
 The solver is linked into the subroutine \verb|DMFT_SOLVERIO|.
 
 This routine supplies the local Green's function \verb|G| and its
-first three Laufent expansion terms \verb|GLAUR|, as well as the
+first three Laurent expansion terms \verb|GLAUR|, as well as the
 U-tensor $\verb|U|$. All quantities are prepared with respect to a
 orthonormal one-particle basisset. These orbitals are two-component
 spinor orbitals. The order of the orbitals is arbitrary, and there is
-not necesaarily a division between spin-up and spin-down orbitals.
+not necessarily a division between spin-up and spin-down orbitals.
 
-Note also the the nature of the orbitals and also their order may
+Note also, that the nature of the orbitals and also their order may
 change arbitrarily from one iteration to the next. However, the
-orbitals stay constant the same during the evaluation of a density
-matrix functional for a goven density matrix $\mat{\rho}$.
+orbitals stay the same during the evaluation of a density
+matrix functional for a given density matrix $\mat{\rho}$.
 
 
-The routine expects back the value of the Luttinger-Ward functional
-$\Delta\Phi^{LW}=\Phi^{LW}-\Phi^{LW,HF}$ minus its Hartree Fock value
-$\Phi^{LW,HF}$. The Hartree fock value of the Luttinger Ward
+The routine expects back $\Delta\Phi^{LW}=\Phi^{LW}-\Phi^{LW,HF}$, the
+value of the Luttinger-Ward functional $\Phi^{LW}$ minus its Hartree-Fock value
+$\Phi^{LW,HF}$. The Hartree-Fock value of the Luttinger-Ward
 functional can be calculated directly from the density matrix given by
 \eq{eq:rhoofg} as
 \begin{eqnarray}
@@ -367,7 +469,7 @@ functional can be calculated directly from the density matrix given by
 \end{eqnarray}
 
 
-Similarly the self energy and its Laurent expansion terms follow from
+Similarly, the self energy and its Laurent expansion terms follow from
 \begin{eqnarray}
 \Delta\Sigma_{a,b}(i\omega_\nu)&=&
 \beta\frac{\partial\Phi^{LW}}{\partial G_{b,a}(i\omega_\nu)}
@@ -459,7 +561,7 @@ U_{a,b,c,d}=\alpha\int d^4x\int d^4x'\;
 \label{eq:defutensordmftobject}
 \end{eqnarray}
 Only the U-tensor for equal spin-electrons is stored. $\alpha$ is a
-scale factor that mimicks the screening of the U-tensor. It is called
+scale factor that mimics the screening of the U-tensor. It is called
 \verb|LHFWEIGHT|.
 %
 \item \verb|DMFT_SMAT|:
@@ -473,7 +575,7 @@ structure.
 %
 \item \verb|DMFT_NATORB|: Construct transformation matrices
   $\langle\chi|\phi\rangle$ and $\langle\pi|\phi\rangle$ onto an
-  orthonormal local basiset $|\phi\rangle$, so that 
+  orthonormal local basisset $|\phi\rangle$, so that 
 \begin{eqnarray}
 \sum_{a,b}
 \langle\phi_i|\phi_a\rangle\Bigl(\mat{S}_R\Bigr)_{a,b}
@@ -481,7 +583,7 @@ structure.
 \end{eqnarray}
 where $\mat{S}_R$ is the local overlap operator obtained from
 projection of $\sum_{\vec{k}} w_{\vec{k}}\mat{S}^{-1}(\vec{k})$ onto the
-local orbitals nd inversion of the projectd matrix.
+local orbitals and inversion of the projection matrix.
 
 The two matrices are related by
 \begin{eqnarray}
@@ -506,7 +608,7 @@ model in \verb|atomset%natorb%piphi| and \verb|atomset%natorb%chiphi|.
 \mat{S}^{-1}(\vec{k})\mat{V}(\vec{k})\mat{f}(\vec{k})
 \end{eqnarray*}
 where the $\mat{f}_k$ is a matrix that contains k-dependent
-occupations, which differe from the occupations $f_n$.
+occupations, which differs from the occupations $f_n$.
 \begin{eqnarray}
 \mat{h}_\rho(\vec{k})-\mu=\mat{V}^{\dagger,-1}(\vec{k})\; k_B
 \ln\left[
@@ -541,15 +643,15 @@ The result and its Laurent expansion terms are stored in
   external solver. The double counting term is calculated as in the
   LMTO module. \textbf{For the double counting in the HF approximation
     only the exchange part is removed, while here also the correlation
-    contribution should be taken out, because that is explicitely
+    contribution should be taken out, because that is explicitly
     added.}
 
-  The Hartree Fock contribution is added directly to the double
+  The Hartree-Fock contribution is added directly to the double
   counting term. Thus the self energy \verb|atomset%sigma| is only
   the dynamical contribution.
 
 Green's function and U-tensor are transformed into the representation
-of orthonormal local orbitals, and the self-energy is tranformed back
+of orthonormal local orbitals, and the self-energy is transformed back
 accordingly.
 
 The external solver shall evaluate
@@ -580,7 +682,7 @@ where
 \end{eqnarray}
 Correspondingly, the self energy to be returned must have the
 Hartree-Fock term subtracted out. That is, the double counting term
-must be the Hartree Fock term.
+must be the Hartree-Fock term.
 \begin{eqnarray*}
 \Sigma_{a,b}(i\omega_\nu)=\frac{\beta\partial\Phi^{LW}}
 {\partial G_{b,a}(i\omega_\nu)}-\sum_{c,d}\Bigl(U_{a,c,b,d}-U_{a,c,d,b}\Bigr)
@@ -589,7 +691,7 @@ must be the Hartree Fock term.
 
 The external solver may make approximations to the U-tensor or to the
 Kadanoff-Baym functional. However, they need to be consistent for
-Luttinger Ward functional and the corresponding Hartree Fock
+Luttinger-Ward functional and the corresponding Hartree-Fock
 term. Thus, it is ensured that there is no approximation made beyond
 the dynamic effects.
 
@@ -622,7 +724,7 @@ the dynamic effects.
   correlated orbitals and an site-dependent term that acts on all
   local orbitals.
 \begin{itemize}
-\item The site-specific term contains the double counting term for teh
+\item The site-specific term contains the double counting term for the
   DFT functional and the Hartree-Fock contribution to the self energy.
 \end{itemize}
 \end{enumerate}
@@ -666,7 +768,7 @@ the dynamic effects.
 \omega_\nu=(2\nu-1)\pi k_BT \qquad\text{for $\nu=1,\ldots,N_\omega$}
 \end{eqnarray}
 \item \verb|IPROOFCHI| maps the indices ICHI to indices IPRO. ICHI and
-  IPRO are explaned in section ~\ref{sec:indexarrays}.
+  IPRO are explained in section ~\ref{sec:indexarrays}.
 \item Atomset structure
 \begin{center}
  \begin{tabular}{ll}
@@ -686,7 +788,7 @@ the dynamic effects.
 \item KSET structure
 \begin{center}
  \begin{tabular}{ll}
- \verb|KSET\%WKPT| & geometic k-point weight\\
+ \verb|KSET\%WKPT| & geometric k-point weight\\
 \end{tabular}
 \end{center}
 \end{itemize}
@@ -715,7 +817,7 @@ u_{\ell,a,b,c,d}
 \int dr\; r^2R_c(r)R_d(r)\Bigl[\int d^3r'\;V_\ell(r,r')R_a(r')R_b(r')\Bigr]
 \end{eqnarray}
 where the kernel $V_\ell(r,r')$ is the one used by $RADIAL\$POISSON$.
-\textbf{There is a input parameter that determins which $\ell$ values are
+\textbf{There is a input parameter that determines which $\ell$ values are
 considered.}
 
 In \verb|LMTO_UTENSOR| the U-tensor elements are composed according to
@@ -752,7 +854,7 @@ E_X=\frac{1}{2}\sum_{a,b,c,d}U_{a,b,c,d}\;\rho_{c,b}\rho_{d,a}
 Construct natural orbitals in the space of correlated orbitals on one
 site.
 
-For this purpose, I redefine the unity operator for the subhilbert
+For this purpose, I redefine the unity operator for the sub Hilbert
 space of correlated orbitals.
 \begin{eqnarray}
 \hat{1}_{\mathcal{C}_R}
@@ -761,7 +863,7 @@ space of correlated orbitals.
 \langle\pi_\alpha|\psi_n\rangle\langle\psi_n|\pi_\beta\rangle
 \langle\chi_\beta|
 \end{eqnarray}
-which allows one to identify rthe inverse overlap matrix inthis sub-Hilbert space.
+which allows one to identify the inverse overlap matrix in this sub-Hilbert space.
 \begin{eqnarray}
 \mat{S}^{-1}_{\alpha,\beta}
 =\sum_{\alpha,\beta}\sum_n
@@ -883,8 +985,8 @@ The Laurent expansion terms are
 \subsection{DMFT\_SOLVER}
 %====================================================================
 The solver first calculates the Hartree-Fock contribution to the
-Luttinger Ward functional as defined in Eq.~\ref{eq:philwhf} and the
-correpsonding self energy. Because the Hartree Fock self energy is
+Luttinger-Ward functional as defined in Eq.~\ref{eq:philwhf} and the
+corresponding self energy. Because the Hartree-Fock self energy is
 static and because it does not affect the density matrix constraint,
 it is added together with the double counting correction to
 \verb|atomset%denmat%h|.
@@ -897,7 +999,7 @@ Then the double counting correction is calculated. \textbf{At the
 
 Finally the data are prepared for the solver in
 \verb|DMFT_dynamicsolver|. The dynamicsolver transforms all data into
-a spin-orbital represenation of orthonormal states, which may be
+a spin-orbital representation of orthonormal states, which may be
 either natural orbitals derived from the local density matrix or which
 may be eigenstates of the local overlap matrix.
 
@@ -989,7 +1091,7 @@ S^{-1}_{a,b}=\sum_k\langle\pi_a|\psi_n\rangle f_n\langle\psi_n|\pi_b\rangle
 \end{eqnarray}
 
 \textbf{Proof:}
-Here, I will show that the Green's function mtrix expressed in local orbitals
+Here, I will show that the Green's function matrix expressed in local orbitals
 \eq{eq:greenlocform1}
 \begin{eqnarray}
 \mat{G}_{a,b}(i\omega_\nu)=
