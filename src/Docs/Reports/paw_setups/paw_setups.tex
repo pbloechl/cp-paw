@@ -2019,6 +2019,43 @@ j can also be considered a sum over all shells.
 \chapter{Code structure}
 %=====================================================================
 %=====================================================================
+\section{Code to construct automatic stp.cntl file}
+%=====================================================================
+The routines \verb|SETUP_BUILDPARMS_NDLSS| constructs an automatic
+parameter file \verb|stp.cntl| for the atomic setups. There are
+alternatives called \verb|SETUP_BUILDPARMS_1| for the standard setups
+and \verb|SETUP_BUILDPARMS_2| for the HBS-type setups.
+
+
+
+\begin{verbatim}
+ !SETUP  ID='H_NDLSS' EL='H' ZV= 1.
+         TYPE='NDLSS' RBOX/RCOV=2. RCSM/RCOV=0.25
+         RCL/RCOV= 1.0 1.0 1.0 1.0 1.
+         LAMBDA= 6. 6. 6. 6. 6.
+   !GRID DMIN=1.E-6 DMAX=0.1 RMAX= 9. !END
+   !POT  POW=3.  RC/RCOV=0.67 !END
+   !CORE POW=3.  RC/RCOV=0.67 !END
+ !END
+\end{verbatim}
+
+\begin{itemize}
+\item ZV: For main group elements, the d-electron and f-electron
+  shells are not considered part of the valence shell.
+\item RBOX/RCOV=2.
+\item RCSM/RCOV=0.25
+\item RCL/RCOV=0.75
+\item RCL/RCOV=6.
+\item GRID: DMIN=$5\times 10^{-6}$,
+DMAX=$5\times 10^{-1}$,
+RMAX is $2r_{cov}$ or $r_{cov}+0.73~$\AA$/a_0$, whatever is larger
+\item POT:
+\end{itemize}
+
+
+
+
+%=====================================================================
 \section{Flowchart of the paw\_setups object}
 %=====================================================================
 \petertt{This is lifted from my notes and needs to be updated.}
