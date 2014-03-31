@@ -48,7 +48,7 @@ theory.
 \subsubsection{Grand potential and density-matrix 
 functional as starting point}
 %====================================================================
-The grand potential has the form
+The grand potential has the form\cite{bloechl13_prb88_25139}
 \begin{eqnarray}
 \Omega^{KB}_{\beta,\mu}[\hat{h}+\hat{W}]
 &=&\min_{|\psi_n\rangle,f_n\in[0,1]}\stat_\Lambda
@@ -101,7 +101,7 @@ electron-electron interaction $\hat{W}$.
 The Matsubara sum runs over the Matsubara frequencies 
 \begin{eqnarray}
 \omega_\nu=(2\nu-1)\frac{\pi}{\hbar\beta}
-\text{for $\nu\in\mathbb{Z}$}
+\qquad\text{for $\nu\in\mathbb{Z}$}
 \end{eqnarray}
 
 The Hamiltonian $\mat{h}_\rho$ is a non-local Hamiltonian directly
@@ -145,8 +145,8 @@ A_{\beta,N}[\hat{h}+\hat{W}]
 \end{eqnarray}
 where $Q$ is the density matrix functional without the entropy
 contribution.  The entropy contribution is taken care of with the
-Mermin functional to describe DFT calculations with electrons at
-finite temperature.
+Mermin functional\cite{mermin65_pr137_a1441} to describe DFT
+calculations with electrons at finite temperature.
 \begin{eqnarray}
 Q^{\hat{W}}_\beta[\mat{\rho}]
 &=&\tilde{F}^{\hat{W}}_\beta[\mat{\rho}]
@@ -183,11 +183,11 @@ Q^{\hat{W}}_\beta[\mat{\rho}]
 \subsubsection{Projection onto local orbitals}
 %====================================================================
 In order to integrate DMFT into the DFT code, we define first a local
-basis set of orbitals $|\chi_a\rangle$. These orbitals are in general
-not orthogonal. The orbitals are spin orbitals, that is each is a two
-component wave function with a spin-up and a spin-down component. If
-the spin orbitals are eigenstates of $\hat{S}_z$ one or the other of
-the components vanishes.
+basis set of orbitals $|\chi_a\rangle$. These orbitals are not
+orthogonal. The orbitals are spin orbitals, that is, each is a
+two-component wave function with a spin-up and a spin-down
+component. If the spin orbitals are eigenstates of $\hat{S}_z$, one or
+the other of the components vanishes.
 
 The decomposition of the Kohn-Sham wave functions,
 which in the the context of rDMFT are the natural orbitals, is
@@ -200,7 +200,7 @@ where the projector functions obey the bi-orthogonality condition
 \begin{eqnarray}
 \langle\pi_a|\chi_b\rangle=\delta_{a,b}\;,
 \end{eqnarray}
-and $|\delta\psi_n\rangle$ is a remainder which is left over if the
+and where $|\delta\psi_n\rangle$ is a remainder which is left over if the
 local orbitals do not form a complete basis set. This remainder has
 the property
 \begin{eqnarray}
@@ -247,10 +247,10 @@ n(\vec{r})&=&\sum_\sigma n(\vec{r},\sigma,\sigma)
 f_n\langle\psi|\pi_b\rangle 
 \end{eqnarray}
 
-The Hartree-Fock term $Q^{\hat{W}}_{X,\beta}$ is $Q^{\hat{W}}_\beta$
-  obtained when only the first-order term of the Luttinger-Ward
-  functional in the interaction is considered.
-It is obtained as
+The Hartree-Fock term $Q^{\hat{W}}_{X,\beta}$ is equal to
+$Q^{\hat{W}}_\beta$ when only the first-order term of the
+Luttinger-Ward functional in the interaction is considered.  It is
+obtained as
 \begin{eqnarray}
 Q_{\text{X},\beta}^{\hat{W}}[\mat{\rho}]
 =\frac{1}{2}\sum_{a,b,c,d}U_{a,b,d,c}
@@ -258,8 +258,10 @@ Q_{\text{X},\beta}^{\hat{W}}[\mat{\rho}]
 \end{eqnarray}
 where the U-tensor is defined as
 \begin{eqnarray}
-U_{a,b,c,d}=\frac{e^2\chi^*_a(\vec{r})\chi^*_b(\vec{r'})
-\chi_c(\vec{r})\chi_d(\vec{r'})}{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+U_{a,b,c,d}=\sum_{\sigma,\sigma'}\int d^3r\int d^3r\;
+\frac{e^2\chi^*_a(\vec{r},\sigma)\chi^*_b(\vec{r'},\sigma')
+\chi_c(\vec{r},\sigma)\chi_d(\vec{r'},\sigma')}
+{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
 \end{eqnarray}
 
 The dynamical term $Q_{\text{dyn},\beta}^{\hat{W}}$
@@ -389,13 +391,13 @@ specified.  A finite temperature calculation requires
 eigenstates of the Hamiltonian.
 \begin{verbatim}
 !CONTROL
-  !GENERIC NSTEP=500  dt=5. STart=F  !END 
+  !GENERIC NSTEP=500  DT=5. START=F  !END 
   !FOURIER EPWPSI=30. CDUAL=2.0 !END
   !DFT TYPE=10  
      !NTBO MODUS='DMFT' !END   
   !END 
   !PSIDYN STOP=T FRIC=.05 SAFEORTHO=F
-    !auto fric(-)=0.3 fact(-)=0.97 fric(+)=0.3 fact(+)=1.0 minfric=0.05 !end
+    !AUTO FRIC(-)=0.3 FACT(-)=0.97 FRIC(+)=0.3 FACT(+)=1.0 MINFRIC=0.05 !END
   !END
   !MERMIN T[K]=4000. ADIABATIC=T RETARD=10. !END
 !end
@@ -409,20 +411,20 @@ A typical structure file may look as follows. New are the \verb|!NTBO|
 subblocks.
 \begin{verbatim}
 !STRUCTURE 
-  !GENERIC  LUNIT[aa]=   3.8   EUNIT[EV]=T !END
+  !GENERIC  LUNIT[AA]=   3.8   EUNIT[EV]=T !END
   !OCCUPATIONS EMPTY=10 NSPIN=2 SPIN[HBAR]=1.5 !END
-  !KPOINTS div=1 1 1 shift=1 1 1 !END
+  !KPOINTS DIV=1 1 1 SHIFT=1 1 1 !END
   !SPECIES NAME='CA' ID='CA_HBS_SC' NPRO=2 2 1 
-     !NTBO TORB=F F F F F  
-           CV=F FOCKSETUP=F TAILLAMBDA=4.0 2.0 !END 
+    !NTBO NOFL=1 0 0 RAUG/RCOV=0.8 RTAIL/RCOV=1.4 TAILLAMBDA=2. 1.
+          CV=F FOCKSETUP=F  !END 
   !END
   !SPECIES NAME='MN' ID='MN_HBS' NPRO=1 1 1 
-     !NTBO TORB=F F T   LHFWeiGHT=0.25
-           CV=F FOCKSETUP=F TAILLAMBDA=4.0 2.0 !END 
+     !NTBO NOFL=1 0 1 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 TAILLAMBDA=2. 1.
+           LHFWeiGHT=0.25 CV=F FOCKSETUP=F !END 
   !END
   !SPECIES NAME='O_' ID='O_.75_6.0'  NPRO=1 1 0
-     !NTBO TORB=F F   TORB_X=T F T F F   
-           CV=F FOCKSETUP=F TAILLAMBDA=4.0 2.0 !END 
+    !NTBO NOFL=1 1  RAUG/RCOV=1.2 RTAIL/RCOV=1.4 TAILLAMBDA=2. 1.
+           CV=F FOCKSETUP=F !END 
   !END
   !LATTICE T=  1.0000        0.0000        0.0000000000
                0.0000        1.0000        0.0000000000
@@ -447,9 +449,11 @@ The solver is linked into the subroutine \verb|DMFT_SOLVERIO|.
 This routine supplies the local Green's function \verb|G| and its
 first three Laurent expansion terms \verb|GLAUR|, as well as the
 U-tensor $\verb|U|$. All quantities are prepared with respect to a
-orthonormal one-particle basisset. These orbitals are two-component
-spinor orbitals. The order of the orbitals is arbitrary, and there is
-not necessarily a division between spin-up and spin-down orbitals.
+orthonormal one-particle basisset\footnote{The formerly non-orthogonal
+  orbitals on a single site are orthogonalized with each
+  other.}. These orbitals are two-component spinor orbitals. The order
+of the orbitals is arbitrary, and there is not necessarily a division
+between spin-up and spin-down orbitals.
 
 Note also, that the nature of the orbitals and also their order may
 change arbitrarily from one iteration to the next. However, the
@@ -485,36 +489,10 @@ Similarly, the self energy and its Laurent expansion terms follow from
 \section{Description of Subroutines}
 %====================================================================
 %====================================================================
-\subsection{Index arrays}
-\label{sec:indexarrays}
-%====================================================================
-The local orbitals arranged on a long array indexed by \verb|IPRO|.
-The the subset of local orbitals considered in the DMFT module, in the
-following called correlated orbitals, are indexed by by
-\verb|ICHI|. They are arranged by the following pseudocode:
-\begin{verbatim}
-ipro=0
-ichi=0
-do iat=1,nat
-  isp=isp(iat)
-  do ln=1,lnx(isp)
-    l=lox(ln,isp)
-    do im=1,2*l+1
-      ipro=ipro+1
-      if(torb(ln,isp(iat))ichi=ichi+1
-    enddo
-  enddo
-enddo
-\end{verbatim}
-\verb|ISP|,\verb|LNX|,\verb|LOX| and \verb|TORB| are obtained from the
-\verb|SETUPS| project.
-
-
-%====================================================================
 \subsection{DMFT\$GREEN}
 %====================================================================
 DMFT\$GREEN is the main subroutine of the DMFT object. It is called
-from the LMTO object, which also provides the the projections onto the
+from the LMTO object, which also provides the  projections onto the
 tight-binding orbitals.
 
 \begin{verbatim}
@@ -767,21 +745,12 @@ the dynamic effects.
 \begin{eqnarray}
 \omega_\nu=(2\nu-1)\pi k_BT \qquad\text{for $\nu=1,\ldots,N_\omega$}
 \end{eqnarray}
-\item \verb|IPROOFCHI| maps the indices ICHI to indices IPRO. ICHI and
-  IPRO are explained in section ~\ref{sec:indexarrays}.
 \item Atomset structure
 \begin{center}
  \begin{tabular}{ll}
  \verb|atomset\%nloc| & number of correlated orbits on this atom \\
 \verb|atomset\%ICHI1| & first value of ICHI index for this atom\\
 \verb|atomset\%ICHI2| & last value of ICHI index for this atom\\
-\verb|atomset\%DENMAT\%LNX| & number of radial partial waves  for this atom\\
-\verb|atomset\%DENMAT\%LOX(lnx)| 
-     & main angular momentum quantum numbers $\ell$\\
-\verb|atomset\%DENMAT\%LMNX| 
-     & number (including m quantum number) of partial waves  for this atom\\
-\verb|atomset\%DENMAT\%LMN(lmnx)| 
-     & IPRO index relative to the first index for this atom\\
 \end{tabular}
 \end{center}
 %
@@ -805,7 +774,7 @@ In \verb|DMFT_ULOCAL| it obtains the local U-tensor from the
 contains the extended $\phi$ and $\dot{\phi}$ functions
 \begin{eqnarray}
 |\chi_a\rangle=|\phi_a\rangle-
-\sum_{b; R_b=R_a}|\dot{\bar{\phi}}_b\rangle \bar{S}_{b,a}
+\sum_{b; R_b=R_a}|\dot{\bar{\phi}}_b\rangle \bar{S}_{a,b}
 \end{eqnarray}
 
 
@@ -1014,7 +983,7 @@ may be eigenstates of the local overlap matrix.
 %====================================================================
 \chapter{The Green function}
 %====================================================================
-We construct the \textbf{lattice Green's function}
+We construct the \textbf{lattice Green's function} defined as
 \begin{eqnarray}
 \hat{G}^{lat}(i\omega_\nu)&=&
 \biggl[(i\hbar\omega_\nu+\mu)\hat{1}
@@ -1029,7 +998,7 @@ We construct the \textbf{lattice Green's function}
 \label{eq:latgreenfunc}
 \end{eqnarray}
 This expression is approximate, if the set of band states is not
-complete, and, in practice, corrections are required.
+complete. In practice, corrections are required.
 
 In the representation of the band states, the lattice Green's function
 has the form
@@ -1039,18 +1008,18 @@ G^{lat}_{n,n'}(i\omega_\nu)&=&
 -\Delta\hat{\Sigma}(i\omega_\nu)|\psi_n\rangle\biggr]_{n,n'}^{-1}
 \label{eq:latgreenfuncmat}
 \end{eqnarray}
-Note that the matrix to be inverted is not necessarily hermitean!
+Note, that the matrix to be inverted is not necessarily hermitean!
 
 %====================================================================
 \section{Project Green's function onto local orbitals}
 %====================================================================
-For a hamiltonian $\hat{h}=\sum_{a,b}|\pi_a\rangle
+For a Hamiltonian $\hat{h}=\sum_{a,b}|\pi_a\rangle
 h_{a,b}\langle\pi_b|$ and a self energy 
 $\hat{\Sigma}(i\omega_\nu)=
 \sum_{a,b}|\pi_a\rangle
 \Sigma_{a,b}(i\omega_\nu)
 \langle\pi_b|$
-acting onto the local orbitals, the Green's function can be expressed
+acting on the local orbitals, the Green's function can be expressed
 as
 \begin{eqnarray}
 \hat{G}(i\omega_\nu)&=&
@@ -1091,8 +1060,7 @@ S^{-1}_{a,b}=\sum_k\langle\pi_a|\psi_n\rangle f_n\langle\psi_n|\pi_b\rangle
 \end{eqnarray}
 
 \textbf{Proof:}
-Here, I will show that the Green's function matrix expressed in local orbitals
-\eq{eq:greenlocform1}
+Here, I will show that the Green's function matrix 
 \begin{eqnarray}
 \mat{G}_{a,b}(i\omega_\nu)=
 \sum_n\langle\pi_a|\psi_n\rangle
@@ -1125,18 +1093,18 @@ G_{a,b}(i\omega_\nu)
 \nonumber\\
 &=&
 \sum_{n,n'}\langle\pi_a|\psi_{n}\rangle
-\bigl(
+\biggl[
 \sum_{j=0}^\infty
 \frac{1}{(i\hbar\omega_\nu)^{j+1}}
 \biggl(
 \langle\psi|\pi\rangle
 \mat{h}
 \langle\pi|\psi\rangle\biggr)^j_{n,n'}
-\langle\psi_{n'}|\pi_b\rangle
+\biggr]\langle\psi_{n'}|\pi_b\rangle
 \nonumber\\
 &=&
 \sum_{n,n'}\langle\pi_a|\psi_{n}\rangle
-\bigl(
+\biggl[
 \sum_{j=0}^\infty
 \frac{1}{(i\hbar\omega_\nu)^{j+1}}
 \biggl(\sum_{n_2,\ldots,n_{j}} 
@@ -1145,7 +1113,7 @@ G_{a,b}(i\omega_\nu)
 \langle\pi|\psi_{n_2}\rangle\langle\psi_{n_2}|\pi\rangle
 \ldots
 \mat{h}
-\langle\pi|\psi_{n'}\rangle\biggr)
+\langle\pi|\psi_{n'}\rangle\biggr)\biggr]
 \langle\psi_{n'}|\pi_b\rangle
 \nonumber\\
 &=&
@@ -1175,7 +1143,7 @@ q.e.d.
 %====================================================================
 \subsection{Laurent expansion of the Green's function}
 %====================================================================
-Here we extract the Laurent expansion of the Green's function in the form
+Here, we extract the Laurent expansion of the Green's function in the form
 \begin{eqnarray}
 \mat{G}=\biggl[(i\hbar\omega_\nu+\mu)\mat{S}
 -\mat{h}-\mat{\Sigma}(i\omega_\nu)\biggr]^{-1}
