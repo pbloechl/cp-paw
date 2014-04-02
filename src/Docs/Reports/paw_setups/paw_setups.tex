@@ -95,22 +95,22 @@ normalize the partial waves within a sphere, but by the boundary
 conditions at the origin. That is, we effectively shrink the
 normalization sphere to zero.
 
-
-
 %====================================================================
 \subsubsection{Node-less bound states}
 %====================================================================
 We define\cite{bloechl12_arxiv1210_5937} a sequence of
 \textbf{node-less bound states}\index{node-less bound states}
-$|u_n\rangle$
+$|u_n\rangle$. The node-less bound state are constructed sequentially
+by
 \begin{eqnarray}
 (\hat{h}-\epsilon_n)|u_n\rangle=-|u_{n-1}\rangle
+\,.
 \label{eq:nodelesseq}
 \end{eqnarray}
 The first wave function, $|u_1\rangle$ is the lowest bound state of
-the hamiltonian. The other ones are calculated by radially integrating
-the Schr\"odinger equation outward, starting with vanishing value and
-derivative, so that
+the Hamiltonian. The other wave functions are obtained by radially
+integrating the Schr\"odinger equation outward, starting with
+vanishing value and derivative, so that
 \begin{eqnarray}
 \lim_{\vec{r}\rightarrow0}|\frac{\langle\vec{r}|u_n\rangle}{|\vec{r}|^{\ell+1}}=0
 \qquad\text{for $n>1$}
@@ -118,7 +118,7 @@ derivative, so that
 
 
 The node-less wave functions do not
-have any nodes but look like Slater orbitals, in the sense that they
+have any nodes, but look like Slater orbitals, in the sense that they
 grow at the origin as a power and that they decay exponentially at
 large distance. Their behavior at the origin
 is\cite{bloechl12_arxiv1210_5937}
@@ -186,12 +186,13 @@ nodeless functions for given set of energies $\{\epsilon_{n+j}; j\ge1\}$ via
 \label{eq:qbardiffgl}
 \\
 (\hat{h}-\epsilon)|\bar{q}_{n}^{(0)}(\epsilon)\rangle&=&-|u_{n-1}\rangle 
+\label{eq:qbardiffgl0}
 \end{eqnarray}
 These equations have great similarity with those of the nodeless
 equations \eq{eq:nodelesseq}.
 
-The sequence defined by \eq{eq:qbardiffgl} can be constructed
-by the recursive equation
+The sequence defined by \eq{eq:qbardiffgl} and \eq{eq:qbardiffgl0} can
+be constructed by the recursive equation
 \begin{eqnarray}
 |\bar{q}_{n}^{(j+1)}(\epsilon)\rangle&=&
 \frac{-1}{\epsilon-\epsilon_{n+j}}
@@ -551,31 +552,43 @@ involved in the relativistic case.
 \subsection{Pseudo wave functions from node-reduced wave functions}
 \label{sec:determinedeltepseudo}
 %====================================================================
-Here, the routine \verb|SETUPS_MAKEPSPHI_MINE| is described. It is used
+Here, the routine \verb|SETUPS_MAKEPSPHI_FLAT| is described. It is used
 to construct a pseudo wave function for the lowest node-reduced
 partial wave.
 
 Starting from a wave function $\phi(\vec{r})$, which shall be
-pseudized, we invert the Schr\"odinger equation to determine
+pseudized, we invert the Schr\"odinger equation to determine the potential
 \begin{eqnarray}
 v-\epsilon_\nu=
 \begin{cases}
 -\frac{1}{\phi(\vec{r})}\hat{t}\phi(\vec{r})&\qquad\text{for $r>r_c$.}
 \\
--\frac{1}{\phi(\vec{r}_c)}\hat{t}\phi(\vec{r}_c)&\qquad\text{for $r<r_c$.}
+A+Br^x&\qquad\text{for $r<r_c$.}
 \end{cases}
 \label{eq:invertschrgl}
 \end{eqnarray}
-where $r_c$ is the pseudization radius. $\hat{t}|\phi\rangle$ is a
-short-hand notation for the result of the kinetic energy operator
-acting on the partial wave. In the non-relativistic theory
-$\hat{t}=\frac{\hat{\vec{p}}^2}{2m_0}$, while the expression is more
-complex in the relativistic theory.
+where $r_c$ is the pseudization radius. 
+
+$\hat{t}|\phi\rangle$ is a short-hand notation for the
+result of the kinetic energy operator acting on the partial wave. In
+the non-relativistic theory $\hat{t}=\frac{\hat{\vec{p}}^2}{2m_0}$,
+while the expression is more complex in the relativistic theory.
+
+The coefficients $A$ and $B$
+are chosen so that the function is differentiable. The parameter $x$
+describes how flat the potential in the core region is and how sharp
+the upturn is, which is required to ensure differentiability.
 
 With \eq{eq:invertschrgl}, we obtain a potential that is shallow and
 flat inside the pseudization radius. Outside the pseudization radius
 it is chosen such that partial wave obeys the non-relativistic
 Schr\"odinger equation for this potential.
+
+Note that this potential little to do with the all-electron potential,
+nor with a pseudo potential. It should be viewed merely as a tool to
+construct partial waves. If this potential wew a constant, the
+Schr\"odinger equation would produce a Bessel functions, and its
+energy derivatives. 
 
 Now, we derive for this potential the radial wave function and its
 first two energy derivatives
@@ -586,28 +599,101 @@ first two energy derivatives
 \nonumber\\
 \Bigl[\frac{\vec{p}^2}{2m_0}+v-\epsilon_\nu\Bigr]|\ddot{f}\rangle
 &=&2|\dot{f}\rangle
+\nonumber\\
+\Bigl[\frac{\vec{p}^2}{2m_0}+v-\epsilon_\nu\Bigr]|\dddot{f}\rangle
+&=&3|\ddot{f}\rangle
 \end{eqnarray}
 
 At the same time we determine 
 \begin{eqnarray}
 \hat{t}|f\rangle&=&\frac{\hat{\vec{p}}^2}{2m_e}|f\rangle
-=-(\epsilon-v)|f\rangle
+=(\epsilon-v)|f\rangle
 \nonumber\\
 \hat{t}|\dot{f}\rangle&=&\frac{\hat{\vec{p}}^2}{2m_e}|\dot{f}\rangle
-=|f\rangle-(\epsilon-v)|\dot{f}\rangle
+=|f\rangle+(\epsilon-v)|\dot{f}\rangle
 \nonumber\\
-\hat{t}|\ddot{f}\rangle&=&\frac{\hat{\vec{p}}^2}{2m_e}|\dot{f}\rangle
-=2|\dot{f}\rangle-(\epsilon-v)|\ddot{f}\rangle
+\hat{t}|\ddot{f}\rangle&=&\frac{\hat{\vec{p}}^2}{2m_e}|\ddot{f}\rangle
+=2|\dot{f}\rangle+(\epsilon-v)|\ddot{f}\rangle
+\nonumber\\
+\hat{t}|\dddot{f}\rangle&=&\frac{\hat{\vec{p}}^2}{2m_e}|\dddot{f}\rangle
+=3|\ddot{f}\rangle+(\epsilon-v)|\dddot{f}\rangle
 \end{eqnarray}
 
 Finally, we match these three functions onto the node-reduced wave
 function so that
 \begin{eqnarray}
 |\tilde{\phi}\rangle=|f\rangle c_1 
-+|\dot{f}\rangle c_2+|\ddot{f}\rangle c_3
++|\dot{f}\rangle c_2
++|\ddot{f}\rangle c_3
++|\dddot{f}\rangle c_4
 \end{eqnarray}
 so that value, derivative and (if requested) the kinetic energy
-density at the cutoff radius agree.
+density and its derivative at the cutoff radius agree.
+
+The coefficients are computed as follows:
+\begin{enumerate}
+\item we calculate the value and derivative of
+  $\phi,f,\dot{f},\ddot{f},\dddot{f}$ and of their kinetic energies.
+\item we add $f,\dot{f}$ to $\ddot{f},\dddot{f}$ so that their value
+  and derivatives at $r_c$ vanish, and we replace $\phi$
+  differentiably by $f,\dot{f}$ inside $r_c$.
+\begin{eqnarray}
+\phi(r)&=&f(r)c_1 + \dot{f}(r)c_2
+\\
+\left(\begin{array}{c}\phi(r_c)\\\phi'(r_c)\end{array}\right)
+&=&
+\left(\begin{array}{cc}f(r_c)&\dot{f}(r_c)\\f'(r_c)&\dot{f}'(r_c)\end{array}\right)
+\left(\begin{array}{c}c_1\\c_2\end{array}\right)
+\nonumber\\
+\left(\begin{array}{c}c_1\\c_2\end{array}\right)
+&=&
+\frac{1}{f(r_c)\dot{f'}(r_c)-f'(r_c)\dot{f}(r_c)}
+\left(\begin{array}{cc}\dot{f'}(r_c)&-\dot{f}(r_c)\\-f'(r_c)&f(r_c)\end{array}\right)
+\left(\begin{array}{c}\phi(r_c)\\\phi'(r_c)\end{array}\right)
+\nonumber\\
+g_3(r)&:=&\ddot{f}(r)-f(r) c_1^{\ddot{f}}-\dot{f}(r)c_2^{\ddot{f}}
+\nonumber\\
+g_4(r)&:=&\dddot{f}(r)-f(r) c_1^{\dddot{f}}-\dot{f}(r)c_2^{\dddot{f}}
+\nonumber\\
+\left(\begin{array}{c}c^{\ddot{f}}_1\\c^{\ddot{f}}_2\end{array}\right)
+&=&
+\frac{1}{f(r_c)\dot{f'}(r_c)-f'(r_c)\dot{f}(r_c)}
+\left(\begin{array}{cc}\dot{f'}(r_c)&-\dot{f}(r_c)\\-f'(r_c)&f(r_c)\end{array}\right)
+\left(\begin{array}{c}\ddot{f}(r_c)\\\ddot{f'}(r_c)\end{array}\right)
+\end{eqnarray}
+
+\item values and derivatives of the kinetic energies are adjusted
+  consistently.
+\item then we add $\ddot{f},\dddot{f}$ to the new $\phi$, so that
+  value and derivative of $\phi$. With $t_3(r)=\hat{t}g_3(r)$ and
+  $t_4(r)=\hat{t}g_4(r)$
+\begin{eqnarray}
+\phi(r)&\leftarrow&\phi(r)-g_3(r)c_3 - g_4(r)c_4
+\nonumber\\
+\left(\begin{array}{c}
+\hat{t}\phi(r_c)
+\\
+(\hat{t}\phi)'(r_c)
+\end{array}\right)
+&=&
+\left(\begin{array}{cc}t_3(r_c)&t_4(r_c)\\
+t'_3(r_c)&t'_4(r_c)\end{array}\right)
+\left(\begin{array}{c}c_3\\c_4\end{array}\right)
+\nonumber\\
+\left(\begin{array}{c}c_3\\c_4\end{array}\right)
+&=&
+\frac{1}{t_3(r_c)t'_4(r_c)-t'_3(r_c)t_4(r_c)}
+\left(\begin{array}{cc}t'_4(r_c)&-t_4(r_c)\\
+-t'_3(r_c)&t_3(r_c)\end{array}\right)
+\left(\begin{array}{c}\hat{t}\phi(r_c)\\(\hat{t}\phi)'(r_c)\end{array}\right)
+\end{eqnarray}
+\end{enumerate}
+Thus we end up with a pseudo wave function that matches the node-less
+wave function with value and derivative, as well as with value and
+derivative of $\hat{t}\phi$.
+
+
+
 
 %====================================================================
 \section{Relativistic effects}
