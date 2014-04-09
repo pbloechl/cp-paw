@@ -807,7 +807,38 @@ is calculated first using \verb|potpar1(isp)%prok| and
   contribution.}
 
 
+%====================================================================
+\section{U-tensor}
+%====================================================================
+%====================================================================
+\section{Double-counting correction}
+%====================================================================
+The double-counting correction is that of Eq.~36 of the paper by
+Bl\"ochl, Walther, Pruschke\cite{bloechl11_prb84_205101}.
+\begin{eqnarray}
+E_{xc}^{\hat{W}_R}=\int d^3r\; n^\chi_R(\vec{r})
+\epsilon_{xc}[n^\chi_{\sigma,\sigma'}(\vec{r})]
+\frac{n^\chi_R(\vec{r})}{n^\chi(\vec{r})}
+\end{eqnarray}
+The exchange correlation density is calculated with the correlated
+orbitals, but there is an additional factor, which cuts of the
+exchange correlation contribution at large radii, where the density
+vanishes.
 
+Idea!
+\begin{eqnarray}
+E_{xc}^{\hat{W}_R}=\sum_{a,b,c,d}\int d^3r\; 
+\chi^*_a(r)\chi_b(r)\chi^*_d(r)\chi_c(r)
+\frac{\epsilon_{xc}[n^\chi_{\sigma,\sigma'}(\vec{r})]}
+{n^\chi(\vec{r})}
+\end{eqnarray}
+
+
+
+
+We start from two density matrices, which are the same at the moment.
+
+see \verb|lmto_simpledc_new|.
 
 
 
@@ -819,24 +850,13 @@ is calculated first using \verb|potpar1(isp)%prok| and
 \section{Workflow}
 %====================================================================
 \begin{verbatim}
----initialization-----
-POTPAR = potential parameters
-SBAR = screened structureconstants
-<ptilde|chitilde>
-tailed partial waves
-  overlap (Onsite) 
-  utensor (Onsite)
-  utensor (offsite)
-...
-----cycle-----------
-TBC=<pi-tilde|psi> from PROJ=<ptilde|psitide>
-DENMAT density matrix in local orbitals
-...
-total energy and derivatives
-HAMIL hamiltonian matrix in tight-binding orbitals
-...
-HTBC = de/dtbc * 1/f
-HPROJ = de/dproj * 1/f
+---initialization----- POTPAR = potential parameters SBAR = screened
+ structureconstants <ptilde|chitilde> tailed partial waves overlap
+ (Onsite) utensor (Onsite) utensor (offsite) ...  ----cycle-----------
+ TBC=<pi-tilde|psi> from PROJ=<ptilde|psitide> DENMAT density matrix
+ in local orbitals ...  total energy and derivatives HAMIL hamiltonian
+ matrix in tight-binding orbitals ...  HTBC = de/dtbc * 1/f HPROJ =
+ de/dproj * 1/f
 \end{verbatim}
 
 %====================================================================
@@ -1218,7 +1238,7 @@ First the interstitial orbital is determined
 
 This implies that within the sphere centered at $R_\beta$ only the
 expansion into bare bessel functions survive, while outside only the
-bare Hankel function is considsered.
+bare Hankel function is considered.
 
 
 
@@ -1229,6 +1249,8 @@ bare Hankel function is considsered.
 %=======================================================================
 \section{Silicon}
 %=======================================================================
+The files are in \url{~/Tree/Projects/SetupTests/Si}.
+
 I performed calculation for a silicon crystal. We used a mixing of the
 lcoal exchange of $\alpha_X=0.1$. The local basiset included one
 s-type and one p-type tight-binding function.
@@ -1238,20 +1260,45 @@ The following dependencies have been explored:
 %
 %================= k2 ================================================
 \item kinetic energy of the Hankel function: $K2=0,\ldots,-0.5$
+\begin{figure}[h!]
 \begin{center}
-\includegraphics[width=0.4\linewidth,clip=true]{Figs/Eofk2si/eofk2si110.eps}
-\includegraphics[width=0.4\linewidth,clip=true]{Figs/Eofk2si/gapofk2si110.eps}
+\includegraphics[width=0.4\linewidth,clip=true]{Figs/Eofk2si/eofk2.eps}
+\includegraphics[width=0.4\linewidth,clip=true]{Figs/Gapofk2si/gapofk2.eps}
 \end{center}
+\caption{Energy in Hartree and band gap in eV of the silicon crystal
+  as function of the kinetic energy (times -0.01) of the envelope
+  function for the PBE functional (black; none), local Hartree-Fock
+  (red; onsite or local) NDDO-type exchange, i.e density of one site
+  with the density on a bond partner (blue, NDDO), terms with three
+  orbitals on one site and one on the bond partner (green NDDO+31) and
+  the exchange of the bond density with itself (orange, all bond).
+  The full line is the result for one s-type and one p-type
+  orbital. For the dashe4d lines also d-type orbitals are
+  included. The dotted lines are calculated with double orbitals for
+  s,p and single orbitals for d.}
+\end{figure}
 %
 %================= raug ================================================
 \item Augmentation radius. The augmentation radius is the radius at
   which the partial waves are matched to the envelope function. It is
   also the radius for the sphere used to derive the projector function
   onto the local orbitals.
+\begin{figure}[h!]
 \begin{center}
-\includegraphics[width=0.5\linewidth,clip=true]{Figs/Eofraugsi/eofraug_110.eps}
-\includegraphics[width=0.4\linewidth,clip=true]{Figs/Eofraugsi/gapofraugsi110.eps}\hfill
+\includegraphics[width=0.5\linewidth,clip=true]{Figs/Eofraugsi/eofraug.eps}
+\includegraphics[width=0.4\linewidth,clip=true]{Figs/Gapofraugsi/gapofraug.eps}\hfill
 \end{center}
+\caption{Energy in Hartree and band gap in eV of the silicon crystal
+  as function of the augmentation radius for the PBE functional
+  (black; none), local Hartree-Fock (red; onsite or local) NDDO-type
+  exchange, i.e density of one site with the density on a bond partner
+  (blue, NDDO), terms with three orbitals on one site and one on the
+  bond partner (green NDDO+31) and the exchange of the bond density
+  with itself (orange, all bond).  The full line is the result for one
+  s-type and one p-type orbital. For the dashe4d lines also d-type
+  orbitals are included. The dotted lines are calculated with double
+  orbitals for s,p and single orbitals for d.}
+\end{figure}
 The procedure apparently breaks down completely, if the augmentation
 radius is too large. The dependency becomes stronger, if more
 non-local terms are included. This may be due to the fact that the
@@ -1260,26 +1307,43 @@ double counting term is only included for the local terms.
 %================= rtail ================================================
 \item tail matching radius
 \begin{center}
-\includegraphics[width=0.4\linewidth,clip=true]{Figs/Eofrtailsi/eofrtailsi110.eps}
-\includegraphics[width=0.4\linewidth,clip=true]{Figs/Eofrtailsi/eofrtailsi110hr.eps}
+\includegraphics[width=0.4\linewidth,clip=true]{Figs/Eofrtailsi/eofrtail.eps}
+\includegraphics[width=0.4\linewidth,clip=true]{Figs/Gapofrtailsi/gapofrtail.eps}
 \\
-\includegraphics[width=0.4\linewidth,clip=true]{Figs/Eofrtailsi/gapofrtailsi110.eps}
+\includegraphics[width=0.4\linewidth,clip=true]
+{Figs/Eofrtailsi/eofrtailsi110hr.eps}
 \end{center}
 \end{itemize}
+%=======================================================================
+\subsection{Summary}
+%=======================================================================
+\begin{itemize}
+\item The augmentation radius has the largest effects on the results
+  both for the gap and for the total energy. Beyond a certain radius
+  ($>1.2~r_{cov}$) the calculation becomes even unstable. For an
+  ``overcomplete TB-basisset $2s+2p+1d$ teh calculationb also fails for
+  ($<1.1~r_{cov}$).
+%
+\item It becomes evident that the energy is rather insensitive to the
+  parameters describing the local orbitals for local exchange and the
+  NDDO terms. Additional terms such as ``31'' and ``bondx'', which
+  include the bond overlap density $\chi_R(r)\chi_{R'}(r)$ lead to a
+  very strong dependency on the choice of orbitals. Note that
+  0.05~H$\approx$1.4~eV!
 
-The augmentation radius has the largest effects on the results both
-for the gap and for the total energy. Beyond a certain radius the
-calculation becomes even unstable.
+  This may be due to the poor description of the bond density by the
+  exponential tails ofg the tailed orbitals.
 
-It becomes evident that the energy is rather insensitive to the
-parameters describing the local orbitals for local exchange and the
-NDDO terms. As soon as the bond overlap density
-$\chi_R(r)\chi_{R'}(r)$ is included the dependency becomes very
-important. Note that 0.05~H$\approx$1.4~eV!
-
-It should be noted that the double counting term is included only for
-local exchange.
-
+  It may also be due to the fact the these terms are not compensated
+  by the double counting term.
+% 
+\item It should be noted that the double counting term is included
+  only for local exchange.
+%
+\item Choose value of $-0.2<k^2<-0.5$~H 
+%
+\item Choose value of $r_{tail}=1.2 r_{cov}$
+\end{itemize}
 
 
 
