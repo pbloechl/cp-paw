@@ -40,7 +40,9 @@ http://www.pt.tu-clausthal.de/atp/}
 %====================================================================
 The purpose of the DMFT object is to prepare an interface to the
 solver for a quantum impurity, in the context of dynamical mean-field
-theory.
+theory. The derivations here follow closely the paper of Bl\"ochl,
+Pruschke and Potthoff\cite{bloechl13_prb88_25139}, in the following
+referred to \textbf{BPP}\index{BPP}.
 
 %====================================================================
 \section{Grand potential and density-matrix 
@@ -60,7 +62,8 @@ The \textbf{grand potential}\index{grand potential}
 \label{eq:gcpdm2}
 \end{eqnarray}
 where the \textbf{density-matrix functional}\index{density-matrix
-  functional} is expressed with the \textbf{Luttinger-Ward
+  functional} $\tilde{F}_\beta^{\hat{W}}$ is
+expressed\cite{bloechl13_prb88_25139} by the \textbf{Luttinger-Ward
   functional}\index{Luttinger-Ward functional}
 \cite{luttinger60_pr118_1417} $\Phi^{LW}[\mat{G},\hat{W}]$ as
 \begin{eqnarray}
@@ -76,17 +79,17 @@ where the \textbf{density-matrix functional}\index{density-matrix
 -\frac{1}{\beta}\sum_\nu\Tr\Bigl\lbrace
 \ln\Bigl[
 \mat{1}-
-\Bigl(i\hbar\omega_\nu+\mu)\mat{1}-\mat{h}_{\rho}\Bigr)^{-1}
-\Bigl(\mat{h}'+\mat{\Sigma}(i\omega_\nu)-\mat{h}_{\rho}\Bigr)
+\Bigl(i\hbar\omega_\nu+\mu)\mat{1}-\bar{\mat{h}}\Bigr)^{-1}
+\Bigl(\mat{h}'+\mat{\Sigma}(i\omega_\nu)-\bar{\mat{h}}\Bigr)
 \Bigr]
 \nonumber\\&&
-+(\mat{h}'+\mat{\Sigma}(i\omega_\nu)-\mat{h}_\rho)\mat{G}(i\omega_\nu)
++(\mat{h}'+\mat{\Sigma}(i\omega_\nu)-\bar{\mat{h}})\mat{G}(i\omega_\nu)
 -
 \Bigl[
 \mat{G}(i\omega_\nu)
--\Bigl(i\hbar\omega_\nu+\mu)\mat{1}-\mat{h}_{\rho}\Bigr)^{-1}
+-\Bigl(i\hbar\omega_\nu+\mu)\mat{1}-\bar{\mat{h}}\Bigr)^{-1}
 \Bigr]
-\Bigl(\mat{h}'-\mat{h}_\rho\Bigr)\Bigr\rbrace
+\Bigl(\mat{h}'-\bar{\mat{h}}\Bigr)\Bigr\rbrace
 \biggr\rbrace
 \label{eq:dmfgreen}
 \end{eqnarray}
@@ -95,39 +98,48 @@ role of \textbf{natural orbitals}\index{natural orbitals}, the
 eigenstates of the \textbf{one-particle density
   matrix}\index{one-particle density matrix}\index{density matrix}
 $\mat{\rho}$. $f_n$ are the occupations, the eigenvalues of the
-one-particle density matrix. The chemical potential is $\mu$ and
-$\beta=1/(k_BT)$. The full Hamiltonian consists of a non-interacting
-part $\hat{h}=\frac{\hat{p}^2}{2m_0}+\hat{v}_{ext}$ and an
-electron-electron interaction $\hat{W}$.
+one-particle density matrix. The orthonormality of the natural
+orbitals is enforced with the method of Lagrange multipliers. The
+Lagrange multipliers are $\Lambda$. The chemical potential is $\mu$
+and $\beta=1/(k_BT)$. The full Hamiltonian consists of a
+non-interacting part $\hat{h}=\frac{\hat{p}^2}{2m_0}+\hat{v}_{ext}$
+and an electron-electron interaction $\hat{W}$. 
 
-The Matsubara sum runs over the \textbf{Matsubara
-  frequencies}\index{Matsubara frequencies} (see
-appendix~\ref{app:matsubarafreq} on p.~\pageref{app:matsubarafreq})
+With $\stat_x Y$, we denote the stationary condition, which requires
+that the partial derivatives of $Y$ with respect to the variable $x$ is
+obeyed. It explicitely does not require the stationary point to be an
+extremum.
+
+$\mat{G}(i\omega)$ is the Green's function and
+$\mat{\Sigma}(i\omega_\nu)$ is the self energy.  The Matsubara sum
+runs over the \textbf{Matsubara frequencies}\index{Matsubara
+  frequencies} (see appendix~\ref{app:matsubarafreq} on
+p.~\pageref{app:matsubarafreq})
 \begin{eqnarray}
 \omega_\nu=(2\nu-1)\frac{\pi}{\hbar\beta}
 \qquad\text{for $\nu\in\mathbb{Z}$}
 \end{eqnarray}
 
-The Hamiltonian $\mat{h}_\rho$ is a non-local Hamiltonian directly
-related to the one-particle density matrix via
-\begin{eqnarray}
-\mat{h}_\rho=\mu\mat{1}+k_BT\ln
-\left[\frac{\mat{1}-\mat{\rho}}{\mat{\rho}}\right]
-\end{eqnarray}
-The Hamiltonian $\mat{h}'$, on the other hand, is a Lagrange multiplier.
-
-$\mat{G}(i\omega)$ is the Green's function and $\mat{\Sigma}(i\omega_\nu)$
-is the self energy. The Green's function is related to the density matrix by
+$\mat{h}'$ are the
+Lagrange multipliers for the density-matrix constraint.
 \begin{eqnarray}
 \mat{\rho}=\frac{1}{\beta}
 \sum_\nu\e{i\beta\hbar\omega_\nu0^+}\mat{G}(i\omega_\nu)
 \label{eq:rhoofg}
 \end{eqnarray}
-This latter equation is a consequence of the startionarity with
-respect to the Lagrange multiplier $\mat{h}'$
+
+The Hamiltonian $\bar{\mat{h}}$ is a non-local Hamiltonian directly
+related to the one-particle density matrix via (see Eq.~BPP24)
+\begin{eqnarray}
+\bar{\mat{h}}=\mu\mat{1}+k_BT\ln
+\left[\frac{\mat{1}-\mat{\rho}}{\mat{\rho}}\right]
+\label{eq:defhbar}
+\end{eqnarray}
 
 
-In practice, we calculate the \textbf{Helmholtz
+
+In practice, we perform calculations at fixed particle
+number. Therefore, we calculate the \textbf{Helmholtz
   potential}\index{Helmholtz potential}
 \begin{eqnarray}
 A_{\beta,N}[\hat{h}+\hat{W}]
@@ -145,10 +157,10 @@ A_{\beta,N}[\hat{h}+\hat{W}]
 \biggr\rbrace
 \label{eq:hp}
 \end{eqnarray}
-where $Q$ is the density matrix functional without the entropy
-contribution.  The entropy contribution is taken care of with the
-Mermin functional\cite{mermin65_pr137_a1441} to describe DFT
-calculations with electrons at finite temperature.
+where $Q^{\hat{W}}_\beta$ is the density matrix functional without the
+  entropy contribution.  The entropy contribution is taken care of
+  with the Mermin functional\cite{mermin65_pr137_a1441} to describe
+  DFT calculations with electrons at finite temperature.
 \begin{eqnarray}
 Q^{\hat{W}}_\beta[\mat{\rho}]
 &=&\tilde{F}^{\hat{W}}_\beta[\mat{\rho}]
@@ -163,85 +175,66 @@ Q^{\hat{W}}_\beta[\mat{\rho}]
 -\frac{1}{\beta}\sum_\nu\Tr\Bigl\lbrace
 \ln\Bigl[
 \mat{1}-
-\Bigl(i\hbar\omega_\nu+\mu)\mat{1}-\mat{h}_{\rho}\Bigr)^{-1}
-\Bigl(\mat{h}'+\mat{\Sigma}(i\omega_\nu)-\mat{h}_{\rho}\Bigr)
+\Bigl(i\hbar\omega_\nu+\mu)\mat{1}-\bar{\mat{h}}\Bigr)^{-1}
+\Bigl(\mat{h}'+\mat{\Sigma}(i\omega_\nu)-\bar{\mat{h}}\Bigr)
 \Bigr]
 \nonumber\\&&
-+(\mat{h}'+\mat{\Sigma}(i\omega_\nu)-\mat{h}_\rho)\mat{G}(i\omega_\nu)
++(\mat{h}'+\mat{\Sigma}(i\omega_\nu)-\bar{\mat{h}})\mat{G}(i\omega_\nu)
 -
 \Bigl[
 \mat{G}(i\omega_\nu)
--\Bigl(i\hbar\omega_\nu+\mu)\mat{1}-\mat{h}_{\rho}\Bigr)^{-1}
+-\Bigl(i\hbar\omega_\nu+\mu)\mat{1}-\bar{\mat{h}}\Bigr)^{-1}
 \Bigr]
-\Bigl(\mat{h}'-\mat{h}_\rho\Bigr)\Bigr\rbrace
+\Bigl(\mat{h}'-\bar{\mat{h}}\Bigr)\Bigr\rbrace
 \biggr\rbrace
 \label{eq:dmfQgreen}
 \end{eqnarray}
 
 %====================================================================
-\section{Projection onto local orbitals}
+\section{Separate out static correlations: Towards DFT+}
 %====================================================================
-In order to integrate DMFT into the DFT code, we define first a local
-basis set of orbitals $|\chi_a\rangle$. These orbitals are not
-orthogonal. The orbitals are spin orbitals, that is, each is a
-two-component wave function with a spin-up and a spin-down
-component. If the spin orbitals are eigenstates of $\hat{S}_z$, one or
-the other of the components vanishes.
-
-The decomposition of the Kohn-Sham wave functions,
-which in the the context of rDMFT are the natural orbitals, is
-obtained via the projector functions $\langle\pi_a|$ as
+In appendix~\ref{sec:sdlitcorrelation}, it is shown that the
+correlation contribution $Q^{\hat{W}}_\beta$ can be divided into
+one part having a frequency-dependent self energy and several
+contributions having a frequency-independent self energy. The
+Luttinger-Ward functional with frequency-independent self energy can
+be expressed by the density matrix alone, that is the Green's function
+enters always in the form of the integral
 \begin{eqnarray}
-|\psi_n\rangle=\sum_a|\chi_a\rangle\langle\pi_a|\psi_n\rangle
-+|\delta\psi_n\rangle
-\end{eqnarray}
-where the projector functions obey the bi-orthogonality condition
-\begin{eqnarray}
-\langle\pi_a|\chi_b\rangle=\delta_{a,b}\;,
-\end{eqnarray}
-and where $|\delta\psi_n\rangle$ is a remainder which is left over if the
-local orbitals do not form a complete basis set. This remainder has
-the property
-\begin{eqnarray}
-\langle\pi_a|\delta\psi_n\rangle=0
+\frac{1}{\beta}\sum_\nu\mat{G}(i\omega_\nu)\e{i\hbar\omega\beta0^+}
 \end{eqnarray}
 
-The interaction $\hat{W}$  
+This notion allows us to split the interaction contribution
+$Q^{\hat{W}}$ into different parts as
 \begin{eqnarray}
-\hat{W}
-=\frac{1}{2}\sum_{a,b,c,d} U_{a,b,d,c}\hat{c}^\dagger_a\hat{c}^\dagger_b\hat{c}_c\hat{c}_d
+Q^{\hat{W}}[\mat{\rho}]
+\approx Q^{DFT,\hat{W}}[\mat{\rho}]-Q^{DFT,\hat{W}_1}[\mat{\rho}]
++Q^{HF,\hat{W}_1}[\mat{\rho}]-Q^{HF,\hat{W}_2}[\mat{\rho}]
++Q^{\hat{W}_2}[\mat{\rho}]
 \end{eqnarray}
-is expressed by the \textbf{U-tensor}\index{U-tensor}
-\begin{eqnarray}
-U_{a,b,c,d}=\sum_{\sigma,\sigma'}\int d^3r\int d^3r\;
-\frac{e^2\chi^*_a(\vec{r},\sigma)\chi^*_b(\vec{r'},\sigma')
-\chi_c(\vec{r},\sigma)\chi_d(\vec{r'},\sigma')}
-{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
-\end{eqnarray}.
+of which only the last term has a frequency dependent self energy.
 
-The U-tensor can then be approximated to yield $\hat{W}_1$ and
-$\hat{W}_2$. Typically, these approximations amount to multiplying
-matrix elements with scale factors and to leavingf certain elements
-out completely.
+In order to keep the computational effort at a reasonable level, we
+treat the full interaction on the most simple level of the
+description, namely DFT, while the most complex many-particle
+treatment is limited to the most approximate interaction, namely
+$\hat{W}_2$. 
 
-%====================================================================
-\subsubsection{Non-orthonormal orbitals}
-%====================================================================
-The main difference\cite{bloechl11_prb84_205101} between orthonormal
-and non-orthonormal basisets is that the commutator relation
+With\footnote{A proper description should replace $E_{xc}$ with
+  $U_{xc}$, the interaction part at full interaction
+  strength. $E_{xc}$ contains the difference of the kinetic energy of
+  the fully interacting and the non-interacting electron gas at the
+  same density. Because the density matrix functional works with the
+  full interaction, this contribution must be removed.}
 \begin{eqnarray}
-\Bigl[\hat{c}^\dagger_a,\hat{c}_b\Bigr]_+=\langle\pi_b|\pi_a\rangle
+Q^{DFT,\hat{W}}[\hat{\rho}]=
+\frac{1}{2}\int d^3r\int d^3r'
+\frac{e^2n(\vec{r})n(\vec{r'})}{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
++E_{xc}[n]\;,
 \end{eqnarray}
-
-Therefore, it is adviseable to first orthonormalize the local orbital
-basisset.
-
-%====================================================================
-\section{DFT and many-particle corrections}
-%====================================================================
-In order to integrate correlations into a DFT-like framework, we split
-off the Helmholtz potential of a DFT calculation, so that the
-Helmholtz potential has the form of a DFT term and a correction.
+and a screened Hartree-Fock contribution $Q^{HF,\hat{W}}[\hat{\rho}]$
+described later, we obtain
+\begin{myshadowminipage}{Helmholtz potential}
 \begin{eqnarray}
 A_{\beta,N}[\hat{h}+\hat{W}]
 &=&\min_{|\psi_n\rangle,f_n\in[0,1]}\stat_{\mu,\Lambda}
@@ -255,12 +248,12 @@ A_{\beta,N}[\hat{h}+\hat{W}]
 +\frac{1}{\beta}\sum_n\Bigl[f_n\ln(f_n)+(1-f_n)\ln(1-f_n)\Bigr]
 \nonumber\\
 &&+
-\underbrace{Q_{\text{X},\beta}^{\hat{W}_1}[\mat{\rho}]
-   -Q_{\text{DFT},\beta}^{\hat{W}_1}[\mat{\rho},n]}_{\text{local hybrid functional}}
+\underbrace{Q_{\beta}^{HF,\hat{W}_1}[\mat{\rho}]
+   -Q_{\beta}^{DFT,\hat{W}_1}[\mat{\rho},n]}_{\text{local hybrid functional}}
 \quad+\quad
 \underbrace{Q_{\beta}^{\hat{W}_2}[\mat{\rho}]
--Q_{\text{X},\beta}^{\hat{W}_2}[\mat{\rho}]}
-_{Q_{\text{dyn},\beta}^{\hat{W}_2}[\mat{\rho}]}
+-Q_{\beta}^{HF,\hat{W}_2}[\mat{\rho}]}
+_{Q_{\beta}^{dyn,\hat{W}_2}[\mat{\rho}]}
 \nonumber\\
 &&
 -\mu\Bigl[\sum_n f_n-N\Bigr]
@@ -278,193 +271,338 @@ n(\vec{r})&=&\sum_\sigma n(\vec{r},\sigma,\sigma)
 \nonumber\\
 \rho_{a,b}&=&\sum_n\langle\pi_a|\psi_n\rangle 
 f_n\langle\psi|\pi_b\rangle 
+\label{eq:denmatmatel}
 \end{eqnarray}
-
+\end{myshadowminipage}
 
 We distinguish two different corrections:
 \begin{enumerate}
 \item a screened Hartree-Fock correction with an interaction
-  $\hat{W}_1$. For this purpose we restrict the U-tensor to onsite
-  contributions and certain bond-terms. In the spirit of the hybrid
-  functionals or the GW method, we scale the U-tensor. The neglect of
-  U-tensor elements that do not reside on an atom pair, is motivated
-  by the fact that screening becomes stronger with increasing
-  distance. Part of this approximation is to neglect the interactions
-  not captured by the local orbital basis. This term is evaluates in
-  the \verb|paw_lmto|-object.
-\item a dynamic correction using an interaction $\hat{W}_2$. In the
-  spirit of the local approximation the Interaction of this term is
-  limited to on-site terms only. Only the dynamic correlations
+  $\hat{W}_1$. 
+
+  The Hartree-Fock term $Q^{HF,\hat{W}}_{\beta}$ is equal to
+  $Q^{\hat{W}}_\beta$ when only the first-order term of the
+  Luttinger-Ward functional in the interaction is considered.  It is
+  obtained as (BPP-Eq.43)
+  \begin{eqnarray}
+  Q_{\beta}^{HF,\hat{W}}[\mat{\rho}]
+  =\frac{1}{2}\sum_{a,b,c,d}U_{a,b,d,c}
+   \Bigl[\rho_{d,a}\rho_{c,b}-\rho_{c,a}\rho_{d,b}\Bigr]
+  \end{eqnarray}
+  (See also appendix~\ref{app:hfcontrib} on p.\pageref{app:hfcontrib}.)
+
+  For this purpose we restrict the U-tensor to onsite contributions
+  and certain bond-terms. In the spirit of the hybrid functionals or
+  the GW method, we scale the U-tensor. The neglect of U-tensor
+  elements that do not reside on an atom pair is motivated by the fact
+  that screening becomes stronger with increasing distance. Part of
+  this approximation is to neglect the interactions not captured by
+  the local orbital basis. This term is evaluated in the
+  \verb|paw_lmto|-object.
+%
+\item a DFT double counting term $Q^{DFT,\hat{W}_1}_\beta$: It mimicks
+  the DFT contribution when the interactiopn is limited to
+  $\hat{W}_1$. The basic ideas behind the double counting correction
+  has been described in a previous paper\cite{bloechl11_prb84_205101}.
+%
+\item a dynamic-correlation correction 
+  \begin{eqnarray}
+  Q^{dyn,\hat{W}_2}_\beta\defas Q^{\hat{W}_2}_\beta-Q^{HF,\hat{W}_2}_\beta
+  \end{eqnarray}
+  contains an interaction term calculated on the highest level of
+  theory such as a many-body calculation. The corresponding
+  Hartree-Fock term is immediately substracted as double counting
+  correction.
+
+  The dynamic-correlation correction uses an interaction
+  $\hat{W}_2$. In the spirit of the local approximation, the
+  interaction of this term is limited to on-site terms only. The
+  evaluation of the dynamic correlations is the only contribution that
   requires expensive many-particle calculations.
+
+  This term is further elaborated in section~\ref{sec:dyncorelcorr}
 \end{enumerate}
 
 
-By formulating these terms in correction, we ensure
-that an approximation of the U-tensor only affects a ``small''
-correction and does not impact the main result.
-
-
-%====================================================================
-\subsection{DFT double-counting correction}
-%====================================================================
-The basic ideas behind the double counting correction has been
-described in a previous paper\cite{bloechl11_prb84_205101}.
-
-
-%====================================================================
-\subsection{Screened Hartree Fock correction}
-%====================================================================
-The Hartree-Fock term $Q^{\hat{W}}_{X,\beta}$ is equal to
-$Q^{\hat{W}}_\beta$ when only the first-order term of the
-Luttinger-Ward functional in the interaction is considered.  It is
-obtained as
+%==========================================================
+\subsubsection{Stationary conditions for wave functions and occupations}
+%==========================================================
+Let us now explore the stationary conditions in \eq{eq:hp}: We use the
+representation of the wave functions $|\psi_n\rangle=\sum_a
+|\chi_a\rangle\langle\pi_a|\psi_n\rangle$ in terms of local orbitals
+$|\chi_a\rangle$.
 \begin{eqnarray}
-Q_{\text{X},\beta}^{\hat{W}}[\mat{\rho}]
-=\frac{1}{2}\sum_{a,b,c,d}U_{a,b,d,c}
-\Bigl[\rho_{d,a}\rho_{c,b}-\rho_{c,a}\rho_{d,b}\Bigr]
+\biggl[\frac{\hat{\vec{p}}^2}{2m_e}+v_{ext}+v_{Hartree}+v_{xc}
+&
++&\sum_{a,b}|\pi_a\rangle\biggl(
+\frac{\delta Q^{\hat{W}_1}_{HF,\beta}}{\delta\rho_{a,b}}
+-\frac{\delta Q^{\hat{W}_1}_{DFT,\beta}}{\delta\rho_{a,b}}
++\frac{\delta Q^{\hat{W}_2}_{dyn,\beta}}{\delta\rho_{a,b}}
+\biggr)\langle\pi_b|
+\biggr]|\psi_n\rangle
+\nonumber\\
+&=&\sum_{m}|\psi_m\rangle\Lambda_{m,n}\frac{1}{f_n}
+\end{eqnarray}
+\begin{eqnarray}
+\langle\psi_n|
+\biggl[
+\frac{\hat{\vec{p}}^2}{2m_e}+v_{ext}+v_{Hartree}+v_{xc}
+&+&\sum_{a,b}|\pi_a\rangle\biggl(
+\frac{\delta Q^{\hat{W}_1}_{HF,\beta}}{\delta\rho_{a,b}}
+-\frac{\delta Q^{\hat{W}_1}_{DFT,\beta}}{\delta\rho_{a,b}}
++\frac{\delta Q^{\hat{W}_2}_{dyn,\beta}}{\delta\rho_{a,b}}
+\biggr)\langle\pi_b|
+\biggr]|\psi_n\rangle
+\nonumber\\
+&-&\mu+\frac{1}{\beta}\ln\left[\frac{f_n}{1-f_n}\right]=0
 \end{eqnarray}
 
-The interpretation of this term is subtle because it is formulated in
-non-orthonormal orbitals. 
-\begin{itemize}
-\item We consider the expansion of Kohn-Sham orbitals in local orbitals
+These equations specify the optimum density matrix as
+\begin{myshadowminipage}{Equilibrium density matrix}
 \begin{eqnarray}
-Q_{\text{X},\beta}^{\hat{W}}[\mat{\rho}]
-&=&\frac{1}{2}\sum_{m,n}f_mf_n\int d^3r\int d^3r'\;
-\frac{e^2\Bigl(
-\phi^*_m(\vec{r})\phi^*_n(\vec{r'})\phi_n(\vec{r'})\phi_m(\vec{r})
--
-\phi^*_m(\vec{r})\phi^*_n(\vec{r'})\phi_m(\vec{r'})\phi_n(\vec{r})\Bigr)
-}{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
-\nonumber\\
-&=&\frac{1}{2}\sum_{a,b,c,d}
-\underbrace{
-\Bigl(\sum_{m}\langle\pi_a|\phi_m\rangle f_m\langle\phi_m|\pi_b\rangle\Bigr)
-}_{\rho_{a,b}}
-\underbrace{
-\Bigl(\sum_{n}\langle\pi_c|\phi_n\rangle f_n\langle\phi_n|\pi_d\rangle\Bigr)
-}_{\rho_{c,d}}
-\nonumber\\
-&&\times
-\int d^3r\int d^3r'\;
-\frac{e^2\Bigl(
-\chi^*_b(\vec{r})\chi^*_d(\vec{r'})\chi_c(\vec{r'})\chi_a(\vec{r})
--
-\chi^*_b(\vec{r})\chi^*_d(\vec{r'})\chi_a(\vec{r'})\chi_c(\vec{r})\Bigr)
-}{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
-\\
-&=&\frac{1}{2}\sum_{a,b,c,d}\rho_{a,b}\rho_{c,d}
-\Bigl(U_{b,d,a,c}-U_{b,d,c,a}\Bigr)
-\\
-&=&\frac{1}{2}\sum_{a,b,c,d}
-U_{a,b,d,c}\Bigl(\rho_{d,a}\rho_{c,b}-\rho_{c,a}\rho_{d,b}\Bigr)
+\hat{\rho}&=&\left[\hat{1}+\e{\beta(\hat{h}_{eff}-\mu)}\right]^{-1}
+\label{eq:rhoopt}
 \end{eqnarray}
-%
-\item Consider expectation valiue of a Slater determinant expressed in
-  terms of non-orthonormal local orbitals. The Slater determinant has the form
-  \begin{eqnarray}
-    \Psi(\vec{x}_1,\ldots,\vec{x}_n)
-    =C\det\left| \mat{M}\right|=C\sum_{i_1,\ldots,i_N=1}^N
-\epsilon_{i_1,\ldots,i_N}\;   
-\chi_{i_1}(\vec{x}_1)\cdots\chi_{i_N}(\vec{x}_N)
-  \end{eqnarray}
- with $M_{i,j}=\chi_{i}(\vec{x}_j)$ and the normalization constant
- $C$.  $\epsilon_{i_1,\ldots,i_N}$ is the fully antisymmetric tensor
- defined by $\epsilon_{1,2,\ldots,N}=1$, by the fact that it changes
- sign under permutation of two indices, and that it vanishes whenever
- two indices are identical.
-
-\petertt{This argument needs to be completed. Probably we obtain the
-  same result as in the first case. This needs to be shown by
-  performing a transformation onto orthogonal one-particle states,
-  that span the same Hilbert space.}
-
-\end{itemize}
-
+with the effective Hamiltonian
+\begin{eqnarray}
+\hat{h}_{eff}=\frac{\hat{\vec{p}}^2}{2m_e}+v_{ext}+v_{Hartree}+v_{xc}
+&+&\sum_{a,b}|\pi_a\rangle\biggl(
+\frac{\delta Q^{\hat{W}_1}_{HF,\beta}}{\delta\rho_{a,b}}
+-\frac{\delta Q^{\hat{W}_1}_{DFT,\beta}}{\delta\rho_{a,b}}
++\frac{\delta Q^{\hat{W}_2}_{dyn,\beta}}{\delta\rho_{a,b}}
+\biggr)\langle\pi_b|
+\nonumber\\
+\end{eqnarray}
+Note, that, in equilibrium, $\hat{h}_{eff}=\hat{h}_\rho$.
+\end{myshadowminipage}
+\eq{eq:rhoopt} can be veryfied from the stationary conditions by going
+into a basis of eigenstates of $\hat{h}_{eff}$.
 
 %====================================================================
-\subsection{Dynamic correlation correction}
+\section{Dynamic correlation correction}
+\label{sec:dyncorelcorr}
 %====================================================================
 The dynamical term $Q_{\text{dyn},\beta}^{\hat{W}}$
 is simply the difference of the complete term minus
 the Hartree-Fock contribution.
 \begin{myshadowminipage}{Dynamic correlation correction}
 \begin{eqnarray}
-Q^{\hat{W}}_{dyn,\beta}[\mat{\rho}]
-&=&\tilde{F}^{\hat{W}}_\beta[\mat{\rho}]
+Q^{\hat{W}_2}_{dyn,\beta}[\mat{\rho}]
+&=&\tilde{F}^{\hat{W}_2}_\beta[\mat{\rho}]
 -
 \frac{1}{\beta}\Tr\Bigl[
 \mat{\rho}\ln(\mat{\rho})+(\mat{1}-\mat{\rho})\ln(\mat{1}-\mat{\rho})\Bigr]
 -
-\frac{1}{2}\sum_{a,b,c,d}U_{a,b,d,c}
+\frac{1}{2}\sum_{a,b,c,d}U^{\hat{W}_2}_{a,b,d,c}
 \Bigl[\rho_{d,a}\rho_{c,b}-\rho_{c,a}\rho_{d,b}\Bigr]
 \nonumber\\
 &=&
-\stat_{\mat{h}'}\stat_{\mat{G},\mat{\Sigma}}
+\stat_{\mat{h}'_{dyn}}\stat_{\mat{G},\mat{\Sigma}_{dyn}}
 \biggl\lbrace
-\Phi^{LW}_\beta[\mat{G},\hat{W}]
--\frac{1}{\beta}\sum_\nu\Tr\Bigl\lbrace
+\Phi^{LW}_\beta[\mat{G},\hat{W}_2]-\Phi^{HF,LW}_\beta[\mat{G},\hat{W}_2]
+\nonumber\\
+&&-\frac{1}{\beta}\sum_\nu\Tr\Bigl\lbrace
 \ln\Bigl[
 \mat{1}-
-\Bigl(i\hbar\omega_\nu+\mu)\mat{1}-\mat{h}_{\rho}\Bigr)^{-1}
-\Bigl(\mat{h}'+\mat{\Sigma}(i\omega_\nu)-\mat{h}_{\rho}\Bigr)
+\Bigl((i\hbar\omega_\nu+\mu)\mat{1}-\bar{\mat{h}}\Bigr)^{-1}
+\Bigl(\mat{h}'_{dyn}+\mat{\Sigma}_{dyn}(i\omega_\nu)-\bar{\mat{h}}\Bigr)
 \Bigr]
 \nonumber\\&&
-+(\mat{h}'+\mat{\Sigma}(i\omega_\nu)-\mat{h}_\rho)\mat{G}(i\omega_\nu)
++(\mat{h}'_{dyn}+\mat{\Sigma}_{dyn}(i\omega_\nu)-\bar{\mat{h}})\mat{G}(i\omega_\nu)
 -
 \Bigl[
 \mat{G}(i\omega_\nu)
--\Bigl(i\hbar\omega_\nu+\mu)\mat{1}-\mat{h}_{\rho}\Bigr)^{-1}
+-\Bigl(i\hbar\omega_\nu+\mu)\mat{1}-\bar{\mat{h}}\Bigr)^{-1}
 \Bigr]
-\Bigl(\mat{h}'-\mat{h}_\rho\Bigr)\Bigr\rbrace
+\Bigl(\mat{h}'_{dyn}-\bar{\mat{h}}\Bigr)\Bigr\rbrace
 \biggr\rbrace
 \nonumber\\
-&&-
-\frac{1}{2}\sum_{a,b,c,d}U_{a,b,d,c}
-\Bigl[\rho_{d,a}\rho_{c,b}-\rho_{c,a}\rho_{d,b}\Bigr]
 \label{eq:dmf1green}
 \end{eqnarray}
 \end{myshadowminipage}
-
 If the Luttinger-Ward functional is expressed by Feynman diagrams, we
 can simply avoid the Hartree and the exchange term instead of
-subtracting the exchange contribution externally. The reason is that
-we may add any function in a constrained optimization that is constant
-when the constraint is obeyed. Tha advantage of this procedure is that
-the remaining functional depends much weaker on the Green's function.
+subtracting the exchange contribution externally. 
 
-The purpose of the DMFT object is to add
-\begin{eqnarray}
-Q_{\text{dyn},\beta}^{\hat{W}_2}[\mat{\rho}]
+According to appendix~\ref{sec:sdlitcorrelation}, the Hartree-Fock
+contribution can also be moved out of the variational part, where it
+can be calculated directly from the density matrix. In that case,
+however, the values of $\mat{h}'_{dyn}$ and $\mat{\Sigma}_{dyn}$ have
+different values than if they are kept inside the variational part. It
+is beneficial to keep it inside the variational principle, because the
+values of the self energy and the Lagrange multipliers will be
+smaller.
+
+%============================================================
+\subsubsection{Derivative of the dynamical correlation}
+%============================================================
+Let us form the derivative of
+$Q_{\text{dyn},\beta}^{\hat{W}_2}[\mat{\rho}]$ in all detail to avoid
+using inappropriate assumptions.
+
+
+During the derivation we use the rule for derivatives of an inverse of
+a matrix\footnote{\begin{eqnarray} 
+\mat{A}\mat{A}^{-1}=\mat{1}
+\qquad\Rightarrow\qquad
+\Bigl(d\mat{A}\Bigr)\mat{A}^{-1}
++\mat{A}\Bigl(d\mat{A}^{-1}\Bigr)=0
+\qquad\Rightarrow\qquad
+d\mat{A}^{-1}\Bigr)=-\mat{A}^{-1}\Bigl(d\mat{A}\Bigr)\mat{A}^{-1}
 \end{eqnarray}
-in the local approximation, that is for a Luttinger-Ward functional,
-that is a sum over local terms. This approximation is consistent with
-dynamical mean-field theory. In the long run, the DMFT object will
-only contribute the dynamical terms, while the Hartree-Fock term is
-taken care of in the LMTO object. This will allow to include the
-non-local Hartree-Fock terms, while the DMFT object is limited to site
-local terms for the Luttinger-Ward functional.
+}
+$d(\bar{\mat{G}}^{-1})=+\bar{\mat{G}}d\bar{\mat{h}}\bar{\mat{G}}$.
+
+We form the first variation with respect to the density matrix,
+keeping $\mat{h}'_{dyn}$, $\mat{\Sigma}_{dyn}$ and $\mat{G}$ fixed.
+\begin{eqnarray}
+d Q_{\beta}^{dyn,\hat{W}_2}
+&=&
+-\frac{1}{\beta}\sum_\nu\Tr\biggl\lbrace
+\Bigl[\mat{1}-\bar{\mat{G}}
+\Bigl(\mat{h}'_{dyn}+\mat{\Sigma}_{dyn}-\bar{\mat{h}}\Bigr)\Bigr]^{-1}
+\underbrace{
+\Bigl[-\bar{\mat{G}}d\bar{\mat{h}}\bar{\mat{G}}
+\Bigl(\mat{h}'_{dyn}+\mat{\Sigma}_{dyn}-\bar{\mat{h}}\Bigr)
++\bar{\mat{G}}d\bar{\mat{h}}\Bigr]}
+_{\bar{\mat{G}}d\bar{\mat{h}}\Bigl[\mat{1}-\bar{\mat{G}}
+\Bigl(\mat{h}'_{dyn}+\mat{\Sigma}_{dyn}-\bar{\mat{h}}\Bigr)
+\Bigr]}
+\nonumber\\
+&&-\underbrace{d\bar{\mat{h}}\mat{G}}_{(A)}-
+\Bigl[\bar{\mat{G}}d\bar{\mat{h}}\bar{\mat{G}}
+\Bigl(\mat{h}'_{dyn}-\bar{\mat{h}}\Bigr)
+-\Bigl(\underbrace{\mat{G}}_{(A)}-\bar{\mat{G}}\Bigr)d\bar{\mat{h}}\Bigr]
+\biggr\rbrace
+\nonumber\\
+&=&
+-\frac{1}{\beta}\sum_\nu\Tr\biggl\lbrace
+\underbrace{\bar{\mat{G}}d\bar{\mat{h}}}_{(B)}
+-
+\Bigl[-\bar{\mat{G}}d\bar{\mat{h}}\bar{\mat{G}}
+\Bigl(\mat{h}'_{dyn}-\bar{\mat{h}}\Bigr)
++\underbrace{\bar{\mat{G}}d\bar{\mat{h}}}_{(B)}\Bigr]
+\biggr\rbrace
+\nonumber\\
+&=&-\Tr\biggl\lbrace\Bigl(\mat{h}'_{dyn}-\bar{\mat{h}}\Bigr)
+\underbrace{\frac{1}{\beta}\sum_\nu d\bar{G}}_{d\rho}
+\biggr\rbrace
+\end{eqnarray}
+Thus, we obtain the derivative with respect to the density matrix as
+\begin{eqnarray}
+\frac{\delta Q_{\beta}^{dyn,\hat{W}_2}}{\delta\mat{\rho}}
+&=&
+-\Bigl(\mat{h}'_{dyn}-\bar{\mat{h}}\Bigr)
+\eqrel{eq:defhbar}{=}
+\mu\mat{1}+k_BT\ln\left[\frac{\mat{1}-\mat{\rho}}{\mat{\rho}}\right]
+-\mat{h}'_{dyn}
+\end{eqnarray}
+which is the desired result.
+
+The stationary condition with respect to $\mat{G}$ is
+\begin{eqnarray}
+\frac{\beta\delta\Phi^{LW}}{\delta\mat{G}}
+-\frac{\beta\delta\Phi^{HF,LW}}{\delta\mat{G}}-\mat{\Sigma}_{dyn}=0
+%\nonumber\\
+\qquad\Rightarrow\qquad
+\mat{\Sigma}_{dyn}=\frac{\beta\delta\Phi^{LW}}{\delta\mat{G}}
+-\frac{\beta\delta\Phi^{HF,LW}}{\delta\mat{G}}
+\end{eqnarray}
+and the one with respect to $\mat{\Sigma}_{dyn}$ is
+\begin{eqnarray}
+&&\Bigl[
+\mat{1}-\bar{\mat{G}}
+\Bigl(\mat{h}'_{dyn}+\mat{\Sigma}_{dyn}-\bar{\mat{h}}\Bigr)
+\Bigr]^{-1}\Bigl(-\bar{\mat{G}}\Bigr)+\mat{G}=0
+\nonumber\\
+\qquad\Rightarrow\qquad
+\mat{G}&=&\Bigl[\bar{\mat{G}}^{-1}-
+\Bigl(\mat{h}'_{dyn}+\mat{\Sigma}_{dyn}-\bar{\mat{h}}\Bigr)
+\Bigr]^{-1}
+\nonumber\\
+&=&\Bigl[(i\hbar\omega_\nu+\mu)\mat{1}-\bar{\mat{h}}
+  -\Bigl(\mat{h}'_{dyn}-\bar{\mat{h}}+\mat{\Sigma}_{dyn}\Bigr)
+\Bigr]^{-1}
+\end{eqnarray}
+
+\begin{myshadowminipage}{}
+With the new symbol
+\begin{eqnarray}
+\mat{\Gamma}\defas\bar{\mat{h}}-\mat{h}'_{dyn}
+\label{eq:defgammalagrangeq}
+\end{eqnarray}
+the derivative of the correlation contribution is
+\begin{eqnarray}
+\frac{\delta Q_{\beta}^{dyn,\hat{W}_2}}{\delta\mat{\rho}}
+&=&\mat{\Gamma}
+\end{eqnarray}
+and the Greens function has the form
+\begin{eqnarray}
+\mat{G}(i\omega_\nu)&=&\Bigl[(i\hbar\omega_\nu+\mu)\mat{1}-\bar{\mat{h}}
+  +\mat{\Gamma}-\mat{\Sigma}_{dyn}(i\omega_\nu)
+\Bigr]^{-1}
+\end{eqnarray}
+The full self energy is
+\begin{eqnarray}
+\Sigma^{\hat{W}_2}=
+\Sigma^{HF,\hat{W}_2}+\Sigma^{dyn,\hat{W}_2}
+\end{eqnarray}
+\end{myshadowminipage}
+
+
+
+Comparing with the Green's function 
+\begin{eqnarray}
+\mat{G}&=&\Bigl[(i\hbar\omega_\nu+\mu)\mat{1}-\bar{\mat{h}}
+  -\Bigl(\mat{h}'-\bar{\mat{h}}+\mat{\Sigma}\Bigr)
+\Bigr]^{-1}
+\end{eqnarray}
+we can make the identification
+\begin{eqnarray}
+\mat{h}'+\mat{\Sigma}=\mat{h}'_{dyn}+
+\underbrace{\mat{\Sigma}
+-\mat{\Sigma}^{HF}}_{\mat{\Sigma}_{dyn}}
+\nonumber\\
+\mat{h}'=\mat{h}'_{dyn}-\mat{\Sigma}^{HF}
+\end{eqnarray}
+
+
+The matrix $\mat{\Gamma}$ replaces $\mat{h}'$ as Lagrange parameter
+for the density matrix constraint.  It vanishes in the Hartree-Fock
+approximation as seen from
+BPP-Eq.45-46\cite{bloechl13_prb88_25139}. Instead of the Hartree-Fock
+self energy $\mat{\Sigma}^{HF}$, we could have taken any other static
+self energy.
+
+
+One may ask, where the self energy contribution from static
+correlations is, because both, $\mat{\Sigma}$ and $\mat{\Sigma}^{HF}$
+mentioned here refer to the second interaction using $\hat{W}_2$. The
+Terms related to $\hat{W}_1$ are contained in the density matrix and
+$\bar{\mat{h}}$.
 
 %====================================================================
 \section{Solver for dynamic correlations}
 %====================================================================
 %====================================================================
-\subsection{Evaluation of the functional}
+\subsection{Loop for the dynamic correlation contribution}
 %====================================================================
 We evaluate the functional $Q^{\hat{W}_2}_{dyn,\beta}[\mat{\rho}]$
-following the recipy provided in section III of yhe BPP
+following the recipy provided in section III of the BPP
 paper\cite{bloechl13_prb88_25139}.
 \begin{enumerate}
 \item Construct the hamiltonian $\hat{h}_\rho$, whose Green's function
   obeys the density-matrix constraint.
 \begin{eqnarray}
-\hat{h}_\rho=\mu\mat{1}+k_BT\ln\left[\frac{1-\mat{\rho}}{\mat{\rho}}\right]
+\bar{\mat{h}}=\mu\mat{1}
++k_BT\ln\left[\frac{\mat{1}-\mat{\rho}}{\mat{\rho}}\right]
 \end{eqnarray}
 This is done in \verb|DMFT_HRHO|.
 %
-\item Construct the Greens function $\hat{G}_\rho$
+\item Construct the Greens function $\bar{\mat{G}}$, which is the
+  non-interacting Green's function with the correct density matrix.
 \begin{eqnarray}
-\mat{G}_\rho(i\omega_\nu)=\Bigl[(i\hbar\omega_\nu+\mu)\mat{1}-\mat{h}_\rho
+\bar{\mat{G}}(i\omega_\nu)=\Bigl[(i\hbar\omega_\nu+\mu)\mat{1}-\bar{\mat{h}}
 \Bigr]^{-1}
 \end{eqnarray}
 %
@@ -474,8 +612,9 @@ This is done in \verb|DMFT_HRHO|.
   Furthermore expand U-tensor and Green's function into the spin-up
   spin-down spinor representation.
 
-\item pass the local Green's function and the transformed U-tensor
- to the solver interface:
+\item pass the local Green's function and the transformed U-tensor to
+  the solver interface. The solver only contributes the dynamic
+  correlations.
 \begin{myshadowminipage}{Solver}
 The external solver may do further approximations to the U-tensor.
 Then it calculates the non-Hartree-Fock contribution of
@@ -485,7 +624,7 @@ the Luttinger Ward functional, i.e.
 \end{eqnarray}
 and the non-Hartree-Fock contribtion of the self energy
 \begin{eqnarray}
-\Sigma_{2,a,b}(i\omega_\nu)
+\Sigma^{dyn}_{a,b}(i\omega_\nu)
 =\Sigma_{a,b}(i\omega_\nu)-\Sigma^{HF}_{a,b}(i\omega_\nu)=
 \frac{\beta\delta\Phi^{LW}[G,\hat{W}_2]}{\delta G_{b,a}(i\omega_\nu)}
 -\frac{\beta\delta\Phi^{LW,HF}[G,\hat{W}_2]}{\delta G_{b,a}(i\omega_\nu)}
@@ -494,7 +633,7 @@ and the non-Hartree-Fock contribtion of the self energy
   terms with respect to the local U-tensor. This derivative is the
   two-particle density matrix.
 \begin{eqnarray}
-N_{a,b,c,d}=\frac{\beta\delta\Phi^{LW}[G,\hat{W}_2]}{\delta U_{a,b,c,d}}
+N^{dyn}_{a,b,c,d}=\frac{\beta\delta\Phi^{LW}[G,\hat{W}_2]}{\delta U_{a,b,c,d}}
 -\frac{\beta\delta\Phi^{LW,HF}[G,\hat{W}_2]}{\delta U_{a,b,c,d}}
 \end{eqnarray}
 }
@@ -503,80 +642,179 @@ N_{a,b,c,d}=\frac{\beta\delta\Phi^{LW}[G,\hat{W}_2]}{\delta U_{a,b,c,d}}
 \item convert the self energy and the derivative of the U-tensor back
   to the non-orthonormal set of local orbitals.
 %
-\item The new Green's function $\mat{\bar{G}}$ has the form
+\item Mix the self energy: The self energy cannot be simply
+  inserted into the Green's function for the next iteration, because
+  the changes for small Matsubara frequencies would be too
+  violent. Therefore it needs some preconditioning.
+
+  The underlying ideas related to the
+  mixing are described in appendix~\ref{sec:mixing} on
+  p.~\pageref{sec:mixing}.
+
+  \begin{eqnarray}
+    \Sigma^{dyn}_{a,b}(i\omega_\nu)
+=\Sigma^{dyn}_{a,b}(i\omega_\nu)
++\frac{1}{C}\Bigl(\frac{C}{M}+(\hbar\omega)^2\Bigr)
+\biggl(\Sigma^{dyn}_{a,b}(i\omega_\nu)
+-\frac{\beta\delta\Phi^{LW}_{dyn}}{\partial G_{b,a}(i\omega_\nu)}
+\biggr)
+\end{eqnarray}
+$\mat{\Sigma}^{dyn}$ is the self energy that has been accumulated, and
+  that is zero in the first
+  iteration. $\frac{\beta\delta\Phi^{LW}_{dyn}} {\partial
+    G_{b,a}(i\omega_\nu)}$ is the dynamic self-energy contribution
+  produced by the solver. Note that this self energy does not contain
+  the Hartree-Fock term. $C$ and $M$ are two mixing parameters, that
+  control the behavior at small ($M$) and large ($C$) Matsubara
+  frequencies.
+%
+\item The new Green's function $\mat{G}^{new}$ has the form
 \begin{eqnarray}
-\mat{\bar{G}}(i\omega_\nu)=\Bigl[(i\hbar\omega_\nu+\mu)\mat{1}
--\mat{h}_\rho 
--\mat{\Sigma}_2(i\omega_\nu)
--\underbrace{\Bigl(\mat{h'}-\mat{h}_\rho+\mat{\Sigma}_1 \Bigr)}_{\mat{\Gamma}}
+\mat{G}^{new}(i\omega_\nu)=\Bigl[(i\hbar\omega_\nu+\mu)\mat{1}
+-\bar{\mat{h}}+\mat{\Gamma}
+-\mat{\Sigma}^{dyn}(i\omega_\nu)
 \Bigr]^{-1}
 \end{eqnarray}
 where the Lagrange multiplier $\mat{\Gamma}$ needs to be adjusted until
 the density matrix constraint
 \begin{eqnarray}
 \mat{\rho}=\frac{1}{\beta}\sum_\nu 
-\e{i\beta\hbar\omega_\nu0^+}\mat{G}(i\omega_\nu)
+\e{i\beta\hbar\omega_\nu0^+}\mat{G}^{new}(i\omega_\nu)
 \end{eqnarray}
 is fulfilled. 
 
 For this purpose, we linearize the constraint equation in the Lagrange
 multiplier
 \begin{eqnarray}
-\mat{\rho}=\frac{1}{\beta}\sum_\nu 
+\mat{\rho}&=&\frac{1}{\beta}\sum_\nu 
 \e{i\beta\hbar\omega_\nu0^+}
 \biggl[
-\mat{\bar{G}}(i\omega_\nu)+\mat{\bar{G}}(i\omega_\nu)\delta\mat{\Gamma}
-\mat{\bar{G}}(i\omega_\nu)\biggr]
+\mat{G}^{new}(i\omega_\nu)-\mat{G}^{new}(i\omega_\nu)\delta\mat{\Gamma}
+\mat{G}^{new}(i\omega_\nu)\biggr]
 \nonumber\\
+0&=&\left[\frac{1}{\beta}\sum_\nu \e{i\beta\hbar\omega_\nu0^+}
+G^{new}_{a,b}(i\omega_\nu)\right]-\rho_{a,b}
+-\sum_{c,d}\left[
+\frac{1}{\beta}\sum_\nu 
+\mat{G}^{new}_{a,c}(i\omega_\nu)\mat{G}^{new}_{d,b}(i\omega_\nu)\right]
+\delta\mat{\Gamma}_{c,d}
+\nonumber\\
+\delta\mat{\Gamma}_{c,d}
+&=&
+\underbrace{
+\left[
+\frac{1}{\beta}\sum_\nu 
+\mat{G}^{new}_{a,c}(i\omega_\nu)\mat{G}^{new}_{d,b}(i\omega_\nu)
+\right]^{-1}_{cd,ab}
+}_{\leadsto\quad \alpha\delta_{c,a}\delta_{d,b}}
+\biggl(
+\underbrace{\left[\frac{1}{\beta}\sum_\nu \e{i\beta\hbar\omega_\nu0^+}
+G^{new}_{a,b}(i\omega_\nu)\right]}_{\rho^{new}_{a,b}}-\rho_{a,b}
+\biggr)
 \end{eqnarray}
-Note that $\mat{\Gamma}$ is, like $\mat{h'}$, a non-local Hamiltonian,
+\petertt{In this equation we can use the model Green's function to
+  avoid the calculation and inversion of
+  $\mat{G}^{new}\otimes\mat{G}^{new}$}
+
+Note, that $\mat{\Gamma}$ is, like $\mat{h'}$, a non-local Hamiltonian,
 that in principle connects arbitrary local orbitals with each
 other. In a Bloch representation, $\mat{\Gamma}$ is a k-dependent matrix,
 which connects all local orbitals in the unit cell with each other.
 
+Thus, we iterate the coupled equations
+\begin{eqnarray}
+\mat{G}^{new}(i\omega_\nu)&=&\Bigl[(i\hbar\omega_\nu+\mu)\mat{1}
+-\bar{\mat{h}}+\mat{\Gamma}
+-\mat{\Sigma}^{dyn}(i\omega_\nu)
+\Bigr]^{-1}
+\nonumber\\
+\delta\mat{\rho}&=&\frac{1}{\beta}\sum_\nu 
+\e{i\beta\hbar\omega_\nu0^+}\mat{G}^{new}(i\omega_\nu)-\mat{\rho}
+\nonumber\\
+\mat{\Gamma}&=&\mat{\Gamma}+\alpha \delta\mat{\rho}
+\end{eqnarray}
+until $\delta\rho$ vanishes.
+
+\petertt{In practice we do not use $\alpha$, but precondition with a
+  Green's function with zero one-particle level. see
+  section~\ref{sec:routinedmftconstraints}.}
+
 With the correct Lagrange multiplier, the new Green's function is
 obtained.
 %
-\item The new Green's function is feed back into the calculation of
-  the Luttinger Ward functional and its self energy.
+\item The new Green's function is feed back into the solver for the
+  calculation of the Luttinger-Ward functional and its self energy.
 \end{enumerate}
 
 %====================================================================
-\subsubsection{Energy contribution}
+\subsection{Energy contribution}
 %====================================================================
 When the loop is converged,  we evaluate 
 \begin{eqnarray}
-\mat{h}'=\mat{h}_\rho+\mat{\Gamma}-\mat{\Sigma}_1
-\end{eqnarray}
-and from it \eq{eq:dmf1green}
-\begin{eqnarray}
-Q^{\hat{W}}_{dyn,\beta}[\mat{\rho}]
+Q^{\hat{W}_2}_{dyn,\beta}[\mat{\rho}]
 &=&
 \biggl\lbrace
-\Phi^{LW}_\beta[\mat{G},\hat{W}]
--\frac{1}{\beta}\sum_\nu\Tr\Bigl\lbrace
+\Phi^{LW}_\beta[\mat{G},\hat{W}_2]-\Phi^{HF,LW}_\beta[\mat{G},\hat{W}_2]
+\nonumber\\
+&&-\frac{1}{\beta}\sum_\nu\Tr\Bigl\lbrace
 \ln\Bigl[
 \mat{1}-
-\Bigl(i\hbar\omega_\nu+\mu)\mat{1}-\mat{h}_{\rho}\Bigr)^{-1}
-\Bigl(\mat{h}'+\mat{\Sigma}(i\omega_\nu)-\mat{h}_{\rho}\Bigr)
+\bar{\mat{G}}(i\omega_\nu)
+\Bigl(\mat{\Sigma}_{dyn}(i\omega_\nu)-\mat{\Gamma}\Bigr)
 \Bigr]
 \nonumber\\&&
-+(\mat{h}'+\mat{\Sigma}(i\omega_\nu)-\mat{h}_\rho)\mat{G}(i\omega_\nu)
--
-\underbrace{\Bigl[
-\mat{G}(i\omega_\nu)
--\Bigl(i\hbar\omega_\nu+\mu)\mat{1}-\mat{h}_{\rho}\Bigr)^{-1}
-\Bigr]}_{=0}
-\Bigl(\mat{h}'-\mat{h}_\rho\Bigr)\Bigr\rbrace
++\Bigl(\mat{\Sigma}_{dyn}(i\omega_\nu)-\mat{\Gamma}\Bigr)\mat{G}(i\omega_\nu)
++
+\Bigl[\mat{G}(i\omega_\nu)-\bar{\mat{G}}(i\omega_\nu)\Bigr]
+\mat{\Gamma}
+\biggr\rbrace
 \nonumber\\
-&&-
-\frac{1}{2}\sum_{a,b,c,d}U_{a,b,d,c}
-\Bigl[\rho_{d,a}\rho_{c,b}-\rho_{c,a}\rho_{d,b}\Bigr]
-\label{eq:dmf1greena}
+\label{eq:dmf1greenenergy}
 \end{eqnarray}
 
 %====================================================================
-\subsection{Dahlen's trick}
+\subsection{Evaluation of the logarithm using a power series expansion}
+%====================================================================
+We use the Taylor expansion of the logarithm
+\begin{eqnarray}
+\ln[1-x]=-\sum_{n=1}^\infty \frac{1}{n}x^n \qquad\text{for $|x|<1$}
+\end{eqnarray}
+
+
+\begin{eqnarray}
+Q^{\hat{W}_2}_{dyn,\beta}[\mat{\rho}]
+&=&
+\Phi^{LW}_\beta[\mat{G},\hat{W}_2]-\Phi^{HF,LW}_\beta[\mat{G},\hat{W}_2]
+\nonumber\\
+&&-\frac{1}{\beta}\sum_\nu\Tr\biggl\lbrace
+-\sum_{n=1}^\infty\frac{1}{n}
+\Bigl[\bar{\mat{G}}(i\omega_\nu)
+\Bigl(\mat{\Sigma}_{dyn}(i\omega_\nu)-\mat{\Gamma}\Bigr)
+\Bigr]^n
+\nonumber\\&&
++\Bigl(\mat{\Sigma}_{dyn}(i\omega_\nu)-\mat{\Gamma}\Bigr)\mat{G}(i\omega_\nu)
++
+\Bigl[\mat{G}(i\omega_\nu)-\bar{\mat{G}}(i\omega_\nu)\Bigr]
+\mat{\Gamma}
+\biggr\rbrace
+\nonumber\\
+&=&
+\Phi^{LW}_\beta[\mat{G},\hat{W}_2]-\Phi^{HF,LW}_\beta[\mat{G},\hat{W}_2]
+\nonumber\\
+&&-\frac{1}{\beta}\sum_\nu\Tr\biggl\lbrace
+\mat{\Sigma}_{dyn}(i\omega_\nu)
+\Bigl[\mat{G}(i\omega_\nu)-\bar{\mat{G}}(i\omega_\nu)\Bigr]
+-\sum_{n=2}^\infty\frac{1}{n}
+\Bigl[\bar{\mat{G}}(i\omega_\nu)
+\Bigl(\mat{\Sigma}_{dyn}(i\omega_\nu)-\mat{\Gamma}\Bigr)
+\Bigr]^n
+\biggr\rbrace
+\nonumber\\
+\label{eq:dmf1greenenergypower}
+\end{eqnarray}
+
+%====================================================================
+\subsection{Evaluation of the logarithm using Dahlen's trick}
 %====================================================================
 The evaluation fo the logarithm is problematic, because Green's
 function and self energy are not hermitean. In appendix B of their
@@ -591,7 +829,7 @@ The trick rests on the assumption of the following identity
 \end{eqnarray}
 which should be valid for arbitrary non-hermitean matrices $\mat{A}$.
 
-Consder the singular value decompostion of
+Consider the singular value decompostion of
 $mat{A}=\mat{U}\mat{\Sigma}\mat{V}^\dagger$, where $\mat{U}$ and $\mat{V}$ are
 unitary matrices and $\mat{\Sigma}$ is a diagonal matrix with real,
 non-negative numbers, the singular values, on the diagonal.
@@ -614,9 +852,6 @@ non-negative numbers, the singular values, on the diagonal.
 Unfortunately $\mat{V}^\dagger\mat{U}\neq\mat{1}$ so that we cannot
 simply convert the power series expansion into one of the singular
 values.\petertt{This is the problem}.
-
-
-
 
 %====================================================================
 \subsection{Traditional formulation of the dynamical mean-field theory}
@@ -753,6 +988,178 @@ Similarly, the self energy and its Laurent expansion terms follow from
 &=&\beta\frac{\partial\Phi^{LW}[\mat{G},\hat{W}]}{\partial G_{b,a}(i\omega_\nu)}
 -\sum_{c,d}\Bigl(U_{a,c,b,d}-U_{a,c,d,b}\Bigr)\rho_{c,d}
 \end{eqnarray}
+%
+%====================================================================
+\newpage
+\section{Local orbitals}
+%====================================================================
+%====================================================================
+\subsection{Projection onto local orbitals}
+%====================================================================
+In order to integrate DMFT into the DFT code, we define first a local
+basis set of orbitals $|\chi_a\rangle$. These orbitals are not
+orthogonal. The orbitals are spin orbitals, that is, each is a
+two-component wave function with a spin-up and a spin-down
+component. If the spin orbitals are eigenstates of $\hat{S}_z$, one or
+the other of the components vanishes.
+
+The decomposition of the Kohn-Sham wave functions,
+which in the the context of rDMFT are the natural orbitals, is
+obtained via the projector functions $\langle\pi_a|$ as
+\begin{eqnarray}
+|\psi_n\rangle=\sum_a|\chi_a\rangle\langle\pi_a|\psi_n\rangle
++|\delta\psi_n\rangle
+\end{eqnarray}
+where the projector functions obey the bi-orthogonality condition
+\begin{eqnarray}
+\langle\pi_a|\chi_b\rangle=\delta_{a,b}\;,
+\end{eqnarray}
+and where $|\delta\psi_n\rangle$ is a remainder which is left over if the
+local orbitals do not form a complete basis set. This remainder has
+the property
+\begin{eqnarray}
+\langle\pi_a|\delta\psi_n\rangle=0
+\end{eqnarray}
+
+%====================================================================
+\subsection{Energy correction}
+%====================================================================
+Here we consider changes of the correlation corrections when we move
+from a Bra-Ket notation to a matrix notation.
+\begin{eqnarray}
+Q_\beta^{\hat{W}}\left[\hat{\rho}\right]
+=Q_\beta^{\hat{W}}\left[\sum_n|\psi_n\rangle f_n\langle\psi_n|\right]
+=
+Q_\beta^{\hat{W}}\biggl[\sum_{a,b}|\chi_a\rangle
+\underbrace{\left(
+\sum_n\langle\pi_a|\psi_n\rangle f_n\langle\psi_n|\pi_b\rangle
+\right)}_{\rho_{a,b}}\langle\chi_b|
+\biggr]
+\end{eqnarray}
+Below we consider also the energy contribution as functional of the
+density matrix in matrix form
+\begin{eqnarray}
+Q_\beta^{\hat{W}}\left[\mat{\rho}\right]\defas
+Q_\beta^{\hat{W}}\left[\sum_{a,b}|\chi_a\rangle\rho_{a,b}\langle\chi_b|\right]
+\end{eqnarray}
+
+The derivatives are
+\begin{eqnarray}
+\frac{\delta Q_\beta^{\hat{W}}}{\delta\langle\psi_n|}\frac{1}{f_n}
+&=&\sum_{a,b}|\pi_b\rangle
+\langle\chi_b|\frac{\delta Q_\beta^{\hat{W}}}{\delta\hat{\rho}}
+|\chi_a\rangle
+\langle\pi_a|\psi_n\rangle 
+\nonumber\\
+\frac{\delta Q_\beta^{\hat{W}}}{\delta f_n}
+&=&\sum_{a,b}\langle\psi_n|\pi_b\rangle
+\langle\chi_b|\frac{\delta Q_\beta^{\hat{W}}}{\delta\hat{\rho}}
+|\chi_a\rangle
+\langle\pi_a|\psi_n\rangle 
+\end{eqnarray}
+
+
+In the following we introduce a new symbol, namely
+\begin{eqnarray}
+\frac{\delta Q_\beta^{\hat{W}}}{\delta\rho_{b,a}}
+&\defas&
+\langle\chi_b|\frac{\delta Q_\beta^{\hat{W}}}{\delta\hat{\rho}}
+|\chi_a\rangle
+\end{eqnarray}
+
+%====================================================================
+\subsection{U-tensor}
+%====================================================================
+The interaction $\hat{W}$  
+\begin{eqnarray}
+\hat{W}
+=\frac{1}{2}\sum_{a,b,c,d} U_{a,b,d,c}
+\hat{c}^\dagger_a\hat{c}^\dagger_b\hat{c}_c\hat{c}_d
+\end{eqnarray}
+is expressed by the \textbf{U-tensor}\index{U-tensor}
+\begin{eqnarray}
+U_{a,b,c,d}=\sum_{\sigma,\sigma'}\int d^3r\int d^3r\;
+\frac{e^2\chi^*_a(\vec{r},\sigma)\chi^*_b(\vec{r'},\sigma')
+\chi_c(\vec{r},\sigma)\chi_d(\vec{r'},\sigma')}
+{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+\end{eqnarray}.
+
+The U-tensor can then be approximated to yield $\hat{W}_1$ and
+$\hat{W}_2$. Typically, these approximations amount to multiplying
+matrix elements with scale factors and to leavingf certain elements
+out completely.
+
+%====================================================================
+\subsection{Non-orthonormal orbitals}
+%====================================================================
+The main difference\cite{bloechl11_prb84_205101} between orthonormal
+and non-orthonormal basisets is that the commutator relation
+\begin{eqnarray}
+\Bigl[\hat{c}^\dagger_a,\hat{c}_b\Bigr]_+=\langle\pi_b|\pi_a\rangle
+\end{eqnarray}
+
+%====================================================================
+\subsubsection{Feynman diagrams}
+%====================================================================
+A Feynmandiagram in terms of orthonormal orbitals can be transformed
+easily into any other one-particle basis, by introducing a unit matrix
+in the form $\mat{A}\mat{A}^{-1}$ in between every Green's function
+and every interaction. 
+
+Let the original basis be $\{|\psi_n\rangle\}$
+and a new basis $\{|\chi_a\rangle\}$ so that
+\begin{eqnarray}
+|\psi_n\rangle=\sum_a |\chi_a\rangle\langle\pi_a|\psi_n\rangle
+\end{eqnarray}
+Then the Green's function has the form
+\begin{eqnarray}
+\hat{G}&=&\sum_{m,n}|\psi_m\rangle
+\langle\psi_m|\hat{G}|\psi_n\rangle\langle\psi_n|
+=
+\sum_{a,b}|\chi_a\rangle
+\underbrace{\langle\pi_a|\hat{G}|\pi_b\rangle}_{G_{a,b}}\langle\chi_b|
+\end{eqnarray}
+
+Thus if the U-tensor is evaluated using the orbitals $|\chi\rangle$,
+it can directly be used with the Green's function
+$\langle\pi_a|\hat{G}|\pi_b\rangle$. The final result will be
+invariant if all sums are traced out.
+
+%====================================================================
+\subsection{Incompleteness}
+%====================================================================
+One difficulty stems from the fact that the natural orbitals, the
+local orbitals and the projector functions span different spaces.
+
+We choose a solution by introducing a new type of algebra, that is
+designed to give certain sum rules exactly. 
+In this algebra we consider the states
+\begin{eqnarray}
+|\kappa_n\rangle\defas
+\sum_{a}|\chi_a\rangle\langle\pi_a|\psi_n\rangle
+\end{eqnarray}
+as complete orthonormal basisset.
+
+Thus, 
+\begin{eqnarray}
+\delta_{m,n}=\langle\kappa_m|\kappa_n\rangle
+=\sum_{a,b}\langle\psi_m|\pi_a\rangle\langle\chi_a|
+\chi_b\rangle\langle\pi_b|\psi_n\rangle
+\end{eqnarray}
+and
+\begin{eqnarray}
+\hat{1}=\sum_{a,b,n}|\chi_a\rangle\langle\pi_a|\psi_n\rangle
+\langle\psi_n|\pi_b\rangle\langle\chi_b|
+\end{eqnarray}
+
+I introduce
+\begin{eqnarray}
+S^{-1}_{a,b}\defas \sum_{n}\langle\pi_a|\psi_n\rangle\langle\psi_n|\pi_b\rangle
+\end{eqnarray}
+and redefine the overlap $\langle\chi_a|\chi_b\rangle$ as the inverse
+of $\mat{S}$. We could consider this as a redefinition of the scalar
+product between the states $|\kappa_n\rangle$.
+
 
 
 
@@ -870,7 +1277,9 @@ call dmft_addtohpsi()
 \end{verbatim}
 
 \begin{enumerate}
-\item \verb|DMFT_COLLECTHAMILTONIAN|:
+\item \verb|DMFT_COLLECTHAMILTONIAN|: The orbital coefficients
+  $\langle\pi_a|\psi_n\rangle$ have been calculated by the LMTO object
+  and they are kept in the module of \verb|paw_waves|.
 \begin{eqnarray}
 \langle\pi_a|\psi_n\rangle&&
 \\
@@ -878,12 +1287,29 @@ call dmft_addtohpsi()
 \langle\pi_a|\psi_n(\vec{k})\rangle f_n(\vec{k})
 \langle\psi_n(\vec{k})|\pi_b\rangle
 \end{eqnarray}
+The orbital coefficients are kept as
+\verb|kset(ik)%pipsi(ndim,nchi,nb,nspin)|. The k-dependent density
+matrix is kept as \verb|kset(ik)%rho(nchi,nchi,ndimd)|.
+
+\petertt{The name DMFT\_COLLECTHAMILTONIAN is misleading,
+  because we only collect the orbital coeffcients and the density
+  matrix.}
 %
 \item \verb|DMFT_COLLECTFULLDENMAT|: Calculates the local density matrix,
   but for all orbitals on each atom. This is needed for the double
   counting term.
+
+ \petertt{This still uses the orbital coefficients and occupations
+   from the PAW\_WAVES module, instead of using the orbital
+   coefficients or dthe k-dependent density matrix from KSET.}
+
+ \petertt{The name DMFT\_COLLECTFULLDENMAT is misleading.}
 %
-\item \verb|DMFT_UTENSOR|: 
+\item \verb|DMFT_UTENSOR|: (see also
+  section~\ref{sec:routinedmftutensor}) The local U-tensor is
+  collected from the onsite elements \verb|POTPAR(ISP)%TAILED%U|
+  calculated in the \verb|paw_LMTO| object. It is directly converted
+  from the ``tailed representation'' into the basis of local orbitals.
 \begin{eqnarray}
 U_{a,b,c,d}=\alpha\int d^4x\int d^4x'\;
 \frac{e^2\chi^*_a(\vec{x})\chi^*_b(\vec{x'})\chi_c(\vec{x})\chi_d(\vec{x'})}
@@ -893,80 +1319,112 @@ U_{a,b,c,d}=\alpha\int d^4x\int d^4x'\;
 Only the U-tensor for equal spin-electrons is stored. $\alpha$ is a
 scale factor that mimics the screening of the U-tensor. It is called
 \verb|LHFWEIGHT|.
+
+The scaled U-tensor is kept as \verb|ATOMSET(iat)%U|
 %
-\item \verb|DMFT_SMAT|:
+\item \verb|DMFT_SMAT|: The inverse overlap matrix $\mat{S}^{-1}$ is
+  calculated as
 \begin{eqnarray}
 \mat{S}^{-1}(\vec{k})
 =\sum_n\langle\pi_a|\psi_n(\vec{k})\rangle\langle\psi_n(\vec{k})|\pi_b\rangle
 \end{eqnarray}
 Note that the inverse overlap matrix is spin and orbital dependent.
-$\mat{S}(\vec{k})$ and $\mat{S}^{-1}(\vec{k})$ are put on the KSET
-structure.
+$\mat{S}(\vec{k})$ is pot on the KSET structure as \verb|KSET%SINV| 
+and $\mat{S}^{-1}(\vec{k})$ as \verb|KSET%SMAT| 
 %
-\item \verb|DMFT_NATORB|: Construct a set of local, orthonormal orbitals
-  $|\phi\rangle$. 
-
-
-Ther atomicn natural orbitals are the eigenstates o9f, which are defined by
+%===============natorb=================================================
+\item \verb|DMFT_NATORB|: (see also section~\ref{sec:routinedmftnatorb})
+  Construct the eigenstates $|\phi_j\rangle$ of the single site
+  density matrix
 \begin{eqnarray}
-\sum_{a,b}
-\langle\phi_i|\pi_a\rangle\Bigl(\mat{S}_R\Bigr)_{a,b}
-\langle\pi_b|\phi_j\rangle=\delta_{i,j}
+\hat{\rho}_R|\phi_{R,i}\rangle=|\phi_{R,i}\rangle f'_{R,i}
 \end{eqnarray}
-where $\mat{S}_R$ is the local overlap operator obtained from
-projection of $\sum_{\vec{k}} w_{\vec{k}}\mat{S}^{-1}(\vec{k})$ onto the
-local orbitals and inversion of the projection matrix.
+These states will be called local natural orbitals.
 
-
-Construct transformation matrices
-  $\langle\chi|\phi\rangle$ and $\langle\pi|\phi\rangle$ onto an
-  orthonormal local basisset $|\phi\rangle$, so that 
+The orbital coefficients of the local natural orbitals are calculated as
+\footnote{
 \begin{eqnarray}
-\sum_{a,b}
-\langle\phi_i|\pi_a\rangle\Bigl(\mat{S}_R\Bigr)_{a,b}
-\langle\pi_b|\phi_j\rangle=\delta_{i,j}
+\underbrace{\sum_{a,b}|\chi_a\rangle\langle\pi_a|\hat{\rho}_R|\pi_b\rangle
+\langle\chi_b|}_{\hat{\rho}_R}
+\underbrace{\sum_c|\chi_c\rangle x_{c,j}}_{|\phi_{R,j}\rangle}
+=\underbrace{\sum_a|\chi_a\rangle x_{a,j}}_{|\phi_{R,j}\rangle} f'_{R,j}
+\nonumber\\
+\sum_{b,c}\langle\pi_a|\hat{\rho}_R|\pi_b\rangle
+\langle\chi_b|\chi_c\rangle x_{c,j}
+=x_{a,j}f'_{R,j}
 \end{eqnarray}
-where $\mat{S}_R$ is the local overlap operator obtained from
-projection of $\sum_{\vec{k}} w_{\vec{k}}\mat{S}^{-1}(\vec{k})$ onto the
-local orbitals and inversion of the projection matrix.
-
-The two matrices are related by
+Now, introduce $y_{a,j}=\sum_b\langle\chi_a|\chi_b\rangle x_{b,j}$
 \begin{eqnarray}
-\langle\pi|\phi\rangle=\mat{S}^{-1}_R\langle\pi|\phi\rangle
+\sum_{b}\langle\pi_a|\hat{\rho}_R|\pi_b\rangle y_{b,j}
+=\sum_b S^{-1}_{a,b}y_{b,j}f'_{R,j}
+\end{eqnarray}
+which is a generalized eigenvalue problem for the vectors $\vec{y}_j$,
+which are converted into orbital coefficients by multiplication with
+$\mat{S}^{-1}$.
+\begin{eqnarray}
+|\phi_{R,j}\rangle=\sum_{a,b}|\chi_a\rangle S^{-1}_{a,b} y_{b,j}
+\end{eqnarray}
+The local natural orbitals are orthonormal in the sense
+\begin{eqnarray}
+\langle\phi_{R,i}|\phi_{R,j}\rangle
+=\sum_{a,b,c,d}
+y^*_{a,i}S^{-1}_{a,c}
+\underbrace{\langle\chi_c|\chi_d\rangle}_{(\mat{S}^{-1})^{-1}}
+ S^{-1}_{d,b} y_{b,j}
+=\sum_{a,b}y^*_{a,i}S^{-1}_{a,b}y_{b,j}=\delta_{i,j}
+\end{eqnarray}
+}
+\begin{eqnarray}
+\sum_{b}\langle\pi_a|\hat{\rho}_R|\pi_b\rangle y_{b,j}
+&=&\sum_b S^{-1}_{R,a,b}y_{b,j}f'_{R,j}
+\qquad\text{with $\vec{y}^\dagger_i \mat{S}^{-1}_R\vec{y}_{j}=\delta_{i,j}$}
+\\
+\langle\pi_a|\phi_{R,j}\rangle&=&\sum_{b} S^{-1}_{R,a,b} y_{b,j}
 \end{eqnarray}
 
-Alternatively, (using a hard-wired switch) on can select a
-transformation onto natural orbitals, that is a representation for
-which also the local density matrix is diagonal.
+The local density matrix $\mat{\rho}_R$ andf the local inverse overlap
+matrix $\mat{S}^{-1}_R$ are obtained as Brillouin zone intergral
+projected onto the lcoal site
 \begin{eqnarray}
-\mat{\rho}_R\langle\chi|\phi\rangle=\mat{S}^{-1}_R
-\langle\chi|\phi\rangle \vec{x}
+\mat{\rho}_R&=&\mat{P}_R\Bigl[
+\sum_{\vec{k}} w_{\vec{k}}\mat{\rho}(\vec{k})
+\Bigr]\mat{P}_R
+\nonumber\\
+\mat{S}^{-1}_R&=&\mat{P}_R\Bigl[
+\sum_{\vec{k}} w_{\vec{k}}\mat{S}^{-1}(\vec{k})
+\Bigr]\mat{P}_R
 \end{eqnarray}
 
 The transformation matrices are stored in the fully non-collinear data
-model in \verb|atomset%natorb%piphi| and \verb|atomset%natorb%chiphi|.
+model in \verb|atomset%natorb%piphi| and the vectors $\vec{y}_j$ are
+stored as \verb|atomset%natorb%chiphi|.
+
+\petertt{The vector $y$ is used for the transformation to the local
+  natural orbitals in the solver interface. Check if this is
+  correct. should it be the vector $x$?}
 %
 \item \verb|DMFT_HRHO|: For each k-point solve the generalized
   eigenvalue problem
 \begin{eqnarray*}
 \mat{\rho}(k)\mat{V}(\vec{k})=
-\mat{S}^{-1}(\vec{k})\mat{V}(\vec{k})\mat{f}(\vec{k})
+\mat{S}^{-1}(\vec{k})\mat{V}(\vec{k})\mat{f}''(\vec{k})
 \end{eqnarray*}
-where the $\mat{f}_k$ is a matrix that contains k-dependent
-occupations, which differs from the occupations $f_n$.
+where $\mat{f}''(\vec{k})$ is a diagonal matrix that contains
+k-dependent occupations. (They differ from the occupations $f_n$ of
+the natural orbitals $|\psi_n\rangle$.)
 \begin{eqnarray}
-\mat{h}_\rho(\vec{k})-\mu=\mat{V}^{\dagger,-1}(\vec{k})\; k_B
+\bar{\mat{h}}(\vec{k})-\mu=\mat{V}^{\dagger,-1}(\vec{k})\; k_B
 \ln\left[
 \frac{\mat{1}-\mat{V}^\dagger(\vec{k})\mat{\rho}(\vec{k})\mat{V}(\vec{k})}
 {\mat{V}^\dagger(\vec{k})\mat{\rho}(\vec{k})\mat{V}(\vec{k})}
 \right]\mat{V}^{-1}(\vec{k})
 \end{eqnarray}
-$\mat{h}_\rho$ is kept as \verb|KSET%HRHO|.
+$\bar{\mat{h}}$ is kept as \verb|KSET%HRHO|.
 %
 \item \verb|DMFT_CONSTRAINTS|: Determines $\mat{h}'(\vec{k})$ such that
 \begin{eqnarray}
 \mat{\rho}(\vec{k})=k_BT\sum_\nu \Bigl[(i\omega_\nu+\mu)\mat{S}(\vec{k})-
-\mat{h'}-\mat{\Sigma}(i\omega_\nu)\Bigr]^{-1}
+\bar{\mat{h}}+\mat{\Gamma}-\mat{\Sigma}^{\hat{W}_2}_{dyn}(i\omega_\nu)\Bigr]^{-1}
 \end{eqnarray}
 $\mat{h'}$ is kept as \verb|KSET%H0|.
 %
@@ -976,7 +1434,7 @@ $\mat{h'}$ is kept as \verb|KSET%H0|.
 \begin{eqnarray}
 \mat{G}_R(i\omega_\nu)=\sum_k w(\vec{k})
 \Bigl[(i\omega_\nu+\mu)\mat{S}(\vec{k})-
-\mat{h'}-\mat{\Sigma}(i\omega_\nu)\Bigr]^{-1}_R
+\bar{\mat{h}}+\mat{\Gamma}-\mat{\Sigma}^{\hat{W}_2}_{dyn}(i\omega_\nu)\Bigr]^{-1}_R
 \end{eqnarray}
 
 The result and its Laurent expansion terms are stored in
@@ -1046,17 +1504,19 @@ the dynamic effects.
 &-&\frac{1}{\beta}\sum_\nu\Tr\Bigl\lbrace
 \ln\Bigl[
 \mat{1}-
-\Bigl(i\hbar\omega_\nu+\mu)\mat{1}-\mat{h}_{\rho}\Bigr)^{-1}
-\Bigl(\mat{h}'+\mat{\Sigma}(i\omega_\nu)-\mat{h}_{\rho}\Bigr)
+\Bigl(i\hbar\omega_\nu+\mu)\mat{1}-\bar{\mat{h}}\Bigr)^{-1}
+\Bigl(
+\mat{\Sigma}^{\hat{W}_2}_{dyn}(i\omega_\nu)-\mat{\Gamma}\Bigr)
 \Bigr]
 \nonumber\\&&
-+(\mat{h}'+\mat{\Sigma}(i\omega_\nu)-\mat{h}_\rho)\mat{G}(i\omega_\nu)
--
++\Bigl(\mat{\Sigma}^{\hat{W}_2}_{dyn}(i\omega_\nu)
+-\mat{\Gamma}\Bigr)\mat{G}(i\omega_\nu)
++
 \Bigl[
 \mat{G}(i\omega_\nu)
--\Bigl(i\hbar\omega_\nu+\mu)\mat{1}-\mat{h}_{\rho}\Bigr)^{-1}
-\Bigr]
-\Bigl(\mat{h}'-\mat{h}_\rho\Bigr)\Bigr\rbrace
+-\Bigl(i\hbar\omega_\nu+\mu)\mat{1}-\bar{\mat{h}}\Bigr)^{-1}
+\Bigr[
+\mat{\Gamma}\Bigr\rbrace
 \end{eqnarray}
 \begin{itemize}
   \item \textbf{At this point I am still using the Dahlen trick.}  
@@ -1131,6 +1591,7 @@ the dynamic effects.
 
 %====================================================================
 \subsection{DMFT\_UTENSOR}
+\label{sec:routinedmftutensor}
 %====================================================================
 Obtain the onsite Utensor for all local orbitals from subroutine
 \verb|dmft_ulocal| reduces it to the entries for the correlated
@@ -1186,6 +1647,7 @@ E_X=\frac{1}{2}\sum_{a,b,c,d}U_{a,b,c,d}\;\rho_{c,b}\rho_{d,a}
 
 %====================================================================
 \subsection{DMFT\_NATORB}
+\label{sec:routinedmftnatorb}
 %====================================================================
 Construct natural orbitals in the space of correlated orbitals on one
 site.
@@ -1274,47 +1736,96 @@ differentiable. The value of $f_0$ is currently set to $10^{-6}$.
 
 %====================================================================
 \subsection{DMFT\_CONSTRAINTS}
+\label{sec:routinedmftconstraints}
 %====================================================================
-The two equations are solved iteratively
+%====================================================================
+\subsubsection{Green's function}
+%====================================================================
+The Green's function is calculated as follows
 \begin{eqnarray}
-\bar{\mat{\rho}}(\vec{k})&=&k_BT\sum_\nu
-\underbrace{\Bigl[
-(i\omega_\nu+\mu)\mat{S}(\vec{k})-\mat{h}(\vec{k})-\sum_R \Sigma_R(i\omega_\nu)
-\Bigr]^{-1}}_{\mat{G}(\vec{k})}
-\\
-\delta\mat{h}&=&4k_BT\mat{S}(\vec{k})\Bigl[
-\bar{\rho}(\vec{k})-\rho(\vec{k})\Bigr]
-\mat{S}(\vec{k})
+\mat{G}(\vec{k},i\omega_\nu)&=&
+\Bigl[
+(i\omega_\nu+\mu)\mat{S}(\vec{k})-\bar{\mat{h}}(\vec{k})+\mat{\Gamma}(\vec{k})
+-\sum_R\mat{\Sigma}^{dyn}_R(i\omega_\nu)
+\Bigr]^{-1}
 \end{eqnarray}
-
-This equation is a Newton scheme with the Green's function in the
-slope estimate replaced by the non-interacting Green's function with
-zero potential self energy and chemical potential. \textbf{Should
-  there be convergence problems, it may be improved by using the
-  static Green's function $\mat{G}_\rho$ instead.}
-
-
-
-The Laurent expansion terms are
+As described in section~\ref{sec:laurentgreen} on
+p.~\pageref{sec:laurentgreen}, the Laurent-expansion coefficients are
 \begin{eqnarray}
 \mat{G}^{(1)}(\vec{k})&=&\mat{S}^{-1}(\vec{k})
 \nonumber\\
 \mat{G}^{(2)}(\vec{k})&=&\mat{S}^{-1}(\vec{k})
-\Bigl(-\mu\mat{S}(\vec{k})+\mat{h'}(\vec{k})+\mat{\Sigma}^{(1)}(\vec{k})
+\Bigl(-\mu\mat{S}(\vec{k})+\bar{\mat{h}}(\vec{k})-\mat{\Gamma}(\vec{k})
++\mat{\mathcal{S}}^{(1)}_{dyn}(\vec{k})
 \Bigr)
 \mat{S}^{-1}(\vec{k})
 \nonumber\\
-\mat{G}^{(2)}(\vec{k})&=&
+\mat{G}^{(3)}(\vec{k})&=&
 \mat{S}^{-1}(\vec{k})
 \biggl[
-\mat{S}^{-1}(\vec{k})
-\Bigl(-\mu\mat{S}(\vec{k})+\mat{h'}(\vec{k})+\mat{\Sigma}^{(1)}(\vec{k})
-\Bigr)
-\mat{S}^{-1}(\vec{k})+\mat{\Sigma}^{(2)}(\vec{k})
+\mat{\mathcal{S}}^{(2)}_{dyn}(\vec{k})+
+\Bigl(-\mu\mat{S}(\vec{k})+\bar{\mat{h}}(\vec{k})-\mat{\Gamma}(\vec{k})
++\mat{\mathcal{S}}^{(1)}_{dyn}(\vec{k})\Bigr)
+\nonumber\\
+&&\times\mat{S}^{-1}(\vec{k})
+\Bigl(-\mu\mat{S}(\vec{k})+\bar{\mat{h}}(\vec{k})-\mat{\Gamma}(\vec{k})
++\mat{\mathcal{S}}^{(1)}_{dyn}(\vec{k})\Bigr)
 \biggr]
 \mat{S}^{-1}(\vec{k})
 \nonumber\\
 \end{eqnarray}
+
+%============================================================================
+\subsubsection{Update $\mat{\Gamma}$}
+%============================================================================
+\begin{myshadowminipage}{Update $\Gamma$}
+The following two equations are solved iteratively
+\begin{eqnarray}
+\delta\mat{\rho}(\vec{k})&=&
+\biggl(\frac{1}{\beta}\sum_\nu
+\underbrace{\Bigl[
+(i\omega_\nu+\mu)\mat{S}(\vec{k})-\bar{\mat{h}}(\vec{k})+\mat{\Gamma}(\vec{k})
+-\sum_R\mat{\Sigma}^{dyn}_R(i\omega_\nu)
+\Bigr]^{-1}}_{\mat{G}(\vec{k})}\biggr)-\mat{\rho}(\vec{k})
+\nonumber\\
+\mat{\Gamma}(\vec{k})&=&\mat{\Gamma}(\vec{k})-\frac{4}{\beta}\mat{S}(\vec{k})
+\delta{\rho}(\vec{k})
+\mat{S}(\vec{k})
+\end{eqnarray}
+until $\delta\mat{\rho}$ vanishes.
+\end{myshadowminipage}
+
+This equation is a Newton scheme with the Green's function in the
+slope estimate replaced by the non-interacting Green's function with
+zero potential self energy and chemical potential. 
+
+
+\begin{eqnarray}
+\delta\mat{\rho}(\mat{\Gamma})=\delta\mat{\rho}(\mat{\Gamma}_0)
+-\frac{1}{\beta}\sum_\nu \mat{G}(\mat{\Gamma}-\mat{\Gamma}_0)\mat{G}+...
+\end{eqnarray}
+Now we approximate $\mat{G}$ by $(i\hbar\omega_\nu)^{-1}\mat{S}^{-1}$
+\begin{eqnarray}
+\delta\mat{\rho}(\mat{\Gamma})&=&\delta\mat{\rho}(\mat{\Gamma}_0)
+-
+\underbrace{\frac{1}{\beta}
+\Bigl[\sum_\nu\frac{1}{(i\hbar\omega_\nu)^2} \Bigr]}
+_{-\beta/4}
+\mat{S}^{-1}(\mat{\Gamma}-\mat{\Gamma})\mat{S}^{-1}+...
+\nonumber\\
+\Rightarrow\qquad\mat{\Gamma}&=&\mat{\Gamma}_0
++\frac{4}{\beta}
+\mat{S}
+\Bigl(\underbrace{\delta\mat{\rho}(\mat{\Gamma})}_{=0}-\delta\mat{\rho}(\mat{\Gamma}_0)\Bigr)
+\mat{S}
+\end{eqnarray}
+
+
+\petertt{Should
+  there be convergence problems, it may be improved by using the
+  static Green's function $\mat{G}_\rho$ instead.}
+
+
 
 
 %====================================================================
@@ -1862,6 +2373,7 @@ q.e.d.
 
 %====================================================================
 \subsection{Laurent expansion of the Green's function}
+\label{sec:laurentgreen}
 %====================================================================
 Here, we extract the Laurent expansion of the Green's function in the form
 \begin{eqnarray}
@@ -1999,6 +2511,363 @@ density matrix as
 -\frac{1}{480}\beta^5\mat{\mathcal{G}}^{(6)}
 +\frac{1.0?}{4320}\beta^7\mat{\mathcal{G}}^{(8)}\Bigr)}_{\text{from grapher}}
 +O(\beta^9)
+\end{eqnarray*}
+
+
+
+
+%==============================================================================
+\chapter{Dividing the correlation contribution into a static and a dynamic part}
+\label{sec:sdlitcorrelation}
+%==============================================================================
+We will divide the correlation contribution $Q^{\hat{W}}_\beta$ in
+\eq{eq:dmfQgreen} on p.~\pageref{eq:dmfQgreen} into two separate
+terms. It seems that division is only possible if only one of the
+terms has a frequency-dependent self energy.
+
+For this purpose, we express the Luttinger-Ward functional as a sum
+of two terms $\Phi^{LW}_\beta=\Phi^{LW,2}_\beta+\Phi^{LW,2}_\beta$, of
+which only the second has the frequency dependent self energy.
+\begin{eqnarray}
+Q^{\hat{W}}_\beta[\mat{\rho}]
+&\eqrel{eq:dmfQgreen}{=}&
+\stat_{\mat{h}'}\stat_{\mat{G},\mat{\Sigma}}
+\biggl\lbrace
+\Phi^{LW,1}_\beta[\mat{G},\hat{W}_1]
++\Phi^{LW,2}_\beta[\mat{G},\hat{W}_2]
+\nonumber\\
+&&-\frac{1}{\beta}\sum_\nu\Tr\Bigl\lbrace
+\ln\Bigl[
+\mat{1}-
+\Bigl(i\hbar\omega_\nu+\mu)\mat{1}-\bar{\mat{h}}\Bigr)^{-1}
+\Bigl(\mat{h}'+\mat{\Sigma}(i\omega_\nu)-\bar{\mat{h}}\Bigr)
+\Bigr]
+\nonumber\\&&
++(\mat{h}'+\mat{\Sigma}(i\omega_\nu)-\bar{\mat{h}})\mat{G}(i\omega_\nu)
+-
+\Bigl[
+\mat{G}(i\omega_\nu)
+-\Bigl(i\hbar\omega_\nu+\mu)\mat{1}-\bar{\mat{h}}\Bigr)^{-1}
+\Bigr]
+\Bigl(\mat{h}'-\bar{\mat{h}}\Bigr)\Bigr\rbrace
+\biggr\rbrace
+\nonumber\\
+\label{eq:dmfQgreenbeforedivision}
+\end{eqnarray}
+
+The stationary conditions are
+\begin{eqnarray}
+0&=&-\frac{\beta\delta\Phi^{LW,1}}{\delta\mat{G}(i\omega_\nu)}
+-\frac{\beta\delta\Phi^{LW,2}}{\delta\mat{G}(i\omega_\nu)}
++\Bigl(\mat{h}'+\mat{\Sigma}(i\omega_\nu)-\bar{\mat{h}}\Bigr)
+-\Bigl(\mat{h}'-\bar{\mat{h}}\Bigr)
+\nonumber\\
+&\Rightarrow&\qquad
+\mat{\Sigma}(i\omega_\nu)
+=\frac{\beta\delta\Phi^{LW,1}}{\delta\mat{G}(i\omega_\nu)}
++\frac{\beta\delta\Phi^{LW,2}}{\delta\mat{G}(i\omega_\nu)}
+\nonumber\\
+0&=&\biggl[\mat{1}-\bar{\mat{G}}(i\omega_\nu)
+\Bigl(\mat{h}'+\mat{\Sigma}(i\omega_\nu)-\bar{\mat{h}}\Bigr)\biggr]^{-1}
+\Bigl(-\bar{\mat{G}}(i\omega_\nu)\Bigr)+\mat{G}(i\omega_\nu)
+\label{eq:splitqvarsigma}
+\\
+&\Rightarrow&\qquad
+\mat{G}(i\omega_\nu)=\biggl[\mat{1}-\bar{\mat{G}}(i\omega_\nu)
+\Bigl(\mat{h}'
++\mat{\Sigma}(i\omega_\nu)-\bar{\mat{h}}\Bigr)\biggr]^{-1}
+\bar{\mat{G}}(i\omega_\nu)
+\nonumber\\
+0&=&
+-\frac{1}{\beta}\sum_\nu\biggl\lbrace
+\underbrace{\biggl[\mat{1}-\bar{\mat{G}}(i\omega_\nu)
+\Bigl(\mat{h}'+\mat{\Sigma}(i\omega_\nu)-\bar{\mat{h}}\Bigr)\biggr]^{-1}
+\Bigl(-\bar{\mat{G}}(i\omega_\nu)\Bigr)+\mat{G}(i\omega_\nu)}
+_{=0\quad\text{\eq{eq:splitqvarsigma}}}
+-\Bigl(\mat{G}(i\omega_\nu)
+-\bar{\mat{G}}(i\omega_\nu)\Bigr)\biggr\rbrace
+\nonumber\\
+&\Rightarrow&\qquad
+\frac{1}{\beta}\sum_\nu
+\mat{G}(i\omega_\nu)\e{i\hbar\omega_\nu\beta0^+}
+=\frac{1}{\beta}\sum_\nu
+\bar{\mat{G}}(i\omega_\nu)\e{i\hbar\omega_\nu\beta0^+}
+=\mat{\rho}
+\end{eqnarray}
+
+Whenever the Luttinger-Ward functional can be expressed directly by
+the density matrix, the self energy is independent of the Matsubara
+frequencies. In this case the Luttinger-Ward functional depends on the
+Green'sfunction only via the integral $\mat{\rho}=
+\frac{1}{\beta}\sum_\nu
+\mat{G}(i\omega_\nu)\e{i\hbar\omega_\nu\beta0^+}$. This is the case
+for the Hartree-Fock approximation and it is the case for the Density
+functional theory.
+
+In the following, we assume that $\Phi^{LW,1}_\beta$ has this form,
+i.e. that it depends on the Green's function only via the density
+matrix.
+
+%================================================================
+\subsubsection{Divided form}
+%================================================================
+We rewrite the expression as
+\begin{eqnarray}
+Q^{\hat{W}}_\beta[\mat{\rho}]
+&=&
+\Phi^{LW,1}_\beta[\bar{\mat{G}},\hat{W}_1]+
+\stat_{\mat{h}'_2}\stat_{\mat{G},\mat{\Sigma}_2}
+\biggl\lbrace
+\Phi^{LW,2}_\beta[\mat{G},\hat{W}_2]
+\nonumber\\
+&&-\frac{1}{\beta}\sum_\nu\Tr\Bigl\lbrace
+\ln\Bigl[
+\mat{1}-
+\Bigl(i\hbar\omega_\nu+\mu)\mat{1}-\bar{\mat{h}}\Bigr)^{-1}
+\Bigl(\mat{h}'_2+\mat{\Sigma}_2(i\omega_\nu)-\bar{\mat{h}}\Bigr)
+\Bigr]
+\nonumber\\&&
++(\mat{h}'_2+\mat{\Sigma}_2(i\omega_\nu)-\bar{\mat{h}})\mat{G}(i\omega_\nu)
+-
+\Bigl[
+\mat{G}(i\omega_\nu)
+-\Bigl(i\hbar\omega_\nu+\mu)\mat{1}-\bar{\mat{h}}\Bigr)^{-1}
+\Bigr]
+\Bigl(\mat{h}'_2-\bar{\mat{h}}\Bigr)\Bigr\rbrace
+\biggr\rbrace
+\nonumber\\
+\label{eq:dmfQgreenafterdivision}
+\end{eqnarray}
+
+The stationary conditions are
+\begin{eqnarray}
+\mat{\Sigma}_2(i\omega_\nu)
+&=&\frac{\beta\delta\Phi^{LW,2}}{\delta\mat{G}(i\omega_\nu)}
+\nonumber\\
+\mat{G}(i\omega_\nu)&=&\biggl[\mat{1}-\bar{\mat{G}}(i\omega_\nu)
+\Bigl(\mat{h}'_2
++\mat{\Sigma}_2(i\omega_\nu)-\bar{\mat{h}}\Bigr)\biggr]^{-1}
+\bar{\mat{G}}(i\omega_\nu)
+\end{eqnarray}
+
+We see that 
+\begin{eqnarray}
+\mat{h}'&=&
+\mat{h}'_2+
+\frac{\beta\delta\Phi^{LW,1}}{\delta\mat{G}(i\omega_\nu)}
+\end{eqnarray}
+leads to the same Green's function as in the former case. That is,
+both forms, i.e. \eq{eq:dmfQgreenbeforedivision} and
+\eq{eq:dmfQgreenafterdivision}, have the same stationary state.  At
+the stationary state both forms have furthermore the same value.
+
+%================================================================
+\subsubsection{No Matsubara sum with a stationary self energy}
+%================================================================
+Here, I show that
+$Q^{\hat{W}}_\beta[\mat{\rho}]=\Phi^{LW}_\beta[\bar{\mat{G}},\hat{W}]$,
+if the Luttinger Ward functional only depends on the Greens function
+via the density matrix.
+
+In that case, the self energy is frequency independent. All stationary
+conditions can be fulfilled by choosing
+\begin{eqnarray}
+\mat{h}'+\mat{\Sigma}=\bar{\mat{h}}
+\nonumber\\
+\mat{G}(i\omega_\nu)=\bar{\mat{G}}(i\omega_\nu)
+\end{eqnarray}
+
+Thus we may decompose the correlation contribution into several terms
+of which only one has a frequency dependent self energy
+
+
+%==============================================================================
+\chapter{Form of the Hartree Fock energy}
+\label{app:hfcontrib}.
+%==============================================================================
+The Hartree-Fock term $Q^{\hat{W}}_{X,\beta}$ is equal to
+$Q^{\hat{W}}_\beta$ when only the first-order term of the
+Luttinger-Ward functional in the interaction is considered.  It is
+obtained as (BPP-Eq.43)
+\begin{eqnarray}
+Q_{\text{X},\beta}^{\hat{W}}[\mat{\rho}]
+=\frac{1}{2}\sum_{a,b,c,d}U_{a,b,d,c}
+\Bigl[\rho_{d,a}\rho_{c,b}-\rho_{c,a}\rho_{d,b}\Bigr]
+\end{eqnarray}
+
+The interpretation of this term is subtle because it is formulated in
+non-orthonormal orbitals. 
+\begin{itemize}
+\item We consider the expansion of Kohn-Sham orbitals in local orbitals
+\begin{eqnarray}
+Q_{\text{X},\beta}^{\hat{W}}[\mat{\rho}]
+&=&\frac{1}{2}\sum_{m,n}f_mf_n\int d^3r\int d^3r'\;
+\frac{e^2\Bigl(
+\phi^*_m(\vec{r})\phi^*_n(\vec{r'})\phi_n(\vec{r'})\phi_m(\vec{r})
+-
+\phi^*_m(\vec{r})\phi^*_n(\vec{r'})\phi_m(\vec{r'})\phi_n(\vec{r})\Bigr)
+}{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+\nonumber\\
+&=&\frac{1}{2}\sum_{a,b,c,d}
+\underbrace{
+\Bigl(\sum_{m}\langle\pi_a|\phi_m\rangle f_m\langle\phi_m|\pi_b\rangle\Bigr)
+}_{\rho_{a,b}}
+\underbrace{
+\Bigl(\sum_{n}\langle\pi_c|\phi_n\rangle f_n\langle\phi_n|\pi_d\rangle\Bigr)
+}_{\rho_{c,d}}
+\nonumber\\
+&&\times
+\int d^3r\int d^3r'\;
+\frac{e^2\Bigl(
+\chi^*_b(\vec{r})\chi^*_d(\vec{r'})\chi_c(\vec{r'})\chi_a(\vec{r})
+-
+\chi^*_b(\vec{r})\chi^*_d(\vec{r'})\chi_a(\vec{r'})\chi_c(\vec{r})\Bigr)
+}{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+\\
+&=&\frac{1}{2}\sum_{a,b,c,d}\rho_{a,b}\rho_{c,d}
+\Bigl(U_{b,d,a,c}-U_{b,d,c,a}\Bigr)
+\\
+&=&\frac{1}{2}\sum_{a,b,c,d}
+U_{a,b,d,c}\Bigl(\rho_{d,a}\rho_{c,b}-\rho_{c,a}\rho_{d,b}\Bigr)
+\end{eqnarray}
+%
+\item Consider expectation valiue of a Slater determinant expressed in
+  terms of non-orthonormal local orbitals. The Slater determinant has the form
+  \begin{eqnarray}
+    \Psi(\vec{x}_1,\ldots,\vec{x}_n)
+    =C\det\left| \mat{M}\right|=C\sum_{i_1,\ldots,i_N=1}^N
+\epsilon_{i_1,\ldots,i_N}\;   
+\chi_{i_1}(\vec{x}_1)\cdots\chi_{i_N}(\vec{x}_N)
+  \end{eqnarray}
+ with $M_{i,j}=\chi_{i}(\vec{x}_j)$ and the normalization constant
+ $C$.  $\epsilon_{i_1,\ldots,i_N}$ is the fully antisymmetric tensor
+ defined by $\epsilon_{1,2,\ldots,N}=1$, by the fact that it changes
+ sign under permutation of two indices, and that it vanishes whenever
+ two indices are identical.
+
+\petertt{This argument needs to be completed. Probably we obtain the
+  same result as in the first case. This needs to be shown by
+  performing a transformation onto orthogonal one-particle states,
+  that span the same Hilbert space.}
+
+\end{itemize}
+
+%==============================================================================
+\chapter{Mixing of the self energy}
+\label{sec:mixing}
+%==============================================================================
+%=============================================================
+\section{Euler-Lagrange equations}
+%=============================================================
+In order to arrive at a reasonable mixing scheme, we explore a
+dynamics from a Lagrangian formalism. It is however important to note
+that this dynamics is useless, because there is no minimum prinicple,
+so that applying a friction will not lead to a stationary state.
+
+\begin{eqnarray*}
+m_\Sigma(\omega_\nu)\ddot{\Sigma}_{a,b}(i\omega_\nu)
+&=&-\beta\frac{\partial{E}}
+{\partial\Sigma^\dagger_{a,b}(i\omega_\nu)}
+\end{eqnarray*}
+
+The equation for the self energy is a little complicated. Therefore we
+obtain it directly from the action principle.
+\begin{eqnarray*}
+\mathcal{L}&=&\frac{1}{\beta}\sum_\nu m_\Sigma
+\sum_{a,b}\Bigl\lbrace
+\dot{\Sigma}_{a,b}(i\omega_\nu)
+\dot{\Sigma}^\dagger_{b,a}(i\omega_\nu)\Bigr\rbrace
+-\Phi(\mat{G})
+\\
+0&=&\frac{1}{\beta}\sum_\nu
+m_\Sigma\sum_{a,b}\Bigl\lbrace
+\dot{\Sigma}_{a,b}^\dagger(i\omega_\nu)
+\delta\dot{\Sigma}_{b,a}(i\omega_\nu)
++\dot{\Sigma}_{a,b}(i\omega_\nu)
+\delta\dot{\Sigma}_{b,a}^\dagger(i\omega_\nu)
+\Bigr\rbrace
+\nonumber\\
+&&-\frac{1}{\beta}\sum_\nu
+\sum_{a,b,c,d}
+\left[
+\frac{\beta\partial\Phi}{\partial G_{a,b}(i\omega_\nu)}
+\frac{\partial G_{a,b}(i\omega_\nu)}{\partial\Sigma_{c,d}(i\omega_\nu)}
+\delta\Sigma_{c,d}(i\omega_\nu)
++\frac{\beta\partial\Phi}{\partial G^\dagger_{a,b}(i\omega_\nu)}
+\frac{\partial G^\dagger_{a,b}(i\omega_\nu)}
+{\partial\Sigma^\dagger_{c,d}(i\omega_\nu)}
+\delta\Sigma^\dagger_{c,d}(i\omega_\nu)
+\right]
+\nonumber\\
+%
+&=&\frac{1}{\beta}\sum_\nu 
+m_\Sigma\sum_{a,b}\Bigl\lbrace
+-\ddot{\Sigma}_{a,b}^\dagger(i\omega_\nu)
+\delta\Sigma_{b,a}(i\omega_\nu)
+-\ddot{\Sigma}_{a,b}(i\omega_\nu)
+\delta\Sigma_{b,a}^\dagger(i\omega_\nu)
+\Bigr\rbrace
+\nonumber\\
+&&-\frac{1}{\beta}\sum_\nu
+\sum_{a,b,c,d}
+\frac{\beta\partial\Phi}{\partial G_{a,b}(i\omega_\nu)}
+G_{a,c}(i\omega_\nu)\delta\Sigma_{c,d}(i\omega_\nu)G_{d,b}(i\omega_\nu)
+\nonumber\\
+&&-\frac{1}{\beta}\sum_\nu
+\sum_{a,b,c,d}
+\frac{\beta\partial\Phi}{\partial G^\dagger_{a,b}(i\omega_\nu)}
+G^\dagger_{a,c}(i\omega_\nu)\delta\Sigma^\dagger_{c,d}(i\omega_\nu)
+G^\dagger_{d,b}(i\omega_\nu)
++\text{boundary terms at $t_1,t_2$}
+%
+\nonumber\\
+&=&-\frac{1}{\beta}\sum_\nu 
+\left[
+\sum_{a,b}
+m_\Sigma\ddot{\Sigma}_{a,b}(i\omega_\nu)
+\delta\Sigma^\dagger_{b,a}(i\omega_\nu)
++
+\sum_{c,d}\biggl(
+\sum_{a,b}
+G^\dagger_{d,b}(i\omega_\nu)
+\frac{\beta\partial\Phi}{\partial G^\dagger_{a,b}(i\omega_\nu)}
+G^\dagger_{a,c}(i\omega_\nu)\biggr)
+\delta\Sigma^\dagger_{c,d}(i\omega_\nu)\right]+\text{c.c.}
+\nonumber\\
+%
+&=&-\frac{1}{\beta}\sum_\nu \sum_{a,b}
+\biggl[m_\Sigma
+\ddot{\Sigma}_{a,b}(i\omega_\nu)
++
+\sum_{c,d}
+G^\dagger_{a,c}(i\omega_\nu)
+\frac{\beta\partial\Phi}{\partial G^\dagger_{d,c}(i\omega_\nu)}
+G^\dagger_{d,b}(i\omega_\nu)
+\biggr]\delta\Sigma^\dagger_{b,a}(i\omega_\nu)+\text{c.c.}
+\end{eqnarray*}
+
+Thus the equation of motion has the form
+
+\begin{eqnarray*}
+m_\Sigma
+\ddot{\Sigma}_{a,b}(i\omega_\nu)
+&=&-
+\sum_{c,d}
+G^\dagger_{a,c}(i\omega_\nu)
+\frac{\beta\partial\Phi}{\partial G^\dagger_{d,c}(i\omega_\nu)}
+G^\dagger_{d,b}(i\omega_\nu)
+\end{eqnarray*}
+
+With $G(i\omega)=G^\dagger(-i\omega)$ and
+$\Sigma(i\omega)=\Sigma^\dagger(-i\omega)$, I obtain
+\begin{eqnarray*}
+m_\Sigma
+\ddot{\Sigma}^\dagger_{a,b}(i\omega_\nu)
+&=&-
+\sum_{c,d}
+G_{a,c}(i\omega_\nu)
+\frac{\beta\partial\Phi}{\partial G_{d,c}(i\omega_\nu)}
+G_{d,b}(i\omega_\nu)
 \end{eqnarray*}
 
 
@@ -2240,7 +3109,263 @@ Remark: We can approximate
   +(\hbar\omega)^2
 \end{eqnarray}
 
+%==============================================================================
+\section{Preconditioning}
+%==============================================================================
+With this model and using $E=0$ we obtain
+\begin{eqnarray*}
+\ddot{\Sigma}_{a,b}(i\omega_\nu)
+&=&
+\frac{1}{m_\Sigma(\omega_\nu)}
+\sum_{c,d}
+G^{corr}_{a,c}(i\omega_\nu)
+\biggl[\Sigma_{c,d}(i\omega)
+-\frac{\beta\partial \Phi^{LW}}{\partial{G}^{loc}_{d,c}(i\omega_\nu)}
+\biggr]
+G^{corr}_{d,b}(i\omega_\nu)
+\nonumber\\
+&=&
+\frac{1}{m_\Sigma(\omega_\nu)}
+\sum_{c,d}
+\biggl[-i\delta_{a,c} \frac{1}{W/2}\atan(\frac{W/2}{\hbar\omega})\biggr]
+\biggl[\Delta\Sigma_{c,d}(i\omega)
+-\frac{\beta\partial \Delta\Phi^{LW}}{\partial{G}^{loc}_{d,c}(i\omega_\nu)}
+\biggr]
+\nonumber\\
+&&
+\biggl[-i\delta_{d,b} \frac{1}{W/2}\atan(\frac{W/2}{\hbar\omega})\biggr]
+\nonumber\\
+&=&
+-\frac{1}{m_\Sigma(\omega_\nu)}
+\left(\frac{\atan(\frac{W/2}{\hbar\omega})}{(W/2)}\right)^2
+\biggl[\Delta\Sigma_{a,b}(i\omega)
+-\frac{\beta\partial \Delta\Phi^{LW}}{\partial{G}^{loc}_{b,a}(i\omega_\nu)}
+\end{eqnarray*}
 
+Thus we make the ansatz for the $\omega$-dependent mass for the self energy as
+\begin{eqnarray}
+m_\Sigma(\omega_\nu)=A\left(\frac{\atan(\frac{W/2}{\hbar\omega})}{(W/2)}\right)^2
+\end{eqnarray}
+where $A$ is a parameter.
+For $\omega\rightarrow\infty$ the mass approaches
+$A/(\hbar\omega)^2$. Near the origin, however the mass does not
+vanish, but it approaches a constant, namely
+$A(\frac{\pi}{W})^2$.
+
+Let us define two parameters that determine the $\omega$-dependent mass.
+\begin{eqnarray}
+M_\Sigma&=&m_\Sigma(0)
+\\
+C_\Sigma&=&\lim_{\omega\rightarrow\infty} m_\Sigma(\omega)\cdot(\hbar\omega)^2
+\end{eqnarray}
+
+With these parameters we obtain
+\begin{eqnarray}
+m_\Sigma(\omega_\nu)\approx M_\Sigma
+\biggl[
+\frac{2}{\pi}
+\atan\Bigl(\frac{\pi}{2}
+\sqrt{\frac{C_\Sigma}{M_\Sigma}}\frac{1}{\hbar\omega}\Bigr)
+\biggr]^2
+\end{eqnarray}
+
+An approximation for the mass \petertt{(which is not used, though!)} is
+\begin{eqnarray}
+m_\Sigma(\omega_\nu)\approx m_\Sigma
+\biggl[\Bigl(\frac{2}{\pi W/2}\Bigr)^2+(\hbar\omega)^2\biggr]^{-1}
+=C_\Sigma
+\biggl[\frac{C_\Sigma}{M_\Sigma}+(\hbar\omega)^2\biggr]^{-1}
+\end{eqnarray}
+which has the same value at the origin and the same tail for
+$\omega\rightarrow\infty$. At the origin it does not have the kink of
+the original function but remains larger.
+
+The mass for the low frequency region is $M_\Sigma$ and the mass of
+the high-frequency region is $C_\Sigma/(\hbar\omega)^2$.  The
+high-frequency tail of the Greens function is system independent,
+which allows us to determine a canonical value for $C_\Sigma$, that
+only depends in the time step. If the period of the high-frequency
+tail shall be 10 time steps, $C_\Sigma$ should have the value
+$C_\Sigma=\left(\frac{10\Delta t}{2\pi}\right)^2=$, which is about 250
+for $\Delta t=10$.
+
+If the period is fixed, we can determine also the optimum friction as
+$a_{opt}=\frac{\alpha_{opt}}{2}\Delta t=2\pi\frac{\Delta t}{T}$ which
+is with our choices $a_{opt}=\frac{2\pi}{10}$. It is not adviseable
+tio choose such a factor, because it would overdamp the low-frequency
+region.
+
+
+
+%% %=============================================================
+%% \subsubsection{Problems:}
+%% %=============================================================
+%% \begin{itemize}
+%% \item the density matrix obtained from the Matsubara sum has
+%%   eigenvalues that lie beyond the interval $[0,1]$. Tests for
+%%   Matsubara sums hower shows that the spectrum of occupations should
+%%   be smaller for a finite sum that that the true result.
+%% %
+%% \item for a given self energy the density-matrix constraint may not be
+%%   fulfillable. 
+%% %
+%% \item If we set $\Gamma$ and $Y^{(2)}$ to zero, the optimization of the
+%%   self energy is almost decoupled from that of the density matrix.
+
+%% Thus we may consider to replace the equation of motion for the
+%% Lagrange multipliers by a discrete transformation.
+%% \end{itemize}
+
+%% %=============================================================
+%% \newpage
+%% \subsection{Linear stability analysis}
+%% %=============================================================
+%% It is not clear if these dynamical equations approach a fix point if a
+%% friction is applied. The reason is (1) that it is not proven that the
+%% functional is a minimum with respect to the self energy and (2) the
+%% dynamics for the constraint equation is not derived from a minimum
+%% principle.
+
+%% The two problematic cases are related to self energy and Lagrange
+%% multipliers. Therefore we should analyze the dynamics within this
+%% subspace for a fixed one-particle density matrix. In order to
+%% understand the dynamics we do a linear stability analyses about a
+%% fixed point.
+
+%% We linearize $\bar{\mat{\rho}}$ \eq{eq:defrhobar} about the equilibrium
+%% self energy. For the second differential equation, we use
+%% \eq{eq:quantityxforderivatives} and expand about $\mat{Y}=0$, with $Y$
+%% defined in \eq{eq:defbigy}.
+%% \petertt{In the following there is a mixup with $\beta$'s!!}
+
+%% \begin{eqnarray}
+%% m_\Gamma\delta\ddot{\Gamma}_{n,n'}
+%% &=&\frac{1}{\beta}\sum_\nu\sum_{a,b}
+%% \underbrace{
+%% \Bigl[
+%% \sum_{m,m'} G_{n,m}(i\omega_\nu)\langle\psi_m|\bar{\pi}_a\rangle
+%% \langle\bar{\pi}_b|\psi_{m'}\rangle G_{m',n'}(i\omega_\nu)\Bigr]
+%% }_{B_{b,a,n',n}(i\omega_\nu)}
+%% \delta\Delta\Sigma_{a,b}(i\omega_\nu)
+%% \nonumber
+%% \\
+%% m_\Sigma\delta\Delta\ddot{\Sigma}_{a,b}(i\omega_\nu)
+%% &=&\sum_{n,n'}\underbrace{
+%% \Bigl[\sum_{m,m'}
+%% \langle\bar{\pi}_a|\psi_{m}\rangle G_{m,n}(i\omega_\nu)
+%% G_{n',m'}(i\omega_\nu)\langle\psi_{m'}|\bar{\pi}_b\rangle
+%% \Bigr]}_{B_{a,b,n,n'}(i\omega_\nu)}\delta\Gamma_{n,n'}
+%% \end{eqnarray}
+
+%% After a Fourier ttransform in time we obtain the following matrix equation
+%% \begin{eqnarray}
+%% \left(\begin{array}{cccc}
+%% \beta m_\Gamma\omega^2 & B^{\dagger,\dagger}(i\omega_1) 
+%%                 & B^{\dagger,\dagger}(i\omega_2) &\ldots\\
+%% B(i\omega_1) & m_\Sigma\omega^2 & 0 & \ldots\\
+%% B(i\omega_2) & 0&m_\Sigma\omega^2 &  \ldots\\
+%% \vdots &\vdots & 0 & 
+%% \end{array}\right)
+%% \left(\begin{array}{c}
+%% \Gamma \\ \Sigma(i\omega_1)\\ \Sigma(i\omega_2) \\ \vdots
+%% \end{array}\right)
+%% =0
+%% \end{eqnarray}
+%% From the lower equation, we obtain
+%% \begin{eqnarray}
+%% \Sigma(i\omega_\nu)=\frac{1}{m_\Sigma\omega^2}B(i\omega_\nu)\Gamma
+%% \end{eqnarray}
+%% which we insert into the uppermost equation
+%% \begin{eqnarray}
+%% &&\Bigl[m_\Gamma\omega^2-\sum_\nu B^{\dagger,\dagger}(i\omega_\nu) 
+%% \frac{1}{m_\Sigma\omega^2}B(i\omega_\nu)\Bigr]\Gamma=0
+%% \nonumber
+%% \\
+%% &&\sum_{p,p'}\biggl\lbrace
+%% m_\Gamma\omega^2\delta_{n,p}\delta_{n',p'}
+%% -\frac{1}{\beta}\sum_{\nu}
+%% \sum_{a,b}\Bigl[
+%% \sum_{m,m'} G_{n,m}(i\omega_\nu)\langle\psi_m|\bar{\pi}_a\rangle
+%% \langle\bar{\pi}_b|\psi_{m'}\rangle G_{m',n'}(i\omega_\nu)\Bigr]
+%% \nonumber\\
+%% &&\hspace{3cm}\cdot
+%% \frac{1}{m_\Sigma\omega^2}
+%% \Bigl[\sum_{m,m'}
+%% \langle\bar{\pi}_a|\psi_{m}\rangle G_{m,p}(i\omega_\nu)
+%% G_{p',m'}(i\omega_\nu)\langle\psi_{m'}|\bar{\pi}_b\rangle
+%% \Bigr]
+%% \biggr\rbrace\Gamma_{p,p'}=0
+%% \nonumber
+%% \\
+%% \Rightarrow&&\sum_{p,p'}\biggl\lbrace
+%% m_\Gamma m_\Sigma \omega^4\delta_{n,p}\delta_{n',p'}
+%% -
+%% \frac{1}{\beta}\sum_{\nu}
+%% \Bigl[
+%% \sum_{a,m,q}G_{n,m}(i\omega_\nu)\langle\psi_m|\bar{\pi}_a\rangle
+%% \langle\bar{\pi}_a|\psi_{q}\rangle G_{q,p}(i\omega_\nu)\Bigr]
+%% \nonumber\\
+%% &&\hspace{3cm}\cdot
+%% \Bigl[\sum_{b,m',q'}
+%% G_{p',q'}(i\omega_\nu)\langle\psi_{q'}|\bar{\pi}_b\rangle
+%% \langle\bar{\pi}_b|\psi_{m'}\rangle G_{m',n'}(i\omega_\nu)\Bigr]
+%% \biggr\rbrace\Gamma_{p,p'}=0
+%% \end{eqnarray}
+%% This equation factorizes according to the Bloch vectors.
+
+%% The physical meaning of 
+%% \begin{eqnarray}
+%% \sum_{b,m',q'}
+%% &&G_{p',q'}(i\omega_\nu)\langle\psi_{q'}|\bar{\pi}_b\rangle
+%% \langle\bar{\pi}_b|\psi_{m'}\rangle G_{m',n'}(i\omega_\nu)
+%% \\
+%% &=&\left.\frac{d}{dV}\right|_{V=0}
+%% \Bigl[\Bigl(\mat{G}(i\omega_\nu)\Bigr)^{-1}_{n',p'}
+%% -\sum_{a,b}\langle\psi_{n'}|\bar{\pi}_a\rangle V\delta_{a,b}
+%% \langle\bar{\pi}_b|\psi_{p'}\rangle
+%% \Bigr]^{-1}_{p',n'}
+%% \end{eqnarray}
+%% is that of the response of the Green's function to a constant external
+%% potential acting on the orbitals in the correlated subspace.
+
+%% This dynamics is unstable. The forces point in the angular direction
+%% and increase with the distance from the center. Thus the centrifugal
+%% force shifts the dynamics to increasingly larger orbits.
+%% \begin{center}
+%% {\tiny
+%% \begin{verbatim}
+%%        program dyn
+%%        implicit none
+%%        integer(4),parameter :: niter=10000
+%%        real(8)   ,parameter :: dt=1.d0
+%%        real(8)   ,parameter :: m=-1.d0
+%%        real(8)   ,parameter :: anne=5.d0
+%%        real(8)   ,parameter :: c1=1.d0,c2=-1.d0
+%%        integer(4)           :: iter
+%%        real(8)              :: x0(2),xp(2),xm(2),f(2)
+%% !      *************************************************************************
+%%        x0=(/1.d0,0.d0/)
+%%        xm=x0
+%%        do iter=1,niter
+%% !        == write ========================
+%%          write(*,fmt='(i5,2e20.5)')iter,x0
+%% !        == forces ======================
+%%          f(1)=-c1*x0(2)
+%%          f(2)=-c2*x0(1)
+%% !        == propagate
+%%          xp=(x0*2.d0-xm*(1.d0-anne)+f*dt**2/m)/(1.d0+anne)
+%% !        == switch
+%%          xm=x0
+%%          x0=xp
+%%       enddo
+%%       stop
+%%       end
+%% \end{verbatim}}
+%% \end{center}
+
+%% Conceivable is to fix the self energy and allow the density matrix to
+%% adjust, including the Lagrange parameters. The Lagrange parameters act
+%% as forces for an outer loop in which the self-energy is optimized.
 
 
 
