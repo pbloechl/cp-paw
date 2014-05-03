@@ -1262,12 +1262,14 @@ call dmft_utensor()
 call dmft_smat()
 call dmft_natorb()
 call dmft_hrho()
-call dmft_constraints('hrho')
+call dmft_constraints()
 do iter=1,3
-  call dmft_gloc_withatomset() 
+  call dmft_gloc() 
   call dmft_solver(etot) 
-  call dmft_constraints('h0')
+  call dmft_constraints()
 enddo ! end of loop over iterations to enforce constraint
+call dmft_staticsolver(svar) 
+etot=etot+svar
 call dmft_detot(svar)
 etot=etot+svar      
 call energylist$set('dmft interface',etot)
@@ -1403,29 +1405,18 @@ stored as \verb|atomset%natorb%chiphi|.
   natural orbitals in the solver interface. Check if this is
   correct. should it be the vector $x$?}
 %
-\item \verb|DMFT_HRHO|: For each k-point solve the generalized
-  eigenvalue problem
-\begin{eqnarray*}
-\mat{\rho}(k)\mat{V}(\vec{k})=
-\mat{S}^{-1}(\vec{k})\mat{V}(\vec{k})\mat{f}''(\vec{k})
-\end{eqnarray*}
-where $\mat{f}''(\vec{k})$ is a diagonal matrix that contains
-k-dependent occupations. (They differ from the occupations $f_n$ of
-the natural orbitals $|\psi_n\rangle$.)
+\item \verb|DMFT_HRHO|: (see also section~\ref{sec:routinedmfthrho} on
+  p.~\pageref{sec:routinedmfthrho}).) Calculate the non-interacting
+  Hamiltonian $\bar{\mat{h}}$ that produces the specified density
+  matrix.
 \begin{eqnarray}
-\bar{\mat{h}}(\vec{k})-\mu=\mat{V}^{\dagger,-1}(\vec{k})\; k_B
-\ln\left[
-\frac{\mat{1}-\mat{V}^\dagger(\vec{k})\mat{\rho}(\vec{k})\mat{V}(\vec{k})}
-{\mat{V}^\dagger(\vec{k})\mat{\rho}(\vec{k})\mat{V}(\vec{k})}
-\right]\mat{V}^{-1}(\vec{k})
+\bar{h}_{a,b}(\vec{k})=\mu S_{a,b}(\vec{k})+\sum_n\langle\chi_a|\psi_n'\rangle
+\frac{1}{\beta}\ln\left[\frac{1-f'_n}{f'_n}\right]
+\langle\psi'_n|\chi_b\rangle
 \end{eqnarray}
-$\bar{\mat{h}}$ is kept as \verb|KSET%HRHO|.
-%
-\item \verb|DMFT_CONSTRAINTS|: Determines $\mat{h}'(\vec{k})$ such that
-\begin{eqnarray}
-\mat{\rho}(\vec{k})=k_BT\sum_\nu \Bigl[(i\omega_\nu+\mu)\mat{S}(\vec{k})-
-\bar{\mat{h}}+\mat{\Gamma}-\mat{\Sigma}^{\hat{W}_2}_{dyn}(i\omega_\nu)\Bigr]^{-1}
-\end{eqnarray}
+where the natural orbitals $|\psi'_n\rangle$ and the occupations
+$f'_n$ differ from the original natural orbitals.
+
 $\mat{h'}$ is kept as \verb|KSET%H0|.
 %
 \item \verb|DMFT_GLOC|: The local Green's function is obtained as
@@ -1440,64 +1431,67 @@ $\mat{h'}$ is kept as \verb|KSET%H0|.
 The result and its Laurent expansion terms are stored in
 \verb|atomset%gloc| and \verb|atomset%gloclaur|.
 %
-\item \verb|DMFT_SOLVER|: Calculates the self energy for the local
-  Green's functions. The Hartree-Fock term is separated out and
-  calculated directly. Only the dynamic contribution is taken from an
-  external solver. The double counting term is calculated as in the
-  LMTO module. \textbf{For the double counting in the HF approximation
-    only the exchange part is removed, while here also the correlation
-    contribution should be taken out, because that is explicitly
-    added.}
+\item \verb|DMFT_SOLVER|: Calculates the dynamic contribution
+  $\Phi^{LW,\hat{W}_2}_\beta-\Phi^{HF,\hat{W}_2}_\beta$ to the
+  Luttinger-Ward functional and the corresponding contribution
+  $\mat{\Sigma}_{dyn},{\hat{W}_2}$ to the self energy for the
+  specified Green's function.
 
-  The Hartree-Fock contribution is added directly to the double
+  \begin{enumerate}
+    \item In a first loop over atoms the atoms are individually
+      adressed and the routine \verb|dmft_dynamicsolver| is
+      called. 
+    \item Inside \verb|dmft_dynamicsolver| the U-tensor and the
+      Green's function are converted into local natural orbitals and
+      in a up-down spinor representation with all up-spin components
+      first and the down-spin components second.
+    \item then the actual interface routine \verb|DMFT_SOLVERIO| is
+      called, which returns the value of the dynamic contribution to
+      the Luttinger-Ward functional (HF subtracted), the coresponding
+      contribution to the self energy and the derivative of the
+      U-tensor.
+      \begin{eqnarray}
+      \Phi^{dyn,LW}[\mat{G}(i\omega_\nu),\hat{W}_2]&=&
+      \Phi^{LW}[\mat{G}(i\omega_\nu),\hat{W}_2] -\frac{1}{2}
+      \sum_{a,b,c,d} U^{\hat{W}_2}_{a,b,d,c} \Bigl(
+      \rho_{d,a}\rho_{c,b} - \rho_{c,a}\rho_{d,b}\Bigr) \Bigr) 
+      \nonumber\\\
+      \Sigma^{\hat{W}_2}_{dyn,a,b}(i\omega_\nu)&=&
+      \frac{\beta\partial\Phi^{LW}}{\partial G_{b,a}(i\omega_\nu)}
+      -\sum_{c,d}\Bigl(U^{\hat{W}_2}_{a,c,b,d}-U^{\hat{W}_2}_{a,c,d,b}\Bigr)
+      \rho_{d,c}
+      \nonumber\\
+      \frac{\delta\Phi^{dyn,LW}_\beta}{\delta U_{a,b,c,d}}&=&
+      \frac{\delta\Phi^{LW}_\beta}{\delta U_{a,b,d,c}}
+      -\frac{1}{2}\Bigl(
+      \rho_{d,a}\rho_{c,b} - \rho_{c,a}\rho_{d,b}\Bigr) \Bigr) 
+      \end{eqnarray}
+      \petertt{pay attention to the reversed order of the indices $c,d$!}
+    \item After \verb|DMFT_SOLVERIO| the self energy and the
+      derivative with respect to the U-tensor are transformed back.
+  \end{enumerate}
+  The external solver may make additional approximations to the
+  U-tensor or to the Kadanoff-Baym functional. However, these
+  approximationa must be consistent across the dynamical correlation
+  correction.
+%
+\item \verb|DMFT_STATICSOLVER|: Calculates the static contribution to
+  the correlation energy, i.e. the screened Hartree Fock term and the
+  DFT double counting correction and its derivatives. These terms do
+  not affect the density matrix constraint.
+
+   \petertt{This term must be removed if the corresponding terms are
+     treated in the PAW\_LMTO object. The double counting for the
+     correlation must however still be included.}
+
+    \petertt{For the double counting in the HF approximation, only the
+      exchange part is removed, while, here, also the correlation
+      contribution should be taken out, because the correlation is
+      explicitly added.}
+
+    The Hartree-Fock contribution is added directly to the double
   counting term. Thus the self energy \verb|atomset%sigma| is only
   the dynamical contribution.
-
-Green's function and U-tensor are transformed into the representation
-of orthonormal local orbitals, and the self-energy is transformed back
-accordingly.
-
-The external solver shall evaluate
-\begin{eqnarray}
-\Phi^{LW}[\mat{G}(i\omega_\nu),\hat{W}]
--\Phi^{LW,HF}[\mat{G}(i\omega_\nu),\hat{W}]
-\end{eqnarray}
-where
-\begin{eqnarray}
-  \Phi^{LW,HF}[\mat{G},\hat{W}]
-  &=&
-  \frac{1}{2}
-  \frac{1}{\beta^{2}} 
-  \sum_{\nu,\nu'} e^{i \beta \hbar \omega_\nu 0^{+}} e^{i \beta \hbar \omega_{\nu'} 0^{+}}
-  \sum_{a,b,c,d}
-  U_{a,b,d,c} 
-  \nonumber\\ 
-  &&\hspace{-1.2cm}\times\Big(
-  G_{d,a}(i\omega_\nu)G_{c,b}(i\omega_{\nu'})
-  -  G_{c,a}(i\omega_\nu)G_{d,b}(i\omega_{\nu'})
-  \Big) 
-\nonumber\\
-&=& \frac{1}{2}
-  \sum_{a,b,c,d}
-  U_{a,b,d,c} \Bigl(
-  \rho_{d,a}\rho_{c,b} -  \rho_{c,a}\rho_{d,b}\Bigr)
-  \Big) 
-\end{eqnarray}
-Correspondingly, the self energy to be returned must have the
-Hartree-Fock term subtracted out. That is, the double counting term
-must be the Hartree-Fock term.
-\begin{eqnarray*}
-\Sigma_{a,b}(i\omega_\nu)=\frac{\beta\partial\Phi^{LW}}
-{\partial G_{b,a}(i\omega_\nu)}-\sum_{c,d}\Bigl(U_{a,c,b,d}-U_{a,c,d,b}\Bigr)
-\rho_{d,c}
-\end{eqnarray*}
-
-The external solver may make approximations to the U-tensor or to the
-Kadanoff-Baym functional. However, they need to be consistent for
-Luttinger-Ward functional and the corresponding Hartree-Fock
-term. Thus, it is ensured that there is no approximation made beyond
-the dynamic effects.
-
 %
 \item \verb|DMFT_DETOT|: Adds the non-local contribution to the total energy
 \begin{eqnarray}
@@ -1518,10 +1512,8 @@ the dynamic effects.
 \Bigr[
 \mat{\Gamma}\Bigr\rbrace
 \end{eqnarray}
-\begin{itemize}
-  \item \textbf{At this point I am still using the Dahlen trick.}  
-  \item \textbf{Is it correct that only the dynamic self energy is used?}
-\end{itemize}
+\petertt{At this point, I am still using the Dahlen trick, which is
+  probably not quite correct.}
 %
 \item \verb|DMFT_ADDTOHPSI|: Adds the energy derivative to
   \verb|this%htbc| of the \verb|waves_module|. There are two
@@ -1606,14 +1598,14 @@ contains the extended $\phi$ and $\dot{\phi}$ functions
 \end{eqnarray}
 
 
-The U-tensor is constructed in \verb|LMTO\_MAKETAILEDPARTIALWAVES|.
-\verb|LMTO\_ULITTLE| constructs
+The U-tensor is constructed in \verb|LMTO_MAKETAILEDPARTIALWAVES|.
+\verb|LMTO_ULITTLE| constructs
 \begin{eqnarray}
 u_{\ell,a,b,c,d}
 =\frac{2\ell+1}{4\pi}
 \int dr\; r^2R_c(r)R_d(r)\Bigl[\int d^3r'\;V_\ell(r,r')R_a(r')R_b(r')\Bigr]
 \end{eqnarray}
-where the kernel $V_\ell(r,r')$ is the one used by $RADIAL\$POISSON$.
+where the kernel $V_\ell(r,r')$ is the one used by \verb|RADIAL$POISSON|.
 \textbf{There is a input parameter that determines which $\ell$ values are
 considered.}
 
@@ -1720,19 +1712,95 @@ stored in the fully non-collinear model.
 
 %====================================================================
 \subsection{DMFT\_HRHO}
+\label{sec:routinedmfthrho}
 %====================================================================
-The conversion of occupations into energies is done in the routine
-\verb|DMFT_EOFF|.
+Calculate the non-interacting Hamiltonian $\bar{\mat{h}}$ that
+produces the specified density matrix.
 \begin{eqnarray}
-\epsilon=k_B
-\begin{cases}
-\ln\left(\frac{1-f}{f}\right) &\text{for $f_0<f<1-f_0$}\\
-a+b(f-f_0)&\text{for $f<f_0$}\\
--a+b(f-(1-f_0))&\text{for $f>1-f_0$}\\
-\end{cases}
+\bar{h}_{a,b}(\vec{k})=\mu S_{a,b}(\vec{k})+\sum_n\langle\chi_a|\psi_n'\rangle
+\frac{1}{\beta}\ln\left[\frac{1-f'_n}{f'_n}\right]
+\langle\psi'_n|\chi_b\rangle
 \end{eqnarray}
-where $a$ and $b$ are determined such that the mapping is
-differentiable. The value of $f_0$ is currently set to $10^{-6}$.
+where the natural orbitals $|\psi'_n\rangle$ and the occupations
+$f'_n$ differ from the original natural orbitals.
+
+\begin{enumerate}
+  \item First, we transform onto natural orbitals 
+     \begin{eqnarray}
+        |\psi'_n\rangle=\sum_a|\chi_a\rangle \langle\pi_a|\psi'_n\rangle
+     \end{eqnarray}
+     These natural orbitals may be slighly different from the original
+     natural orbitals, because they are restricted to the space of
+     local orbitals.
+     \begin{eqnarray}
+        \hat{\rho}|\psi'_n\rangle&=&|\psi'_n\rangle f'_n
+        \nonumber\\
+        \langle\chi_a|
+        \underbrace{\sum_{b,c}|\chi_b\rangle
+        \overbrace{
+           \Bigl(\sum_m\langle\pi_b|\psi_m\rangle f_m
+                 \langle\psi_m|\pi_c\rangle\Bigr)}^{\rho_{b,c}}
+               \langle\chi_c|}_{\hat{\rho}}
+             \underbrace{\sum_d|\chi_d\rangle\langle\pi_d|\psi'_n\rangle
+              }_{|\psi'_n\rangle}
+             &=&
+             \langle\chi_a|
+             \underbrace{\sum_d|\chi_d\rangle\langle\pi_d|\psi'_n\rangle
+              }_{|\psi'_n\rangle} f'_n
+     \nonumber\\
+           S_{a,b}\rho_{b,c}S_{c,d}\langle\pi_d|\psi'_n\rangle
+           &=&S_{a,d}\langle\pi_d|\psi'_n\rangle f'_n
+     \nonumber\\
+           \mat{\rho} \Bigl(\mat{S} \vec{x}_n\Bigr)
+           &=&\mat{S}^{-1}\Bigl(\mat{S} \vec{c}_n\Bigr) f'_n
+     \end{eqnarray}
+
+     Thus, for each k-point solve the generalized eigenvalue problem
+     \begin{eqnarray*}
+        \mat{\rho}(k)\mat{V}(\vec{k})=
+        \mat{S}^{-1}(\vec{k})\mat{V}(\vec{k})\mat{f}'(\vec{k})
+     \end{eqnarray*}
+     where $\mat{f}'(\vec{k})$ is a diagonal matrix that contains
+     k-dependent occupations. (They differ from the occupations $f_n$
+     of the natural orbitals $|\psi_n\rangle$.)
+%
+\item Next we evaluate the hamiltonian $\bar{\mat{h}}$ in the
+  representation of the natural orbitals $|\psi'_n\rangle$.
+
+  The conversion of occupations into energies is done in the routine
+  \verb|DMFT_EOFF|.
+  \begin{eqnarray}
+  \epsilon=\mu+k_B
+  \begin{cases}
+  \ln\left(\frac{1-f}{f}\right) &\text{for $f_0<f<1-f_0$}\\
+  a+b(f-f_0)&\text{for $f<f_0$}\\
+  -a+b(f-(1-f_0))&\text{for $f>1-f_0$}\\
+  \end{cases}
+  \end{eqnarray}
+  where $a$ and $b$ are determined such that the mapping is
+  differentiable. The value of $f_0$ is currently set to $10^{-6}$.
+
+%
+\item next we transform this Hamiltonian back into the basis of local
+  orbitals, where the Hamniltonian has the form
+  $\bar{h}_{a,b}=\langle\chi_a|\hat{\bar{h}}|\chi_b\rangle$,
+  respectively $\hat{\bar{j}}=\sum_{a,b}|\pi_a\rangle
+  h_{a,b}\langle\pi_b|$.
+  \begin{eqnarray}
+    \hat{\bar{h}}&=&\sum_n|\psi'_n\rangle\epsilon_n\langle\psi'_n|
+  \nonumber\\
+    \langle\chi_a|\hat{\bar{h}}|\chi_b\rangle&=&
+    \sum_n\langle\chi_a|\psi'_n\rangle\epsilon_n\langle\psi'_n|\chi_b\rangle
+   \nonumber\\
+    &=&
+    \sum_{n,c,d}\langle\chi_a|\chi_c\rangle\langle\pi_c|\psi'_n\rangle\epsilon_n
+     \langle\psi'_n|\pi_d\rangle\langle\chi_d|\chi_b\rangle
+    =V_{a,n}\epsilon_n V^\dagger_{n,b}
+   \nonumber\\
+     \bar{\mat{h}}(\vec{k})&=&
+       \mat{V}\mat{\epsilon}\mat{V}^\dagger
+   \end{eqnarray}
+\end{enumerate}
 
 %====================================================================
 \subsection{DMFT\_CONSTRAINTS}
