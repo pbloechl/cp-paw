@@ -39,8 +39,8 @@ http://www.pt.tu-clausthal.de/atp/}
 \chapter{Purpose and theoretical background}
 %====================================================================
 The purpose of the DMFT object is to prepare an interface to the
-solver for a quantum impurity, in the context of dynamical mean-field
-theory. The derivations here follow closely the paper of Bl\"ochl,
+solver for a quantum impurity in the context of dynamical mean-field
+theory. The derivations follow closely the paper of Bl\"ochl,
 Pruschke and Potthoff\cite{bloechl13_prb88_25139}, in the following
 referred to \textbf{BPP}\index{BPP}.
 
@@ -1474,6 +1474,30 @@ The result and its Laurent expansion terms are stored in
   U-tensor or to the Kadanoff-Baym functional. However, these
   approximationa must be consistent across the dynamical correlation
   correction.
+%
+\item Mix the self energy: The self energy cannot be simply
+  inserted into the Green's function for the next iteration, because
+  the changes for small Matsubara frequencies would be too
+  violent. Therefore it needs some preconditioning.
+
+  The underlying ideas related to the mixing are described in
+  appendix~\ref{sec:mixing} on p.~\pageref{sec:mixing}.
+  \begin{eqnarray}
+    \Sigma^{dyn}_{a,b}(i\omega_\nu)
+=\Sigma^{dyn}_{a,b}(i\omega_\nu)
++\frac{1}{C}\Bigl(\frac{C}{M}+(\hbar\omega)^2\Bigr)
+\biggl(\Sigma^{dyn}_{a,b}(i\omega_\nu)
+-\frac{\beta\delta\Phi^{LW}_{dyn}}{\partial G_{b,a}(i\omega_\nu)}
+\biggr)
+\end{eqnarray}
+$\mat{\Sigma}^{dyn}$ is the self energy that has been accumulated, and
+  that is zero in the first
+  iteration. $\frac{\beta\delta\Phi^{LW}_{dyn}} {\partial
+    G_{b,a}(i\omega_\nu)}$ is the dynamic self-energy contribution
+  produced by the solver. Note that this self energy does not contain
+  the Hartree-Fock term. $C$ and $M$ are two mixing parameters, that
+  control the behavior at small ($M$) and large ($C$) Matsubara
+  frequencies.
 %
 \item \verb|DMFT_STATICSOLVER|: Calculates the static contribution to
   the correlation energy, i.e. the screened Hartree Fock term and the
