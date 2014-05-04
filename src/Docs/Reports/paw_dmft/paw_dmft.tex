@@ -1820,15 +1820,17 @@ The Green's function is calculated as follows
 As described in section~\ref{sec:laurentgreen} on
 p.~\pageref{sec:laurentgreen}, the Laurent-expansion coefficients are
 \begin{eqnarray}
-\mat{G}^{(1)}(\vec{k})&=&\mat{S}^{-1}(\vec{k})
+\mat{\mathcal{G}}^{(1)}(\vec{k})&=&\mat{S}^{-1}(\vec{k})
+%
 \nonumber\\
-\mat{G}^{(2)}(\vec{k})&=&\mat{S}^{-1}(\vec{k})
+\mat{\mathcal{G}}^{(2)}(\vec{k})&=&\mat{S}^{-1}(\vec{k})
 \Bigl(-\mu\mat{S}(\vec{k})+\bar{\mat{h}}(\vec{k})-\mat{\Gamma}(\vec{k})
 +\mat{\mathcal{S}}^{(1)}_{dyn}(\vec{k})
 \Bigr)
 \mat{S}^{-1}(\vec{k})
+%
 \nonumber\\
-\mat{G}^{(3)}(\vec{k})&=&
+\mat{\mathcal{G}}^{(3)}(\vec{k})&=&
 \mat{S}^{-1}(\vec{k})
 \biggl[
 \mat{\mathcal{S}}^{(2)}_{dyn}(\vec{k})+
@@ -1842,19 +1844,63 @@ p.~\pageref{sec:laurentgreen}, the Laurent-expansion coefficients are
 \mat{S}^{-1}(\vec{k})
 \nonumber\\
 \end{eqnarray}
+%
+%====================================================================
+\subsubsection{Green's function difference}
+%====================================================================
+In order to calculate the constraint, it may be adviseable to directly
+evaluate the difference of te Green's function from the
+non-interacting Greens function $\bar{\mat{G}}$.
+\begin{eqnarray}
+\Delta\mathcal{G}^{(1)}(\vec{k})&=&0
+\nonumber\\
+\Delta\mathcal{G}^{(2)}(\vec{k})&=&\mat{S}^{-1}(\vec{k})
+\Bigl(
+\mat{\mathcal{S}}^{(1)}_{dyn}(\vec{k})-\mat{\Gamma}(\vec{k})
+\Bigr)
+\mat{S}^{-1}(\vec{k})
+%
+\nonumber\\
+\Delta\mat{\mathcal{G}}^{(3)}(\vec{k})
+&=&
+\mat{S}^{-1}(\vec{k})
+\biggl[
+\mat{\mathcal{S}}^{(2)}_{dyn}(\vec{k})+
+\Bigl(-\mu\mat{S}(\vec{k})+\bar{\mat{h}}(\vec{k})-\mat{\Gamma}(\vec{k})
++\mat{\mathcal{S}}^{(1)}_{dyn}(\vec{k})\Bigr)
+\nonumber\\
+&&\times\mat{S}^{-1}(\vec{k})
+\Bigl(-\mu\mat{S}(\vec{k})+\bar{\mat{h}}(\vec{k})-\mat{\Gamma}(\vec{k})
++\mat{\mathcal{S}}^{(1)}_{dyn}(\vec{k})\Bigr)
+\nonumber\\
+&&-
+\Bigl(-\mu\mat{S}(\vec{k})+\bar{\mat{h}}(\vec{k})\Bigr)
+\mat{S}^{-1}(\vec{k})
+\Bigl(-\mu\mat{S}(\vec{k})+\bar{\mat{h}}(\vec{k})\Bigr)
+\biggr]
+\mat{S}^{-1}(\vec{k})
+\end{eqnarray}
 
 %============================================================================
 \subsubsection{Update $\mat{\Gamma}$}
 %============================================================================
 \begin{myshadowminipage}{Update $\Gamma$}
-The following two equations are solved iteratively
+The following two equations are solved iteratively\footnote{Instead of
+  subtracting the density matrix from the Matsubara sum for the
+  Green'sfunction, we subtract the Greens function $\bar{\mat{G}}$
+  inside the Matsubara sum to avoid numerical problems due to the
+  finite Matsubara sum.}
 \begin{eqnarray}
 \delta\mat{\rho}(\vec{k})&=&
 \biggl(\frac{1}{\beta}\sum_\nu
 \underbrace{\Bigl[
 (i\omega_\nu+\mu)\mat{S}(\vec{k})-\bar{\mat{h}}(\vec{k})+\mat{\Gamma}(\vec{k})
 -\sum_R\mat{\Sigma}^{dyn}_R(i\omega_\nu)
-\Bigr]^{-1}}_{\mat{G}(\vec{k})}\biggr)-\mat{\rho}(\vec{k})
+\Bigr]^{-1}}_{\mat{G}(\vec{k})}\biggr)
+\nonumber]\\
+&&\hspace{1cm}-\underbrace{\Bigl[
+(i\omega_\nu+\mu)\mat{S}(\vec{k})-\bar{\mat{h}}(\vec{k})\Bigr]^{-1}
+}_{\bar{\mat{G}}(\vec{k})}\biggr)
 \nonumber\\
 \mat{\Gamma}(\vec{k})&=&\mat{\Gamma}(\vec{k})-\frac{4}{\beta}\mat{S}(\vec{k})
 \delta{\rho}(\vec{k})
@@ -1862,11 +1908,9 @@ The following two equations are solved iteratively
 \end{eqnarray}
 until $\delta\mat{\rho}$ vanishes.
 \end{myshadowminipage}
-
 This equation is a Newton scheme with the Green's function in the
 slope estimate replaced by the non-interacting Green's function with
 zero potential self energy and chemical potential. 
-
 
 \begin{eqnarray}
 \delta\mat{\rho}(\mat{\Gamma})=\delta\mat{\rho}(\mat{\Gamma}_0)
