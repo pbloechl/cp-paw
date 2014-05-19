@@ -120,8 +120,8 @@ p.~\pageref{app:matsubarafreq})
 \qquad\text{for $\nu\in\mathbb{Z}$}
 \end{eqnarray}
 
-$\mat{h}'$ are the
-Lagrange multipliers for the density-matrix constraint.
+$\mat{h}'$ are the Lagrange multipliers for the \textbf{density-matrix
+  constraint}\index{density-matrix constraint}.
 \begin{eqnarray}
 \mat{\rho}=\frac{1}{\beta}
 \sum_\nu\e{i\beta\hbar\omega_\nu0^+}\mat{G}(i\omega_\nu)
@@ -157,10 +157,12 @@ A_{\beta,N}[\hat{h}+\hat{W}]
 \biggr\rbrace
 \label{eq:hp}
 \end{eqnarray}
-where $Q^{\hat{W}}_\beta$ is the density matrix functional without the
-  entropy contribution.  The entropy contribution is taken care of
-  with the Mermin functional\cite{mermin65_pr137_a1441} to describe
-  DFT calculations with electrons at finite temperature.
+where $Q^{\hat{W}}_\beta$ is the density-matrix functional without the
+entropy contribution of a non-interacting electron gas with the same
+density matrix.  The entropy contribution is taken care of with the
+\textbf{Mermin functional}\index{Mermin
+  functional}\cite{mermin65_pr137_a1441} to describe DFT calculations
+with electrons at finite temperature.
 \begin{eqnarray}
 Q^{\hat{W}}_\beta[\mat{\rho}]
 &=&\tilde{F}^{\hat{W}}_\beta[\mat{\rho}]
@@ -193,12 +195,12 @@ Q^{\hat{W}}_\beta[\mat{\rho}]
 %====================================================================
 \section{Separate out static correlations: Towards DFT+}
 %====================================================================
-In appendix~\ref{sec:sdlitcorrelation}, it is shown that the
+In appendix~\ref{sec:sdlitcorrelation} it is shown that the
 correlation contribution $Q^{\hat{W}}_\beta$ can be divided into
 one part having a frequency-dependent self energy and several
 contributions having a frequency-independent self energy. The
 Luttinger-Ward functional with frequency-independent self energy can
-be expressed by the density matrix alone, that is the Green's function
+be expressed by the density matrix alone, that is, the Green's function
 enters always in the form of the integral
 \begin{eqnarray}
 \frac{1}{\beta}\sum_\nu\mat{G}(i\omega_\nu)\e{i\hbar\omega\beta0^+}
@@ -212,7 +214,7 @@ Q^{\hat{W}}[\mat{\rho}]
 +Q^{HF,\hat{W}_1}[\mat{\rho}]-Q^{HF,\hat{W}_2}[\mat{\rho}]
 +Q^{\hat{W}_2}[\mat{\rho}]
 \end{eqnarray}
-of which only the last term has a frequency dependent self energy.
+of which only the last term has a frequency-dependent self energy.
 
 In order to keep the computational effort at a reasonable level, we
 treat the full interaction on the most simple level of the
@@ -220,20 +222,10 @@ description, namely DFT, while the most complex many-particle
 treatment is limited to the most approximate interaction, namely
 $\hat{W}_2$. 
 
-With\footnote{A proper description should replace $E_{xc}$ with
-  $U_{xc}$, the interaction part at full interaction
-  strength. $E_{xc}$ contains the difference of the kinetic energy of
-  the fully interacting and the non-interacting electron gas at the
-  same density. Because the density matrix functional works with the
-  full interaction, this contribution must be removed.}
-\begin{eqnarray}
-Q^{DFT,\hat{W}}[\hat{\rho}]=
-\frac{1}{2}\int d^3r\int d^3r'
-\frac{e^2n(\vec{r})n(\vec{r'})}{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
-+E_{xc}[n]\;,
-\end{eqnarray}
-and a screened Hartree-Fock contribution $Q^{HF,\hat{W}}[\hat{\rho}]$
-described later, we obtain
+
+With a density-functional contribution $Q^{DFT,\hat{W}}[\hat{\rho}]$
+acting as double counting term and a screened Hartree-Fock
+contribution $Q^{HF,\hat{W}}[\hat{\rho}]$ described later, we obtain
 \begin{myshadowminipage}{Helmholtz potential}
 \begin{eqnarray}
 A_{\beta,N}[\hat{h}+\hat{W}]
@@ -291,21 +283,48 @@ We distinguish two different corrections:
   \end{eqnarray}
   (See also appendix~\ref{app:hfcontrib} on p.\pageref{app:hfcontrib}.)
 
-  For this purpose we restrict the U-tensor to onsite contributions
-  and certain bond-terms. In the spirit of the hybrid functionals or
-  the GW method, we scale the U-tensor. The neglect of U-tensor
-  elements that do not reside on an atom pair is motivated by the fact
-  that screening becomes stronger with increasing distance. Part of
-  this approximation is to neglect the interactions not captured by
-  the local orbital basis. This term is evaluated in the
-  \verb|paw_lmto|-object.
+  The first term, $E_H$, is the \textbf{Hartree energy}\index{Hartree
+    energy} and the second term, $E_X$, is the \textbf{exchange
+    energy}\index{exchange energy}
+  \begin{eqnarray}
+    E_{H}& =&\frac{1}{2}\sum_{a,b,c,d}U_{a,b,d,c}\rho_{d,a}\rho_{c,b}
+   \nonumber\\
+    E_{X}& =&-\frac{1}{2}\sum_{a,b,c,d}U_{a,b,d,c}\rho_{c,a}\rho_{d,b}
+  \end{eqnarray}
+
+  For the Hartree Fock contribution we restrict the U-tensor to onsite
+  contributions and certain bond-terms. In the spirit of the hybrid
+  functionals or the GW method, we scale the U-tensor. The neglect of
+  U-tensor elements that do not reside on an atom pair is motivated by
+  the fact that screening becomes stronger with increasing
+  distance. Part of this approximation is to neglect the interactions
+  not captured by the local orbital basis. This term is evaluated in
+  the \verb|paw_lmto|-object.
 %
-\item a DFT double counting term $Q^{DFT,\hat{W}_1}_\beta$: It mimicks
-  the DFT contribution when the interactiopn is limited to
-  $\hat{W}_1$. The basic ideas behind the double counting correction
-  has been described in a previous paper\cite{bloechl11_prb84_205101}.
+\item a \textbf{DFT double counting term}\index{double counting
+    term} $Q^{DFT,\hat{W}_1}_\beta$:
+  \begin{eqnarray}
+  Q^{DFT,\hat{W}}[\hat{\rho}]=
+  \frac{1}{2}\int d^3r\int d^3r'
+  \frac{e^2n(\vec{r})n(\vec{r'})}{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+  +\underbrace{E_{xc}[n]+T_s[n]
+  -\Tr[\frac{\hat{\vec{p}}^2}{2m_e}\hat{\rho}]}_{U_{xc}}\;,
+  \end{eqnarray}
+ where $n(r)=\langle\vec{r}|\hat{\rho}|\vec{r}\rangle$.  $U_{xc}$ is
+ the interaction part at full interaction strength.
+
+  \petertt{In practice the we use $E_{xc}$ instead of $U_{xc}$}
+
+  The term $Q^{DFT,\hat{W}_1}_\beta$ describes the DFT contribution
+  when the interaction is limited to $\hat{W}_1$. The basic ideas
+  behind the double-counting correction have been described in a
+  previous paper\cite{bloechl11_prb84_205101}.
+
+  Both, the Hartree-Fock term and the DFT double-counting term contain
+  the same Hartree energy, which cancels exactly. 
 %
-\item a dynamic-correlation correction 
+\item a \textbf{dynamic-correlation
+  correction}\index{dynamic-correlation correction}
   \begin{eqnarray}
   Q^{dyn,\hat{W}_2}_\beta\defas Q^{\hat{W}_2}_\beta-Q^{HF,\hat{W}_2}_\beta
   \end{eqnarray}
@@ -379,13 +398,13 @@ Note, that, in equilibrium, $\hat{h}_{eff}=\hat{h}_\rho$.
 into a basis of eigenstates of $\hat{h}_{eff}$.
 
 %====================================================================
-\section{Dynamic correlation correction}
+\section{Dynamic-correlation correction}
 \label{sec:dyncorelcorr}
 %====================================================================
-The dynamical term $Q_{\text{dyn},\beta}^{\hat{W}}$
-is simply the difference of the complete term minus
-the Hartree-Fock contribution.
-\begin{myshadowminipage}{Dynamic correlation correction}
+The dynamical term
+$Q_{\text{dyn},\beta}^{\hat{W}}$\index{dynamic-correlation correction}
+is simply the difference of the complete term minus the Hartree-Fock
+contribution.
 \begin{eqnarray}
 Q^{\hat{W}_2}_{dyn,\beta}[\mat{\rho}]
 &=&\tilde{F}^{\hat{W}_2}_\beta[\mat{\rho}]
@@ -417,9 +436,43 @@ Q^{\hat{W}_2}_{dyn,\beta}[\mat{\rho}]
 \Bigl(\mat{h}'_{dyn}-\bar{\mat{h}}\Bigr)\Bigr\rbrace
 \biggr\rbrace
 \nonumber\\
+\label{eq:dmf1greena}
+\end{eqnarray}
+
+We introduce a new variable
+\begin{eqnarray}
+\mat{\Gamma}\defas\bar{\mat{h}}-\mat{h}'_{dyn}
+\end{eqnarray}
+so that
+
+\begin{myshadowminipage}{Dynamic correlation correction}
+\begin{eqnarray}
+Q^{\hat{W}_2}_{dyn,\beta}[\mat{\rho}]
+&=&
+\stat_{\mat{\Gamma}}\stat_{\mat{G},\mat{\Sigma}_{dyn}}
+\biggl\lbrace
+\Phi^{LW}_\beta[\mat{G},\hat{W}_2]-\Phi^{HF,LW}_\beta[\mat{G},\hat{W}_2]
+\nonumber\\
+&&-\frac{1}{\beta}\sum_\nu\Tr\Bigl\lbrace
+\ln\Bigl[
+\mat{1}-
+\Bigl((i\hbar\omega_\nu+\mu)\mat{1}-\bar{\mat{h}}\Bigr)^{-1}
+\Bigl(\mat{\Sigma}_{dyn}(i\omega_\nu)-\mat{\Gamma}\Bigr)
+\Bigr]
+\nonumber\\&&
++(\mat{\Sigma}_{dyn}(i\omega_\nu)-\mat{\Gamma})\mat{G}(i\omega_\nu)
++
+\Bigl[
+\mat{G}(i\omega_\nu)
+-\Bigl(i\hbar\omega_\nu+\mu)\mat{1}-\bar{\mat{h}}\Bigr)^{-1}
+\Bigr]
+\mat{\Gamma}\Bigr\rbrace
+\biggr\rbrace
+\nonumber\\
 \label{eq:dmf1green}
 \end{eqnarray}
 \end{myshadowminipage}
+
 If the Luttinger-Ward functional is expressed by Feynman diagrams, we
 can simply avoid the Hartree and the exchange term instead of
 subtracting the exchange contribution externally. 
@@ -440,6 +493,15 @@ Let us form the derivative of
 $Q_{\text{dyn},\beta}^{\hat{W}_2}[\mat{\rho}]$ in all detail to avoid
 using inappropriate assumptions.
 
+In order to simplify the discussion we introduce the non-interacting
+density matrix, which produces a given density matrix as
+\begin{eqnarray}
+\bar{\mat{G}}(i\omega_\nu)
+=\Bigl[(i\hbar\omega_\nu+\mu)\mat{1}-\bar{\mat{h}}\Bigr]^{-1}
+\label{eq:defgbar}
+\end{eqnarray}
+with $\bar{\mat{h}}$ defined in \eq{eq:defhbar} as a functional of the
+density matrix.
 
 During the derivation we use the rule for derivatives of an inverse of
 a matrix\footnote{\begin{eqnarray} 
@@ -454,118 +516,157 @@ d\mat{A}^{-1}\Bigr)=-\mat{A}^{-1}\Bigl(d\mat{A}\Bigr)\mat{A}^{-1}
 $d(\bar{\mat{G}}^{-1})=+\bar{\mat{G}}d\bar{\mat{h}}\bar{\mat{G}}$.
 
 We form the first variation with respect to the density matrix,
-keeping $\mat{h}'_{dyn}$, $\mat{\Sigma}_{dyn}$ and $\mat{G}$ fixed.
+keeping $\mat{\Gamma}$, $\mat{\Sigma}_{dyn}$ and $\mat{G}$ fixed.
 \begin{eqnarray}
-d Q_{\beta}^{dyn,\hat{W}_2}
+d\mathcal{Q}_{\beta}^{dyn,\hat{W}_2}
 &=&
+-\frac{1}{\beta}\sum_\nu\Tr\biggl\lbrace
+\biggl(-\frac{\beta\delta\Phi^{LW}_\beta}{\delta\mat{G}(i\omega_\nu)}
++\frac{\beta\delta\Phi^{LW}_{\beta,HF}}{\delta\mat{G}(i\omega_\nu)}\biggr)d\mat{G}
+\nonumber\\
+&&+\Bigl[\mat{1}-\bar{\mat{G}}
+\Bigl(\mat{\Sigma}_{dyn}-\mat{\Gamma}\Bigr)\Bigr]^{-1}
+\biggl(-d\bar{\mat{G}}(\mat{\Sigma}_{dyn}-\mat{\Gamma})
+-\bar{\mat{G}}(d\mat{\Sigma}_{dyn}-d\mat{\Gamma})\biggr)
+\nonumber\\
+&&+(d\mat{\Sigma}_{dyn}-\underbrace{d\mat{\Gamma}}_{(A)})\mat{G}
++(\mat{\Sigma}_{dyn}-\underbrace{\mat{\Gamma}}_{(B)})d\mat{G}
++(\underbrace{d\mat{G}}_{(B)}-d\bar{\mat{G}})\mat{\Gamma}
++(\underbrace{\mat{G}}_{(A)}-\bar{\mat{G}})d\mat{\Gamma}
+\biggr\rbrace
+\nonumber\\
+&=&
+-\frac{1}{\beta}\sum_\nu\Tr\biggl\lbrace
+\biggr[\mat{\Sigma}_{dyn}
+-\frac{\beta\delta\Phi^{LW}_\beta}{\delta\mat{G}(i\omega_\nu)}
++\frac{\beta\delta\Phi^{LW}_{\beta,HF}}{\delta\mat{G}(i\omega_\nu)}
+\biggr]d\mat{G}
+\nonumber\\
+&&+\biggl[
+-\Bigl[\mat{1}-\bar{\mat{G}}
+\Bigl(\mat{\Sigma}_{dyn}-\mat{\Gamma}\Bigr)\Bigr]^{-1}
+\bar{\mat{G}}+\mat{G}\biggr]d\mat{\Sigma}_{dyn}
+\nonumber\\
+&&
+\nonumber\\
+&&+\biggl[\Bigl[\mat{1}-\bar{\mat{G}}
+\Bigl(\mat{\Sigma}_{dyn}-\mat{\Gamma}\Bigr)\Bigr]^{-1}
+\bar{\mat{G}}
+-\bar{\mat{G}}
+\biggr]d\mat{\Gamma}
+\nonumber\\
+&&
+-\biggl[\bar{\mat{G}}(\mat{\Sigma}_{dyn}-\mat{\Gamma})
+\Bigl[\mat{1}-\bar{\mat{G}}
+\Bigl(\mat{\Sigma}_{dyn}-\mat{\Gamma}\Bigr)\Bigr]^{-1}
+\bar{\mat{G}}\biggr]d\bar{\mat{h}}
+\nonumber\\
+&&
+-d\bar{\mat{G}}\mat{\Gamma}
+\biggr\rbrace
+\nonumber\\
+&=&
+-\frac{1}{\beta}\sum_\nu\Tr\biggl\lbrace
+\biggr[\mat{\Sigma}_{dyn}
+-\frac{\beta\delta\Phi^{LW}_\beta}{\delta\mat{G}(i\omega_\nu)}
++\frac{\beta\delta\Phi^{LW}_{\beta,HF}}{\delta\mat{G}(i\omega_\nu)}
+\biggr]d\mat{G}
+\nonumber\\
+&&+\biggl[
+\mat{G}-\Bigl[\mat{1}-\bar{\mat{G}}
+\Bigl(\mat{\Sigma}_{dyn}-\mat{\Gamma}\Bigr)\Bigr]^{-1}
+\bar{\mat{G}}\biggr]d\mat{\Sigma}_{dyn}
+\nonumber\\
+&&
+\nonumber\\
+&&+\biggl[
+\Bigl[\mat{1}-\bar{\mat{G}}
+\Bigl(\mat{\Sigma}_{dyn}-\mat{\Gamma}\Bigr)\Bigr]^{-1}
+\bar{\mat{G}}
+-\bar{\mat{G}}
+\biggr]\Bigl(d\mat{\Gamma}-d\bar{\mat{h}}\Bigr)
+\nonumber\\
+&&
++\underbrace{\biggl[
+\Bigl[\mat{1}-\bar{\mat{G}}
+\Bigl(\mat{\Sigma}_{dyn}-\mat{\Gamma}\Bigr)\Bigr]^{-1}
+\bar{\mat{G}}
+-\bar{\mat{G}}
+-\bar{\mat{G}}(\mat{\Sigma}_{dyn}-\mat{\Gamma})
+\Bigl[\mat{1}-\bar{\mat{G}}
+\Bigl(\mat{\Sigma}_{dyn}-\mat{\Gamma}\Bigr)\Bigr]^{-1}
+\bar{\mat{G}}
+\biggr]}_{=0}d\bar{\mat{h}}
+\nonumber\\
+&&
+-d\bar{\mat{G}}\mat{\Gamma}
+\biggr\rbrace
+\end{eqnarray}
+
+Thus we obtain
+\begin{eqnarray}
+d\mathcal{Q}_{\beta}^{dyn,\hat{W}_2}
+&=&
+-\frac{1}{\beta}\sum_\nu\Tr\biggl\lbrace
+\biggr[\mat{\Sigma}_{dyn}(i\omega_\nu)
+-\frac{\beta\delta\Phi^{LW}_\beta}{\delta\mat{G}(i\omega_\nu)}
++\frac{\beta\delta\Phi^{LW}_{\beta,HF}}{\delta\mat{G}(i\omega_\nu)}
+\biggr]d\mat{G}(i\omega_\nu)\biggr\rbrace
+\nonumber\\
+&&
+-\frac{1}{\beta}\sum_\nu\Tr\biggl\lbrace
+\biggl[
+\mat{G}(i\omega_\nu)-\Bigl[\mat{1}-\bar{\mat{G}}(i\omega_\nu)
+\Bigl(\mat{\Sigma}_{dyn}(i\omega_\nu)-\mat{\Gamma}\Bigr)\Bigr]^{-1}
+\bar{\mat{G}}(i\omega_\nu)\biggr]d\mat{\Sigma}_{dyn}(i\omega_\nu)
+\biggr\rbrace
+\nonumber\\
+&&
 -\frac{1}{\beta}\sum_\nu\Tr\biggl\lbrace
 \Bigl[\mat{1}-\bar{\mat{G}}
-\Bigl(\mat{h}'_{dyn}+\mat{\Sigma}_{dyn}-\bar{\mat{h}}\Bigr)\Bigr]^{-1}
-\underbrace{
-\Bigl[-\bar{\mat{G}}d\bar{\mat{h}}\bar{\mat{G}}
-\Bigl(\mat{h}'_{dyn}+\mat{\Sigma}_{dyn}-\bar{\mat{h}}\Bigr)
-+\bar{\mat{G}}d\bar{\mat{h}}\Bigr]}
-_{\bar{\mat{G}}d\bar{\mat{h}}\Bigl[\mat{1}-\bar{\mat{G}}
-\Bigl(\mat{h}'_{dyn}+\mat{\Sigma}_{dyn}-\bar{\mat{h}}\Bigr)
-\Bigr]}
-\nonumber\\
-&&-\underbrace{d\bar{\mat{h}}\mat{G}}_{(A)}-
-\Bigl[\bar{\mat{G}}d\bar{\mat{h}}\bar{\mat{G}}
-\Bigl(\mat{h}'_{dyn}-\bar{\mat{h}}\Bigr)
--\Bigl(\underbrace{\mat{G}}_{(A)}-\bar{\mat{G}}\Bigr)d\bar{\mat{h}}\Bigr]
+\Bigl(\mat{\Sigma}_{dyn}-\mat{\Gamma}\Bigr)\Bigr]^{-1}
+\bar{\mat{G}}
+-\bar{\mat{G}}
 \biggr\rbrace
+\Bigl(d\mat{\Gamma}-d\bar{\mat{h}}\Bigr)
 \nonumber\\
-&=&
--\frac{1}{\beta}\sum_\nu\Tr\biggl\lbrace
-\underbrace{\bar{\mat{G}}d\bar{\mat{h}}}_{(B)}
--
-\Bigl[-\bar{\mat{G}}d\bar{\mat{h}}\bar{\mat{G}}
-\Bigl(\mat{h}'_{dyn}-\bar{\mat{h}}\Bigr)
-+\underbrace{\bar{\mat{G}}d\bar{\mat{h}}}_{(B)}\Bigr]
-\biggr\rbrace
-\nonumber\\
-&=&-\Tr\biggl\lbrace\Bigl(\mat{h}'_{dyn}-\bar{\mat{h}}\Bigr)
-\underbrace{\frac{1}{\beta}\sum_\nu d\bar{G}}_{d\rho}
-\biggr\rbrace
-\end{eqnarray}
-Thus, we obtain the derivative with respect to the density matrix as
-\begin{eqnarray}
-\frac{\delta Q_{\beta}^{dyn,\hat{W}_2}}{\delta\mat{\rho}}
-&=&
--\Bigl(\mat{h}'_{dyn}-\bar{\mat{h}}\Bigr)
-\eqrel{eq:defhbar}{=}
-\mu\mat{1}+k_BT\ln\left[\frac{\mat{1}-\mat{\rho}}{\mat{\rho}}\right]
--\mat{h}'_{dyn}
-\end{eqnarray}
-which is the desired result.
-
-The stationary condition with respect to $\mat{G}$ is
-\begin{eqnarray}
-\frac{\beta\delta\Phi^{LW}}{\delta\mat{G}}
--\frac{\beta\delta\Phi^{HF,LW}}{\delta\mat{G}}-\mat{\Sigma}_{dyn}=0
-%\nonumber\\
-\qquad\Rightarrow\qquad
-\mat{\Sigma}_{dyn}=\frac{\beta\delta\Phi^{LW}}{\delta\mat{G}}
--\frac{\beta\delta\Phi^{HF,LW}}{\delta\mat{G}}
-\end{eqnarray}
-and the one with respect to $\mat{\Sigma}_{dyn}$ is
-\begin{eqnarray}
-&&\Bigl[
-\mat{1}-\bar{\mat{G}}
-\Bigl(\mat{h}'_{dyn}+\mat{\Sigma}_{dyn}-\bar{\mat{h}}\Bigr)
-\Bigr]^{-1}\Bigl(-\bar{\mat{G}}\Bigr)+\mat{G}=0
-\nonumber\\
-\qquad\Rightarrow\qquad
-\mat{G}&=&\Bigl[\bar{\mat{G}}^{-1}-
-\Bigl(\mat{h}'_{dyn}+\mat{\Sigma}_{dyn}-\bar{\mat{h}}\Bigr)
-\Bigr]^{-1}
-\nonumber\\
-&=&\Bigl[(i\hbar\omega_\nu+\mu)\mat{1}-\bar{\mat{h}}
-  -\Bigl(\mat{h}'_{dyn}-\bar{\mat{h}}+\mat{\Sigma}_{dyn}\Bigr)
-\Bigr]^{-1}
+&&+\Tr\Bigl[\mat{\Gamma}d\mat{\rho}\Bigr]
 \end{eqnarray}
 
-\begin{myshadowminipage}{}
-With the new symbol
+Thus the stationary conditions are
+\begin{itemize}
+\item the definition of the dynamic self energy
 \begin{eqnarray}
-\mat{\Gamma}\defas\bar{\mat{h}}-\mat{h}'_{dyn}
-\label{eq:defgammalagrangeq}
+\mat{\Sigma}_{dyn}(i\omega_\nu)
+=\frac{\beta\delta\Phi^{LW}_\beta}{\delta\mat{G}(i\omega_\nu)}
+-\frac{\beta\delta\Phi^{LW}_{\beta,HF}}{\delta\mat{G}(i\omega_\nu)}
 \end{eqnarray}
-the derivative of the correlation contribution is
+%
+\item Dyson's equation defining the Green's function
 \begin{eqnarray}
-\frac{\delta Q_{\beta}^{dyn,\hat{W}_2}}{\delta\mat{\rho}}
+\mat{G}(i\omega_\nu)=\Bigl[\mat{1}-\bar{\mat{G}}(i\omega_\nu)
+\Bigl(\mat{\Sigma}_{dyn}(i\omega_\nu)-\mat{\Gamma}\Bigr)\Bigr]^{-1}
+\bar{\mat{G}}(i\omega_\nu)
+\end{eqnarray}
+%
+\item and the density-matrix constraint
+\begin{eqnarray}
+\frac{1}{\beta}\sum_\nu\Tr\biggl\lbrace
+\Bigl[\mat{1}-\bar{\mat{G}}
+\Bigl(\mat{\Sigma}_{dyn}-\mat{\Gamma}\Bigr)\Bigr]^{-1}
+\bar{\mat{G}}
+-\bar{\mat{G}}
+\biggr\rbrace
+\end{eqnarray}
+\end{itemize}
+If the stationary conditions are obeyed, the derivative with respect
+to the density matrix is simply the matrix $\mat{\Gamma}$.
+\begin{myshadowminipage}{Density-matrix derivative of the dynamic correlation correction}
+\begin{eqnarray}
+\frac{\delta\mat{Q}^{dyn,\hat{W}_2}_\beta[\mat{\rho}]}{\delta\mat{\rho}}
 &=&\mat{\Gamma}
 \end{eqnarray}
-and the Greens function has the form
-\begin{eqnarray}
-\mat{G}(i\omega_\nu)&=&\Bigl[(i\hbar\omega_\nu+\mu)\mat{1}-\bar{\mat{h}}
-  +\mat{\Gamma}-\mat{\Sigma}_{dyn}(i\omega_\nu)
-\Bigr]^{-1}
-\end{eqnarray}
-The full self energy is
-\begin{eqnarray}
-\Sigma^{\hat{W}_2}=
-\Sigma^{HF,\hat{W}_2}+\Sigma^{dyn,\hat{W}_2}
-\end{eqnarray}
 \end{myshadowminipage}
-
-
-
-Comparing with the Green's function 
-\begin{eqnarray}
-\mat{G}&=&\Bigl[(i\hbar\omega_\nu+\mu)\mat{1}-\bar{\mat{h}}
-  -\Bigl(\mat{h}'-\bar{\mat{h}}+\mat{\Sigma}\Bigr)
-\Bigr]^{-1}
-\end{eqnarray}
-we can make the identification
-\begin{eqnarray}
-\mat{h}'+\mat{\Sigma}=\mat{h}'_{dyn}+
-\underbrace{\mat{\Sigma}
--\mat{\Sigma}^{HF}}_{\mat{\Sigma}_{dyn}}
-\nonumber\\
-\mat{h}'=\mat{h}'_{dyn}-\mat{\Sigma}^{HF}
-\end{eqnarray}
-
 
 The matrix $\mat{\Gamma}$ replaces $\mat{h}'$ as Lagrange parameter
 for the density matrix constraint.  It vanishes in the Hartree-Fock
@@ -574,420 +675,12 @@ BPP-Eq.45-46\cite{bloechl13_prb88_25139}. Instead of the Hartree-Fock
 self energy $\mat{\Sigma}^{HF}$, we could have taken any other static
 self energy.
 
-
 One may ask, where the self energy contribution from static
 correlations is, because both, $\mat{\Sigma}$ and $\mat{\Sigma}^{HF}$
 mentioned here refer to the second interaction using $\hat{W}_2$. The
 Terms related to $\hat{W}_1$ are contained in the density matrix and
 $\bar{\mat{h}}$.
 
-%====================================================================
-\section{Solver for dynamic correlations}
-%====================================================================
-%====================================================================
-\subsection{Loop for the dynamic correlation contribution}
-%====================================================================
-We evaluate the functional $Q^{\hat{W}_2}_{dyn,\beta}[\mat{\rho}]$
-following the recipy provided in section III of the BPP
-paper\cite{bloechl13_prb88_25139}.
-\begin{enumerate}
-\item Construct the hamiltonian $\hat{h}_\rho$, whose Green's function
-  obeys the density-matrix constraint.
-\begin{eqnarray}
-\bar{\mat{h}}=\mu\mat{1}
-+k_BT\ln\left[\frac{\mat{1}-\mat{\rho}}{\mat{\rho}}\right]
-\end{eqnarray}
-This is done in \verb|DMFT_HRHO|.
-%
-\item Construct the Greens function $\bar{\mat{G}}$, which is the
-  non-interacting Green's function with the correct density matrix.
-\begin{eqnarray}
-\bar{\mat{G}}(i\omega_\nu)=\Bigl[(i\hbar\omega_\nu+\mu)\mat{1}-\bar{\mat{h}}
-\Bigr]^{-1}
-\end{eqnarray}
-%
-\item For each site (or correlated cluster), extract the local part of
-  the Green's function. Then transform Green's function and U-tensor
-  to the local orthonormal basisset (such as local natural orbitals.)
-  Furthermore expand U-tensor and Green's function into the spin-up
-  spin-down spinor representation.
-
-\item pass the local Green's function and the transformed U-tensor to
-  the solver interface. The solver only contributes the dynamic
-  correlations.
-\begin{myshadowminipage}{Solver}
-The external solver may do further approximations to the U-tensor.
-Then it calculates the non-Hartree-Fock contribution of
-the Luttinger Ward functional, i.e.
-\begin{eqnarray}
-\Phi^{LW}[G,\hat{W}_2]-\Phi^{LW,HF}[G,\hat{W}_2]
-\end{eqnarray}
-and the non-Hartree-Fock contribtion of the self energy
-\begin{eqnarray}
-\Sigma^{dyn}_{a,b}(i\omega_\nu)
-=\Sigma_{a,b}(i\omega_\nu)-\Sigma^{HF}_{a,b}(i\omega_\nu)=
-\frac{\beta\delta\Phi^{LW}[G,\hat{W}_2]}{\delta G_{b,a}(i\omega_\nu)}
--\frac{\beta\delta\Phi^{LW,HF}[G,\hat{W}_2]}{\delta G_{b,a}(i\omega_\nu)}
-\end{eqnarray}
-\petertt{Later we should also calculate the derivative of the energy
-  terms with respect to the local U-tensor. This derivative is the
-  two-particle density matrix.
-\begin{eqnarray}
-N^{dyn}_{a,b,c,d}=\frac{\beta\delta\Phi^{LW}[G,\hat{W}_2]}{\delta U_{a,b,c,d}}
--\frac{\beta\delta\Phi^{LW,HF}[G,\hat{W}_2]}{\delta U_{a,b,c,d}}
-\end{eqnarray}
-}
-\end{myshadowminipage}
-%
-\item convert the self energy and the derivative of the U-tensor back
-  to the non-orthonormal set of local orbitals.
-%
-\item Mix the self energy: The self energy cannot be simply
-  inserted into the Green's function for the next iteration, because
-  the changes for small Matsubara frequencies would be too
-  violent. Therefore it needs some preconditioning.
-
-  The underlying ideas related to the
-  mixing are described in appendix~\ref{sec:mixing} on
-  p.~\pageref{sec:mixing}.
-
-  \begin{eqnarray}
-    \Sigma^{dyn}_{a,b}(i\omega_\nu)
-=\Sigma^{dyn}_{a,b}(i\omega_\nu)
-+\frac{1}{C}\Bigl(\frac{C}{M}+(\hbar\omega)^2\Bigr)
-\biggl(\Sigma^{dyn}_{a,b}(i\omega_\nu)
--\frac{\beta\delta\Phi^{LW}_{dyn}}{\partial G_{b,a}(i\omega_\nu)}
-\biggr)
-\end{eqnarray}
-$\mat{\Sigma}^{dyn}$ is the self energy that has been accumulated, and
-  that is zero in the first
-  iteration. $\frac{\beta\delta\Phi^{LW}_{dyn}} {\partial
-    G_{b,a}(i\omega_\nu)}$ is the dynamic self-energy contribution
-  produced by the solver. Note that this self energy does not contain
-  the Hartree-Fock term. $C$ and $M$ are two mixing parameters, that
-  control the behavior at small ($M$) and large ($C$) Matsubara
-  frequencies.
-%
-\item The new Green's function $\mat{G}^{new}$ has the form
-\begin{eqnarray}
-\mat{G}^{new}(i\omega_\nu)=\Bigl[(i\hbar\omega_\nu+\mu)\mat{1}
--\bar{\mat{h}}+\mat{\Gamma}
--\mat{\Sigma}^{dyn}(i\omega_\nu)
-\Bigr]^{-1}
-\end{eqnarray}
-where the Lagrange multiplier $\mat{\Gamma}$ needs to be adjusted until
-the density matrix constraint
-\begin{eqnarray}
-\mat{\rho}=\frac{1}{\beta}\sum_\nu 
-\e{i\beta\hbar\omega_\nu0^+}\mat{G}^{new}(i\omega_\nu)
-\end{eqnarray}
-is fulfilled. 
-
-For this purpose, we linearize the constraint equation in the Lagrange
-multiplier
-\begin{eqnarray}
-\mat{\rho}&=&\frac{1}{\beta}\sum_\nu 
-\e{i\beta\hbar\omega_\nu0^+}
-\biggl[
-\mat{G}^{new}(i\omega_\nu)-\mat{G}^{new}(i\omega_\nu)\delta\mat{\Gamma}
-\mat{G}^{new}(i\omega_\nu)\biggr]
-\nonumber\\
-0&=&\left[\frac{1}{\beta}\sum_\nu \e{i\beta\hbar\omega_\nu0^+}
-G^{new}_{a,b}(i\omega_\nu)\right]-\rho_{a,b}
--\sum_{c,d}\left[
-\frac{1}{\beta}\sum_\nu 
-\mat{G}^{new}_{a,c}(i\omega_\nu)\mat{G}^{new}_{d,b}(i\omega_\nu)\right]
-\delta\mat{\Gamma}_{c,d}
-\nonumber\\
-\delta\mat{\Gamma}_{c,d}
-&=&
-\underbrace{
-\left[
-\frac{1}{\beta}\sum_\nu 
-\mat{G}^{new}_{a,c}(i\omega_\nu)\mat{G}^{new}_{d,b}(i\omega_\nu)
-\right]^{-1}_{cd,ab}
-}_{\leadsto\quad \alpha\delta_{c,a}\delta_{d,b}}
-\biggl(
-\underbrace{\left[\frac{1}{\beta}\sum_\nu \e{i\beta\hbar\omega_\nu0^+}
-G^{new}_{a,b}(i\omega_\nu)\right]}_{\rho^{new}_{a,b}}-\rho_{a,b}
-\biggr)
-\end{eqnarray}
-\petertt{In this equation we can use the model Green's function to
-  avoid the calculation and inversion of
-  $\mat{G}^{new}\otimes\mat{G}^{new}$}
-
-Note, that $\mat{\Gamma}$ is, like $\mat{h'}$, a non-local Hamiltonian,
-that in principle connects arbitrary local orbitals with each
-other. In a Bloch representation, $\mat{\Gamma}$ is a k-dependent matrix,
-which connects all local orbitals in the unit cell with each other.
-
-Thus, we iterate the coupled equations
-\begin{eqnarray}
-\mat{G}^{new}(i\omega_\nu)&=&\Bigl[(i\hbar\omega_\nu+\mu)\mat{1}
--\bar{\mat{h}}+\mat{\Gamma}
--\mat{\Sigma}^{dyn}(i\omega_\nu)
-\Bigr]^{-1}
-\nonumber\\
-\delta\mat{\rho}&=&\frac{1}{\beta}\sum_\nu 
-\e{i\beta\hbar\omega_\nu0^+}\mat{G}^{new}(i\omega_\nu)-\mat{\rho}
-\nonumber\\
-\mat{\Gamma}&=&\mat{\Gamma}+\alpha \delta\mat{\rho}
-\end{eqnarray}
-until $\delta\rho$ vanishes.
-
-\petertt{In practice we do not use $\alpha$, but precondition with a
-  Green's function with zero one-particle level. see
-  section~\ref{sec:routinedmftconstraints}.}
-
-With the correct Lagrange multiplier, the new Green's function is
-obtained.
-%
-\item The new Green's function is feed back into the solver for the
-  calculation of the Luttinger-Ward functional and its self energy.
-\end{enumerate}
-
-%====================================================================
-\subsection{Energy contribution}
-%====================================================================
-When the loop is converged,  we evaluate 
-\begin{eqnarray}
-Q^{\hat{W}_2}_{dyn,\beta}[\mat{\rho}]
-&=&
-\biggl\lbrace
-\Phi^{LW}_\beta[\mat{G},\hat{W}_2]-\Phi^{HF,LW}_\beta[\mat{G},\hat{W}_2]
-\nonumber\\
-&&-\frac{1}{\beta}\sum_\nu\Tr\Bigl\lbrace
-\ln\Bigl[
-\mat{1}-
-\bar{\mat{G}}(i\omega_\nu)
-\Bigl(\mat{\Sigma}_{dyn}(i\omega_\nu)-\mat{\Gamma}\Bigr)
-\Bigr]
-\nonumber\\&&
-+\Bigl(\mat{\Sigma}_{dyn}(i\omega_\nu)-\mat{\Gamma}\Bigr)\mat{G}(i\omega_\nu)
-+
-\Bigl[\mat{G}(i\omega_\nu)-\bar{\mat{G}}(i\omega_\nu)\Bigr]
-\mat{\Gamma}
-\biggr\rbrace
-\nonumber\\
-\label{eq:dmf1greenenergy}
-\end{eqnarray}
-
-%====================================================================
-\subsection{Evaluation of the logarithm using a power series expansion}
-%====================================================================
-We use the Taylor expansion of the logarithm
-\begin{eqnarray}
-\ln[1-x]=-\sum_{n=1}^\infty \frac{1}{n}x^n \qquad\text{for $|x|<1$}
-\end{eqnarray}
-
-
-\begin{eqnarray}
-Q^{\hat{W}_2}_{dyn,\beta}[\mat{\rho}]
-&=&
-\Phi^{LW}_\beta[\mat{G},\hat{W}_2]-\Phi^{HF,LW}_\beta[\mat{G},\hat{W}_2]
-\nonumber\\
-&&-\frac{1}{\beta}\sum_\nu\Tr\biggl\lbrace
--\sum_{n=1}^\infty\frac{1}{n}
-\Bigl[\bar{\mat{G}}(i\omega_\nu)
-\Bigl(\mat{\Sigma}_{dyn}(i\omega_\nu)-\mat{\Gamma}\Bigr)
-\Bigr]^n
-\nonumber\\&&
-+\Bigl(\mat{\Sigma}_{dyn}(i\omega_\nu)-\mat{\Gamma}\Bigr)\mat{G}(i\omega_\nu)
-+
-\Bigl[\mat{G}(i\omega_\nu)-\bar{\mat{G}}(i\omega_\nu)\Bigr]
-\mat{\Gamma}
-\biggr\rbrace
-\nonumber\\
-&=&
-\Phi^{LW}_\beta[\mat{G},\hat{W}_2]-\Phi^{HF,LW}_\beta[\mat{G},\hat{W}_2]
-\nonumber\\
-&&-\frac{1}{\beta}\sum_\nu\Tr\biggl\lbrace
-\mat{\Sigma}_{dyn}(i\omega_\nu)
-\Bigl[\mat{G}(i\omega_\nu)-\bar{\mat{G}}(i\omega_\nu)\Bigr]
--\sum_{n=2}^\infty\frac{1}{n}
-\Bigl[\bar{\mat{G}}(i\omega_\nu)
-\Bigl(\mat{\Sigma}_{dyn}(i\omega_\nu)-\mat{\Gamma}\Bigr)
-\Bigr]^n
-\biggr\rbrace
-\nonumber\\
-\label{eq:dmf1greenenergypower}
-\end{eqnarray}
-
-%====================================================================
-\subsection{Evaluation of the logarithm using Dahlen's trick}
-%====================================================================
-The evaluation fo the logarithm is problematic, because Green's
-function and self energy are not hermitean. In appendix B of their
-paper\cite{dahlen06_pra73_12511} Dahlen et al proposed a trick to
-solve the problem. \petertt{It is not yet clear to me if this trick is
-  correct.}
-
-The trick rests on the assumption of the following identity
-\begin{eqnarray}
-\Tr\ln(\mat{A}\mat{A}^\dagger)\stackrel{?}{=}
-\Tr\ln(\mat{A})+Tr\ln(\mat{A}^\dagger)
-\end{eqnarray}
-which should be valid for arbitrary non-hermitean matrices $\mat{A}$.
-
-Consider the singular value decompostion of
-$mat{A}=\mat{U}\mat{\Sigma}\mat{V}^\dagger$, where $\mat{U}$ and $\mat{V}$ are
-unitary matrices and $\mat{\Sigma}$ is a diagonal matrix with real,
-non-negative numbers, the singular values, on the diagonal.
-\begin{eqnarray}
-\Tr\ln(\mat{A}\mat{A}^\dagger)
-&=&\Tr\ln(\mat{U}\mat{\Sigma}\mat{V}^\dagger
-\mat{V}\mat{\Sigma}^\dagger\mat{U}^\dagger)
-=\Tr\ln(\mat{U}\mat{\Sigma}\mat{\Sigma}^\dagger\mat{U}^\dagger)
-=\Tr\Bigl[\mat{U}\ln(\mat{\Sigma}\mat{\Sigma}^\dagger)\mat{U}^\dagger\Bigr]
-\nonumber\\
-&=&\Tr\Bigl[\ln(\mat{\Sigma}\mat{\Sigma}^\dagger)\Bigr]
-=\sum_i \ln(s_i)+\sum_i \ln(s_i)+
-=\Tr\ln[\mat{\Sigma}]+\Tr\ln[\mat{\Sigma}^\dagger]
-\nonumber\\
-\Tr\ln(\mat{A})+Tr\ln(\mat{A}^\dagger)
-&=&\Tr\ln(\mat{U}\mat{\Sigma}\mat{V}^\dagger)
-+\Tr\ln(\mat{V}\mat{\Sigma}^\dagger\mat{U}^\dagger)
-\end{eqnarray}
-
-Unfortunately $\mat{V}^\dagger\mat{U}\neq\mat{1}$ so that we cannot
-simply convert the power series expansion into one of the singular
-values.\petertt{This is the problem}.
-
-%====================================================================
-\subsection{Traditional formulation of the dynamical mean-field theory}
-%====================================================================
-The loop of solver takes as input a local Greens function and a
-U-tensor. It produces the value of the Luttinger-Ward functional, and
-its derivatives of the Luttinger-Ward functional with respect to
-Greens function and U-tensor.
-
-The algorithm is the following
-\begin{enumerate}
-\item choose a hybridization function $\Delta^{in}(i\omega_\nu)$
-\item calculate an output Greens function $\mat{G}^{out}$ as
-  follows\footnote{(D. Vollhardt \textit{Dynamical Mean Field Theory
-      for Strongly Correlated Materials} in \textit{The LDA+DMFT
-      Approach to Strongly Correlated Materials'} E. Pavarini,
-    E. Koch, D. Vollhardt and A. Lichtenstein Eds, Forschungszentrum
-    Juelich 2011. Eq. 23.ff)}: \petertt{Caution, I
-      generalized Dieter's Equations without checking. Signs, factors,
-      indices, etc. may be wrong!}
-\begin{eqnarray*}
-G^{out}_{\alpha,\beta}(i\omega_\nu)&:=&
--\frac{1}{Z}\int\prod_{\gamma} Dc^*_\gamma Dc_\gamma\;
-c_\alpha(i\omega_\nu)c^*_\beta(i\omega_\nu) \e{-S_{loc}}
-\\
-Z&=&\int\prod_{\gamma} Dc^*_\gamma Dc_\gamma\;\e{-S_{loc}}
-\\
-S_{loc}&=&-\int_0^\beta d\tau_1\int_0^\beta d\tau_2\;
-\sum_{\alpha,\beta}c^*_\alpha(\tau_1)
-\Bigl[
-i\hbar\omega_\nu\delta_{\alpha,\beta}-\Delta^{in}_{\alpha,\beta}(i\omega_\nu)
-\Bigr]
-c_\beta(\tau_2)
-\nonumber\\
-&&-\int_0^\beta d\tau \sum_{\alpha,\beta,\gamma,\delta}
-U_{\alpha,\beta,\delta,\gamma}
- c^*_\alpha c^*_\beta c_\gamma c_\delta
-\end{eqnarray*}
-Note, that only the hybridization function $\mat{\Delta}^{in}$ and the
-  U-tensor enter in this calculation. The only result is the output
-  Greens function $\mat{G}^{out}$.
-%
-\item Convert the Green's function into a self energy $\mat{\Sigma}^{out}$
-  using Dyson's equation
-\begin{eqnarray}
-\Sigma^{out}_{\alpha,\beta}(i\omega_\nu)
-:=-\Bigl(G^{out}(i\omega_\nu)\Bigr)^{-1}_{\alpha,\beta}
-+i\hbar\omega_\nu\delta_{\alpha,\beta}
--\Delta^{in}_{\alpha,\beta}(i\omega_\nu)
-\label{eq:sigmaout}
-\end{eqnarray}
-%
-\item Use the Greens function $\mat{G}$ passed
-  to the solver as input argument (not
-  $\mat{G}^{out}$!)  to extract a new
-  hybridization function $\mat{\Delta}^{out}$
-\begin{eqnarray}
-\Delta^{out}_{\alpha,\beta}(i\omega_\nu)
-:=-\Bigl(G(i\omega_\nu)\Bigr)^{-1}_{\alpha,\beta}
-+i\hbar\omega_\nu\delta_{\alpha,\beta}-\Sigma^{out}_{\alpha,\beta}(i\omega_\nu)
-\label{eq:deltaout}
-\end{eqnarray}
-\end{enumerate}
-
-
-The steps given above yield a unique mapping from $\Delta^{in}$ to
-$\Delta^{out}$. In other words the output hybridization function is a
-unique functional of the input hybridization function, the input
-Greens function and the U-tensor.
-\begin{eqnarray}
-\mat{\Delta}^{out}=F[\mat{\Delta}^{in},\mat{G},\mat{U}]
-\end{eqnarray}
-
-
-The mapping depends on exactly two quantities, namely
-the input Green's function and the U-tensor. Self-consistency yields the 
-fixed point $\Delta^{out}=\Delta^{in}$ of this mapping.
-At this fixed point, \eq{eq:deltaout} and \eq{eq:sigmaout} yield
-\begin{eqnarray}
-G^{out}_{\alpha,\beta}(i\omega_\nu)&=&G_{\alpha,\beta}(i\omega_\nu)
-\end{eqnarray}
-and 
-\begin{eqnarray}
-G_{\alpha,\beta}(i\omega_\nu)
-=\biggl[
-i\hbar\omega_\nu\mat{1}
--\mat{\Sigma}^{out}(i\omega_\nu)
--\mat{\Delta}^{in}(i\omega_\nu)
-\biggr]^{-1}_{\alpha,\beta}
-\;.
-\end{eqnarray}
-
-
-%====================================================================
-\subsection{The interface}
-%====================================================================
-The Luttinger-Ward functional and its derivative, the self energy is
-obtained from an external solver. The solver is linked into the
-subroutine \verb|DMFT_SOLVERIO|.
-
-This routine supplies the local Green's function \verb|G| and its
-first three Laurent expansion terms \verb|GLAUR|, as well as the
-U-tensor $\verb|U|$. All quantities are prepared with respect to a
-orthonormal one-particle basisset\footnote{The formerly non-orthogonal
-  orbitals on a single site are orthogonalized with each
-  other.}. These orbitals are two-component spinor orbitals. The order
-of the orbitals is arbitrary, and there is not necessarily a division
-between spin-up and spin-down orbitals.
-
-Note also, that the nature of the orbitals and also their order may
-change arbitrarily from one iteration to the next. However, the
-orbitals stay the same during the evaluation of a density
-matrix functional for a given density matrix $\mat{\rho}$.
-
-
-The routine expects back $\Delta\Phi^{LW}=\Phi^{LW}-\Phi^{LW,HF}$, the
-value of the Luttinger-Ward functional $\Phi^{LW}$ minus its Hartree-Fock value
-$\Phi^{LW,HF}$. The Hartree-Fock value of the Luttinger-Ward
-functional can be calculated directly from the density matrix given by
-\eq{eq:rhoofg} as
-\begin{eqnarray}
-\Phi^{LW,HF}=\frac{1}{2}\sum_{a,b,c,d}U_{a,b,d,c}
-\Bigl(\rho_{b,a}\rho_{c,b}-\rho_{c,a}\rho_{d,b}\Bigr)
-\label{eq:philwhf}
-\end{eqnarray}
-
-
-Similarly, the self energy and its Laurent expansion terms follow from
-\begin{eqnarray}
-\Delta\Sigma_{a,b}(i\omega_\nu)&=&
-\beta\frac{\partial\Phi^{LW}}{\partial G_{b,a}(i\omega_\nu)}
--\beta\frac{\partial\Phi^{LW,HF}}{\partial G_{b,a}(i\omega_\nu)}
-\nonumber\\
-&=&\beta\frac{\partial\Phi^{LW}[\mat{G},\hat{W}]}{\partial G_{b,a}(i\omega_\nu)}
--\sum_{c,d}\Bigl(U_{a,c,b,d}-U_{a,c,d,b}\Bigr)\rho_{c,d}
-\end{eqnarray}
 %
 %====================================================================
 \newpage
@@ -1155,6 +848,7 @@ and
 I introduce
 \begin{eqnarray}
 S^{-1}_{a,b}\defas \sum_{n}\langle\pi_a|\psi_n\rangle\langle\psi_n|\pi_b\rangle
+\label{eq:defoverlapmatrix}
 \end{eqnarray}
 and redefine the overlap $\langle\chi_a|\chi_b\rangle$ as the inverse
 of $\mat{S}$. We could consider this as a redefinition of the scalar
@@ -1163,76 +857,511 @@ product between the states $|\kappa_n\rangle$.
 
 
 
-%====================================================================
-\section{Usage}
-%====================================================================
-%====================================================================
-\subsection{Control file}
-%====================================================================
-A typical control file looks as follows. The DMFT object is activated
-by the block \verb|!NTBO| with the value \verb|MODUS='DMFT'|. The DMFT
-interface requires a finite temperature calculation, which is
-specified by the \verb|!MERMIN| block, where the temperature is
-specified.  A finite temperature calculation requires
-\verb|SAFEORTHO=T|, so that the wave function dynamics converges to
-eigenstates of the Hamiltonian.
-\begin{verbatim}
-!CONTROL
-  !GENERIC NSTEP=500  DT=5. START=F  !END 
-  !FOURIER EPWPSI=30. CDUAL=2.0 !END
-  !DFT TYPE=10  
-     !NTBO MODUS='DMFT' !END   
-  !END 
-  !PSIDYN STOP=T FRIC=.05 SAFEORTHO=F
-    !AUTO FRIC(-)=0.3 FACT(-)=0.97 FRIC(+)=0.3 FACT(+)=1.0 MINFRIC=0.05 !END
-  !END
-  !MERMIN T[K]=4000. ADIABATIC=T RETARD=10. !END
-!end
-!EOB
-\end{verbatim}
+
+
 
 %====================================================================
-\subsection{Structure file}
+\section{Variational parameters for the Green's function}
 %====================================================================
-A typical structure file may look as follows. New are the \verb|!NTBO|
-subblocks.
-\begin{verbatim}
-!STRUCTURE 
-  !GENERIC  LUNIT[AA]=   3.8   EUNIT[EV]=T !END
-  !OCCUPATIONS EMPTY=10 NSPIN=2 SPIN[HBAR]=1.5 !END
-  !KPOINTS DIV=1 1 1 SHIFT=1 1 1 !END
-  !SPECIES NAME='CA' ID='CA_HBS_SC' NPRO=2 2 1 
-    !NTBO NOFL=1 0 0 RAUG/RCOV=0.8 RTAIL/RCOV=1.4 TAILLAMBDA=2. 1.
-          CV=F FOCKSETUP=F  !END 
-  !END
-  !SPECIES NAME='MN' ID='MN_HBS' NPRO=1 1 1 
-     !NTBO NOFL=1 0 1 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 TAILLAMBDA=2. 1.
-           LHFWeiGHT=0.25 CV=F FOCKSETUP=F !END 
-  !END
-  !SPECIES NAME='O_' ID='O_.75_6.0'  NPRO=1 1 0
-    !NTBO NOFL=1 1  RAUG/RCOV=1.2 RTAIL/RCOV=1.4 TAILLAMBDA=2. 1.
-           CV=F FOCKSETUP=F !END 
-  !END
-  !LATTICE T=  1.0000        0.0000        0.0000000000
-               0.0000        1.0000        0.0000000000
-               0.0000        0.0000        1.0000000000 !END
-  !ATOM NAME= 'CA1'   R=   0.0  0.0 0.0 !END
-  !ATOM NAME= 'MN1'   R=   0.5  0.5 0.5 !END
-  !ATOM NAME= 'O_1'   R=   0.0  0.5 0.5 !END
-  !ATOM NAME= 'O_2'   R=   0.5  0.0 0.5 !END
-  !ATOM NAME= 'O_3'   R=   0.5  0.5 0.0 !END
-  !ORBPOT_X
-    !POT ATOM='MN(UP)1' VALUE=+.2 TYPE='D' RC=1.5 S=1 !END
-  !END
-!END 
-!EOB
-\end{verbatim}
+%====================================================================
+\subsubsection{Representation of the Green's function}
+%====================================================================
+The Green's function is expressed in a Bloch representation.
+\begin{eqnarray}
+\mat{G}_{\vec{t},\vec{t'}}(i\omega_\nu)=\frac{1}{N_k}\sum_{\vec{k}}
+\mat{G}_{\vec{k}}(i\omega_\nu)\e{i\vec{k}(\vec{t}-\vec{t'})}
+\end{eqnarray}
+where $N_k$ is the number of $\vec{k}$ points on the chosen numerical
+grid in the first unit cell.  $\mat{G}_{\vec{t},\vec{t'}}$ is a matrix
+with dimension equal to the number of local orbitals in a given unit
+cell, and it connects these orbitals in two unit cells specified by
+the translation vectors $\vec{t}$ and $\vec{t}$.  \petertt{Check the
+  sign in the exponential!}
 
+
+The Green's function can be expressed by the values at the positive
+Matsubara frequencies up to a maximum value $\omega_x$ and the first
+three Laurent expansion terms.
+\begin{eqnarray}
+\mat{G}_{\vec{k}}(i\omega_\nu)=
+\begin{cases}
+\mat{G}_{\vec{k}}(i\omega_\nu)
+&\text{for $0<\omega_\nu\le\omega_x$}\\
+\mat{G}_{\vec{k}}^\dagger(-i\omega_\nu)
+&\text{for $-\omega_x\le\omega_\nu<0$}\\
+\sum_{j=1,2}\frac{1}{(i\hbar\omega_\nu)^j}
+\mat{\mathcal{G}}^{(j)}_{\vec{k}}
+&\text{for $|\omega_\nu|>\omega_x$}\\
+\end{cases}
+\label{eq:Greensfunctionrep}
+\end{eqnarray}
+where $\mathcal{\mat{G}}^{(0)}_{\vec{k}}=\mat{S}_{\vec{k}}^{-1}$.
+
+
+%====================================================================
+\subsubsection{Variational parameters}
+%====================================================================
+However, we treat this representation as the derived form.  By
+employing the stationary condition for the self energy, we obtain
+Dyson's equation, which expresses the Green's function by the self
+energy. Using the same stationary condition with respect to the
+Laurent expansion terms of the self energy, one obtaines a consisent
+definition for the Laurent expansion terms of the Green's function.
+
+The parameters entering in the representation
+\eq{eq:Greensfunctionrep} of the Greens function given above are
+obtained from the fundamental variables as.
+\begin{eqnarray}
+\mat{G}_{\vec{k}}(i\omega_\nu)&=&
+\biggl[
+(i\hbar\omega_\nu+\mu)\mat{S}_{\vec{k}}-\bar{\mat{h}}_{\vec{k}}
+-
+\Bigl[\mat{\Sigma}_{dyn}(i\omega_\nu)-\mat{\Gamma}_k\Bigr]
+\biggr]^{-1}
+\qquad\text{for $0<\omega_\nu\le\omega_x$}
+\nonumber\\
+\mat{\mathcal{G}}^{(1)}_{\vec{k}}
+&\eqrel{eq:Lauenttermsgreenappendix}{=}&
+\mat{S}_{\vec{k}}^{-1}
+\nonumber\\
+\mat{\mathcal{G}}^{(2)}_{\vec{k}}
+&\eqrel{eq:Lauenttermsgreenappendix}{=}&
+-\mat{S}_{\vec{k}}^{-1}
+\biggl[\mu\mat{S}_{\vec{k}}-\mat{h}_{\vec{k}}
++\mat{\Gamma}_{\vec{k}}-\mat{\mathcal{S}}^{(0)}_{dyn}
+\biggr]
+\mat{S}_{\vec{k}}^{-1}
+%% \nonumber\\
+%% \mat{\mathcal{G}}^{(3)}_{\vec{k}}
+%% &\eqrel{eq:Lauenttermsgreenappendix}{=}&
+%% \mat{S}_{\vec{k}}^{-1}
+%% \biggl[\mu\mat{S}_{\vec{k}}-\mat{h}_{\vec{k}}+\mat{\Gamma}_{\vec{k}}
+%% -\mat{\mathcal{S}}^{(0)}_{dyn}\Bigr]\mat{S}_{\vec{k}}^{-1}
+%% \biggl[\mu\mat{S}_{\vec{k}}-\mat{h}_{\vec{k}}+\mat{\Gamma}_{\vec{k}}
+%% -\mat{\mathcal{S}}^{(0)}_{dyn}\Bigr]\mat{S}^{-1}
+%% \nonumber\\
+%% &&+
+%% \mat{S}_{\vec{k}}^{-1}\mat{\mathcal{S}}^{(1)}_{dyn}\mat{S}_{\vec{k}}^{-1}
+\end{eqnarray}
+
+The leading order in the Laurent expansion of the Green's function is
+not a dynamical variable, because it does not depend on any of the
+variational parameters in the definition of the dynamical correlation.
+
+
+Thus the self energy is treated as variable that is iteratively
+optimized. This optimization is guided by the derivative with respect
+to the Green's function.
+\begin{eqnarray}
+\mat{\Sigma}_{dyn}(+)=\mat{\Sigma}_{dyn}(0)+\alpha
+\biggl[\left.\frac{\beta\delta\Phi^{LW,dyn}}{\delta\mat{G}}
+\right|_{\mat{G}[\mat{\Sigma}(0)]}
+-\mat{\Sigma}_{dyn}(0)\biggr]
+\end{eqnarray}
+
+
+The fundamental variables are
+\begin{itemize}
+\item the site-diagonal and therefore k-independent dynamic self
+  energy $\mat{\Sigma}_{dyn,R}(i\omega_\nu)=
+  \mat{\Sigma}_{R}(i\omega_\nu)
+  -\mat{\Sigma}_{HF,R}(i\omega_\nu)$. The self energy for positive and
+  negative Matsubara frequencies are related by a hermitean
+  conjugation
+  $\mat{\Sigma}_{dyn,R}(-i\omega_\nu)=\mat{\Sigma}_{dyn,R}^\dagger(i\omega_\nu)$
+%
+\item the Hamiltonian $\bar{\mat{h}}_{\vec{k}}$, which produces the
+  one-particle reduced density matrix as $\mat{\rho}_{\vec{k}}
+  =\Bigl[\mat{1}+\e{\beta(\mat{\bar{h}}_{\vec{k}}-\mu\mat{1})}\Bigr]^{-1}$.
+%
+\item the static correction $\mat{\Gamma}_{\vec{k}}$, that ensures
+  that the original density matrix is obtained from the Green's
+  function, if the dynamic self energy is taken into account.
+\end{itemize}
+
+From the site-diagonal self energies, we obtain as direct sum. The self
+energy that connects each orbital in a unit cell with each other. 
+\begin{eqnarray}
+\mat{\Sigma}_{dyn}(i\omega_\nu)=\bigoplus_{R\in\text{unit cell}}
+\mat{\Sigma}_{dyn,R}(i\omega_\nu)
+\label{eq:sigmafromlocal}
+\end{eqnarray}
+This self energy is independent of $\vec{k}$.
+
+
+%====================================================================
+\subsubsection{Local Green's function}
+%====================================================================
+Then local Green's function is obtains as Brillouin-zone integral
+\begin{eqnarray}
+\mat{G}_{R}(i\omega_\nu)
+=\frac{1}{N_k}\sum_{\vec{k}}\mat{P}_R\mat{G}_{\vec{k}}(i\omega_\nu)
+\mat{P}^\dagger_R
+\label{eq:deflocalgreen}
+\end{eqnarray}
+where $\mat{P}_R$ is a non-square diagonal matrix, which projects the
+matrix onto the subspace of orbitals on a given site.
+
+
+
+
+%============================================================
+\subsection{High-Freqency expansion of Matsubara sum}
+%============================================================
+A consistent choice for the Laurent expansion for the Green's function
+and self energy has turned out to be non-trivial. The most consistent
+approach apepars to write down an approximate form for the
+high-frequency tail of the Matsubara sum in the dynanic correlation
+correction, and to extract the Laurent expansion coefficients from the
+stationary conditions.
+
+With the high-frequency tail, we obtain
+\begin{eqnarray}
+&&\ln\Bigl[\mat{1}-\bar{\mat{G}}\Bigl(\mat{\Sigma}-\mat{\Gamma}\Bigr)\Bigr]
++\Bigl(\mat{\Sigma}-\mat{\Gamma}\Bigr)\mat{G}
++\Bigl(\mat{G}-\bar{\mat{G}}\Bigr)\mat{\Gamma}
+%
+\nonumber\\
+&=&-\bar{\mat{G}}\Bigl(\mat{\Sigma}-\mat{\Gamma}\Bigr)
+-\sum_{n=2}^\infty\frac{1}{n}
+\Bigl[\bar{\mat{G}}\Bigl(\mat{\Sigma}-\mat{\Gamma}\Bigr)\Bigr]^n
++\Bigl(\mat{\Sigma}-\mat{\Gamma}\Bigr)\mat{G}
++\Bigl(\mat{G}-\bar{\mat{G}}\Bigr)\mat{\Gamma}
+%
+\nonumber\\
+&=&\Bigl(\mat{G}-\bar{\mat{G}}\Bigr)
+\Bigl(\mat{\Sigma}-\mat{\Gamma}\Bigr)
+-\sum_{n=2}^\infty\frac{1}{n}
+\Bigl[\bar{\mat{G}}\Bigl(\mat{\Sigma}-\mat{\Gamma}\Bigr)\Bigr]^n
++\underbrace{\Bigl(\mat{G}-\bar{\mat{G}}\Bigr)\mat{\Gamma}}
+_{\rightarrow\text{number constraint}}
+%
+\nonumber\\
+&=&\Bigl(\mat{G}-\bar{\mat{G}}\Bigr)\mat{\Sigma}
+-\sum_{n=2}^\infty\frac{1}{n}
+\Bigl[\bar{\mat{G}}\Bigl(\mat{\Sigma}-\mat{\Gamma}\Bigr)\Bigr]^n
+\label{eq:startingpointmatsubara}
+\end{eqnarray}
+
+Side Remark:\footnote{In order to rationalize the form of the
+  Kadanoff-Baym functional, we look for a functional $X$ , that
+  provides Dyson's equation as functional derivative of the self
+  energy. We do not make any reference regarding the representation of
+  the Green's function. We onmly require $d \Tr[A^n]=n A^{n-1}dA$ and
+  $\ln[1-A]=-\sum_{n=1}^\infty \frac{1}{n}A^n$.
+
+ We start with Dyson's equation
+\begin{eqnarray}
+G=G_{0}+G_0\Sigma G
+=G_0+\sum_{n=1}G_0\Bigl(\Sigma G_0\Bigr)^n
+=\sum_{n=0}G_0\Bigl(\Sigma G_0\Bigr)^n
+\end{eqnarray}
+We define a functional $X[G,\Sigma$ so that
+\begin{eqnarray}
+\left.\frac{\delta X[G,\Sigma]}{\delta\Sigma}\right|_{G_0}=
+G-\sum_{n=0}G_0\Bigl(\Sigma G_0\Bigr)^n
+\end{eqnarray}
+The functional has the form
+\begin{eqnarray}
+X[G,\Sigma]
+&=&\Tr\Bigl[G\Sigma-\sum_{n=0}\frac{1}{n+1} \Bigl(\Sigma G_0\Bigr)^{n+1}\Bigr]
+=\Tr\Bigl[G\Sigma-\sum_{n=1}\frac{1}{n} \Bigl(\Sigma G_0\Bigr)^{n}\Bigr]
+\nonumber\\
+&\eqrel{eq:laurentexpansionofgbar}{=}&
+\Tr\Bigl[G\Sigma+\ln\Bigl(1-\Sigma G_0\Bigr)\Bigr]
+\end{eqnarray}
+The functional derivative of $X$ with respect to the Green's function is the
+self energy
+\begin{eqnarray}
+\left.\frac{\delta X[G,\Sigma]}{\delta G}\right|_{G_0}=
+\Sigma 
+\end{eqnarray}
+Thus, if one finds a functional $\Phi[G]$ of the Green's function
+alone, which produces the self energy as derivative,
+\begin{eqnarray}
+\frac{\delta \Phi[G]}{\delta G}=\Sigma
+\end{eqnarray}
+we can produce a functional
+\begin{eqnarray}
+\Phi[G]-X[G,\Sigma]
+\end{eqnarray}
+which produces Dyson's equation as stationary condition with respect
+to Green's function and self energy. The connection to the total
+energy is, however, no clear from this argument.  }
+
+Now we insert the Laurent expansions into
+\eq{eq:startingpointmatsubara}
+\begin{eqnarray}
+&&\Bigl(\mat{G}-\bar{\mat{G}}\Bigr)\mat{\Sigma}
+-\sum_{n=2}^\infty\frac{1}{n}
+\Bigl[\bar{\mat{G}}\Bigl(\mat{\Sigma}-\mat{\Gamma}\Bigr)\Bigr]^n
+\nonumber\\
+&=&
+\biggl[
+\sum_{j=2}^\infty\frac{1}{(i\hbar\omega_\nu)^j}
+\biggl(\mathcal{\mat{G}}^{(j)}-\bar{\mathcal{\mat{G}}}^{(j)}
+\biggr)
+\biggr]
+\biggl[
+\sum_{j'=0}^\infty\frac{1}{(i\hbar\omega_\nu)^{j'}}
+\mathcal{\mat{S}}^{(j')}
+\biggr]
+\nonumber\\
+&&-
+\sum_{n=2}^\infty\frac{1}{n}
+\biggl[
+\biggl(
+\sum_{j=1}^\infty\frac{1}{(i\hbar\omega_\nu)^j}
+\bar{\mathcal{\mat{G}}}^{(j)}
+\biggr)
+\biggl(\mathcal{\mat{S}}^{(0)}-\mat{\Gamma}
++\sum_{j'=1}^\infty\frac{1}{(i\hbar\omega_\nu)^{j'}}\mathcal{\mat{S}}^{(j')}
+\biggl)
+\biggr]^n
+\end{eqnarray}
+
+So-far, no approximations have been made: Now we introduce an
+approximation by truncating the Laurent expansions.
+\begin{itemize}
+\item We choose to include terms in the Matsubara sum up to the second
+  order of the inverse Matsubara frequency.
+\item we include only the leading order of the Laurent expansion, namely
+  $\mathcal{\mat{G}}^{(2)}$ and $\mathcal{\mat{S}}^{(0)}$ for the self
+  energy.
+\end{itemize}
+
+Alternatively one could include terms in the Matsubara sum up to
+fourth order in the inverse temperature and to include the also
+$\mathcal{\mat{G}}^{(3)}$ and $\mathcal{\mat{S}}^{(1)}$. Note that the
+third order term in inverse temperature of the Matsubara sum does not
+contribute. However we will postpone this for the time being.
+
+Another alternative would be to truncate the power-series expansion of
+thelogarithm beyond a certain value and to inlcude all Laurent
+expansion terms of the Matsubara sum which are produced by the
+Green's-function and self-energy expansion up to a certain order.
+
+Then, the functional $X$
+\begin{eqnarray}
+ X&=&-\frac{1}{\beta}\sum_{\nu,|\omega_\nu|>\omega_x}\Tr\biggl\lbrace
+\frac{1}{(i\hbar\omega_\nu)^2}
+\biggl\lbrace
+\biggl(
+\mathcal{\mat{G}}^{(2)}-\bar{\mathcal{\mat{G}}}^{(2)}
+\biggr)
+\mathcal{\mat{S}}^{(0)}
+-
+\frac{1}{2}
+\biggl[
+\bar{\mathcal{\mat{G}}}^{(1)}
+\biggl(\mathcal{\mat{S}}^{(0)}-\mat{\Gamma}\biggr)
+\biggr]^2\biggr\rbrace
+%
+\nonumber\\
+&\eqrel{eq:laurentexpansionofgbar}{=}&
+-\frac{1}{\beta}\sum_{\nu,|\omega_\nu|>\omega_x}\Tr\biggl\lbrace
+\frac{1}{(i\hbar\omega_\nu)^2}
+\biggl\lbrace
+\biggl(
+\mathcal{\mat{G}}^{(2)}-\bar{\mathcal{\mat{G}}}^{(2)}
+\biggr)
+\mathcal{\mat{S}}^{(0)}
+-
+\frac{1}{2}
+\biggl[
+\mat{S}^{-1}
+\biggl(\mathcal{\mat{S}}^{(0)}-\mat{\Gamma}\biggr)
+\biggr]^2\biggr\rbrace
+\biggr\rbrace
+\end{eqnarray}
+
+The functional derivatives with respect to the self energy is
+\begin{eqnarray}
+\frac{dX}{d\mathcal{\mat{S}}^{(0)}}
+&=&
+\biggl\lbrace
+-\frac{1}{\beta}\sum_{\nu,|\omega_\nu|>\omega_x}\frac{1}{(i\hbar\omega_\nu)^2}\
+\biggr\rbrace
+\biggl[
+\mathcal{\mat{G}}^{(2)}-\bar{\mathcal{\mat{G}}}^{(2)}
+-
+\mat{S}^{-1}\biggl(\mathcal{\mat{S}}^{(0)}-\mat{\Gamma}\biggr)\mat{S}^{-1}
+\biggr]
+\end{eqnarray}
+With the Laurent expansion of the non-interacting Green's function,
+\eq{eq:laurentexpansionofgbar}, we obtain
+\begin{eqnarray}
+\mathcal{\mat{G}}^{(2)}=\mat{S}^{-1}
+\biggl(\bar{\mat{h}}-\mu\mat{S}
+-\Bigl(\mathcal{\mat{S}}^{(0)}-\mat{\Gamma}\Bigr)\biggr)
+\mat{S}^{-1}
+\end{eqnarray}
+
+The derivative with respect to the Green's function yields
+\begin{eqnarray}
+\frac{dX}{d\mathcal{\mat{G}}^{(2)}}
+&=&
+\biggl\lbrace
+-\frac{1}{\beta}\sum_{\nu,|\omega_\nu|>\omega_x}\frac{1}{(i\hbar\omega_\nu)^2}\
+\biggr\rbrace
+\mathcal{\mat{S}}^{(0)}
+\end{eqnarray}
+
+The stationary condition with respect to the Laurent term of the
+Green's function yields
+\begin{eqnarray}
+\frac{1}{\beta}\sum_{\nu;|\omega_\nu|>\omega_x}
+\biggl[
+\frac{\beta\delta\Phi^{LW}}{\delta\mat{G}(i\omega_\nu)}
+-\frac{\beta\delta\Phi^{LW,HF}}{\delta\mat{G}(i\omega_\nu)}
+\biggr]
+\underbrace{
+\frac{\delta\mat{G}(i\omega_\nu)}{\delta\mathcal{\mat{G}}^{(2)}}
+}_{\frac{1}{(i\hbar\omega_\nu)^2}}
++
+\biggl\lbrace
+-\frac{1}{\beta}\sum_{\nu,|\omega_\nu|>\omega_x}\frac{1}{(i\hbar\omega_\nu)^2}\
+\biggr\rbrace
+\mathcal{\mat{S}}^{(0)}=0
+%
+\nonumber\\
+\mathcal{\mat{S}}^{(0)}=
+\biggl\lbrace
++\frac{1}{\beta}\sum_{\nu,|\omega_\nu|>\omega_x}\frac{1}{(i\hbar\omega_\nu)^2}\
+\biggr\rbrace^{-1}
+\biggl\lbrace
+\frac{1}{\beta}\sum_{\nu;|\omega_\nu|>\omega_x}
+\frac{1}{(i\hbar\omega_\nu)^2}
+\biggl[
+\frac{\beta\delta\Phi^{LW}}{\delta\mat{G}(i\omega_\nu)}
+-\frac{\beta\delta\Phi^{LW,HF}}{\delta\mat{G}(i\omega_\nu)}
+\biggr]
+\biggr\rbrace
+\end{eqnarray}
+
+
+%====================================================================
+\section{Dynamic-correlation correction in non-orthonormal basis and in Bloch representation}
+%====================================================================
+\begin{myshadowminipage}{Dynamic correlation correction}
+\begin{eqnarray}
+Q^{\hat{W}_2}_{dyn,\beta}[\mat{\rho}] 
+&\eqrel{eq:dmf1green}{=}&
+\stat_{\mat{\Gamma}_{\vec{k}}}\stat_{\mat{G}_{\vec{k}},\mat{\Sigma}_{dyn,R}}\biggl\lbrace
+\sum_R\Bigl(
+\Phi^{LW}_\beta[\mat{G}_R,\hat{W}_{2,R}]
+-\Phi^{HF,LW}_\beta[\mat{G}_R,\hat{W}_{2,R}]
+\Bigr)
+\nonumber\\ &&-\frac{1}{N_k}\sum_k
+\frac{1}{\beta}\sum_{\nu,|\omega_\nu|<\omega_x}
+\Tr\Bigl\lbrace \ln\Bigl[
+  \mat{1}-
+  \Bigl((i\hbar\omega_\nu+\mu)\mat{S}_{\vec{k}}-\bar{\mat{h}}_{\vec{k}}\Bigr)^{-1}
+  \Bigl(\mat{\Sigma}_{dyn}(i\omega_\nu)-\mat{\Gamma}_{\vec{k}}\Bigr) \Bigr]
+\nonumber\\
+&&\hspace{3cm}
++\Bigl(\mat{\Sigma}_{dyn}(i\omega_\nu)-\mat{\Gamma}_{\vec{k}}\Bigr)
+\mat{G}_{\vec{k}}(i\omega_\nu) 
+\nonumber\\
+&&\hspace{3cm}+
+\Bigl[ \mat{G}_{\vec{k}}(i\omega_\nu)
+  -\Bigl((i\hbar\omega_\nu+\mu)\mat{S}_{\vec{k}}
+-\bar{\mat{h}}_{\vec{k}}\Bigr)^{-1} \Bigr]
+\mat{\Gamma}_{\vec{k}}\Bigr\rbrace \biggr\rbrace 
+\nonumber\\
+&&-
+\biggl[\frac{1}{\beta}\sum_{\nu,|\omega_\nu|>\omega_x}
+\frac{1}{(i\hbar\omega_\nu)^2}\biggr]
+\frac{1}{N_k}\sum_k
+\Tr\biggl\lbrace
+\biggl[
+\mathcal{\mat{G}}^{(2)}_{\vec{k}}
+-\mat{S}^{-1}_{\vec{k}}\Bigl(\bar{\mat{h}}_{\vec{k}}-\mu\mat{S}_{\vec{k}}\Bigr)\mat{S}^{-1}_{\vec{k}}
+\biggr]
+\mathcal{\mat{S}}^{(0)}_{\vec{k}}
+\nonumber\\
+&&\hspace{5cm}-
+\frac{1}{2}
+\biggl[
+\mat{S}^{-1}_{\vec{k}}
+\biggl(\mathcal{\mat{S}}^{(0)}_{\vec{k}}-\mat{\Gamma}_{\vec{k}}\biggr)
+\biggr]^2\biggr\rbrace
+\biggr\rbrace
+\label{eq:dmf1greenb}
+\end{eqnarray}
+
+$\mat{G}_R$ is obtained from $\mat{G}_{\vec{k}}$ via
+\eq{eq:deflocalgreen} and $\mat{\Sigma}_{dyn}$ is obtained from the
+local contributions $\mat{\Sigma}_{dyn,R}$ via \eq{eq:sigmafromlocal}.
+The overlap matrix $\mat{S}_{\vec{k}}$ is obtained from
+\eq{eq:defoverlapmatrix}.
+
+$N_k$ is the number of k-points in considered for the grid in the
+Brillouin zone integration.
+
+\begin{eqnarray}
+\bar{\mat{h}}_{a,b,\vec{k}}=
+\mu\mat{S}_{a,b,\vec{k}}+
+\sum_n\langle\chi_a|\psi'_n\rangle\frac{1}{\beta}
+\ln\Biggl[\frac{1-f'_n}{f'_n}\biggr]\langle\psi'_n|\chi_b\rangle
+\end{eqnarray}
+where
+\begin{eqnarray}
+\biggl(\sum_{a,b}|\chi_a\rangle\rho_{\vec{k},a,b}\langle\chi_b|\biggr)
+\biggl(\sum_c|\chi_c\rangle\langle\pi_c|\psi'_{\vec{k},n}\rangle\biggr)
+&=&\biggl(\sum_a|\chi_a\rangle\langle\pi_a|\psi'_{\vec{k},n}\rangle\biggr) 
+f'_{\vec{k},n}
+\nonumber\\
+\Rightarrow\qquad
+\mat{S}_{\vec{k}}\mat{\rho}_{\vec{k}}\mat{S}_{\vec{k}} \vec{\psi'}_{\vec{k},n}
+&=&\mat{S}_{\vec{k}}\vec{\psi'}_{\vec{k},n} f'_n
+\end{eqnarray}
+and $\langle\chi_a|\chi_b\rangle=\mat{S}_{k}$.
+
+In the high-frequency part, i.e. for $|\omega_\nu|>\omega_x$, the
+Green's function and the self energy are given by
+\begin{eqnarray}
+\mat{G}_{\vec{k}}(i\omega_\nu)&=&\frac{1}{i\hbar\omega}\mat{S}^{-1}_{\vec{k}}
++\frac{1}{(i\hbar\omega)^2}\mathcal{\mat{G}}^{(2)}
+\nonumber\\
+\mat{\Sigma}_{dyn,R}(i\omega_\nu)&=&\mathcal{\mat{S}}^{(0)}_{dyn,R}
+\end{eqnarray}
+
+The result is correct for $N_k\rightarrow\infty$ and for
+$\omega_x\rightarrow\infty$.
+\end{myshadowminipage}
 
 
 %====================================================================
 \section{Description of Subroutines}
 %====================================================================
+
+
+%====================================================================
+\subsubsection{Data structures}
+%====================================================================
+\begin{tabular}{|l|l|}
+\hline $\langle\pi_\alpha|\psi_{n,\vec{k}}\rangle$ &
+\verb|KSET(IKPT)%PIPSI(:NDIM,:NCHI,:NB,NSPIN)|\\ $\mat{\rho}_{\vec{k}}$
+& \verb|KSET(IKPT)%RHO(:NCHI,:NCHI,:NDIMD)|\\ $\mat{S}_{\vec{k}}$ &
+\verb|KSET(IKPT)%SMAT(:NCHI,:NCHI,:NDIMD)|\\ $\mat{S}^{-1}_{\vec{k}}$
+& \verb|KSET(IKPT)%SINV(:NCHI,:NCHI,:NDIMD)|\\ \hline
+$\mat{\Sigma}_{dyn,R}(i\omega_\nu)$ &
+\verb|ATOMSET(IAT)%SLOC(:NLOC,:NLOC,:NDIMD,:NOMEGA)|\\ $\mathcal{\mat{S}}^{(0)}_{dyn,R}$
+&
+\verb|ATOMSET(IAT)%SLOClaur(:NLOC,:NLOC,:NDIMD,1)|\\ $\mathcal{\mat{S}}^{(1)}_{dyn,R}$
+&
+\verb|ATOMSET(IAT)%SLOClaur(:NLOC,:NLOC,:NDIMD,2)|\\ $\bar{\mat{h}}_{\vec{k}}$
+&
+\verb|KSET(IKPT)%HRHO(:NCHI,:NCHI,:NDIMD)|\\ $\mat{\Gamma}_{\vec{k}}$
+& \verb|KSET(IKPT)%GAMMA(:NCHI,:NCHI,:NDIMD)|\\ \hline
+\end{tabular}
+
+
+%====================================================================
+\subsection{Data exchange of the Object wit the outer world}
+%====================================================================
+
 
 %====================================================================
 \subsection{Flowchart}
@@ -1243,16 +1372,15 @@ subblocks.
 \end{center}
 
 %====================================================================
-\subsection{Data exchange of the Object wit the outer world}
-%====================================================================
-
-
-%====================================================================
 \subsection{DMFT\$GREEN}
 %====================================================================
 DMFT\$GREEN is the main subroutine of the DMFT object. It is called
 from the LMTO object, which also provides the  projections onto the
 tight-binding orbitals.
+
+We evaluate the functional $Q^{\hat{W}_2}_{dyn,\beta}[\mat{\rho}]$
+following the recipy provided in section III of the BPP
+paper\cite{bloechl13_prb88_25139}.
 
 \begin{verbatim}
 call dmft_ini()
@@ -1334,9 +1462,23 @@ Note that the inverse overlap matrix is spin and orbital dependent.
 $\mat{S}(\vec{k})$ is pot on the KSET structure as \verb|KSET%SINV| 
 and $\mat{S}^{-1}(\vec{k})$ as \verb|KSET%SMAT| 
 %
+%=========================hrho========================================
+\item \verb|DMFT_HRHO|: (see also section~\ref{sec:routinedmfthrho} on
+p.~\pageref{sec:routinedmfthrho}.) Calculate the non-interacting
+Hamiltonian $\bar{\mat{h}}_{\vec{k}}$ that produces the specified
+density matrix.
+\begin{eqnarray}
+\bar{h}_{\vec{k},a,b}=\mu S_{\vec{k},a,b}+\sum_{n}
+\langle\chi_a|\psi'_{\vec{k},n}\rangle\frac{1}{\beta}
+\ln\left[\frac{1-f'_{\vec{k},n}}{f'_{\vec{k},n}}\right]
+\langle\psi'_{\vec{k},n}|\chi_b\rangle
+\end{eqnarray}
+
+$\bar{\mat{h}}_{\vec{k}}$ is kept as \verb|KSET(IKPT)%HRHO|.
+%
 %===============natorb=================================================
 \item \verb|DMFT_NATORB|: (see also section~\ref{sec:routinedmftnatorb})
-  Construct the eigenstates $|\phi_j\rangle$ of the single site
+  Construct the eigenstates $|\phi_j\rangle$ of the single-site
   density matrix
 \begin{eqnarray}
 \hat{\rho}_R|\phi_{R,i}\rangle=|\phi_{R,i}\rangle f'_{R,i}
@@ -1405,27 +1547,26 @@ stored as \verb|atomset%natorb%chiphi|.
   natural orbitals in the solver interface. Check if this is
   correct. should it be the vector $x$?}
 %
-\item \verb|DMFT_HRHO|: (see also section~\ref{sec:routinedmfthrho} on
-  p.~\pageref{sec:routinedmfthrho}).) Calculate the non-interacting
-  Hamiltonian $\bar{\mat{h}}$ that produces the specified density
-  matrix.
-\begin{eqnarray}
-\bar{h}_{a,b}(\vec{k})=\mu S_{a,b}(\vec{k})+\sum_n\langle\chi_a|\psi_n'\rangle
-\frac{1}{\beta}\ln\left[\frac{1-f'_n}{f'_n}\right]
-\langle\psi'_n|\chi_b\rangle
-\end{eqnarray}
-where the natural orbitals $|\psi'_n\rangle$ and the occupations
-$f'_n$ differ from the original natural orbitals.
-
-$\mat{h'}$ is kept as \verb|KSET%H0|.
 %
 \item \verb|DMFT_GLOC|: The local Green's function is obtained as
   Brillouin zone integral over the k-dependent greens function after
   projecting onto the correlated orbitals on the specified site.
 \begin{eqnarray}
-\mat{G}_R(i\omega_\nu)=\sum_k w(\vec{k})
-\Bigl[(i\omega_\nu+\mu)\mat{S}(\vec{k})-
-\bar{\mat{h}}+\mat{\Gamma}-\mat{\Sigma}^{\hat{W}_2}_{dyn}(i\omega_\nu)\Bigr]^{-1}_R
+\mat{G}_R(i\omega_\nu)=\sum_k w_{\vec{k}}
+\Bigl[(i\omega_\nu+\mu)\mat{S}_{\vec{k}}-
+\bar{\mat{h}}_{\vec{k}}+\mat{\Gamma}_{\vec{k}}
+-\mat{\Sigma}^{\hat{W}_2}_{dyn}(i\omega_\nu)\Bigr]^{-1}_R
+\end{eqnarray}
+The Laurent expansion is obtained as
+\begin{eqnarray}
+\mathcal{\mat{G}}^{(1)}_R(i\omega_\nu)&=&\sum_k w_{\vec{k}}
+\mat{S}^{-1}_{\vec{k}}
+\nonumber\\
+\mathcal{\mat{G}}^{(2)}_R(i\omega_\nu)&=&\sum_k w_{\vec{k}}
+\mat{S}^{-1}_{\vec{k}}
+\Bigl(\bar{\mat{h}}-\mu\mat{S}_{\vec{k}}
++\mat{\Gamma}_{\vec{k}}-\mathcal{\mat{S}}_{dyn}^{(0)}\Bigr)
+\mat{S}^{-1}_{\vec{k}}
 \end{eqnarray}
 
 The result and its Laurent expansion terms are stored in
@@ -1434,7 +1575,7 @@ The result and its Laurent expansion terms are stored in
 \item \verb|DMFT_SOLVER|: Calculates the dynamic contribution
   $\Phi^{LW,\hat{W}_2}_\beta-\Phi^{HF,\hat{W}_2}_\beta$ to the
   Luttinger-Ward functional and the corresponding contribution
-  $\mat{\Sigma}_{dyn},{\hat{W}_2}$ to the self energy for the
+  $\mat{\Sigma}_{dyn}^{\hat{W}_2}$ to the self energy for the
   specified Green's function.
 
   \begin{enumerate}
@@ -1451,7 +1592,7 @@ The result and its Laurent expansion terms are stored in
       contribution to the self energy and the derivative of the
       U-tensor.
       \begin{eqnarray}
-      \Phi^{dyn,LW}[\mat{G}(i\omega_\nu),\hat{W}_2]&=&
+      \Phi^{LW}_{dyn}[\mat{G}(i\omega_\nu),\hat{W}_2]&=&
       \Phi^{LW}[\mat{G}(i\omega_\nu),\hat{W}_2] -\frac{1}{2}
       \sum_{a,b,c,d} U^{\hat{W}_2}_{a,b,d,c} \Bigl(
       \rho_{d,a}\rho_{c,b} - \rho_{c,a}\rho_{d,b}\Bigr) \Bigr) 
@@ -1461,21 +1602,42 @@ The result and its Laurent expansion terms are stored in
       -\sum_{c,d}\Bigl(U^{\hat{W}_2}_{a,c,b,d}-U^{\hat{W}_2}_{a,c,d,b}\Bigr)
       \rho_{d,c}
       \nonumber\\
+      \mathcal{\mat{S}}^{(0)}_{dyn,a,b}
+       &=&\frac{1}{\beta}\sum_{|\nu|>\nu_x}
+       \frac{1}{(i\hbar\omega_\nu)^2}\biggl[
+       \frac{\beta\partial\Phi^{LW}}{\partial G_{b,a}(i\omega_\nu)}
+      -\sum_{c,d}\Bigl(U^{\hat{W}_2}_{a,c,b,d}-U^{\hat{W}_2}_{a,c,d,b}\Bigr)
+      \rho_{d,c}\biggr]
+      \nonumber\\
+      %
       \frac{\delta\Phi^{dyn,LW}_\beta}{\delta U_{a,b,c,d}}&=&
       \frac{\delta\Phi^{LW}_\beta}{\delta U_{a,b,d,c}}
       -\frac{1}{2}\Bigl(
       \rho_{d,a}\rho_{c,b} - \rho_{c,a}\rho_{d,b}\Bigr) \Bigr) 
       \end{eqnarray}
-      \petertt{pay attention to the reversed order of the indices $c,d$!}
-    \item After \verb|DMFT_SOLVERIO| the self energy and the
-      derivative with respect to the U-tensor are transformed back.
+      \petertt{pay attention to the reversed order of the indices
+        $c,d$!}  
+
+       $\frac{\delta\Phi^{dyn,LW}_\beta}{\delta U_{a,b,c,d}}$ is the
+      difference of the two-particle density for the interacting and
+      the non-interacting electron gas at the same density matrix. In
+      contrast to the corresponding term in the density functional
+      theory, this term does not contain a kinetic energy contribution
+      as does $n(\vec{r})\int_0^1 d\lambda\;
+        h_{\lambda}(\vec{r},\vec{r'})$, but rather
+        $n(\vec{r})\Bigl[h_{1}(\vec{r},\vec{r'})
+          -h_{0}(\vec{r},\vec{r'})\Bigr]$
+    %
+    \item After \verb|DMFT_SOLVERIO| is finished, the self energy and
+      the derivative with respect to the U-tensor are transformed
+      back.
   \end{enumerate}
   The external solver may make additional approximations to the
   U-tensor or to the Kadanoff-Baym functional. However, these
   approximationa must be consistent across the dynamical correlation
   correction.
 %
-\item Mix the self energy: The self energy cannot be simply
+\item \verb|DMFT_MIX| mixes the self energy: The self energy cannot be simply
   inserted into the Green's function for the next iteration, because
   the changes for small Matsubara frequencies would be too
   violent. Therefore it needs some preconditioning.
@@ -1484,20 +1646,100 @@ The result and its Laurent expansion terms are stored in
   appendix~\ref{sec:mixing} on p.~\pageref{sec:mixing}.
   \begin{eqnarray}
     \Sigma^{dyn}_{a,b}(i\omega_\nu)
-=\Sigma^{dyn}_{a,b}(i\omega_\nu)
+&\leftarrow&\Sigma^{dyn}_{a,b}(i\omega_\nu)
 +\frac{1}{C}\Bigl(\frac{C}{M}+(\hbar\omega)^2\Bigr)
 \biggl(\Sigma^{dyn}_{a,b}(i\omega_\nu)
 -\frac{\beta\delta\Phi^{LW}_{dyn}}{\partial G_{b,a}(i\omega_\nu)}
 \biggr)
+\nonumber\\
+   \mathcal{\mat{S}}_{dyn,a,b}^{(0)}&\leftarrow&\mathcal{\mat{S}}_{dyn,a,b}^{(0)}
++\frac{(\hbar\omega_x)^2}{C}\biggl(\mathcal{\mat{S}}_{dyn,a,b}^{(0)}
+-\frac{\delta\Phi^{LW}_{dyn}}{\delta\mathcal{G}^{(2)}_{b,a}}\biggr)
 \end{eqnarray}
-$\mat{\Sigma}^{dyn}$ is the self energy that has been accumulated, and
-  that is zero in the first
-  iteration. $\frac{\beta\delta\Phi^{LW}_{dyn}} {\partial
-    G_{b,a}(i\omega_\nu)}$ is the dynamic self-energy contribution
-  produced by the solver. Note that this self energy does not contain
-  the Hartree-Fock term. $C$ and $M$ are two mixing parameters, that
-  control the behavior at small ($M$) and large ($C$) Matsubara
-  frequencies.
+\petertt{It seems that the sign for the mixing is incorrect!! I am
+  changing it in the code to see what happens.}  $\mat{\Sigma}^{dyn}$
+is the self energy that has been accumulated, and that is zero in the
+first iteration. $\frac{\beta\delta\Phi^{LW}_{dyn}} {\partial
+  G_{b,a}(i\omega_\nu)}$ is the dynamic self-energy contribution
+produced by the solver. Note that this self energy does not contain
+the Hartree-Fock term. $C$ and $M$ are two mixing parameters, that
+control the behavior at small ($M$) and large ($C$) Matsubara
+frequencies.
+%
+\item \verb|DMFT_CONSTRAINTS| enforced the density matrix constraint:
+  The new Green's function $\mat{G}^{new}$ has the form
+\begin{eqnarray}
+\mat{G}^{new}(i\omega_\nu)=\Bigl[(i\hbar\omega_\nu+\mu)\mat{1}
+-\bar{\mat{h}}+\mat{\Gamma}
+-\mat{\Sigma}^{dyn}(i\omega_\nu)
+\Bigr]^{-1}
+\end{eqnarray}
+where the Lagrange multiplier $\mat{\Gamma}$ needs to be adjusted until
+the density matrix constraint
+\begin{eqnarray}
+\mat{\rho}=\frac{1}{\beta}\sum_\nu 
+\e{i\beta\hbar\omega_\nu0^+}\mat{G}^{new}(i\omega_\nu)
+\end{eqnarray}
+is fulfilled. 
+
+For this purpose, we linearize the constraint equation in the Lagrange
+multiplier
+\begin{eqnarray}
+\mat{\rho}&=&\frac{1}{\beta}\sum_\nu 
+\e{i\beta\hbar\omega_\nu0^+}
+\biggl[
+\mat{G}^{new}(i\omega_\nu)-\mat{G}^{new}(i\omega_\nu)\delta\mat{\Gamma}
+\mat{G}^{new}(i\omega_\nu)\biggr]
+\nonumber\\
+0&=&\left[\frac{1}{\beta}\sum_\nu \e{i\beta\hbar\omega_\nu0^+}
+G^{new}_{a,b}(i\omega_\nu)\right]-\rho_{a,b}
+-\sum_{c,d}\left[
+\frac{1}{\beta}\sum_\nu 
+\mat{G}^{new}_{a,c}(i\omega_\nu)\mat{G}^{new}_{d,b}(i\omega_\nu)\right]
+\delta\mat{\Gamma}_{c,d}
+\nonumber\\
+\delta\mat{\Gamma}_{c,d}
+&=&
+\underbrace{
+\left[
+\frac{1}{\beta}\sum_\nu 
+\mat{G}^{new}_{a,c}(i\omega_\nu)\mat{G}^{new}_{d,b}(i\omega_\nu)
+\right]^{-1}_{cd,ab}
+}_{\leadsto\quad \alpha\delta_{c,a}\delta_{d,b}}
+\biggl(
+\underbrace{\left[\frac{1}{\beta}\sum_\nu \e{i\beta\hbar\omega_\nu0^+}
+G^{new}_{a,b}(i\omega_\nu)\right]}_{\rho^{new}_{a,b}}-\rho_{a,b}
+\biggr)
+\end{eqnarray}
+\petertt{In this equation we can use the model Green's function to
+  avoid the calculation and inversion of
+  $\mat{G}^{new}\otimes\mat{G}^{new}$}
+
+Note, that $\mat{\Gamma}$ is, like $\mat{h'}$, a non-local Hamiltonian,
+that in principle connects arbitrary local orbitals with each
+other. In a Bloch representation, $\mat{\Gamma}$ is a k-dependent matrix,
+which connects all local orbitals in the unit cell with each other.
+
+Thus, we iterate the coupled equations
+\begin{eqnarray}
+\mat{G}^{new}(i\omega_\nu)&=&\Bigl[(i\hbar\omega_\nu+\mu)\mat{1}
+-\bar{\mat{h}}+\mat{\Gamma}
+-\mat{\Sigma}^{dyn}(i\omega_\nu)
+\Bigr]^{-1}
+\nonumber\\
+\delta\mat{\rho}&=&\frac{1}{\beta}\sum_\nu 
+\e{i\beta\hbar\omega_\nu0^+}\mat{G}^{new}(i\omega_\nu)-\mat{\rho}
+\nonumber\\
+\mat{\Gamma}&=&\mat{\Gamma}+\alpha \delta\mat{\rho}
+\end{eqnarray}
+until $\delta\rho$ vanishes.
+
+\petertt{In practice we do not use $\alpha$, but precondition with a
+  Green's function with zero one-particle level. see
+  section~\ref{sec:routinedmftconstraints}.}
+
+With the correct Lagrange multiplier, the new Green's function is
+obtained.
 %
 \item \verb|DMFT_STATICSOLVER|: Calculates the static contribution to
   the correlation energy, i.e. the screened Hartree Fock term and the
@@ -1609,9 +1851,9 @@ $\mat{\Sigma}^{dyn}$ is the self energy that has been accumulated, and
 \subsection{DMFT\_UTENSOR}
 \label{sec:routinedmftutensor}
 %====================================================================
-Obtain the onsite Utensor for all local orbitals from subroutine
-\verb|dmft_ulocal| reduces it to the entries for the correlated
-orbitals.
+Obtain the onsite U-tensor\index{U-tensor} for all local orbitals from
+subroutine \verb|dmft_ulocal| reduces it to the entries for the
+correlated orbitals.
 
 In \verb|DMFT_ULOCAL| it obtains the local U-tensor from the
 \verb|POTPAR%TAILED%U| and \verb|SBAR| of the LMTO Object. This object
@@ -1849,7 +2091,7 @@ p.~\pageref{sec:laurentgreen}, the Laurent-expansion coefficients are
 \nonumber\\
 \mat{\mathcal{G}}^{(2)}(\vec{k})&=&\mat{S}^{-1}(\vec{k})
 \Bigl(-\mu\mat{S}(\vec{k})+\bar{\mat{h}}(\vec{k})-\mat{\Gamma}(\vec{k})
-+\mat{\mathcal{S}}^{(1)}_{dyn}(\vec{k})
++\mat{\mathcal{S}}^{(0)}_{dyn}(\vec{k})
 \Bigr)
 \mat{S}^{-1}(\vec{k})
 %
@@ -1857,13 +2099,13 @@ p.~\pageref{sec:laurentgreen}, the Laurent-expansion coefficients are
 \mat{\mathcal{G}}^{(3)}(\vec{k})&=&
 \mat{S}^{-1}(\vec{k})
 \biggl[
-\mat{\mathcal{S}}^{(2)}_{dyn}(\vec{k})+
+\mat{\mathcal{S}}^{(1)}_{dyn}(\vec{k})+
 \Bigl(-\mu\mat{S}(\vec{k})+\bar{\mat{h}}(\vec{k})-\mat{\Gamma}(\vec{k})
-+\mat{\mathcal{S}}^{(1)}_{dyn}(\vec{k})\Bigr)
++\mat{\mathcal{S}}^{(0)}_{dyn}(\vec{k})\Bigr)
 \nonumber\\
 &&\times\mat{S}^{-1}(\vec{k})
 \Bigl(-\mu\mat{S}(\vec{k})+\bar{\mat{h}}(\vec{k})-\mat{\Gamma}(\vec{k})
-+\mat{\mathcal{S}}^{(1)}_{dyn}(\vec{k})\Bigr)
++\mat{\mathcal{S}}^{(0)}_{dyn}(\vec{k})\Bigr)
 \biggr]
 \mat{S}^{-1}(\vec{k})
 \nonumber\\
@@ -1880,7 +2122,7 @@ non-interacting Greens function $\bar{\mat{G}}$.
 \nonumber\\
 \Delta\mathcal{G}^{(2)}(\vec{k})&=&\mat{S}^{-1}(\vec{k})
 \Bigl(
-\mat{\mathcal{S}}^{(1)}_{dyn}(\vec{k})-\mat{\Gamma}(\vec{k})
+\mat{\mathcal{S}}^{(0)}_{dyn}(\vec{k})-\mat{\Gamma}(\vec{k})
 \Bigr)
 \mat{S}^{-1}(\vec{k})
 %
@@ -1889,13 +2131,13 @@ non-interacting Greens function $\bar{\mat{G}}$.
 &=&
 \mat{S}^{-1}(\vec{k})
 \biggl[
-\mat{\mathcal{S}}^{(2)}_{dyn}(\vec{k})+
+\mat{\mathcal{S}}^{(1)}_{dyn}(\vec{k})+
 \Bigl(-\mu\mat{S}(\vec{k})+\bar{\mat{h}}(\vec{k})-\mat{\Gamma}(\vec{k})
-+\mat{\mathcal{S}}^{(1)}_{dyn}(\vec{k})\Bigr)
++\mat{\mathcal{S}}^{(0)}_{dyn}(\vec{k})\Bigr)
 \nonumber\\
 &&\times\mat{S}^{-1}(\vec{k})
 \Bigl(-\mu\mat{S}(\vec{k})+\bar{\mat{h}}(\vec{k})-\mat{\Gamma}(\vec{k})
-+\mat{\mathcal{S}}^{(1)}_{dyn}(\vec{k})\Bigr)
++\mat{\mathcal{S}}^{(0)}_{dyn}(\vec{k})\Bigr)
 \nonumber\\
 &&-
 \Bigl(-\mu\mat{S}(\vec{k})+\bar{\mat{h}}(\vec{k})\Bigr)
@@ -1987,6 +2229,129 @@ either natural orbitals derived from the local density matrix or which
 may be eigenstates of the local overlap matrix.
 
 %====================================================================
+\subsection{DMFT\_ETOT}
+%====================================================================
+When the loop is converged,  we evaluate 
+\begin{eqnarray}
+Q^{\hat{W}_2}_{dyn,\beta}[\mat{\rho}]
+&=&
+\biggl\lbrace
+\Phi^{LW}_\beta[\mat{G},\hat{W}_2]-\Phi^{HF,LW}_\beta[\mat{G},\hat{W}_2]
+\nonumber\\
+&&-\frac{1}{\beta}\sum_\nu\Tr\Bigl\lbrace
+\ln\Bigl[
+\mat{1}-
+\bar{\mat{G}}(i\omega_\nu)
+\Bigl(\mat{\Sigma}_{dyn}(i\omega_\nu)-\mat{\Gamma}\Bigr)
+\Bigr]
+\nonumber\\&&
++\Bigl(\mat{\Sigma}_{dyn}(i\omega_\nu)-\mat{\Gamma}\Bigr)\mat{G}(i\omega_\nu)
++
+\Bigl[\mat{G}(i\omega_\nu)-\bar{\mat{G}}(i\omega_\nu)\Bigr]
+\mat{\Gamma}
+\biggr\rbrace
+\nonumber\\
+\label{eq:dmf1greenenergy}
+\end{eqnarray}
+
+%====================================================================
+\subsubsection{Evaluation of the logarithm using a power series expansion}
+%====================================================================
+We use the Taylor expansion of the logarithm
+\begin{eqnarray}
+\ln[1-x]=-\sum_{n=1}^\infty \frac{1}{n}x^n \qquad\text{for $|x|<1$}
+\end{eqnarray}
+
+
+\begin{eqnarray}
+Q^{\hat{W}_2}_{dyn,\beta}[\mat{\rho}]
+&=&
+\Phi^{LW}_\beta[\mat{G},\hat{W}_2]-\Phi^{HF,LW}_\beta[\mat{G},\hat{W}_2]
+\nonumber\\
+&&-\frac{1}{\beta}\sum_\nu\Tr\biggl\lbrace
+-\sum_{n=1}^\infty\frac{1}{n}
+\Bigl[\bar{\mat{G}}(i\omega_\nu)
+\Bigl(\mat{\Sigma}_{dyn}(i\omega_\nu)-\mat{\Gamma}\Bigr)
+\Bigr]^n
+\nonumber\\&&
++\Bigl(\mat{\Sigma}_{dyn}(i\omega_\nu)-\mat{\Gamma}\Bigr)\mat{G}(i\omega_\nu)
++
+\Bigl[\mat{G}(i\omega_\nu)-\bar{\mat{G}}(i\omega_\nu)\Bigr]
+\mat{\Gamma}
+\biggr\rbrace
+\nonumber\\
+&=&
+\Phi^{LW}_\beta[\mat{G},\hat{W}_2]-\Phi^{HF,LW}_\beta[\mat{G},\hat{W}_2]
+\nonumber\\
+&&-\frac{1}{\beta}\sum_\nu\Tr\biggl\lbrace
+\mat{\Sigma}_{dyn}(i\omega_\nu)
+\Bigl[\mat{G}(i\omega_\nu)-\bar{\mat{G}}(i\omega_\nu)\Bigr]
+-\sum_{n=2}^\infty\frac{1}{n}
+\Bigl[\bar{\mat{G}}(i\omega_\nu)
+\Bigl(\mat{\Sigma}_{dyn}(i\omega_\nu)-\mat{\Gamma}\Bigr)
+\Bigr]^n
+\biggr\rbrace
+\nonumber\\
+\label{eq:dmf1greenenergypower}
+\end{eqnarray}
+
+%====================================================================
+\subsubsection{Evaluation of the logarithm using Dahlen's trick}
+%====================================================================
+The evaluation fo the logarithm is problematic, because Green's
+function and self energy are not hermitean. In appendix B of their
+paper\cite{dahlen06_pra73_12511} Dahlen et al proposed a trick to
+solve the problem. \petertt{It is not yet clear to me if this trick is
+  correct.}
+
+The trick rests on the assumption of the following identity
+\begin{eqnarray}
+\Tr\ln(\mat{A}\mat{A}^\dagger)\stackrel{?}{=}
+\Tr\ln(\mat{A})+Tr\ln(\mat{A}^\dagger)
+\end{eqnarray}
+which should be valid for arbitrary non-hermitean matrices $\mat{A}$.
+
+Consider the singular value decompostion of
+$\mat{A}=\mat{U}\mat{\Sigma}\mat{V}^\dagger$, where $\mat{U}$ and $\mat{V}$ are
+unitary matrices and $\mat{\Sigma}$ is a diagonal matrix with real,
+non-negative numbers, the singular values, on the diagonal.
+\begin{eqnarray}
+\Tr\ln(\mat{A}\mat{A}^\dagger)
+&=&\Tr\ln(\mat{U}\mat{\Sigma}\mat{V}^\dagger
+\mat{V}\mat{\Sigma}^\dagger\mat{U}^\dagger)
+=\Tr\ln(\mat{U}\mat{\Sigma}\mat{\Sigma}^\dagger\mat{U}^\dagger)
+=\Tr\Bigl[\mat{U}\ln(\mat{\Sigma}\mat{\Sigma}^\dagger)\mat{U}^\dagger\Bigr]
+\nonumber\\
+&=&\Tr\Bigl[\ln(\mat{\Sigma}\mat{\Sigma}^\dagger)\Bigr]
+=\sum_i \ln(s_i)+\sum_i \ln(s_i)+
+=\Tr\ln[\mat{\Sigma}]+\Tr\ln[\mat{\Sigma}^\dagger]
+\nonumber\\
+\Tr\ln(\mat{A})+Tr\ln(\mat{A}^\dagger)
+&=&\Tr\ln(\mat{U}\mat{\Sigma}\mat{V}^\dagger)
++\Tr\ln(\mat{V}\mat{\Sigma}^\dagger\mat{U}^\dagger)
+\end{eqnarray}
+
+Unfortunately $\mat{V}^\dagger\mat{U}\neq\mat{1}$ so that we cannot
+simply convert the power series expansion into one of the singular
+values.\petertt{This is the problem}.
+
+
+Instead of the singular value decomposition, we can also simply use the
+eigenvalue equation
+\begin{eqnarray}
+\mat{A}\mat{V}=\mat{V}\mat{\Sigma}
+\end{eqnarray}
+so that
+\begin{eqnarray}
+\mat{A}=\mat{V}\mat{\Sigma}\mat{V}^{-1}
+\nonumber\\
+\mat{A}^\dagger=\mat{V}^{-1,\dagger}\mat{\Sigma}^*\mat{V}^{\dagger}
+\end{eqnarray}
+Unfortunately, the same problem arises, because, in general,
+$\mat{V}\mat{V}^\dagger\neq\mat{1}$.
+
+
+%====================================================================
 %\section{Helper routines}
 %====================================================================
 
@@ -1999,12 +2364,14 @@ may be eigenstates of the local overlap matrix.
 \label{app:matsubarafreq}
 %====================================================================
 
-The Matsubara frequencies for Fermions are
+The \textbf{Matsubara frequencies}\index{Matsubara
+  frequencies!Fermions} for Fermions are
 \begin{eqnarray*}
 \omega_\nu=(2\nu+1)\frac{\pi}{\hbar\beta}
 \end{eqnarray*}
 
-A Matsubara sum has the general form
+A \textbf{Matsubara sum}\index{Matsubara sum}
+ has the general form
 \begin{eqnarray*}
 \frac{1}{\beta}\sum_{\nu\in z} g(i\omega_\nu)
 \end{eqnarray*}
@@ -2111,7 +2478,7 @@ exponentially for $Re(z)\rightarrow\pm\infty$.
 
 
 %====================================================================
-\subsection{Matsubara sums}
+\subsection{Matsubara sums\index{Matsubara sum}}
 %====================================================================
 From \url{http://en.wikipedia.org/wiki/Matsubara_frequency} we obtain
 the following expression for the \textbf{fermionic} summations.  In
@@ -2270,9 +2637,10 @@ Note, that the matrix to be inverted is not necessarily hermitean!
 \subsection{Green's function with negative Matsubara frequencies}
 %====================================================================
 Green's functions and self energies obey the relation
-\begin{eqnarray*}
+\begin{eqnarray}
 \mat{G}(-i\omega_\nu)=\mat{G}^\dagger(i\omega)
-\end{eqnarray*}
+\label{eq:matsubaragnegfreq}
+\end{eqnarray}
 This allows one to store only half of the Green's functions.
 
 Proof:
@@ -2422,7 +2790,7 @@ _{a,b}
 \end{eqnarray}
 where
 \begin{eqnarray}
-S^{-1}_{a,b}=\sum_k\langle\pi_a|\psi_n\rangle f_n\langle\psi_n|\pi_b\rangle
+S^{-1}_{a,b}=\sum_k\langle\pi_a|\psi_n\rangle \langle\psi_n|\pi_b\rangle
 \label{eq:inverses}
 \end{eqnarray}
 
@@ -2443,7 +2811,7 @@ Here, I will show that the Green's function matrix
 \end{eqnarray}
 can be expressed in the form of \eq{eq:greenlocform1}.
 
-I order to simplify the proof, I will not write out the self energy,
+In order to simplify the proof, I will not write out the self energy,
 nor the chemical potential. This is possible because the proof works
 for each Matsubara frequency independently, so that both can be
 absorbed in the non-interacting Hamiltonian.
@@ -2507,10 +2875,55 @@ G_{a,b}(i\omega_\nu)
 \end{eqnarray}
 q.e.d.
 
+
+%============================================================
+\subsection{Laurentexpansion of the non-interacting Green's function}
+%============================================================
+We determine the Laurent expansion terms of $\bar{\mat{G}}$
+\begin{eqnarray}
+\bar{\mat{G}}=\Bigl[i\hbar\omega_\nu\mat{S}-\Bigl(\bar{\mat{h}}-\mu\mat{S}\Bigr)
+\Bigr]^{-1}
+=\sum_{j=1}^\infty\frac{1}{(i\hbar\omega_\nu)^j}
+\bar{\mathcal{\mat{G}}}^{(j)}
+\end{eqnarray}
+and therefore
+\begin{eqnarray}
+\mat{1}
+&=&
+\sum_{j=1}\frac{1}{(i\hbar\omega_\nu)^j}\bar{\mathcal{\mat{G}}}^{(j)}
+\Bigl[i\hbar\omega_\nu\mat{S}-\Bigl(\bar{\mat{h}}-\mu\mat{S}\Bigr)
+\Bigr]
+\nonumber\\
+&=&
+\sum_{j=0}\frac{1}{(i\hbar\omega_\nu)^{j}}\bar{\mathcal{\mat{G}}}^{(j+1)}\mat{S}
+-\sum_{j=1}\frac{1}{(i\hbar\omega_\nu)^j}\bar{\mathcal{\mat{G}}}^{(j)}\Bigl(\bar{\mat{h}}-\mu\mat{S}\Bigr)
+\nonumber\\
+\bar{\mathcal{\mat{G}}}^{(1)}
+&=&\mat{S}^{-1}
+\nonumber\\
+\bar{\mathcal{\mat{G}}}^{(j+1)}
+&=&\bar{\mathcal{\mat{G}}}^{(j)}\Bigl(\bar{\mat{h}}-\mu\mat{S}\Bigr)\mat{S}^{-1}
+\qquad\text{for $j>1$}
+\nonumber\\
+\bar{\mathcal{\mat{G}}}^{j}&=&
+\mat{S}^{-1}\biggl[\Bigl(\bar{\mat{h}}-\mu\mat{S}\Bigr)\mat{S}^{-1}\biggr]^{j-1}
+\label{eq:laurentexpansionofgbar}
+\end{eqnarray}
+
+The first term in the Laurent expansion of $\mat{G}-\bar{\mat{G}}$ vanishes
+\begin{eqnarray}
+\mathcal{\mat{G}}^{(1)}-\bar{\mathcal{\mat{G}}}^{(1)}&=&0
+\end{eqnarray}
+
 %====================================================================
-\subsection{Laurent expansion of the Green's function}
+\subsection{Laurent expansion of the Green's function (new)}
 \label{sec:laurentgreen}
 %====================================================================
+In order to regularize the Matsubara sums, respectively, to limit the
+extent of the Matsubara sum evaluated numerically, we need to
+represent the Green's function for high frequencies in terms of
+Matsubara sums.
+
 Here, we extract the Laurent expansion of the Green's function in the form
 \begin{eqnarray}
 \mat{G}=\biggl[(i\hbar\omega_\nu+\mu)\mat{S}
@@ -2522,86 +2935,124 @@ where the self energy has the Laurent expansion
 =\sum_{j=0}^\infty\frac{1}{(i\hbar\omega_\nu)^j}\mathcal{S}^{(j)}
 \end{eqnarray}
 
-
+Thus the numerical representation of the Green's function is
 \begin{eqnarray}
-\mat{G}
-&=&\biggl[(i\hbar\omega_\nu)\mat{S}
-\Bigl(\mat{1}-\frac{1}{i\hbar\omega_\nu}
-\mat{S}^{-1}
-\Bigl(\mat{h}-\mu\mat{S}+\mat{\Sigma}(i\omega_\nu)\Bigr)\biggr)\biggr]^{-1}
-\nonumber\\
-&=&
-\sum_{j=0}^\infty
-\frac{1}{(i\hbar\omega_\nu)^{j+1}}
-\biggl(
-\mat{S}^{-1}\Bigl(\mat{h}-\mu\mat{S}+\mat{\Sigma}(i\omega_\nu)\Bigr)\biggr)^{j}
-\mat{S}^{-1}
-\nonumber\\
-&=&
-\frac{1}{(i\hbar\omega_\nu)}
-\mat{S}^{-1}
-+
-\frac{1}{(i\hbar\omega_\nu)^2}
-\mat{S}^{-1}\Bigl(\mat{h}-\mu\mat{S}
-+\mat{\mathcal{S}}^{(0)}
-+\frac{1}{i\hbar\omega_\nu}\mat{\mathcal{S}}^{(1)}
-\Bigr)\mat{S}^{-1}
-\nonumber\\
-&&+
-\frac{1}{(i\hbar\omega_\nu)^3}
-\mat{S}^{-1}\Bigl(\mat{h}-\mu\mat{S}+\mat{\mathcal{S}}^{(0)}\Bigr)
-\mat{S}^{-1}
-\Bigl(\mat{h}-\mu\mat{S}+\mat{\mathcal{S}}^{(0)}\Bigr)\biggr)\mat{S}^{-1}
-+O(\omega_\nu^{-4})
-\nonumber\\
-&=&
-\frac{1}{(i\hbar\omega_\nu)}
-\mat{S}^{-1}
-+
-\frac{1}{(i\hbar\omega_\nu)^2}
-\mat{S}^{-1}\Bigl(\mat{h}-\mu\mat{S}
-+\mat{\mathcal{S}}^{(0)}
-\Bigr)\mat{S}^{-1}
-\nonumber\\
-&&+
-\frac{1}{(i\hbar\omega_\nu)^3}
-\mat{S}^{-1}
-\biggl(
-\mat{\mathcal{S}}^{(1)}
-+
-\Bigl(\mat{h}-\mu\mat{S}+\mat{\mathcal{S}}^{(0)}\Bigr)\mat{S}^{-1}
-\Bigl(\mat{h}-\mu\mat{S}+\mat{\mathcal{S}}^{(0)}\Bigr)
-\biggr)
-\mat{S}^{-1}
-+O(\omega_\nu^{-4})
+\mat{G}(i\omega_\nu)=
+\begin{cases}
+\biggl[(i\hbar\omega_\nu+\mu)\mat{S}
+-\mat{h}-\mat{\Sigma}(i\omega_\nu)\biggr]^{-1}
+&\text{for $|\nu|\le\nu_x$}\\
+\biggl[(i\hbar\omega_\nu+\mu)\mat{S}
+-\mat{h}-\sum_{j'=0}^{j_x'}\mat{\mathcal{S}}^{(j')}\frac{1}{(i\hbar\omega_\nu)^{j'}}
+\biggr]^{-1}
+&\text{for $|\nu|>\nu_x$}
+\end{cases}
 \end{eqnarray}
 
+
+The high-frequency representation of the Green's function shall itself
+be represented by a Laurent expansion
 \begin{eqnarray}
-\mat{G}=\sum_{j=1}^\infty \frac{1}{(i\hbar\omega_\nu)^j}\mat{\mathcal{G}}^{(j)}
+\mat{G}(i\omega_\nu)=\sum_{j=1}^\infty\mat{\mathcal{G}}^{(j)}
+\frac{1}{(i\hbar\omega_\nu)^j}
 \end{eqnarray}
-with
+
+The identity 
 \begin{eqnarray}
-\mat{\mathcal{G}}^{(1)}
-&=&\mat{S}^{-1}
+\sum_{j=1}^\infty\mat{\mathcal{G}}^{(j)}
+\frac{1}{(i\hbar\omega_\nu)^j}
+&=&
+\biggl[(i\hbar\omega_\nu+\mu)\mat{S}
+-\mat{h}
+-\sum_{j'=0}^{j_x'}\mat{\mathcal{S}}^{(j')}\frac{1}{(i\hbar\omega_\nu)^{j'}}
+\biggr]^{-1}
+\end{eqnarray}
+yields
+\begin{eqnarray}
+\sum_{j=1}^\infty\mat{\mathcal{G}}^{(j)}
+\frac{1}{(i\hbar\omega_\nu)^j}
+\biggl[(i\hbar\omega_\nu+\mu)\mat{S}
+-\mat{h}-\sum_{j'=0}^{j_x'}\mat{\mathcal{S}}^{(j')}\frac{1}{(i\hbar\omega_\nu)^{j'}}
+\biggr]=\mat{1}
+\end{eqnarray}
+which we can be arranged in orders of inverse Matsubara frequencies
+\begin{eqnarray}
+\sum_{j=0}^\infty\mat{\mathcal{G}}^{(j+1)}\mat{S}\frac{1}{(i\hbar\omega_\nu)^j}
++
+\sum_{j=1}^\infty\mat{\mathcal{G}}^{(j)}
+\biggl[\mu\mat{S}-\mat{h}-\mat{\mathcal{S}}^{(0)}\Bigr]
+\frac{1}{(i\hbar\omega_\nu)^j}
+\nonumber\\
+-\sum_{j=2}^\infty
+\sum_{n=1}^{j_x'}\mat{\mathcal{G}}^{(j-n)}\mat{\mathcal{S}}^{(n)}
+\frac{1}{(i\hbar\omega_\nu)^j}
+=\mat{1}
+\end{eqnarray}
+
+Thus, the expansion coefficients are
+\begin{eqnarray}
+\mat{\mathcal{G}}^{(1)}&=&\mat{S}^{-1}
+\nonumber\\
+\mat{\mathcal{G}}^{(j+1)}
+&=&-
+\mat{\mathcal{G}}^{(j)}
+\biggl[\mu\mat{S}-\mat{h}-\mat{\mathcal{S}}^{(0)}\Bigr]\mat{S}^{-1}
++\sum_{n=1}^{min(j_x',j-1)}\mat{\mathcal{G}}^{(j-n)}\mat{\mathcal{S}}^{(n)}\mat{S}^{-1}
+\qquad\text{for $j>0$}
+\end{eqnarray}
+
+
+Let us make the higher-order terms more explicit
+\begin{eqnarray}
+\mat{\mathcal{G}}^{(1)}&=&\mat{S}^{-1}
 \nonumber\\
 \mat{\mathcal{G}}^{(2)}
-&=&\mat{S}^{-1}
-\Bigl(\mat{h}-\mu\mat{S}
-+\mat{\mathcal{S}}^{(0)}
-\Bigr)\mat{S}^{-1}
+&=&-
+\mat{\mathcal{G}}^{(1)}
+\biggl[\mu\mat{S}-\mat{h}-\mat{\mathcal{S}}^{(0)}\Bigr]\mat{S}^{-1}
+=-
+\mat{S}^{-1}\biggl[\mu\mat{S}-\mat{h}-\mat{\mathcal{S}}^{(0)}\Bigr]\mat{S}^{-1}
 \nonumber\\
 \mat{\mathcal{G}}^{(3)}
-&=&\mat{S}^{-1}
-\biggl(
-\mat{\mathcal{S}}^{(1)}
+&=&-
+\mat{\mathcal{G}}^{(2)}
+\biggl[\mu\mat{S}-\mat{h}-\mat{\mathcal{S}}^{(0)}\Bigr]\mat{S}^{-1}
++\mat{\mathcal{G}}^{(1)}\mat{\mathcal{S}}^{(1)}\mat{S}^{-1}
+\nonumber\\
+&=&
+\mat{S}^{-1}\biggl[\mu\mat{S}-\mat{h}-\mat{\mathcal{S}}^{(0)}\Bigr]\mat{S}^{-1}
+\biggl[\mu\mat{S}-\mat{h}-\mat{\mathcal{S}}^{(0)}\Bigr]\mat{S}^{-1}
 +
-\Bigl(\mat{h}-\mu\mat{S}+\mat{\mathcal{S}}^{(0)}\Bigr)\mat{S}^{-1}
-\Bigl(\mat{h}-\mu\mat{S}+\mat{\mathcal{S}}^{(0)}\Bigr)
-\biggr)
-\mat{S}^{-1}
+\mat{S}^{-1}\mat{\mathcal{S}}^{(1)}\mat{S}^{-1}
+\label{eq:Lauenttermsgreenappendix}
 \end{eqnarray}
+In practice, we expand the Green's function up to $\mathcal{G}^{(3)}$
+and the self energy up to $\mathcal{S}^{(1)}$.
 
 
+Thus the Green's function will be represented in the form
+\begin{eqnarray}
+\mat{G}(i\omega_\nu)=
+\begin{cases}
+\biggl[(i\hbar\omega_\nu+\mu)\mat{S}
+-\mat{h}-\mat{\Sigma}(i\omega_\nu)\biggr]^{-1}
+&\text{for $|\nu|\le\nu_x$}\\
+\sum_{j=1}^3\mat{\mathcal{G}}^{(j)}\frac{1}{(i\hbar\omega_\nu)^j}
+&\text{for $|\nu|>\nu_x$}
+\end{cases}
+\end{eqnarray}
+where the Laurent-expansion coefficients of the Green's function are
+defined in eq{eq:Lauenttermsgreenappendix}. The variational degrees of
+freedom for the Greens functrion is the Green's function for
+$0<\omega_\nu\le\omega_x$ and the first two Laurent-expansion terms
+$\mat{\mathcal{S}}^{(0)}$ and $\mat{\mathcal{S}}^{(1)}$ of the self
+energy. The Green's functiuon for negative Matsubara frequencies are
+obtained by \eq{eq:matsubaragnegfreq},
+$\mat{G}(-\i\omega_\nu)=\mat{G}^\dagger(\i\omega_\nu)$.
+
+%============================================================
+\subsubsection{Laurent-expansion coefficients are Hermitean}
+%============================================================
 The expansion coefficients for the Laurent expansion are hermitian.
 We exploit that $\mat{G}(-i\omega_\nu)=\mat{G}^\dagger(i\omega_\nu)$
 \begin{eqnarray}
@@ -2616,6 +3067,30 @@ We exploit that $\mat{G}(-i\omega_\nu)=\mat{G}^\dagger(i\omega_\nu)$
 
 From this requirement we can derive that $\mat{S}$, $\mat{h}$,
 $\mat{\mathcal{S}}^{(0)}$ and $\mat{\mathcal{S}}^{(0)}$ are hermitian as well.
+
+%============================================================
+\subsubsection{Difference of Green's functions}
+%============================================================
+The difference of two Green's function with different self energies
+has the form
+\begin{eqnarray}
+\Delta\mat{\mathcal{G}}^{(1)}&=&0
+\\
+\Delta\mat{\mathcal{G}}^{(2)}&=&
+\mat{S}^{-1}\mat{\mathcal{S}}^{(0)}\mat{S}^{-1}
+\\
+\Delta\mat{\mathcal{G}}^{(3)}
+&=&
+-\mat{S}^{-1}\biggl[\mu\mat{S}-\mat{h}\Bigr]\mat{S}^{-1}
+\mat{\mathcal{S}}^{(0)}\mat{S}^{-1}
+-\mat{S}^{-1}\mat{\mathcal{S}}^{(0)}\mat{S}^{-1}
+\biggl[\mu\mat{S}-\mat{h}\Bigr]\mat{S}^{-1}
+\nonumber\\
+&&+\mat{S}^{-1}\mat{\mathcal{S}}^{(0)}\mat{S}^{-1}\mat{\mathcal{S}}^{(0)}
+\mat{S}^{-1}
++
+\mat{S}^{-1}\mat{\mathcal{S}}^{(1)}\mat{S}^{-1}
+\end{eqnarray}
 
 %==============================================================================
 \subsubsection{Laurent expansion for the density matrix}
@@ -2648,6 +3123,63 @@ density matrix as
 +\frac{1.0?}{4320}\beta^7\mat{\mathcal{G}}^{(8)}\Bigr)}_{\text{from grapher}}
 +O(\beta^9)
 \end{eqnarray*}
+
+
+%==============================================================================
+\subsubsection{Derivative of the Luttinger Ward functional}
+%==============================================================================
+For $j'\in\{0,1\}$
+\begin{eqnarray}
+\frac{\partial\Phi^{LW}_\beta}{\partial \mat{\mathcal{S}}^{(j')}}
+&=&
+\sum_{j=1}^3
+\frac{1}{\beta}\sum_{\nu; |\nu|>\nu_x}
+\frac{\beta\partial\Phi^{LW}_\beta}{\partial \mat{G}(i\omega_\nu)}
+\frac{\partial \mat{G}(i\omega_\nu)}{\partial \mat{\mathcal{G}}^{(j)}}
+\frac{\partial \mat{\mathcal{G}}^{(j)}}{\partial \mat{\mathcal{S}}^{(j')}}
+\nonumber\\
+&=&
+\sum_{j=1}^3
+\Bigl[\frac{1}{\beta}\sum_{\nu; |\nu|>\nu_x}
+\frac{\beta\partial\Phi^{LW}_\beta}{\partial \mat{G}(i\omega_\nu)}
+\frac{1}{(i\hbar\omega_\nu)^j}\Bigr]
+\frac{\partial \mat{\mathcal{G}}^{(j)}}{\partial \mat{\mathcal{S}}^{(j')}}
+\nonumber\\
+\frac{\partial\Phi^{LW}_\beta}{\partial \mat{\mathcal{S}}^{(0)}}
+&=&
+\mat{S}^{-1}
+\underbrace{\Bigl[\frac{1}{\beta}\sum_{\nu; |\nu|>\nu_x}
+\frac{\beta\partial\Phi^{LW}_\beta}{\partial \mat{G}(i\omega_\nu)}
+\frac{1}{(i\hbar\omega_\nu)^2}\Bigr]}
+_{\delta\Phi^{LW}_{\beta,dyn}/\delta\mathcal{\mat{G}}^{(2)}}
+\mat{S}^{-1}
+\nonumber\\
+&-&
+\mat{S}^{-1}
+\underbrace{\biggl[\frac{1}{\beta}\sum_{\nu; |\nu|>\nu_x}
+\frac{\beta\partial\Phi^{LW}_\beta}{\partial \mat{G}(i\omega_\nu)}
+\frac{1}{(i\hbar\omega_\nu)^3}\biggr]}
+_{\delta\Phi^{LW}_{\beta,dyn}/\delta\mathcal{\mat{G}}^{(3)}}
+\mat{S}^{-1}\Bigl[\mu\mat{S}-\mat{h}-\mat{\mathcal{S}}^{(0)}\Bigr]\mat{S}^{-1}
+\nonumber\\
+&-&
+\mat{S}^{-1}
+\Bigl[\mu\mat{S}-\mat{h}-\mat{\mathcal{S}}^{(0)}\Bigr]\mat{S}^{-1}
+\underbrace{\biggl[\frac{1}{\beta}\sum_{\nu; |\nu|>\nu_x}
+\frac{\beta\partial\Phi^{LW}_\beta}{\partial \mat{G}(i\omega_\nu)}
+\frac{1}{(i\hbar\omega_\nu)^3}\biggr]}
+_{\delta\Phi^{LW}_{\beta,dyn}/\delta\mathcal{\mat{G}}^{(3)}}
+\mat{S}^{-1}
+%
+\nonumber\\
+\frac{\partial \mat{\mathcal{G}}^{(j)}}{\partial \mat{\mathcal{S}}^{(1)}}
+&=&\mat{S}^{-1}
+\underbrace{\biggl[\frac{1}{\beta}\sum_{\nu; |\nu|>\nu_x}
+\frac{\beta\partial\Phi^{LW}_\beta}{\partial \mat{G}(i\omega_\nu)}
+\frac{1}{(i\hbar\omega_\nu)^3}\biggr]}
+_{\delta\Phi^{LW}_{\beta,dyn}/\delta\mathcal{\mat{G}}^{(3)}}
+\mat{S}^{-1}
+\end{eqnarray}
 
 
 
@@ -2818,7 +3350,7 @@ of which only one has a frequency dependent self energy
 
 
 %==============================================================================
-\chapter{Form of the Hartree Fock energy}
+\chapter{Hartree-Fock energy}
 \label{app:hfcontrib}.
 %==============================================================================
 The Hartree-Fock term $Q^{\hat{W}}_{X,\beta}$ is equal to
@@ -2892,6 +3424,188 @@ U_{a,b,d,c}\Bigl(\rho_{d,a}\rho_{c,b}-\rho_{c,a}\rho_{d,b}\Bigr)
 \chapter{Mixing of the self energy}
 \label{sec:mixing}
 %==============================================================================
+%=============================================================
+\section{Structure of the self-consistency}
+%=============================================================
+The self-consisten scheme has the following structure
+\begin{eqnarray}
+\mat{\Sigma}_{dyn}(+)=\mat{\Sigma}_{dyn}(0)+\alpha
+\biggl[\left.\frac{\beta\delta\Phi^{LW,dyn}}{\delta\mat{G}}
+\right|_{\mat{G}[\mat{\Sigma}_{dyn}(0)]}
+-\mat{\Sigma}_{dyn}(0)\biggr]
+\end{eqnarray}
+and we search for the fixed point of this
+dynamics. $\mat{G}[\mat{\Sigma}_{dyn}]$ is given by Dyson's equation,
+that is by the stationary condition of the dynamic-correlation
+correction with respect to the self energy.
+
+This problem is equivalent to the search of a zero of
+$\frac{\beta\delta\Phi^{LW,dyn}_\beta}{\delta\mat{G}}-\mat{\Sigma}_{dyn}$.
+More precisely, we search $\delta\mat{\Sigma}_{dyn}$ so that
+\begin{eqnarray}
+\left.\frac{\beta\delta\Phi^{LW,dyn}_\beta}{\delta\mat{G}}
+\right|_{\mat{G}[\mat{\Sigma}_{dyn}+\delta\mat{\Sigma}_{dyn}]}
+-\mat{\Sigma}_{dyn}
+-\delta\mat{\Sigma}_{dyn}
+=0
+\end{eqnarray}
+
+This yields to first order in $\delta\Sigma_{dyn}$
+\begin{eqnarray}
+\biggl[\left.\frac{\beta\delta\Phi^{LW,dyn}_\beta}{\delta\mat{G}}
+\right|_{\mat{G}[\mat{\Sigma}_{dyn}]}
+-\mat{\Sigma}_{dyn}
+\biggr]
++\left.\frac{\beta\delta^2\Phi^{LW,dyn}_\beta}{\delta\mat{G}\delta\mat{G'}}
+\right|_{\mat{G}[\mat{\Sigma}_{dyn}]}\frac{\delta\mat{G'}}{\delta\mat{\Sigma}_{dyn}}
+\delta\mat{\Sigma}_{dyn}
+-\delta\mat{\Sigma}_{dyn}
+=0
+\end{eqnarray}
+I write out the indices
+\begin{eqnarray}
+\biggl[\left.\frac{\beta\delta\Phi^{LW,dyn}_\beta}{\delta G_{b,a}}
+\right|_{\mat{G}[\mat{\Sigma}_{dyn}]}\hspace{-0.5cm}
+-\Sigma_{dyn,a,b}
+\biggr]
++
+\sum_{e,f}
+\biggl\lbrace
+\biggl[\sum_{c,d}
+\left.\frac{\beta\delta^2\Phi^{LW,dyn}_\beta}
+{\delta{G}_{b,a}\delta{G}_{d,c}}
+\right|_{\mat{G}[\mat{\Sigma}_{dyn}]}
+\frac{\delta{G}_{d,c}}{\delta{\Sigma}_{dyn,e,f}}
+\biggr]-\delta_{a,e}\delta_{b,f}
+\biggr\rbrace
+\delta\Sigma_{dyn,e,f}
+=0
+\nonumber\\
+\end{eqnarray}
+
+We can now evaluate the derivative of the Green's function with
+respect to the self energy.
+\begin{eqnarray}
+\mat{G}&=&\biggl[(i\hbar\omega_\nu+\mu)\mat{S}-\bar{\mat{h}}
+-\Bigl(\mat{\Sigma}_{dyn}-\mat{\Gamma}\Bigr)\biggr]^{-1}
+\nonumber\\
+\Rightarrow\qquad
+\delta\mat{G}&=&\mat{G}\Bigl(\delta\mat{\Sigma}_{dyn}
+-\delta\mat{\Gamma}\Bigr)\mat{G}
+\nonumber\\
+\Rightarrow\qquad
+\delta{G}_{d,c}&=&{G}_{d,e}\Bigl(\delta{\Sigma}_{dyn,e,f}
+-\delta{\Gamma}_{e,f}\Bigr)\mat{G}_{f,c}
+\end{eqnarray}
+and obtain
+\begin{eqnarray}
+\biggl[\left.\frac{\beta\delta\Phi^{LW,dyn}_\beta}{\delta G_{b,a}}
+\right|_{\mat{G}[\mat{\Sigma}_{dyn}]}\hspace{-0.5cm}
+-\Sigma_{dyn,a,b}
+\biggr]
++
+\sum_{e,f}
+\biggl\lbrace
+\biggl[\sum_{c,d}
+G_{c,e}
+\left.\frac{\beta\delta^2\Phi^{LW,dyn}_\beta}
+{\delta{G}_{b,a}\delta{G}_{c,d}}
+\right|_{\mat{G}[\mat{\Sigma}_{dyn}]}
+G_{f,d}
+\biggr]-\delta_{a,e}\delta_{b,f}
+\biggr\rbrace
+\delta\Sigma_{dyn,e,f}
+=0
+\nonumber\\
+\end{eqnarray}
+
+
+In order to devise an efficient preconditioning scheme, we need a
+model Green's function and a model dynamical Luttinger-Ward
+functional. A model Green's function is developed below in
+section~\ref{sec:modelgreensfunction} on
+p.~\pageref{sec:modelgreensfunction}.
+\begin{eqnarray}
+G_{a,b}(i\omega_\nu)
+G_{c,d}(i\omega_\nu)
+\approx \mat{S}^{-1}_{a,b}\mat{S}^{-1}_{c,d}
+\frac{1}{A+B(\hbar\omega_\nu)^2}
+\end{eqnarray}
+
+Without a good approximation for the Luttinger Ward functional, we
+make the following simple approximation
+\begin{eqnarray}
+\sum_{c,d}
+G_{c,e}
+\left.\frac{\beta\delta^2\Phi^{LW,dyn}_\beta}
+{\delta{G}_{b,a}\delta{G}_{c,d}}
+\right|_{\mat{G}[\mat{\Sigma}_{dyn}]}
+G_{f,d}
+\approx 
+\delta_{a,e}\delta_{b,f}
+\frac{1}{A+B(\hbar\omega_\nu)^2}
+\end{eqnarray}
+
+With this approximation, I obtain the prediction for
+$\delta\mat{\Sigma}_{dyn}$ as
+\begin{eqnarray}
+\biggl[\left.\frac{\beta\delta\Phi^{LW,dyn}_\beta}{\delta G_{b,a}}
+\right|_{\mat{G}[\mat{\Sigma}_{dyn}]}\hspace{-0.5cm}
+-\Sigma_{dyn,a,b}
+\biggr]
++
+\sum_{e,f}
+\biggl\lbrace
+\delta_{a,e}\delta_{b,f}
+\frac{1}{A+B(\hbar\omega_\nu)^2}
+-\delta_{a,e}\delta_{b,f}
+\biggr\rbrace
+\delta\Sigma_{dyn,e,f}
+=0
+\nonumber\\
+\biggl[\left.\frac{\beta\delta\Phi^{LW,dyn}_\beta}{\delta G_{b,a}}
+\right|_{\mat{G}[\mat{\Sigma}_{dyn}]}\hspace{-0.5cm}
+-\Sigma_{dyn,a,b}
+\biggr]
++
+\biggl\lbrace
+\frac{1}{A+B(\hbar\omega_\nu)^2}
+-1
+\biggr\rbrace
+\delta\Sigma_{dyn,a,b}
+=0
+\end{eqnarray}
+so that
+\begin{eqnarray}
+\delta\Sigma_{dyn,a,b}
+&\approx&\frac{1}{1-\frac{1}{A+B(\hbar\omega_\nu)^2}}
+\biggl[\left.\frac{\beta\delta\Phi^{LW,dyn}_\beta}{\delta G_{b,a}}
+\right|_{\mat{G}[\mat{\Sigma}_{dyn}]}\hspace{-0.5cm}
+-\Sigma_{dyn,a,b}
+\biggr]
+\end{eqnarray}
+Thus, in the high-frequency limit, it seems that a mixing factor equal
+to one seems to be ideal, while the low frequency limit should have an
+independent mixing. To avoid a singularity, $A$ must be chosen larher
+than one. A value $A=1$ would lead to infinite mixing for
+$\omega_\nu=0$. Therefore, I introduce a new variable $\alpha$ with
+$(A=\alpha/(\alpha-1)$ for the low-frequency mixing factor $\alpha$ is
+a mixing factor for the low-frequency part, and B controls how fast
+the mixing approaches the high-frequency value.
+
+\begin{eqnarray}
+\mat{\Sigma}_{dyn}(+)=\mat{\Sigma}_{dyn}(0)
++\frac{1}{1-\frac{1}{\frac{\alpha}{\alpha-1}+B(\hbar\omega_\nu)^2}}
+\biggl[\left.\frac{\beta\delta\Phi^{LW,dyn}_\beta}{\delta G_{b,a}}
+\right|_{\mat{G}[\mat{\Sigma}_{dyn}(0)]}\hspace{-0.5cm}
+-\Sigma_{dyn,a,b}(0)
+\biggr]
+\label{eq:mixingsigma}
+\end{eqnarray}
+The Laurent expansions are mixed with a mixing factor equal to unity
+consistent with the high-frequency mixing.
+
+
 %=============================================================
 \section{Euler-Lagrange equations}
 %=============================================================
@@ -3009,6 +3723,7 @@ G_{d,b}(i\omega_\nu)
 
 %==============================================================================
 \section{Model Green's function}
+\label{sec:modelgreensfunction}
 %==============================================================================
 In order to analyze the equations it is often useful to have a model
 Green's function that has an analytical form but reflects the
@@ -3029,7 +3744,7 @@ Now we introduce a model density of states that is diagonal in the
 orbital index and which has a constant density of states of width $W$
 centered at the energy $E$
 \begin{eqnarray}
-D_{a,b}(\epsilon)=\delta_{a,b}\frac{1}{W}
+D_{a,b}(\epsilon)=S^{-1}_{a,b}\frac{1}{W}
 \cdot
 \underbrace{\theta\left(\epsilon-\Bigl(E-\frac{W}{2}\Bigr)\right)
 }_{=1\quad\text{above lower bound}}
@@ -3050,22 +3765,22 @@ rather than $\mu$ allo expand the argument to multi-band situations.
 The resulting Green's function has the form
 \begin{eqnarray}
 G_{a,b}(i\omega_\nu)&=&\int_{E-W/2}^{E+W/2} d\epsilon\;
-\frac{\frac{1}{W}\delta_{a,b}}{i\hbar\omega_\nu-\epsilon}
+\frac{\frac{1}{W}S^{-1}_{a,b}}{i\hbar\omega_\nu-\epsilon}
 \nonumber\\
 &=&
-\frac{\delta_{a,b}}{W}\int_{E-W/2}^{E+W/2}d\epsilon\;
+\frac{S^{-1}_{a,b}}{W}\int_{E-W/2}^{E+W/2}d\epsilon\;
 \frac{-\epsilon-i\hbar\omega_\nu}{(\hbar\omega)^2+\epsilon^2}
 \nonumber\\
 &=&
--\frac{\delta_{a,b}}{W}\int_{E-W/2}^{E+W/2}d\epsilon\;
+-\frac{S^{-1}_{a,b}}{W}\int_{E-W/2}^{E+W/2}d\epsilon\;
 \frac{\epsilon+i\hbar\omega_\nu}{(\hbar\omega)^2+\epsilon^2}
 \nonumber\\
 &=&
--\frac{\delta_{a,b}}{W}\int_{E-W/2}^{E+W/2}dx\;
+-\frac{S^{-1}_{a,b}}{W}\int_{E-W/2}^{E+W/2}dx\;
 \frac{x+i\hbar\omega_\nu}{(\hbar\omega)^2+x^2}
 \nonumber\\
 &=&
--\frac{\delta_{a,b}}{W}
+-\frac{S^{-1}_{a,b}}{W}
 \biggl\lbrace
 \int_{E-W/2}^{E+W/2}dx\;
 \frac{x}{(\hbar\omega)^2+x^2}
@@ -3074,7 +3789,7 @@ G_{a,b}(i\omega_\nu)&=&\int_{E-W/2}^{E+W/2} d\epsilon\;
 \biggr\rbrace
 \nonumber\\
 &=&
--\frac{\delta_{a,b}}{W}
+-\frac{S^{-1}_{a,b}}{W}
 \biggl\lbrace
 \frac{1}{2}\ln\left[(\hbar\omega)^2+(E+W/2)^2\right]
 -\frac{1}{2}\ln\left[(\hbar\omega)^2+(E-W/2)^2\right]
@@ -3088,7 +3803,7 @@ G_{a,b}(i\omega_\nu)&=&\int_{E-W/2}^{E+W/2} d\epsilon\;
 \biggr\rbrace
 \nonumber\\
 &=&
-\frac{\delta_{a,b}}{W}
+\frac{S^{-1}_{a,b}}{W}
 \biggl\lbrace
 +\frac{1}{2}\ln\left[
 \frac{(\hbar\omega)^2+(E-W/2)^2}{(\hbar\omega)^2+(E+W/2)^2}
@@ -3155,7 +3870,7 @@ x&=&\frac{1}{y+\frac{\pi}{2}}+O(y+\frac{\pi}{2})^2
 \quad\Rightarrow\quad 
 y\approx-\frac{\pi}{2}+\frac{1}{x}\quad\text{for $x\rightarrow-\infty$}
 \end{eqnarray}
-} and the expanion of the logarithm
+} and the expansion of the logarithm
 \footnote{
 \begin{eqnarray}
 \ln\left[\frac{a+x}{b+x}\right]\approx
@@ -3164,7 +3879,7 @@ y\approx-\frac{\pi}{2}+\frac{1}{x}\quad\text{for $x\rightarrow-\infty$}
 }.
 \begin{eqnarray}
 G_{a,b}(i\omega_\nu)&=&
-\frac{\delta_{a,b}}{W}
+\frac{S^{-1}_{a,b}}{W}
 \biggl\lbrace
 +\frac{1}{2}\ln\left[
 \frac{(\hbar\omega)^2+(E-W/2)^2}{(\hbar\omega)^2+(E+W/2)^2}
@@ -3175,7 +3890,7 @@ G_{a,b}(i\omega_\nu)&=&
 \nonumber\\
 %
 &\approx&
-\frac{\delta_{a,b}}{W}
+\frac{S^{-1}_{a,b}}{W}
 \biggl\lbrace
 +\frac{1}{2}\ln\left[\left(
 \frac{(E-W/2)}{(E+W/2)}\right)^2
@@ -3190,7 +3905,7 @@ G_{a,b}(i\omega_\nu)&=&
 \nonumber\\
 %
 &\approx&
-\frac{\delta_{a,b}}{W}
+\frac{S^{-1}_{a,b}}{W}
 \biggl\lbrace
 +\ln\left[
 \frac{(E-W/2)}{(E+W/2)}
@@ -3210,7 +3925,7 @@ G_{a,b}(i\omega_\nu)&=&
 \item $\hbar\omega\rightarrow \infty$:
 \begin{eqnarray}
 G_{a,b}(i\omega_\nu)&=&
-\frac{\delta_{a,b}}{W}
+\frac{S^{-1}_{a,b}}{W}
 \biggl\lbrace
 +\frac{1}{2}\ln\left[
 \frac{(\hbar\omega)^2+(E-W/2)^2}{(\hbar\omega)^2+(E+W/2)^2}
@@ -3221,7 +3936,7 @@ G_{a,b}(i\omega_\nu)&=&
 \nonumber\\
 %
 &\approx&
-\frac{\delta_{a,b}}{W}
+\frac{S^{-1}_{a,b}}{W}
 \biggl\lbrace
 -EW(\hbar\omega)^{-2}
 -i W (\hbar\omega)^{-1}
@@ -3229,7 +3944,7 @@ G_{a,b}(i\omega_\nu)&=&
 %
 \nonumber\\
 &\approx&
-\delta_{a,b}
+S^{-1}_{a,b}
 \biggl\lbrace
 -E(\hbar\omega)^{-2}
 -i  (\hbar\omega)^{-1}
@@ -3330,6 +4045,71 @@ $a_{opt}=\frac{\alpha_{opt}}{2}\Delta t=2\pi\frac{\Delta t}{T}$ which
 is with our choices $a_{opt}=\frac{2\pi}{10}$. It is not adviseable
 tio choose such a factor, because it would overdamp the low-frequency
 region.
+
+%====================================================================
+\chapter{Usage}
+%====================================================================
+%====================================================================
+\subsection{Control file}
+%====================================================================
+A typical control file looks as follows. The DMFT object is activated
+by the block \verb|!NTBO| with the value \verb|MODUS='DMFT'|. The DMFT
+interface requires a finite temperature calculation, which is
+specified by the \verb|!MERMIN| block, where the temperature is
+specified.  A finite temperature calculation requires
+\verb|SAFEORTHO=T|, so that the wave function dynamics converges to
+eigenstates of the Hamiltonian.
+\begin{verbatim}
+!CONTROL
+  !GENERIC NSTEP=500  DT=5. START=F  !END 
+  !FOURIER EPWPSI=30. CDUAL=2.0 !END
+  !DFT TYPE=10  
+     !NTBO MODUS='DMFT' !END   
+  !END 
+  !PSIDYN STOP=T FRIC=.05 SAFEORTHO=F
+    !AUTO FRIC(-)=0.3 FACT(-)=0.97 FRIC(+)=0.3 FACT(+)=1.0 MINFRIC=0.05 !END
+  !END
+  !MERMIN T[K]=4000. ADIABATIC=T RETARD=10. !END
+!end
+!EOB
+\end{verbatim}
+
+%====================================================================
+\subsection{Structure file}
+%====================================================================
+A typical structure file may look as follows. New are the \verb|!NTBO|
+subblocks.
+\begin{verbatim}
+!STRUCTURE 
+  !GENERIC  LUNIT[AA]=   3.8   EUNIT[EV]=T !END
+  !OCCUPATIONS EMPTY=10 NSPIN=2 SPIN[HBAR]=1.5 !END
+  !KPOINTS DIV=1 1 1 SHIFT=1 1 1 !END
+  !SPECIES NAME='CA' ID='CA_HBS_SC' NPRO=2 2 1 
+    !NTBO NOFL=1 0 0 RAUG/RCOV=0.8 RTAIL/RCOV=1.4 TAILLAMBDA=2. 1.
+          CV=F FOCKSETUP=F  !END 
+  !END
+  !SPECIES NAME='MN' ID='MN_HBS' NPRO=1 1 1 
+     !NTBO NOFL=1 0 1 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 TAILLAMBDA=2. 1.
+           LHFWeiGHT=0.25 CV=F FOCKSETUP=F !END 
+  !END
+  !SPECIES NAME='O_' ID='O_.75_6.0'  NPRO=1 1 0
+    !NTBO NOFL=1 1  RAUG/RCOV=1.2 RTAIL/RCOV=1.4 TAILLAMBDA=2. 1.
+           CV=F FOCKSETUP=F !END 
+  !END
+  !LATTICE T=  1.0000        0.0000        0.0000000000
+               0.0000        1.0000        0.0000000000
+               0.0000        0.0000        1.0000000000 !END
+  !ATOM NAME= 'CA1'   R=   0.0  0.0 0.0 !END
+  !ATOM NAME= 'MN1'   R=   0.5  0.5 0.5 !END
+  !ATOM NAME= 'O_1'   R=   0.0  0.5 0.5 !END
+  !ATOM NAME= 'O_2'   R=   0.5  0.0 0.5 !END
+  !ATOM NAME= 'O_3'   R=   0.5  0.5 0.0 !END
+  !ORBPOT_X
+    !POT ATOM='MN(UP)1' VALUE=+.2 TYPE='D' RC=1.5 S=1 !END
+  !END
+!END 
+!EOB
+\end{verbatim}
 
 
 
@@ -3507,11 +4287,105 @@ region.
 
 
 %==============================================================================
-\section{Bloch representation}
+\chapter{Bloch representation}
 %==============================================================================
 
 
 
+%====================================================================
+\chapter{Traditional formulation of the dynamical mean-field theory}
+%====================================================================
+\index{dynamical mean-field theory}
+The loop of solver takes as input a local Greens function and a
+U-tensor. It produces the value of the Luttinger-Ward functional, and
+its derivatives of the Luttinger-Ward functional with respect to
+Greens function and U-tensor.
+
+The algorithm is the following
+\begin{enumerate}
+\item choose a hybridization function $\Delta^{in}(i\omega_\nu)$
+\item calculate an output Greens function $\mat{G}^{out}$ as
+  follows\footnote{(D. Vollhardt \textit{Dynamical Mean Field Theory
+      for Strongly Correlated Materials} in \textit{The LDA+DMFT
+      Approach to Strongly Correlated Materials'} E. Pavarini,
+    E. Koch, D. Vollhardt and A. Lichtenstein Eds, Forschungszentrum
+    Juelich 2011. Eq. 23.ff)}: \petertt{Caution, I
+      generalized Dieter's Equations without checking. Signs, factors,
+      indices, etc. may be wrong!}
+\begin{eqnarray*}
+G^{out}_{\alpha,\beta}(i\omega_\nu)&:=&
+-\frac{1}{Z}\int\prod_{\gamma} Dc^*_\gamma Dc_\gamma\;
+c_\alpha(i\omega_\nu)c^*_\beta(i\omega_\nu) \e{-S_{loc}}
+\\
+Z&=&\int\prod_{\gamma} Dc^*_\gamma Dc_\gamma\;\e{-S_{loc}}
+\\
+S_{loc}&=&-\int_0^\beta d\tau_1\int_0^\beta d\tau_2\;
+\sum_{\alpha,\beta}c^*_\alpha(\tau_1)
+\Bigl[
+i\hbar\omega_\nu\delta_{\alpha,\beta}-\Delta^{in}_{\alpha,\beta}(i\omega_\nu)
+\Bigr]
+c_\beta(\tau_2)
+\nonumber\\
+&&-\int_0^\beta d\tau \sum_{\alpha,\beta,\gamma,\delta}
+U_{\alpha,\beta,\delta,\gamma}
+ c^*_\alpha c^*_\beta c_\gamma c_\delta
+\end{eqnarray*}
+Note, that only the hybridization function $\mat{\Delta}^{in}$ and the
+  U-tensor enter in this calculation. The only result is the output
+  Greens function $\mat{G}^{out}$.
+%
+\item Convert the Green's function into a self energy $\mat{\Sigma}^{out}$
+  using Dyson's equation
+\begin{eqnarray}
+\Sigma^{out}_{\alpha,\beta}(i\omega_\nu)
+:=-\Bigl(G^{out}(i\omega_\nu)\Bigr)^{-1}_{\alpha,\beta}
++i\hbar\omega_\nu\delta_{\alpha,\beta}
+-\Delta^{in}_{\alpha,\beta}(i\omega_\nu)
+\label{eq:sigmaout}
+\end{eqnarray}
+%
+\item Use the Greens function $\mat{G}$ passed
+  to the solver as input argument (not
+  $\mat{G}^{out}$!)  to extract a new
+  hybridization function $\mat{\Delta}^{out}$
+\begin{eqnarray}
+\Delta^{out}_{\alpha,\beta}(i\omega_\nu)
+:=-\Bigl(G(i\omega_\nu)\Bigr)^{-1}_{\alpha,\beta}
++i\hbar\omega_\nu\delta_{\alpha,\beta}-\Sigma^{out}_{\alpha,\beta}(i\omega_\nu)
+\label{eq:deltaout}
+\end{eqnarray}
+\end{enumerate}
+
+
+The steps given above yield a unique mapping from $\Delta^{in}$ to
+$\Delta^{out}$. In other words the output hybridization function is a
+unique functional of the input hybridization function, the input
+Greens function and the U-tensor.
+\begin{eqnarray}
+\mat{\Delta}^{out}=F[\mat{\Delta}^{in},\mat{G},\mat{U}]
+\end{eqnarray}
+
+
+The mapping depends on exactly two quantities, namely
+the input Green's function and the U-tensor. Self-consistency yields the 
+fixed point $\Delta^{out}=\Delta^{in}$ of this mapping.
+At this fixed point, \eq{eq:deltaout} and \eq{eq:sigmaout} yield
+\begin{eqnarray}
+G^{out}_{\alpha,\beta}(i\omega_\nu)&=&G_{\alpha,\beta}(i\omega_\nu)
+\end{eqnarray}
+and 
+\begin{eqnarray}
+G_{\alpha,\beta}(i\omega_\nu)
+=\biggl[
+i\hbar\omega_\nu\mat{1}
+-\mat{\Sigma}^{out}(i\omega_\nu)
+-\mat{\Delta}^{in}(i\omega_\nu)
+\biggr]^{-1}_{\alpha,\beta}
+\;.
+\end{eqnarray}
+
+
+\printindex
 \clearpage
 \bibliographystyle{unsrtnat} 
  \bibliography{../all}
