@@ -927,7 +927,7 @@ obtained from the fundamental variables as.
 \mat{\mathcal{G}}^{(2)}_{\vec{k}}
 &\eqrel{eq:Lauenttermsgreenappendix}{=}&
 -\mat{S}_{\vec{k}}^{-1}
-\biggl[\mu\mat{S}_{\vec{k}}-\mat{h}_{\vec{k}}
+\biggl[\mu\mat{S}_{\vec{k}}-\bar{\mat{h}}_{\vec{k}}
 +\mat{\Gamma}_{\vec{k}}-\mat{\mathcal{S}}^{(0)}_{dyn}
 \biggr]
 \mat{S}_{\vec{k}}^{-1}
@@ -1779,7 +1779,8 @@ obtained.
 \mat{\Gamma}\Bigr\rbrace
 \end{eqnarray}
 \petertt{At this point, I am still using the Dahlen trick, which is
-  probably not quite correct.}
+  probably not quite correct. See appendix~\ref{sec:dahlenstrick} on
+  p.~\pageref{sec:dahlenstrick} }
 %
 \item \verb|DMFT_ADDTOHPSI|: Adds the energy derivative to
   \verb|this%htbc| of the \verb|waves_module|. There are two
@@ -2297,12 +2298,14 @@ Q^{\hat{W}_2}_{dyn,\beta}[\mat{\rho}]
 
 %====================================================================
 \subsubsection{Evaluation of the logarithm using Dahlen's trick}
+\label{sec:dahlenstrick}
 %====================================================================
 The evaluation fo the logarithm is problematic, because Green's
 function and self energy are not hermitean. In appendix B of their
 paper\cite{dahlen06_pra73_12511} Dahlen et al proposed a trick to
 solve the problem. \petertt{It is not yet clear to me if this trick is
-  correct.}
+  correct.}\petertt{See some relations for non-hermitean matrices
+  appendix C of Bickers et al.\cite{bickers89_ap193_206})
 
 The trick rests on the assumption of the following identity
 \begin{eqnarray}
@@ -3528,7 +3531,7 @@ p.~\pageref{sec:modelgreensfunction}.
 \begin{eqnarray}
 G_{a,b}(i\omega_\nu)
 G_{c,d}(i\omega_\nu)
-\approx \mat{S}^{-1}_{a,b}\mat{S}^{-1}_{c,d}
+\approx -\mat{S}^{-1}_{a,b}\mat{S}^{-1}_{c,d}
 \frac{1}{A+B(\hbar\omega_\nu)^2}
 \end{eqnarray}
 
@@ -3542,7 +3545,7 @@ G_{c,e}
 \right|_{\mat{G}[\mat{\Sigma}_{dyn}]}
 G_{f,d}
 \approx 
-\delta_{a,e}\delta_{b,f}
+-\delta_{a,e}\delta_{b,f}
 \frac{1}{A+B(\hbar\omega_\nu)^2}
 \end{eqnarray}
 
@@ -3553,12 +3556,12 @@ $\delta\mat{\Sigma}_{dyn}$ as
 \right|_{\mat{G}[\mat{\Sigma}_{dyn}]}\hspace{-0.5cm}
 -\Sigma_{dyn,a,b}
 \biggr]
-+
+-
 \sum_{e,f}
 \biggl\lbrace
 \delta_{a,e}\delta_{b,f}
 \frac{1}{A+B(\hbar\omega_\nu)^2}
--\delta_{a,e}\delta_{b,f}
++\delta_{a,e}\delta_{b,f}
 \biggr\rbrace
 \delta\Sigma_{dyn,e,f}
 =0
@@ -3569,8 +3572,7 @@ $\delta\mat{\Sigma}_{dyn}$ as
 \biggr]
 +
 \biggl\lbrace
-\frac{1}{A+B(\hbar\omega_\nu)^2}
--1
+1+\frac{1}{A+B(\hbar\omega_\nu)^2}
 \biggr\rbrace
 \delta\Sigma_{dyn,a,b}
 =0
@@ -3578,7 +3580,7 @@ $\delta\mat{\Sigma}_{dyn}$ as
 so that
 \begin{eqnarray}
 \delta\Sigma_{dyn,a,b}
-&\approx&\frac{1}{1-\frac{1}{A+B(\hbar\omega_\nu)^2}}
+&\approx&\frac{1}{1+\frac{1}{A+B(\hbar\omega_\nu)^2}}
 \biggl[\left.\frac{\beta\delta\Phi^{LW,dyn}_\beta}{\delta G_{b,a}}
 \right|_{\mat{G}[\mat{\Sigma}_{dyn}]}\hspace{-0.5cm}
 -\Sigma_{dyn,a,b}
@@ -3586,16 +3588,14 @@ so that
 \end{eqnarray}
 Thus, in the high-frequency limit, it seems that a mixing factor equal
 to one seems to be ideal, while the low frequency limit should have an
-independent mixing. To avoid a singularity, $A$ must be chosen larher
-than one. A value $A=1$ would lead to infinite mixing for
-$\omega_\nu=0$. Therefore, I introduce a new variable $\alpha$ with
-$(A=\alpha/(\alpha-1)$ for the low-frequency mixing factor $\alpha$ is
-a mixing factor for the low-frequency part, and B controls how fast
-the mixing approaches the high-frequency value.
+independent mixing. 
 
+A more intuitive set of parameters that $A,B$ is to specify the mixing
+$\alpha$ for $\omega=0$ and the Matsubara frequency $\omega_h$ for
+which the mixing is halfway between $\alpha$ and one.
 \begin{eqnarray}
 \mat{\Sigma}_{dyn}(+)=\mat{\Sigma}_{dyn}(0)
-+\frac{1}{1-\frac{1}{\frac{\alpha}{\alpha-1}+B(\hbar\omega_\nu)^2}}
++\frac{1}{1+\frac{1-\alpha}{\alpha}+\left(\frac{\omega_\nu}{\omega_h}\right)^2}
 \biggl[\left.\frac{\beta\delta\Phi^{LW,dyn}_\beta}{\delta G_{b,a}}
 \right|_{\mat{G}[\mat{\Sigma}_{dyn}(0)]}\hspace{-0.5cm}
 -\Sigma_{dyn,a,b}(0)
@@ -3951,100 +3951,6 @@ S^{-1}_{a,b}
 \biggr\rbrace
 \end{eqnarray}
 \end{itemize}
-
-
-Remark: We can approximate
-\begin{eqnarray}
-\frac{1}{G_{a,a}^2}\approx \left(
-\frac{1}{W}\ln\left[\frac{E-W/2}{E+W/2}\right] \right)^{-2}
-  +(\hbar\omega)^2
-\end{eqnarray}
-
-%==============================================================================
-\section{Preconditioning}
-%==============================================================================
-With this model and using $E=0$ we obtain
-\begin{eqnarray*}
-\ddot{\Sigma}_{a,b}(i\omega_\nu)
-&=&
-\frac{1}{m_\Sigma(\omega_\nu)}
-\sum_{c,d}
-G^{corr}_{a,c}(i\omega_\nu)
-\biggl[\Sigma_{c,d}(i\omega)
--\frac{\beta\partial \Phi^{LW}}{\partial{G}^{loc}_{d,c}(i\omega_\nu)}
-\biggr]
-G^{corr}_{d,b}(i\omega_\nu)
-\nonumber\\
-&=&
-\frac{1}{m_\Sigma(\omega_\nu)}
-\sum_{c,d}
-\biggl[-i\delta_{a,c} \frac{1}{W/2}\atan(\frac{W/2}{\hbar\omega})\biggr]
-\biggl[\Delta\Sigma_{c,d}(i\omega)
--\frac{\beta\partial \Delta\Phi^{LW}}{\partial{G}^{loc}_{d,c}(i\omega_\nu)}
-\biggr]
-\nonumber\\
-&&
-\biggl[-i\delta_{d,b} \frac{1}{W/2}\atan(\frac{W/2}{\hbar\omega})\biggr]
-\nonumber\\
-&=&
--\frac{1}{m_\Sigma(\omega_\nu)}
-\left(\frac{\atan(\frac{W/2}{\hbar\omega})}{(W/2)}\right)^2
-\biggl[\Delta\Sigma_{a,b}(i\omega)
--\frac{\beta\partial \Delta\Phi^{LW}}{\partial{G}^{loc}_{b,a}(i\omega_\nu)}
-\end{eqnarray*}
-
-Thus we make the ansatz for the $\omega$-dependent mass for the self energy as
-\begin{eqnarray}
-m_\Sigma(\omega_\nu)=A\left(\frac{\atan(\frac{W/2}{\hbar\omega})}{(W/2)}\right)^2
-\end{eqnarray}
-where $A$ is a parameter.
-For $\omega\rightarrow\infty$ the mass approaches
-$A/(\hbar\omega)^2$. Near the origin, however the mass does not
-vanish, but it approaches a constant, namely
-$A(\frac{\pi}{W})^2$.
-
-Let us define two parameters that determine the $\omega$-dependent mass.
-\begin{eqnarray}
-M_\Sigma&=&m_\Sigma(0)
-\\
-C_\Sigma&=&\lim_{\omega\rightarrow\infty} m_\Sigma(\omega)\cdot(\hbar\omega)^2
-\end{eqnarray}
-
-With these parameters we obtain
-\begin{eqnarray}
-m_\Sigma(\omega_\nu)\approx M_\Sigma
-\biggl[
-\frac{2}{\pi}
-\atan\Bigl(\frac{\pi}{2}
-\sqrt{\frac{C_\Sigma}{M_\Sigma}}\frac{1}{\hbar\omega}\Bigr)
-\biggr]^2
-\end{eqnarray}
-
-An approximation for the mass \petertt{(which is not used, though!)} is
-\begin{eqnarray}
-m_\Sigma(\omega_\nu)\approx m_\Sigma
-\biggl[\Bigl(\frac{2}{\pi W/2}\Bigr)^2+(\hbar\omega)^2\biggr]^{-1}
-=C_\Sigma
-\biggl[\frac{C_\Sigma}{M_\Sigma}+(\hbar\omega)^2\biggr]^{-1}
-\end{eqnarray}
-which has the same value at the origin and the same tail for
-$\omega\rightarrow\infty$. At the origin it does not have the kink of
-the original function but remains larger.
-
-The mass for the low frequency region is $M_\Sigma$ and the mass of
-the high-frequency region is $C_\Sigma/(\hbar\omega)^2$.  The
-high-frequency tail of the Greens function is system independent,
-which allows us to determine a canonical value for $C_\Sigma$, that
-only depends in the time step. If the period of the high-frequency
-tail shall be 10 time steps, $C_\Sigma$ should have the value
-$C_\Sigma=\left(\frac{10\Delta t}{2\pi}\right)^2=$, which is about 250
-for $\Delta t=10$.
-
-If the period is fixed, we can determine also the optimum friction as
-$a_{opt}=\frac{\alpha_{opt}}{2}\Delta t=2\pi\frac{\Delta t}{T}$ which
-is with our choices $a_{opt}=\frac{2\pi}{10}$. It is not adviseable
-tio choose such a factor, because it would overdamp the low-frequency
-region.
 
 %====================================================================
 \chapter{Usage}
