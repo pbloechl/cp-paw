@@ -1477,18 +1477,29 @@ density matrix.
 $\bar{\mat{h}}_{\vec{k}}$ is kept as \verb|KSET(IKPT)%HRHO|.
 %
 %===============natorb=================================================
-\item \verb|DMFT_NATORB|: (see also section~\ref{sec:routinedmftnatorb})
-  Construct the eigenstates $|\phi_j\rangle$ of the single-site
-  density matrix
-\begin{eqnarray}
-\hat{\rho}_R|\phi_{R,i}\rangle=|\phi_{R,i}\rangle f'_{R,i}
-\end{eqnarray}
-These states will be called local natural orbitals.
+\item \verb|DMFT_NATORB|: (see also
+  section~\ref{sec:routinedmftnatorb}) Despite the name we do no more
+  use local natural orbitals. This is described in
+  section~\ref{sec:routinedmftnatorb}. A this point we have three
+  different settings for the routine \verb|DMFT_NATORB|: ``NATORB'',
+  ``QUAMBO'' and ``ORTHO''. QUAMBO stands for ``quasi atomic molecular
+  orbitals''\cite{qian08_prb78_245112}, while it may or may not be
+  related to it.
 
-The orbital coefficients of the local natural orbitals are calculated as
-\footnote{
+  Construct the eigenstates $|\phi_j\rangle$ of the single-site
+   matrix $\mat{A}$
 \begin{eqnarray}
-\underbrace{\sum_{a,b}|\chi_a\rangle\langle\pi_a|\hat{\rho}_R|\pi_b\rangle
+\hat{A}_R|\phi_{R,i}\rangle=|\phi_{R,i}\rangle a_{R,i}
+\end{eqnarray}
+These states will be called local natural orbitals (This will be
+changed.).
+
+The orbital coefficients of the local orthonormal orbitals are
+calculated as
+\footnote{The spirit follows from the construction of local natural
+  orbitals along the following lines
+\begin{eqnarray}
+\underbrace{\sum_{a,b}|\chi_a\rangle\langle\pi_a|\hat{A}_R|\pi_b\rangle
 \langle\chi_b|}_{\hat{\rho}_R}
 \underbrace{\sum_c|\chi_c\rangle x_{c,j}}_{|\phi_{R,j}\rangle}
 =\underbrace{\sum_a|\chi_a\rangle x_{a,j}}_{|\phi_{R,j}\rangle} f'_{R,j}
@@ -1908,8 +1919,10 @@ E_X=\frac{1}{2}\sum_{a,b,c,d}U_{a,b,c,d}\;\rho_{c,b}\rho_{d,a}
 \subsection{DMFT\_NATORB}
 \label{sec:routinedmftnatorb}
 %====================================================================
-Construct natural orbitals in the space of correlated orbitals on one
-site.
+Construct a set of orthonormal states for the single-site problem.
+This section describes first the mapping to local natural
+orbitals. Later we will propose a different basisset, which avoids
+some of the problems.
 
 For this purpose, I redefine the unity operator for the sub Hilbert
 space of correlated orbitals.
@@ -1920,7 +1933,8 @@ space of correlated orbitals.
 \langle\pi_\alpha|\psi_n\rangle\langle\psi_n|\pi_\beta\rangle
 \langle\chi_\beta|
 \end{eqnarray}
-which allows one to identify the inverse overlap matrix in this sub-Hilbert space.
+which allows one to identify the inverse overlap matrix in this
+sub-Hilbert space.
 \begin{eqnarray}
 \mat{S}^{-1}_{\alpha,\beta}
 =\sum_{\alpha,\beta}\sum_n
@@ -1942,11 +1956,11 @@ The one-particle density matrix in this sub-Hilbert space has the form
 
 The eigenvalue equation
 \begin{eqnarray}
-\hat{\rho}|\phi_n\rangle=|\phi_n\rangle f_n
+\hat{\rho}|\phi_n\rangle&=&|\phi_n\rangle f_n
 \nonumber\\
 \sum_{\alpha,\beta}|\chi_\alpha\rangle
 \langle\pi_\alpha|\hat{\rho}|\pi_\beta\rangle\langle\chi_\beta|\phi_j\rangle
-=\sum_{\alpha,\beta}|\chi_\alpha\rangle\langle\pi_\alpha|\pi_\beta\rangle
+&=&\sum_{\alpha,\beta}|\chi_\alpha\rangle\langle\pi_\alpha|\pi_\beta\rangle
 \langle\chi_\beta|\phi_j\rangle f_j
 =\sum_{\alpha,\beta}|\chi_\alpha\rangle
 \mat{S}^{-1}_{\alpha,\beta}\langle\chi_\beta|\phi_j\rangle \bar{f}_j
@@ -1958,6 +1972,7 @@ $\langle\chi_\beta|\phi_j\rangle=V_{\beta,j}$.
 \mat{\rho}\mat{V}=\mat{S}^{-1}\mat{V}\bar{f}
 \qquad\text{with}\qquad
 \mat{V}^\dagger\mat{S}^{-1}\mat{V}=\mat{1}
+\label{eq:eigenvaluprobforlocalnatorb}
 \end{eqnarray}
 
 The natural orbitals are
@@ -1976,6 +1991,48 @@ which are in \verb|atomset%natorb%f|. In addition we store
 $\mat{S}^{-1}\mat{V}=\mat{V}^{\dagger,-1}$ in
 \verb|atomset%natorb%piphi| All data in \verb|atomset%natorb| are
 stored in the fully non-collinear model.
+
+%====================================================================
+\subsubsection{Orthonormal orbitals without reference to the density matrix}
+%====================================================================
+When approximations are done on the U-tensor, which are not invariant
+under a unitary transformation of the orbitals, the resulting U-tensor
+will be itself a functional of the natural orbitals. The approximation
+of a constant U-tensor in the solver will then lead to uncontrolled
+results.
+
+For this reason we choose an alternative basisset instead of the local
+natural orbitals. The main requirement for the basisset is that it is
+orthonormal.  Orthonormality can be obtained from any eigenvalue
+problem of the form
+\begin{eqnarray}
+\mat{A}\mat{V}=\mat{S}^{-1}\mat{V}\mat{a}
+\end{eqnarray}
+where $\mat{A}$ is an arbitrary hermitean matrix, the the matrix
+$\mat{V}$ containes the eigenvectors, which obey
+$\mat{V}^\dagger\mat{S}^{-1}\mat{V}=\mat{1}$ and the diagonal matrix
+$\mat{a}$ containes the eigenvalues of $\mat{A}$.
+
+This eigenvalue equation replaces \eq{eq:eigenvaluprobforlocalnatorb}.
+
+As a second criterion, we choose orbitals that closely reflect the
+shape of the original tight-binding orbitals. In the current
+implementation the tight-binding orbitals are constructed with a clear
+main angular momentum character. \petertt{If the approximations made
+  by the solver on the U-tensor are not rotationally invariant, one
+  should use here a coordinate system that adapts to the changing
+  local environment.}
+
+If one chooses the matrix $\mat{A}$ to be diagonal, with very
+different diagonal elements, then the eigenstates will be
+correspondingly similar to the original orbitals, and they will remain
+in the original order if the diagonal elements increase with index
+number.
+
+Therefore, I choose $A_{i,j}=j\delta_{i,j}$. A scale factor is
+redundant, because it only affects the eigenvalues, but not the
+eigenvectors.
+
 
 %====================================================================
 \subsection{DMFT\_HRHO}
@@ -2305,7 +2362,7 @@ function and self energy are not hermitean. In appendix B of their
 paper\cite{dahlen06_pra73_12511} Dahlen et al proposed a trick to
 solve the problem. \petertt{It is not yet clear to me if this trick is
   correct.}\petertt{See some relations for non-hermitean matrices
-  appendix C of Bickers et al.\cite{bickers89_ap193_206})
+  appendix C of Bickers et al.\cite{bickers89_ap193_206}}
 
 The trick rests on the assumption of the following identity
 \begin{eqnarray}
@@ -2352,6 +2409,14 @@ so that
 \end{eqnarray}
 Unfortunately, the same problem arises, because, in general,
 $\mat{V}\mat{V}^\dagger\neq\mat{1}$.
+
+%====================================================================
+\chapter{Tests and Numerical problems}
+%====================================================================
+\begin{itemize}
+\item for insulators the Fermi-level is not well defined. It tends to
+  fluctuate insite the band gap.
+\end{itemize}
 
 
 %====================================================================
