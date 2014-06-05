@@ -217,14 +217,17 @@ Q^{\hat{W}}[\mat{\rho}]
 of which only the last term has a frequency-dependent self energy.
 
 In order to keep the computational effort at a reasonable level, we
-treat the full interaction on the most simple level of the
+consider three different interactions, namely the full interaction
+$\hat{W}$, a simplified interaction $\hat{W}_1$ used for static
+correlations, and interaction $\hat{W}_2$, which is even further
+simplified, and which is used for dynamic correlations.
+The full interaction is treated on the most simple level of the
 description, namely DFT, while the most complex many-particle
 treatment is limited to the most approximate interaction, namely
 $\hat{W}_2$. 
 
-
 With a density-functional contribution $Q^{DFT,\hat{W}}[\hat{\rho}]$
-acting as double counting term and a screened Hartree-Fock
+acting as double-counting term and a screened Hartree-Fock
 contribution $Q^{HF,\hat{W}}[\hat{\rho}]$ described later, we obtain
 \begin{myshadowminipage}{Helmholtz potential}
 \begin{eqnarray}
@@ -292,7 +295,7 @@ We distinguish two different corrections:
     E_{X}& =&-\frac{1}{2}\sum_{a,b,c,d}U_{a,b,d,c}\rho_{c,a}\rho_{d,b}
   \end{eqnarray}
 
-  For the Hartree Fock contribution we restrict the U-tensor to onsite
+  For the Hartree Fock contribution we restrict the U-tensor to on-site
   contributions and certain bond-terms. In the spirit of the hybrid
   functionals or the GW method, we scale the U-tensor. The neglect of
   U-tensor elements that do not reside on an atom pair is motivated by
@@ -392,7 +395,8 @@ with the effective Hamiltonian
 \biggr)\langle\pi_b|
 \nonumber\\
 \end{eqnarray}
-Note, that, in equilibrium, $\hat{h}_{eff}=\hat{h}_\rho$.
+Note, that, in equilibrium, $\hat{h}_{eff}=\hat{\bar{h}}$. The latter
+defined in \eq{eq:defhbar}.
 \end{myshadowminipage}
 \eq{eq:rhoopt} can be veryfied from the stationary conditions by going
 into a basis of eigenstates of $\hat{h}_{eff}$.
@@ -1437,7 +1441,7 @@ matrix is kept as \verb|kset(ik)%rho(nchi,nchi,ndimd)|.
 %
 \item \verb|DMFT_UTENSOR|: (see also
   section~\ref{sec:routinedmftutensor}) The local U-tensor is
-  collected from the onsite elements \verb|POTPAR(ISP)%TAILED%U|
+  collected from the on-site elements \verb|POTPAR(ISP)%TAILED%U|
   calculated in the \verb|paw_LMTO| object. It is directly converted
   from the ``tailed representation'' into the basis of local orbitals.
 \begin{eqnarray}
@@ -1863,7 +1867,7 @@ obtained.
 \subsection{DMFT\_UTENSOR}
 \label{sec:routinedmftutensor}
 %====================================================================
-Obtain the onsite U-tensor\index{U-tensor} for all local orbitals from
+Obtain the on-site U-tensor\index{U-tensor} for all local orbitals from
 subroutine \verb|dmft_ulocal| reduces it to the entries for the
 correlated orbitals.
 

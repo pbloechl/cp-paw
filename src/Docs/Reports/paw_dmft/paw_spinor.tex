@@ -12,6 +12,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{../header}
 \hypersetup{pdftitle=paw_brillouin}
+\newcommand{\petertt}[1]{\textcolor{red}{\texttt{#1}}}
 \begin{document}
 \begin{titlepage}
 \begin{center}
@@ -83,8 +84,9 @@ The identity operator has the form
 All hermitean matrices in the two-dimensional spinor space can be
 represented as a superposition of the unit matrix and the three Pauli
 matrices.  In other words, the Pauli matrices including the unit
-element are a complete basis in the space of all complex, hermitean
-$2\times2$ matrices.
+element are a complete basis in the space of all complex $2\times2$
+matrices. All hermitean matrices $2\times2$ matrices are a
+superposition of Pauli matrices with \underline{real} coefficients.
 
 \begin{eqnarray}
 \mat{1}=\mat{\sigma}^{(0)}=\left(\begin{array}{rr}1&0\\0&1\end{array}\right)
@@ -111,11 +113,11 @@ The total density can be expressed by the unit matrix as
 |\psi\rangle
 \end{eqnarray*}
 where $\hat{\sigma}^{(0)}$ is an operator in the two-dimensional
-spinor state.  with the symbol $\circ$ we denote the product where
-each operator acts in its own Hilbert space.
+spinor state.  With the symbol ``$\circ$'' we denote the product or
+two operators, where each operator acts in its own Hilbert space.
 
 
-Similarly we obtain the spin density in the form
+Similarly, we obtain the spin density in the form
 \begin{eqnarray*}
 S_j(\vec{r})
 &=&
@@ -133,7 +135,7 @@ S_j(\vec{r})
 %===================================================================
 \subsubsection{Eigenvectors of Pauli matrices}
 %===================================================================
-The eigenvalue equation is
+The eigenvalue equation is for each $j\in\{x,y,z\}$
 \begin{eqnarray}
 \sigma^{(j)}\xi^{(+j)}=\xi^{(+j)}
 \qquad\text{and}\qquad
@@ -212,6 +214,7 @@ forward transformation
 \Bigl(\rho_{a,b,\downarrow,\uparrow}-\rho_{a,b,\uparrow,\downarrow}\Bigr)
 \nonumber\\
 \rho^{(z)}_{a,b}&=&\rho_{a,b,\uparrow,\uparrow}-\rho_{a,b,\downarrow,\downarrow}
+\label{eq:defdensitymatrixforwardexplicit}
 \end{eqnarray}
 and for the backward transformation
 \begin{eqnarray}
@@ -222,10 +225,35 @@ and for the backward transformation
 \rho_{a,b,\uparrow,\downarrow}&=&\frac{1}{2}\Bigl(\rho^{(x)}_{a,b}-i\rho^{(y)}_{a,b}\Bigr)
 \nonumber\\
 \rho_{a,b,\downarrow,\downarrow}&=&\frac{1}{2}\Bigl(\rho^{(0)}_{a,b}-\rho^{(z)}_{a,b}\Bigr)
+\label{eq:defdensitymatrixbackexplicit}
 \end{eqnarray}
 
 In practice we distinguish the three cases, namely non spin-polarized,
 collinear spin-polarized, and non-collinear.
+
+
+The same in matrix form 
+\begin{eqnarray}
+\left(\begin{array}{c}
+\rho_{ab}^{(0)}\\\rho_{ab}^{(z)}\\\rho_{ab}^{(y)}\\\rho_{ab}^{(z)}
+\end{array}\right)
+&=&
+\left(\begin{array}{cccc}
+1&0&0&1\\0&1&1&0\\0&i&-i&0\\1&0&0&-1
+\end{array}\right)
+\left(\begin{array}{c}
+\rho_{ab,\uparrow,\uparrow}\\\rho_{ab,\downarrow,\uparrow}\\\rho_{ab,\downarrow,\uparrow}\\\rho_{ab,\downarrow,\downarrow}\end{array}\right)
+\nonumber\\
+\left(\begin{array}{c}
+\rho_{ab,\uparrow,\uparrow}\\\rho_{ab,\downarrow,\uparrow}\\\rho_{ab,\downarrow,\uparrow}\\\rho_{ab,\downarrow,\downarrow}\end{array}\right)
+&=&
+\frac{1}{2}\left(\begin{array}{cccc}
+1&0&0&1\\0&1&i&0\\0&1&-i&0\\1&0&0&-1
+\end{array}\right)
+\left(\begin{array}{c}
+\rho_{ab}^{(0)}\\\rho_{ab}^{(z)}\\\rho_{ab}^{(y)}\\\rho_{ab}^{(z)}
+\end{array}\right)
+\end{eqnarray}
 
 
 
@@ -270,7 +298,9 @@ This yields
 %====================================================================
 \subsection{Identity in a spinor representation}
 %====================================================================
-The identity matrix in up-down representation is
+The identity matrix in up-down representation\footnote{Here each
+  matrix element is itself considered a matrix in the space of spatial
+  orbitals.} is
 \begin{eqnarray}
 \left(\begin{array}{cc}
 \mat{\rho}_{\uparrow,\uparrow}&\mat{\rho}_{\uparrow,\downarrow}\\
@@ -326,58 +356,62 @@ After conversion into the spinor representation we obtain
 %====================================================================
 \subsection{Multiplication of matrices in a spinor representation}
 %====================================================================
-Consider to matrices in spinor representation
+Consider two matrices in spinor representation
 \begin{eqnarray*}
 f_{a,b,\sigma,\sigma'}=\frac{1}{2}\sum_{j=0}^3
 \mat{f}^{(j)}_{a,b}\sigma^{(j)}_{\sigma,\sigma'}
+\qquad\text{and}\qquad
+g_{a,b,\sigma,\sigma'}=\frac{1}{2}\sum_{j=0}^3
+\mat{g}^{(j)}_{a,b}\sigma^{(j)}_{\sigma,\sigma'}
 \end{eqnarray*}
 
-now we wish to perform a matrix multiplication
+We wish to perform a matrix multiplication
 \begin{eqnarray*}
 \sum_{c,\sigma''}
 f_{a,c,\sigma,\sigma''}g_{c,b,\sigma'',\sigma'}
 &=&
+\sum_{c,\sigma''}
 \biggl(\frac{1}{2}\sum_{j=0}^3
-\mat{f}^{(j)}_{a,c}\sigma^{(j)}_{\sigma,\sigma''}\biggr)
-\biggl(\frac{1}{2}\sum_{j=0}^3
-\mat{g}^{(j')}_{c,b}\sigma^{(j')}_{\sigma'',\sigma'}\biggr)
-\nonumber\\
-&=&
-\biggl(\frac{1}{2}\sum_{i=0}^3
 f^{(i)}_{a,c}\sigma^{(i)}_{\sigma,\sigma''}\biggr)
 \biggl(\frac{1}{2}\sum_{j=0}^3
 g^{(j)}_{c,b}\sigma^{(j)}_{\sigma'',\sigma'}\biggr)
 \nonumber\\
 &=&
 \frac{1}{4}\sum_{i,j=0}^3
-f^{(i)}_{a,c}g^{(j)}_{c,b}
-\Bigl(\sigma^{(i)}_{\sigma,\sigma''}
+\Bigl(\sum_{c}
+f^{(i)}_{a,c}g^{(j)}_{c,b}\Bigr)
+\Bigl(\sum_{\sigma''}
+\sigma^{(i)}_{\sigma,\sigma''}
 \sigma^{(j)}_{\sigma'',\sigma'}\Bigr)
 \nonumber\\
-&\eqrel{eq:producttablepaulimatrices}{=}&
+&\eqrel{eq:spinorproductformula}{=}&
 \frac{1}{2}
-\biggl(\frac{1}{2}\sum_{j=0}^3f^{(j)}_{a,c}g^{(j)}_{c,b}\biggr)
+\biggl[\frac{1}{2}\sum_{j=0}^3
+\Bigl(\mat{f}^{(j)}\mat{g}^{(j)}\Bigr)_{a,b}\biggr]
 \sigma^{(0)}_{\sigma,\sigma'}
-+\frac{1}{2}\sum_{k=1}^3
-\biggl(\frac{1}{2}\sum_{i=1}^3
-\Bigl(f^{(0)}_{a,c}g^{(k)}_{c,b}
-+f^{(k)}_{a,c}g^{(0)}_{c,b}\Bigr)
-+\frac{i}{2}\sum_{i,j=1}^3\epsilon_{i,j,k}f^{(i)}_{a,c}g^{(j)}_{c,b}
-\biggr)
+\nonumber\\
+&&+\frac{1}{2}\sum_{k=1}^3
+\biggl\lbrace\frac{1}{2}\Bigl(\mat{f}^{(0)}\mat{g}^{(k)}\Bigr)_{a,b}
++\frac{1}{2}\Bigl(\mat{f}^{(k)}\mat{g}^{(0)}\Bigr)_{a,b}
+\nonumber\\
+&&\hspace{2cm}
++\frac{i}{2}\sum_{i,j=1}^3\epsilon_{i,j,k}\Bigl(\mat{f}^{(i)}\mat{g}^{(j)}\Bigr)_{a,b}
+\biggr\rbrace
 \sigma^{(k)}_{\sigma,\sigma'}
 \end{eqnarray*}
 
-Thus if we denote the multiplication as defined above with the symbol
+Thus, if we denote the multiplication as defined above with the symbol
 $\square$, we obtain
 \begin{eqnarray}
-\Bigl(\mat{f}\square\mat{g}\Bigr)^{(0)}
-&=&\frac{1}{2}\sum_{j=0}^3f^{(j)}_{a,c}g^{(j)}_{c,b}
+\Bigl(\mat{f}\square\mat{g}\Bigr)^{(0)}_{a,b}
+&=&\frac{1}{2}\sum_{j=0}^3\Bigl(\mat{f}^{(j)}\mat{g}^{(j)}\Bigr)_{a,b}
 \\
-\Bigl(\mat{f}\square\mat{g}\Bigr)^{(j)}
-&=&\frac{1}{2}\sum_{i=1}^3
-\Bigl(f^{(0)}_{a,c}g^{(k)}_{c,b}
-+f^{(k)}_{a,c}g^{(0)}_{c,b}\Bigr)
-+\frac{i}{2}\sum_{i,j=1}^3\epsilon_{i,j,k}f^{(i)}_{a,c}g^{(j)}_{c,b}
+\Bigl(\mat{f}\square\mat{g}\Bigr)^{(k)}_{a,b}
+&=&\frac{1}{2}
+\Bigl(\mat{f}^{(0)}\mat{g}^{(k)}\Bigr)_{a,b}
++\frac{1}{2}\Bigl(\mat{f}^{(k)}\mat{g}^{(0)}\Bigr)_{a,b}
++\frac{i}{2}\sum_{i,j=1}^3\epsilon_{i,j,k}
+\Bigl(\mat{f}^{(i)}\mat{g}^{(j)}\Bigr)_{a,b}
 \qquad\text{for $j>0$}
 \end{eqnarray}
 
@@ -469,7 +503,7 @@ multiplications for a general non-collinear problem. (Operations that
 scale better than the cube behavior are ignored.)
 
 
-It may be interestint to analyze the scaling behavior.  Consider that
+It may be interesting to analyze the scaling behavior.  Consider that
 the computational effort for an inversion of a matrix with dimension
 $n$ is $an^3$. The effort for a matrix multiplication shall be $bn^3$.
 Thus the scaling will be
@@ -711,7 +745,8 @@ i.e. $V_{\alpha,\beta}(\vec{t})=V_{\beta,\alpha}^*(-\vec{t})$.
 Let us now return to the potentials obtained as derivative with
 respect to the different forms of the density matrix.
 \begin{eqnarray*}
-\bar{V}^{(j)}_{\alpha,\beta}&=&\frac{\partial E}{\partial \bar{\rho}^{(j)*}_{\alpha,\beta}}
+\bar{V}^{(j)}_{\alpha,\beta}&\defas&
+\frac{\partial E}{\partial \bar{\rho}^{(j)*}_{\alpha,\beta}}
 \\
 V_{\alpha,\beta,\sigma,\sigma'}&=&\frac{\partial E}{\partial\rho_{\alpha,\beta,\sigma,\sigma'}^*}
 =\sum_j\frac{\partial E}{\partial \bar{\rho}^{(j)*}_{\alpha,\beta}}
@@ -723,6 +758,98 @@ V_{\alpha,\beta,\sigma,\sigma'}&=&\frac{\partial E}{\partial\rho_{\alpha,\beta,\
 \sum_j\bar{V}_{\alpha,\beta}^{(j)}\biggl(\sigma^{(j)}_{\sigma,\sigma'}\biggr)^*
 \end{eqnarray*}
 
+
+
+\begin{eqnarray}
+dE&=&
+\sum_{a,b,\sigma,\sigma'}
+\frac{\delta E}{\delta\rho_{a,b,\sigma,\sigma'}}
+\delta\rho_{a,b,\sigma,\sigma'}
+=\sum_{a,b,\sigma,\sigma'}V_{b,a,\sigma',\sigma}\delta\rho_{a,b,\sigma,\sigma'}
+\nonumber\\
+&\eqrel{eq:defdensitymatrixforwardexplicit}{=}&
+\sum_{a,b}\biggl\lbrace
+\underbrace{
+\frac{{\delta}E}{{\delta}\rho_{a,b,\uparrow,\uparrow}}
+}_{V_{b,a,\uparrow,\uparrow}}
+\underbrace{
+\frac{1}{2}\biggl({\delta}\rho^{(t)}_{a,b}+{\delta}\rho^{(z)}_{a,b}\biggr)
+}_{\delta\rho_{a,b,\uparrow,\uparrow}}
++
+\underbrace{
+\frac{{\delta}E}{\delta\rho_{a,b,\downarrow,\uparrow}}
+}_{V_{b,a,\uparrow,\downarrow}}
+\underbrace{
+\frac{1}{2}\biggl({\delta}\rho^{(x)}_{a,b}+i{\delta}\rho^{(y)}_{a,b}\biggr)
+}_{\delta\rho_{a,b,\downarrow,\uparrow}}
+\nonumber\\
+&&\hspace{0.5cm}+
+\underbrace{
+\frac{{\delta}E}{{\delta}\rho_{a,b,\uparrow,\downarrow}}
+}_{V_{b,a,\downarrow,\uparrow}}
+\underbrace{
+\frac{1}{2}\biggl({\delta}\rho^{(x)}_{a,b}-i{\delta}\rho^{(y)}_{a,b}\biggr)
+}_{\delta\rho_{a,b,\uparrow,\downarrow}}
++
+\underbrace{
+\frac{{\delta}E}{{\delta}\rho_{a,b,\downarrow,\downarrow}}
+}_{V_{b,a,\downarrow,\uparrow}}
+\underbrace{
+\frac{1}{2}\biggl({\delta}\rho^{(t)}_{a,b}-{\delta}\rho^{(z)}_{a,b}\biggr)
+}_{\delta\rho_{a,b,\downarrow,\downarrow}}
+\biggr\rbrace
+\nonumber\\
+&=&
+\sum_{a,b}\biggl\lbrace
+\underbrace{
+\frac{1}{2}
+\biggl(\frac{\delta{E}}{\delta\rho_{a,b,\uparrow,\uparrow}}
++\frac{\delta{E}}{\delta\rho_{a,b,\downarrow,\downarrow}}
+\biggr)
+}_{\bar{V}_{b,a}^{(t)}}
+\delta\rho^{(t)}
++
+\underbrace{
+\frac{1}{2}
+\biggl(\frac{{\delta}E}{{\delta}\rho_{a,b,\downarrow,\uparrow}}
++\frac{{\delta}E}{\delta\rho_{a,b,\uparrow,\downarrow}}\biggr)
+}_{\bar{V}_{b,a}^{(x)}}
+{\delta}\rho^{(x)}_{a,b}
+\nonumber\\
+&&\hspace{0.5cm}+
+\underbrace{
+\frac{i}{2}
+\biggl(\frac{{\delta}E}{{\delta}\rho_{a,b,\downarrow,\uparrow}}
++\frac{{\delta}E}{{\delta}\rho_{a,b,\uparrow,\downarrow}}\biggr)
+}_{\bar{V}_{b,a}^{(y)}}
+{\delta}\rho^{(y)}_{a,b}
++
+\underbrace{
+\frac{1}{2}
+\biggl(\frac{\delta{E}}{\delta\rho_{a,b,\uparrow,\uparrow}}
+-\frac{\delta{E}}{\delta\rho_{a,b,\downarrow,\downarrow}}\biggr)
+}_{\bar{V}_{b,a}^{(z)}}
+{\delta}\rho^{(z)}
+\biggr\rbrace
+\nonumber\\
+&=&\sum_{j=0}^3 \sum_{a,b}\bar{V}^{(j)}_{b,a}\;\delta\rho^{(j)}_{a,b}
+\end{eqnarray}
+
+Thus
+\begin{eqnarray}
+\bar{V}_{b,a}^{(t)}&=&\frac{1}{2}\Bigl(V_{b,a,\uparrow,\uparrow}
++V_{b,a,\downarrow,\downarrow}\Bigr)
+\nonumber\\
+\bar{V}_{b,a}^{(x)}&=&\frac{1}{2}\Bigl(v_{b,a,\uparrow,\downarrow}
++V_{b,a,\downarrow,\uparrow}\Bigr)
+\nonumber\\
+\nonumber\\
+\bar{V}_{b,a}^{(y)}&=&\frac{i}{2}\Bigl(V_{b,a,\uparrow,\downarrow}
+-V_{b,a,\downarrow,\uparrow}\Bigr)
+\nonumber\\
+\bar{V}_{b,a}^{(z)}&=&\frac{1}{2}\Bigl(V_{b,a,\uparrow,\uparrow}
+-V_{b,a,\downarrow,\downarrow}\Bigr)
+\end{eqnarray}
 
 \begin{myshadowminipage}{Transformation from a total-spin 
 to an up-down representation}
@@ -1129,8 +1256,8 @@ element with $j=0$.
 \mat{\sigma}^{(i)}\mat{\sigma}^{(j)}
 &=&\left(\begin{array}{cccc}
 \mat{\sigma}^{(0)}& \mat{\sigma}^{(x)}  &\mat{\sigma}^{(y)}&\mat{\sigma}^{(z)}\\
-\mat{\sigma}^{(x)}& \mat{\sigma}^{(0)} &i\mat{\sigma}^{(z)}&-\mat{\sigma}^{(y)}\\
-\mat{\sigma}^{(y)}&-i\mat{\sigma}^{(z)}&\mat{\sigma}^{(0)} &-\mat{\sigma}^{(x)}\\
+\mat{\sigma}^{(x)}& \mat{\sigma}^{(0)} &i\mat{\sigma}^{(z)}&-i\mat{\sigma}^{(y)}\\
+\mat{\sigma}^{(y)}&-i\mat{\sigma}^{(z)}&\mat{\sigma}^{(0)} &i\mat{\sigma}^{(x)}\\
 \mat{\sigma}^{(z)}& i\mat{\sigma}^{(y)}&-i\mat{\sigma}^{(x)}&\mat{\sigma}^{(0)}\\
 \end{array}\right)
 \nonumber\\
@@ -1145,6 +1272,35 @@ element with $j=0$.
 \end{eqnarray}
 Do not get confused, because $i$ is used as index and as $\sqrt{-1}$.
 
+In the more intuitive notation with three-dimensional vectors we obtain
+\begin{eqnarray}
+\left(\begin{array}{c|c}
+(\mat{\sigma}^{(0)} )^2
+& \mat{\sigma}^{(0)}\vec{\mat{\sigma}} \\
+\hline
+\mat{\sigma}^{(0)}\vec{\mat{\sigma}} & \mat{\sigma}^{(i)}\mat{\sigma}^{(j)}
+\end{array}\right)
+=
+\left(\begin{array}{c|c}
+\mat{\sigma}^{(0)} & \vec{\mat{\sigma}} \\
+\hline
+\vec{\mat{\sigma}} & \delta_{i,j}\mat{\sigma}^{(0)}
++i\sum_{k=1,3}\epsilon_{i,j,k}\mat{\sigma}^{(k)}
+\end{array}\right)
+\end{eqnarray}
+
+Thus we obtain
+\begin{myshadowminipage}{}
+\begin{eqnarray}
+\sum_{i,j=0}^3 A_{i,j}\mat{\sigma}^{(i)}\mat{\sigma}^{(j)}
+&=&\Bigl(\sum_{k=0}^3 A_{k,k}\Bigr)\mat{\sigma}^{(0)}
++\sum_{j=1,3}\Bigl(A_{0,j}+A_{j,0}+i\sum_{n,m=1}^3\epsilon_{j,k,l}A_{k,l}\Bigr)
+\mat{\sigma}^{(j)}
+\label{eq:spinorproductformula}
+\end{eqnarray}
+Take care of the extent of the sum indices. Some run over $[0,1,2,3]$,
+others over $[1,2,3]$ only.
+\end{myshadowminipage}{}
 
 \clearpage
 \bibliographystyle{unsrtnat}
