@@ -235,7 +235,7 @@ collinear spin-polarized, and non-collinear.
 The same in matrix form 
 \begin{eqnarray}
 \left(\begin{array}{c}
-\rho_{ab}^{(0)}\\\rho_{ab}^{(z)}\\\rho_{ab}^{(y)}\\\rho_{ab}^{(z)}
+\rho_{ab}^{(0)}\\\rho_{ab}^{(x)}\\\rho_{ab}^{(y)}\\\rho_{ab}^{(z)}
 \end{array}\right)
 &=&
 \left(\begin{array}{cccc}
@@ -251,7 +251,7 @@ The same in matrix form
 1&0&0&1\\0&1&i&0\\0&1&-i&0\\1&0&0&-1
 \end{array}\right)
 \left(\begin{array}{c}
-\rho_{ab}^{(0)}\\\rho_{ab}^{(z)}\\\rho_{ab}^{(y)}\\\rho_{ab}^{(z)}
+\rho_{ab}^{(0)}\\\rho_{ab}^{(x)}\\\rho_{ab}^{(y)}\\\rho_{ab}^{(z)}
 \end{array}\right)
 \end{eqnarray}
 
@@ -268,7 +268,9 @@ the spin density is defined as
 $n_s=n_{\uparrow,\uparrow}-n_{\downarrow,\downarrow}$. In that case,
 the density matrix would have the form
 \begin{eqnarray*}
-n_{\sigma,\sigma'}=\frac{1}{2}n^{(0)}\sigma^{(0)}_{\sigma,\sigma'}
+n_{\sigma,\sigma'}
+\eqrel{eq:defdensitymatrixwithspindeptotandcart}{=}
+\frac{1}{2}n^{(0)}\sigma^{(0)}_{\sigma,\sigma'}
 +\frac{1}{2}n^{(4)}\sigma^{(4)}_{\sigma,\sigma'}
 =\left(\begin{array}{cc}\frac{1}{2}n^{(0)}+\frac{1}{2}n^{(4)}&0
 \\0&\frac{1}{2}n^{(0)}-\frac{1}{2}n^{(4)}
@@ -276,8 +278,6 @@ n_{\sigma,\sigma'}=\frac{1}{2}n^{(0)}\sigma^{(0)}_{\sigma,\sigma'}
 \end{eqnarray*}
 which allows to identify $n^{(0)}=n_t$ with the total density and
 $n^{(4)}=n_s$ with the spin density.
-
-
 
 
 This yields
@@ -291,6 +291,8 @@ This yields
 \bar{\chi}_{\alpha}(\vec{r})\bar{\chi}_{\beta}(\vec{r'})
 \label{eq:denmatspindepcart}
 \end{eqnarray}
+where the orbitals $|\bar{\chi}_\alpha\rangle$ are pure spatial
+orbitals without a spin contribution.
 \end{myshadowminipage}
 
 
@@ -315,16 +317,17 @@ The identity matrix in up-down representation\footnote{Here each
 
 After conversion into the spinor representation we obtain
 \begin{eqnarray}
-\mat{\rho}^{(0)}=2\cdot\mat{1};\qquad
-\mat{\rho}^{(1)}=\mat{0};\qquad
-\mat{\rho}^{(2)}=\mat{0};\qquad
-\mat{\rho}^{(3)}=\mat{0}
+\mat{1}^{(0)}=2\cdot\mat{1};\qquad
+\mat{1}^{(1)}=\mat{0};\qquad
+\mat{1}^{(2)}=\mat{0};\qquad
+\mat{1}^{(3)}=\mat{0}
 \end{eqnarray}
 
 %====================================================================
 \subsection{Hermitean conjugate  in a spinor representation}
 %====================================================================
-The identity matrix in up-down representation is
+The hermitean conjugate of a matrix $\mat{\rho}$ in up-down
+representation is
 \begin{eqnarray}
 \left(\begin{array}{cc}
 \left(\mat{\rho}^\dagger\right)_{\uparrow,\uparrow}

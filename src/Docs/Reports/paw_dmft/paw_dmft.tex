@@ -2240,12 +2240,17 @@ zero potential self energy and chemical potential.
 \end{eqnarray}
 Now we approximate $\mat{G}$ by $(i\hbar\omega_\nu)^{-1}\mat{S}^{-1}$
 \begin{eqnarray}
-\delta\mat{\rho}(\mat{\Gamma})&=&\delta\mat{\rho}(\mat{\Gamma}_0)
+\delta\mat{\rho}(\mat{\Gamma})
+&=&\delta\mat{\rho}(\mat{\Gamma}_0)
 -
 \underbrace{\frac{1}{\beta}
 \Bigl[\sum_\nu\frac{1}{(i\hbar\omega_\nu)^2} \Bigr]}
 _{-\beta/4}
-\mat{S}^{-1}(\mat{\Gamma}-\mat{\Gamma})\mat{S}^{-1}+...
+\mat{S}^{-1}(\mat{\Gamma}-\mat{\Gamma}_0)\mat{S}^{-1}+...
+\nonumber\\
+&=&\delta\mat{\rho}(\mat{\Gamma}_0)
++\frac{1}{4}\beta
+\mat{S}^{-1}(\mat{\Gamma}-\mat{\Gamma}_0)\mat{S}^{-1}+...
 \nonumber\\
 \Rightarrow\qquad\mat{\Gamma}&=&\mat{\Gamma}_0
 +\frac{4}{\beta}
