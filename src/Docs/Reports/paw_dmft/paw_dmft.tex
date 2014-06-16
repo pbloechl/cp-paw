@@ -1382,10 +1382,9 @@ paper\cite{bloechl13_prb88_25139}.
 
 \begin{verbatim}
 call dmft_ini()
-call dmft_collecthamiltonian()  
-call dmft_collectfulldenmat()  
+call dmft_collectnatorb()  
+call dmft_rhoofk()  
 call dmft_utensor() 
-call dmft_smat()
 call dmft_natorb()
 call dmft_hrho()
 call dmft_constraints()
@@ -1394,6 +1393,7 @@ do iter=1,3
   call dmft_solver(etot) 
   call dmft_constraints()
 enddo ! end of loop over iterations to enforce constraint
+call dmft_rholocal()
 call dmft_staticsolver(svar) 
 etot=etot+svar
 call dmft_detot(svar)
@@ -1405,33 +1405,34 @@ call dmft_addtohpsi()
 \end{verbatim}
 
 \begin{enumerate}
-\item \verb|DMFT_COLLECTHAMILTONIAN|: The orbital coefficients
+\item \verb|DMFT_COLLECTNATORB|: The orbital coefficients
   $\langle\pi_a|\psi_n\rangle$ have been calculated by the LMTO object
-  and they are kept in the module of \verb|paw_waves|.
+  and they are kept in the module of \verb|paw_waves|.  The orbital
+  coefficients are placed into as
+  \verb|kset(ik)%pipsi(ndim,nchi,nb,nspin)|. Also the occupations are
+  kept as \verb|kset(ik)%f(nb,nspin)| (without spin degeneracy,
+  i.e. $f_n\in[0,1]$). The k-point weights are kept
+  as\verb|kset(ik)%wkpt|. Again the spin degeneracy has been
+  removed. However special k-points have half the weight as general
+  k-points. \petertt{This should be checked explicitely!}
+%
+\item \verb|DMFT_rhoofk|: calculate the k-dependent density matrix,
+  the inverse overlap matrix and the overlap matrix itself.
 \begin{eqnarray}
-\langle\pi_a|\psi_n\rangle&&
-\\
-\rho_{a,b}(\vec{k})=\sum_n
+\rho_{a,b}(\vec{k})&=&\sum_n
 \langle\pi_a|\psi_n(\vec{k})\rangle f_n(\vec{k})
 \langle\psi_n(\vec{k})|\pi_b\rangle
+\\
+\mat{S}^{-1}_{a,b}(\vec{k})&=&\sum_n
+\langle\pi_a|\psi_n(\vec{k})\rangle 
+\langle\psi_n(\vec{k})|\pi_b\rangle
+\\
+\mat{S}&=&\Bigl(\mat{S}^{-1}\Bigr)^{-1}
 \end{eqnarray}
-The orbital coefficients are kept as
-\verb|kset(ik)%pipsi(ndim,nchi,nb,nspin)|. The k-dependent density
-matrix is kept as \verb|kset(ik)%rho(nchi,nchi,ndimd)|.
-
-\petertt{The name DMFT\_COLLECTHAMILTONIAN is misleading,
-  because we only collect the orbital coeffcients and the density
-  matrix.}
-%
-\item \verb|DMFT_COLLECTFULLDENMAT|: Calculates the local density matrix,
-  but for all orbitals on each atom. This is needed for the double
-  counting term.
-
- \petertt{This still uses the orbital coefficients and occupations
-   from the PAW\_WAVES module, instead of using the orbital
-   coefficients or dthe k-dependent density matrix from KSET.}
-
- \petertt{The name DMFT\_COLLECTFULLDENMAT is misleading.}
+The k-dependent density matrix is kept as
+\verb|kset(ik)%rho(nchi,nchi,ndimd)|. The inverse overlap matrix is
+kept as \verb|kset(ik)%sinv(nchi,nchi,ndimd)| and the overlap matrix
+is kept as \verb|kset(ik)%smat(nchi,nchi,ndimd)|.
 %
 \item \verb|DMFT_UTENSOR|: (see also
   section~\ref{sec:routinedmftutensor}) The local U-tensor is
@@ -1449,16 +1450,6 @@ scale factor that mimics the screening of the U-tensor. It is called
 \verb|LHFWEIGHT|.
 
 The scaled U-tensor is kept as \verb|ATOMSET(iat)%U|
-%
-\item \verb|DMFT_SMAT|: The inverse overlap matrix $\mat{S}^{-1}$ is
-  calculated as
-\begin{eqnarray}
-\mat{S}^{-1}(\vec{k})
-=\sum_n\langle\pi_a|\psi_n(\vec{k})\rangle\langle\psi_n(\vec{k})|\pi_b\rangle
-\end{eqnarray}
-Note that the inverse overlap matrix is spin and orbital dependent.
-$\mat{S}(\vec{k})$ is pot on the KSET structure as \verb|KSET%SINV| 
-and $\mat{S}^{-1}(\vec{k})$ as \verb|KSET%SMAT| 
 %
 %=========================hrho========================================
 \item \verb|DMFT_HRHO|: (see also section~\ref{sec:routinedmfthrho} on
@@ -1750,6 +1741,11 @@ until $\delta\rho$ vanishes.
 With the correct Lagrange multiplier, the new Green's function is
 obtained.
 %
+\item \verb|DMFT_RHOLOCAL|: For the Hartree Fock and DFT double
+  countinfg terms, we need the local density matrix, which is
+  calculatecd directly form the k-dependent density matrix als
+  Brillouin zone sum.
+%
 \item \verb|DMFT_STATICSOLVER|: Calculates the static contribution to
   the correlation energy, i.e. the screened Hartree Fock term and the
   DFT double counting correction and its derivatives. These terms do
@@ -1787,7 +1783,13 @@ obtained.
 \Bigr[
 \mat{\Gamma}\Bigr\rbrace
 \end{eqnarray}
-\petertt{At this point, I am still using the Dahlen trick, which is
+
+In order to evaluate the logarithm, I diagonalize the non-hermitean
+matrix in the argument, and sum the absolute values of the
+eigenvalues. The complex logarithm is $\ln[z]=\ln(|z|)+i Arg(z)$. The
+imaginary part cancels out with the negative Matsubara frequencies.
+
+\petertt{In a previous version I used the Dahlen trick, which is
   probably not quite correct. See appendix~\ref{sec:dahlenstrick} on
   p.~\pageref{sec:dahlenstrick} }
 %
