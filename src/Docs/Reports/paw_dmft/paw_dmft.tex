@@ -2421,6 +2421,23 @@ $\mat{V}\mat{V}^\dagger\neq\mat{1}$.
 \begin{itemize}
 \item for insulators the Fermi-level is not well defined. It tends to
   fluctuate insite the band gap.
+\item in order to limit the number of times the solver has to be
+  called explicitely, one my linearize then Luttinger-Ward functional
+\begin{eqnarray}
+\Phi^{LW}[\mat{G}]\approx \Phi^{LW}[\mat{G}_0]
++\frac{1}{\beta}\sum_\nu\sum_{a,b}\biggl[
+\underbrace{
+\left.\frac{\beta\delta\Phi^{LW}}{\delta{G}_{a,b}(i\omega_\nu)}\right|_{\mat{G}_0}
+}_{\Sigma_{0,b,a}(i\omega_\nu)}
+\Bigl(\mat{G}_{a.b}(i\omega_\nu)-\mat{G}_{0,a,b}(i\omega_\nu)\Bigr)
+\biggr]
+\end{eqnarray}
+$\mat{G}_0$ is the last green's function for which the Luttinger ward
+fgunctional and the self energy has been calculated explicitely. The
+approximate form can be used until convergence of the outer loop is
+reached. Then the Luttinger Ward functional is updated and the cycle
+is repeated.
+
 \end{itemize}
 
 
