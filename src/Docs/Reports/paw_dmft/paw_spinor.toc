@@ -1,0 +1,24 @@
+\contentsline {chapter}{\numberline {1}SPINOR object}{2}{chapter.1}
+\contentsline {section}{\numberline {1.1}Spin orbitals}{2}{section.1.1}
+\contentsline {section}{\numberline {1.2}Pauli matrices and observables}{2}{section.1.2}
+\contentsline {subsubsection}{Eigenvectors of Pauli matrices}{3}{section*.2}
+\contentsline {section}{\numberline {1.3}Representation of a matrices in terms of Pauli matrices}{3}{section.1.3}
+\contentsline {subsubsection}{Definition}{3}{section*.3}
+\contentsline {subsubsection}{Conversion of a matrix from $\delimiter "3222378 ,\delimiter "3223379 $ into $t,x,y,z$ representation and vice versa}{4}{section*.4}
+\contentsline {subsubsection}{Motivation}{4}{section*.5}
+\contentsline {subsection}{\numberline {1.3.1}Identity in a spinor representation}{5}{subsection.1.3.1}
+\contentsline {subsection}{\numberline {1.3.2}Hermitean conjugate in a spinor representation}{5}{subsection.1.3.2}
+\contentsline {subsection}{\numberline {1.3.3}Multiplication of matrices in a spinor representation}{5}{subsection.1.3.3}
+\contentsline {subsection}{\numberline {1.3.4}Inversion of a matrix in a spinor representation}{6}{subsection.1.3.4}
+\contentsline {subsection}{\numberline {1.3.5}Hermitean Matrices}{7}{subsection.1.3.5}
+\contentsline {section}{\numberline {1.4}Density matrices and spin orbitals with defined spin}{8}{section.1.4}
+\contentsline {section}{\numberline {1.5}Potentials and spin orbitals}{9}{section.1.5}
+\contentsline {subsubsection}{General definition of a potential for a complex matrix quantity}{9}{section*.6}
+\contentsline {subsubsection}{Spin potentials}{10}{section*.7}
+\contentsline {section}{\numberline {1.6}Description of Subroutines}{12}{section.1.6}
+\contentsline {subsubsection}{(t,x,y,z) representation}{13}{section*.8}
+\contentsline {subsubsection}{Expectation value by trace}{14}{section*.9}
+\contentsline {subsubsection}{Physical}{14}{section*.10}
+\contentsline {subsection}{\numberline {1.6.1}\texttt {SPINOR\$CONVERT}}{15}{subsection.1.6.1}
+\contentsline {chapter}{\numberline {A}Vector representation of Pauli matrices}{16}{appendix.A}
+\contentsline {subsubsection}{Product table of Pauli matrices}{17}{section*.11}

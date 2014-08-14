@@ -1,0 +1,93 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Welcome to writeLaTeX --- just edit your LaTeX on the left,
+% and we'll compile it for you on the right. If you give 
+% someone the link to this page, they can edit at the same
+% time. See the help menu above for more info. Enjoy!
+%
+% Note: you can export the pdf to see the result at full
+% resolution.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass{article}
+
+\usepackage[latin1]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+
+%%%<
+\usepackage{verbatim}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{5pt}%
+%%%>
+
+\begin{comment}
+:Title: Simple flow chart
+:Tags: Diagrams
+
+With PGF/TikZ you can draw flow charts with relative ease. This flow chart from [1]_
+outlines an algorithm for identifying the parameters of an autonomous underwater vehicle model. 
+
+Note that relative node
+placement has been used to avoid placing nodes explicitly. This feature was
+introduced in PGF/TikZ >= 1.09.
+
+.. [1] Bossley, K.; Brown, M. & Harris, C. Neurofuzzy identification of an autonomous underwater vehicle `International Journal of Systems Science`, 1999, 30, 901-913 
+
+
+\end{comment}
+
+
+\begin{document}
+\pagestyle{empty}
+
+
+% Define block styles
+\tikzstyle{decision} = [diamond, draw, fill=blue!20, 
+    text width=4.5em, text badly centered, node distance=3cm, inner sep=0pt]
+\tikzstyle{block} = [rectangle, draw, fill=blue!20, 
+    text width=12em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{line} = [draw, -latex']
+\tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=5cm,
+    minimum height=2em]
+    
+\begin{tikzpicture}[node distance = 2cm, auto]
+    % Place nodes
+    \node [block] (pipsi) {obtain $\langle\pi_a|\psi_n\rangle$ and $f_n$};
+    \node [cloud, right of=pipsi] (waves) {NTBO projections};
+    \node [block, below of=pipsi] (diagsloc) {$S^{-1}(k)=\sum_{n\in k}\langle\pi_a|\psi_n\rangle \langle\psi_n|\pi_b\rangle$};
+    \node [block, below of=diagsloc] (utensor) {U-tensor};
+    \node [cloud, right of=utensor] (lmtou) {Local utensor};
+    \node [block, below of=utensor] (hrho) {$H_{\rho}$};
+    \node [block, below of=utensor] (green) {local Greens function\\ $G_{a,b\in\mathcal{C}_R}(i\omega_\nu)$};
+    \node [block, below of=green] (constraints) {Constraints};
+    \node [decision, below of=constraints,node distance=2.5cm] (decide) {converged?};
+    \node [cloud, left of=green] (iterate) {iterate};
+    \node [block, below of=decide, node distance=2.5cm] (etot) {Kadanoff Baym energy};
+    \node [block, below of=etot, node distance=2cm] (add) {add to hamiltonian};
+    \node [block, right of=green,node distance=5cm] (solver) {Luttinger Ward Functional\\$\Sigma_{a,b\in\mathcal{C}_R}(i\omega_\nu)$};
+    % Draw edges
+    \path [line] (pipsi) -- (diagsloc);
+    \path [line] (diagsloc) -- (utensor);
+    \path [line] (utensor) -- (hrho);
+    \path [line] (hrho) -- (green);
+    \path [line] (green) -- (constraints);
+    \path [line] (constraints) -- (decide);
+    \path [line] (decide) -| node [near start] {no} (iterate);
+    \path [line] (iterate) --  (green);
+    \path [line] (decide) -- node [near end] {yes} (etot);
+    \path [line] (etot) --  (add);
+    \path [line] (green) --  (solver);
+    \path [line] (solver) |-  (constraints);
+    \path [line] (waves) --  (pipsi);
+    \path [line] (lmtou) --  (utensor);
+    %% \path [line] (update) |- (diagsloc);
+    %% \path [line] (decide) -- node {no}(stop);
+    %% \path [line,dashed] (expert) -- (pipsi);
+    %% \path [line,dashed] (waves) -- (pipsi);
+    %% \path [line,dashed] (waves) |- (evaluate);
+\end{tikzpicture}
+
+
+\end{document}

@@ -1,0 +1,18 @@
+\contentsline {chapter}{\numberline {1}BRILLOUIN object}{2}{chapter.1}
+\contentsline {section}{\numberline {1.1}Purpose and theoretical background}{2}{section.1.1}
+\contentsline {section}{\numberline {1.2}Code structure: Brillouin}{2}{section.1.2}
+\contentsline {subsection}{\numberline {1.2.1}Brillouin\_module}{2}{subsection.1.2.1}
+\contentsline {subsection}{\numberline {1.2.2}Brillouin\_msh}{3}{subsection.1.2.2}
+\contentsline {chapter}{\numberline {2}SPACEGROUP object}{4}{chapter.2}
+\contentsline {section}{\numberline {2.1}Purpose and theoretical background}{4}{section.2.1}
+\contentsline {subsection}{\numberline {2.1.1}Symmetry operations}{4}{subsection.2.1.1}
+\contentsline {subsection}{\numberline {2.1.2}Bravais lattices}{4}{subsection.2.1.2}
+\contentsline {subsection}{\numberline {2.1.3}Symmetry operations}{5}{subsection.2.1.3}
+\contentsline {subsection}{\numberline {2.1.4}Symmetry operations: Table 3.4 of Bradley Cracknell}{8}{subsection.2.1.4}
+\contentsline {subsection}{\numberline {2.1.5}Transformation matrices}{9}{subsection.2.1.5}
+\contentsline {subsubsection}{Convert operations from reciprocal to real space}{10}{section*.2}
+\contentsline {subsection}{\numberline {2.1.6}Generators}{10}{subsection.2.1.6}
+\contentsline {section}{\numberline {2.2}Code structure: Spacegroup}{10}{section.2.2}
+\contentsline {subsection}{\numberline {2.2.1}SPACEGROUP\$GENERATORS}{11}{subsection.2.2.1}
+\contentsline {section}{\numberline {.1}Spacegroups}{12}{section.Alph0.1}
+\contentsline {section}{\numberline {.2}Paths in the Brillouin zone}{13}{section.Alph0.2}

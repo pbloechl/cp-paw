@@ -1,0 +1,13 @@
+!wcntl
+  PLANE=T
+  !files
+    !file id='STRC'           ext=T name='.strc_out' !end
+    !file id='WAVE'           ext=F name='h2o_b2.wv' !end
+    !file id='CUBE'           ext=F name='h2o_b2.cub' !end
+    !file id='GNUCONTOUR'     ext=F name='h2o_b2_c.gnu' !end
+    !file id='GNURUBBERSHEET' ext=F name='h2o_b2_r.gnu' !end
+  !end
+  !viewbox o=-5. -5. -5. t=10. 0. 0. 0. 10. 0. 0. 0. 10. !end
+  !plane o=-5. -5. 0. t=10. 0. 0. 0. 10. 0. !end
+!end
+!eob

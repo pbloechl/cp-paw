@@ -1,0 +1,20 @@
+!DCNTL
+  !GENERIC  PREFIX='Dos/' !END
+  !GRID  BROADENING[K]=2000. !END
+  !WEIGHT ID='total' TYPE='TOTAL' !END
+  !WEIGHT ID='os' 
+    !ATOM NAME='O_1' TYPE='S' !END 
+  !END
+  !WEIGHT ID='op' 
+    !ATOM NAME='O_1' TYPE='P' !END 
+  !END
+  !WEIGHT ID='h' 
+    !ATOM NAME='H_2' TYPE='ALL' !END 
+    !ATOM NAME='H_3' TYPE='ALL' !END 
+  !END
+  !COOP ID='o-h' 
+    !ORB1 ATOM='O_1' TYPE='SP3' NNZ='H_2' !END 
+    !ORB2 ATOM='H_2' TYPE='S'   NNZ='O_1' !END 
+  !END
+!END
+!EOB

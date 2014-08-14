@@ -1,0 +1,9 @@
+!wcntl
+  !files
+    !file id='STRC' ext=T name='.strc_out' !end
+    !file id='WAVE' ext=F name='h2o_@STATE@.wv' !end
+    !file id='CUBE' ext=F name='h2o_@STATE@.cub' !end
+  !end
+  !viewbox o=-5. -5. -5. t=10. 0. 0. 0. 10. 0. 0. 0. 10. !end
+!end
+!eob

@@ -1,0 +1,39 @@
+\BOOKMARK [0][-]{chapter.1}{Todo}{}% 1
+\BOOKMARK [1][-]{section.1.1}{Fixes}{chapter.1}% 2
+\BOOKMARK [1][-]{section.1.2}{Ideas}{chapter.1}% 3
+\BOOKMARK [0][-]{chapter.2}{Purpose and theoretical background of the LMTO Object}{}% 4
+\BOOKMARK [1][-]{section.2.1}{Augmentation}{chapter.2}% 5
+\BOOKMARK [1][-]{section.2.2}{Structure constants}{chapter.2}% 6
+\BOOKMARK [2][-]{subsection.2.2.1}{Hankel functions as envelope function}{section.2.2}% 7
+\BOOKMARK [2][-]{subsection.2.2.2}{Hankel and Bessel functions as head and tail functions}{section.2.2}% 8
+\BOOKMARK [2][-]{subsection.2.2.3}{Bare structure constants}{section.2.2}% 9
+\BOOKMARK [2][-]{subsection.2.2.4}{Screened structure constants}{section.2.2}% 10
+\BOOKMARK [1][-]{section.2.3}{Screening on finite clusters}{chapter.2}% 11
+\BOOKMARK [1][-]{section.2.4}{Augmentation and Potential parameters}{chapter.2}% 12
+\BOOKMARK [2][-]{subsection.2.4.1}{Local orbitals}{section.2.4}% 13
+\BOOKMARK [1][-]{section.2.5}{Coefficients of the tight-binding orbital}{chapter.2}% 14
+\BOOKMARK [2][-]{subsection.2.5.1}{Introduction}{section.2.5}% 15
+\BOOKMARK [2][-]{subsection.2.5.2}{Transformation between local-orbital and partial-wave projections}{section.2.5}% 16
+\BOOKMARK [1][-]{section.2.6}{Core-valence exchange}{chapter.2}% 17
+\BOOKMARK [1][-]{section.2.7}{U-tensor}{chapter.2}% 18
+\BOOKMARK [1][-]{section.2.8}{Double-counting correction}{chapter.2}% 19
+\BOOKMARK [0][-]{chapter.3}{Description of Subroutines}{}% 20
+\BOOKMARK [1][-]{section.3.1}{Workflow}{chapter.3}% 21
+\BOOKMARK [1][-]{section.3.2}{LMTO\044CLUSTERSTRUCTURECONSTANTS}{chapter.3}% 22
+\BOOKMARK [2][-]{subsection.3.2.1}{LMTO\044STRUCTURECONSTANTS}{section.3.2}% 23
+\BOOKMARK [2][-]{subsection.3.2.2}{LMTO\044SCREEN}{section.3.2}% 24
+\BOOKMARK [1][-]{section.3.3}{Waves object}{chapter.3}% 25
+\BOOKMARK [1][-]{section.3.4}{Offsite matrix elements}{chapter.3}% 26
+\BOOKMARK [1][-]{section.3.5}{Matrix elements using Gaussians}{chapter.3}% 27
+\BOOKMARK [1][-]{section.3.6}{Matrix elements on an adaptive grid}{chapter.3}% 28
+\BOOKMARK [1][-]{section.3.7}{Routines for reporting}{chapter.3}% 29
+\BOOKMARK [1][-]{section.3.8}{Routines for plotting orbitals}{chapter.3}% 30
+\BOOKMARK [0][-]{chapter.4}{Benchmarks}{}% 31
+\BOOKMARK [1][-]{section.4.1}{Silicon}{chapter.4}% 32
+\BOOKMARK [2][-]{subsection.4.1.1}{Summary}{section.4.1}% 33
+\BOOKMARK [0][-]{appendix.A}{Definition of solid Hankel functions}{}% 34
+\BOOKMARK [1][-]{section.A.1}{Bare structure constants}{appendix.A}% 35
+\BOOKMARK [1][-]{section.A.2}{Consistency checks}{appendix.A}% 36
+\BOOKMARK [0][-]{appendix.B}{Bloch theorem revisited}{}% 37
+\BOOKMARK [0][-]{appendix.C}{Offsite matrix elements using Gaussian integrals}{}% 38
+\BOOKMARK [0][-]{appendix.D}{Changelog, Bugfixes}{}% 39

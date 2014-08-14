@@ -1,0 +1,14 @@
+\BOOKMARK [0][-]{chapter.1}{SPINOR object}{}% 1
+\BOOKMARK [1][-]{section.1.1}{Spin orbitals}{chapter.1}% 2
+\BOOKMARK [1][-]{section.1.2}{Pauli matrices and observables}{chapter.1}% 3
+\BOOKMARK [1][-]{section.1.3}{Representation of a matrices in terms of Pauli matrices}{chapter.1}% 4
+\BOOKMARK [2][-]{subsection.1.3.1}{Identity in a spinor representation}{section.1.3}% 5
+\BOOKMARK [2][-]{subsection.1.3.2}{Hermitean conjugate in a spinor representation}{section.1.3}% 6
+\BOOKMARK [2][-]{subsection.1.3.3}{Multiplication of matrices in a spinor representation}{section.1.3}% 7
+\BOOKMARK [2][-]{subsection.1.3.4}{Inversion of a matrix in a spinor representation}{section.1.3}% 8
+\BOOKMARK [2][-]{subsection.1.3.5}{Hermitean Matrices}{section.1.3}% 9
+\BOOKMARK [1][-]{section.1.4}{Density matrices and spin orbitals with defined spin}{chapter.1}% 10
+\BOOKMARK [1][-]{section.1.5}{Potentials and spin orbitals}{chapter.1}% 11
+\BOOKMARK [1][-]{section.1.6}{Description of Subroutines}{chapter.1}% 12
+\BOOKMARK [2][-]{subsection.1.6.1}{SPINOR\044CONVERT}{section.1.6}% 13
+\BOOKMARK [0][-]{appendix.A}{Vector representation of Pauli matrices}{}% 14

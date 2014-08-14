@@ -1,0 +1,19 @@
+!STRUCTURE 
+  !GENERIC LUNIT[AA]=5.7 !END  
+  !OCCUPATIONS EMPTY=5   !END
+  !KPOINTS R=20. !END
+  !LATTICE T= 0.0 0.5 0.5 
+              0.5 0.0 0.5  
+              0.5 0.5 0.0 !END
+  !SPECIES NAME= 'SI' ID='SI_.75_6.0' NPRO=2 2 1 LRHOX=2 !END
+  !ATOM    NAME= 'SI1'  R=  -0.05   -0.05    -0.05   !END
+  !ATOM    NAME= 'SI2'  R=  0.30    0.30      0.30   !END
+!END 
+!EOB 
+
+
+The experimental lattice constant of silicon is 5.431 AA.
+
+We start purposely from a distorted structure at the lattice constant
+expanded by about 5%, so that we can test the atom dynamics and the
+cell dynamics.

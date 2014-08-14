@@ -1,0 +1,167 @@
+#!/bin/bash
+#  this script performs a subset of calculations for the Hands-On PAW course
+#   
+#  Here: magnetism
+#
+#  It relies on a data structure in the ROOT directory specified below
+#  with a SRC directory containing all input files required, and a
+#  SANDBOX directory where the calculations are performed, and where
+#  the resulting files are kept.
+#
+function error {
+  if [[ $1 != 0 ]] ; then 
+    error "in $0:$THIS: $2"
+    exit $IERR
+  fi
+  IERR=$(echo "$IERR+1" |bc -l)
+}
+
+ROOT='/Users/ptpb/Tree/PhiSX/Praktikum/Calculations'
+SRC=$ROOT/Container
+SANDBOX=$ROOT/Sandbox
+IERR=1
+cd $SANDBOX; error $? "not in sandbox"
+#==================================================================
+#== chapter ?? Solids: Silicon
+#==================================================================
+#==  silicon= wave function optimization, dos and bands.
+THIS=si_1
+# cp $SRC/$THIS.cntl $THIS.cntl    ; error $? "copy cntl failed"
+# cp $SRC/$THIS.strc $THIS.strc    ; error $? "copy strc failed"
+# if [[ -e  $THIS.prot ]] ; then rm $THIS.prot ; fi
+# paw_fast.x $THIS.cntl 1>out 2>&1 ; error $? "paw_fast.x failed"
+# paw_show -ec $THIS $THIS.show_out; error $? "paw_show.x failed"
+#
+# cp $SRC/$THIS.dcntl $THIS.dcntl  ; error $? "copy strc failed"
+# if [[ ! -d Dos_S ]] ; then mkdir Dos_S; fi
+# paw_dos.x $THIS.dcntl            ; error $? "paw_dos.x failed"
+# cp $SRC/$THIS.dpcntl $THIS.dpcntl; error $? "copy dpcntl failed"
+# paw_dosplot.x $THIS.dpcntl       ; error $? "paw_dosplot failed"
+# cp $SRC/$THIS.bcntl $THIS.bcntl  ; error $? "copy bcntl failed"
+# paw_bands.x $THIS.bcntl           ; error $? "paw_bands.x failed"
+#
+#== density of states with empty atoms and a larger radius =========
+PREV=$THIS
+THIS=si_1a
+cp $SRC/$THIS.cntl $THIS.cntl    ; error $? "copy cntl failed"
+cp $SRC/$THIS.strc $THIS.strc         ; error $? "copy strc failed"
+if [[ -e  $THIS.prot ]] ; then rm $THIS.prot ; fi
+paw_fast.x $THIS.cntl 1>out 2>&1 ; error $? "paw_fast.x failed"
+paw_show -ec $THIS $THIS.show_out; error $? "paw_show.x failed"
+#
+cp $SRC/$THIS.dcntl $THIS.dcntl  ; error $? "copy strc failed"
+if [[ ! -d Dos_S ]] ; then mkdir Dos_Sa; fi
+paw_dos.x $THIS.dcntl            ; error $? "paw_dos.x failed"
+cp $SRC/$THIS.dpcntl $THIS.dpcntl; error $? "copy dpcntl failed"
+paw_dosplot.x $THIS.dpcntl       ; error $? "paw_dosplot failed"
+#
+#== lattice optimization of silicon ============================
+# PREV=si_1
+# THIS=si_2
+# cp $SRC/$THIS.cntl $THIS.cntl    ; error $? "copy cntl failed"
+# cp $PREV.strc $THIS.strc         ; error $? "copy strc failed"
+# cp $PREV.rstrt $THIS.rstrt       ; error $? "copy strc failed"
+# if [[ -e  $THIS.prot ]] ; then rm $THIS.prot ; fi
+# paw_fast.x $THIS.cntl 1>out 2>&1 ; error $? "paw_fast.x failed"
+# paw_show -ec $THIS $THIS.show_out; error $? "paw_show.x failed"
+#
+#== energy vs volume   ==========================
+# PREV=si_1
+# THIS=si_3
+# DIR=Si_alats
+# if [[ ! -d $DIR ]] ; then mkdir $DIR ; fi
+# cp $PREV.cntl $DIR/$THIS.cntl    ; error $? "copy cntl failed"
+# cp $PREV.strc $DIR/$THIS.strc         ; error $? "copy strc failed"
+# cd $DIR
+# paw_scanlat -p si_3 -l "94 96 98 100 102 104 106" 
+# cd $SANDBOX
+
+#==================================================================
+#== Aluminum
+#==================================================================
+THIS=al_1
+# cp $SRC/$THIS.cntl $THIS.cntl    ; error $? "copy cntl failed"
+# cp $SRC/$THIS.strc $THIS.strc    ; error $? "copy strc failed"
+# if [[ -e  $THIS.prot ]] ; then rm $THIS.prot ; fi
+# paw_fast.x $THIS.cntl 1>out 2>&1 ; error $? "paw_fast.x failed"
+# paw_show -ec $THIS $THIS.show_out; error $? "paw_show.x failed"
+#
+# cp $SRC/$THIS.dcntl $THIS.dcntl  ; error $? "copy strc failed"
+# if [[ ! -d Dos_A ]] ; then mkdir Dos_A; fi
+# paw_dos.x $THIS.dcntl            ; error $? "paw_dos.x failed"
+# cp $SRC/$THIS.dpcntl $THIS.dpcntl; error $? "copy dpcntl failed"
+# paw_dosplot.x $THIS.dpcntl       ; error $? "paw_dosplot failed"
+# cp $SRC/$THIS.bcntl $THIS.bcntl  ; error $? "copy bcntl failed"
+# paw_bands.x $THIS.bcntl           ; error $? "paw_bands.x failed"
+
+PREV=$THIS
+THIS=al_2
+# cp $PREV.cntl $THIS.cntl    ; error $? "copy cntl failed"
+# cp $SRC/$THIS.strc $THIS.strc    ; error $? "copy strc failed"
+# if [[ -e  $THIS.prot ]] ; then rm $THIS.prot ; fi
+# paw_fast.x $THIS.cntl 1>out 2>&1 ; error $? "paw_fast.x failed"
+# paw_show -ec $THIS $THIS.show_out; error $? "paw_show.x failed"
+# #
+# cp $SRC/$THIS.dcntl $THIS.dcntl  ; error $? "copy strc failed"
+# if [[ ! -d Dos_A2 ]] ; then mkdir Dos_A2; fi
+# paw_dos.x $THIS.dcntl            ; error $? "paw_dos.x failed"
+# cp $SRC/$THIS.dpcntl $THIS.dpcntl; error $? "copy dpcntl failed"
+# paw_dosplot.x $THIS.dpcntl       ; error $? "paw_dosplot failed"
+
+PREV=$THIS
+THIS=al_2a
+cp $PREV.cntl $THIS.cntl    ; error $? "copy cntl failed"
+cp $SRC/$THIS.strc $THIS.strc    ; error $? "copy strc failed"
+if [[ -e  $THIS.prot ]] ; then rm $THIS.prot ; fi
+paw_fast.x $THIS.cntl 1>out 2>&1 ; error $? "paw_fast.x failed"
+paw_show -ec $THIS $THIS.show_out; error $? "paw_show.x failed"
+#
+cp $SRC/$THIS.dcntl $THIS.dcntl  ; error $? "copy strc failed"
+if [[ ! -d Dos_A2a ]] ; then mkdir Dos_A2a; fi
+paw_dos.x $THIS.dcntl            ; error $? "paw_dos.x failed"
+cp $SRC/$THIS.dpcntl $THIS.dpcntl; error $? "copy dpcntl failed"
+paw_dosplot.x $THIS.dpcntl       ; error $? "paw_dosplot failed"
+
+#==================================================================
+#== chapter ?? Magnetism: Iron
+#==================================================================
+#
+#==  alpha iron: electronic structure
+THIS=fe_1
+# cp $SRC/$THIS.cntl $THIS.cntl    ; error $? "copy cntl failed"
+# cp $SRC/$THIS.strc $THIS.strc    ; error $? "copy strc failed"
+# if [[ -e  $THIS.prot ]] ; then rm $THIS.prot ; fi
+# paw_fast.x $THIS.cntl 1>out 2>&1 ; error $? "paw_fast.x failed"
+# paw_show -ec $THIS $THIS.show_out; error $? "paw_show.x failed"
+#
+# cp $SRC/$THIS.dcntl $THIS.dcntl  ; error $? "copy strc failed"
+# if [[ ! -d Dos_F ]] ; then mkdir Dos_F; fi
+# paw_dos.x $THIS.dcntl            ; error $? "paw_dos.x failed"
+# cp $SRC/$THIS.dpcntl $THIS.dpcntl; error $? "copy strc failed"
+# paw_dosplot.x $THIS.dpcntl       ; error $? "paw_dosplot failed"
+#
+#
+#==  nickel oxide: electronic structure with orbpot
+# THIS=nio_1
+# cp $SRC/$THIS.cntl $THIS.cntl    ; error $? "copy cntl failed"
+# cp $SRC/$THIS.strc $THIS.strc    ; error $? "copy strc failed"
+# if [[ -e  $THIS.prot ]] ; then rm $THIS.prot ; fi
+# paw_fast.x $THIS.cntl 1>out 2>&1 ; error $? "paw_fast.x failed"
+# paw_show -ec $THIS $THIS.show_out; error $? "paw_show.x failed"
+#
+#==  nickel oxide: electronic structure without orbpot
+PREV=$THIS
+THIS=nio_2
+# cp $SRC/$THIS.cntl $THIS.cntl    ; error $? "copy cntl failed"
+# cp $SRC/$THIS.strc $THIS.strc    ; error $? "copy strc failed"
+# cp $PREV.rstrt $THIS.rstrt       ; error $? "copy strc failed"
+# if [[ -e  $THIS.prot ]] ; then rm $THIS.prot ; fi
+# paw_fast.x $THIS.cntl 1>out 2>&1 ; error $? "paw_fast.x failed"
+# paw_show -ec $THIS $THIS.show_out; error $? "paw_show.x failed"
+#
+# cp $SRC/$THIS.dcntl $THIS.dcntl  ; error $? "copy strc failed"
+# if [[ ! -d DOS_N ]]; then make Dos_N; fi
+# paw_dos.x $THIS.dcntl            ; error $? "paw_dos.x failed"
+# cp $SRC/$THIS.dpcntl $THIS.dpcntl; error $? "copy strc failed"
+# paw_dosplot.x $THIS.dpcntl       ; error $? "paw_dosplot failed"
+exit

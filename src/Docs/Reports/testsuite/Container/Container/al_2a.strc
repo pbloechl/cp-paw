@@ -1,0 +1,20 @@
+!STRUCTURE 
+  !GENERIC LUNIT[AA]=4.05 !END  
+  !OCCUPATIONS EMPTY=8  !END
+  !KPOINTS R=80. !END
+  !LATTICE T= 0.0  0.5  0.5 
+              0.5  0.0  0.5  
+              0.5  0.5  0.0 !END
+  !SPECIES NAME= 'AL'  ID='AL_.75_6.0'  NPRO=1 1 1 LRHOX=2 !END
+  !ATOM    NAME= 'AL1'  R=  0.00    0.00      0.00   !END
+ !END 
+!EOB 
+
+For the experimental band structure of aluminium see 
+Levinson Greuter and Plummer, Phys. Rev. B 27, 727 (1983)
+
+Benchmark calculations with PBE can be found in paier06_jcp124_154709
+The quoted experimental lattice constant is 4.032 \AA =7.619 a_0 and
+the PBE result with VASP-PAW is 4.040 Angstrom. He used a 24x24x24
+grid.
+

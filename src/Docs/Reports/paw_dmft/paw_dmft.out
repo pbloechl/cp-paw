@@ -1,0 +1,47 @@
+\BOOKMARK [0][-]{chapter.1}{Purpose and theoretical background}{}% 1
+\BOOKMARK [1][-]{section.1.1}{Grand potential and density-matrix functional as starting point}{chapter.1}% 2
+\BOOKMARK [1][-]{section.1.2}{Separate out static correlations: Towards DFT+}{chapter.1}% 3
+\BOOKMARK [1][-]{section.1.3}{Dynamic-correlation correction}{chapter.1}% 4
+\BOOKMARK [1][-]{section.1.4}{Local orbitals}{chapter.1}% 5
+\BOOKMARK [2][-]{subsection.1.4.1}{Projection onto local orbitals}{section.1.4}% 6
+\BOOKMARK [2][-]{subsection.1.4.2}{Energy correction}{section.1.4}% 7
+\BOOKMARK [2][-]{subsection.1.4.3}{U-tensor}{section.1.4}% 8
+\BOOKMARK [2][-]{subsection.1.4.4}{Non-orthonormal orbitals}{section.1.4}% 9
+\BOOKMARK [2][-]{subsection.1.4.5}{Incompleteness}{section.1.4}% 10
+\BOOKMARK [1][-]{section.1.5}{Variational parameters for the Green's function}{chapter.1}% 11
+\BOOKMARK [2][-]{subsection.1.5.1}{High-Freqency expansion of Matsubara sum}{section.1.5}% 12
+\BOOKMARK [1][-]{section.1.6}{Dynamic-correlation correction in non-orthonormal basis and in Bloch representation}{chapter.1}% 13
+\BOOKMARK [1][-]{section.1.7}{Description of Subroutines}{chapter.1}% 14
+\BOOKMARK [2][-]{subsection.1.7.1}{Data exchange of the Object wit the outer world}{section.1.7}% 15
+\BOOKMARK [2][-]{subsection.1.7.2}{Flowchart}{section.1.7}% 16
+\BOOKMARK [2][-]{subsection.1.7.3}{DMFT\044GREEN}{section.1.7}% 17
+\BOOKMARK [2][-]{subsection.1.7.4}{DMFT\137INI}{section.1.7}% 18
+\BOOKMARK [2][-]{subsection.1.7.5}{DMFT\137UTENSOR}{section.1.7}% 19
+\BOOKMARK [2][-]{subsection.1.7.6}{DMFT\137NATORB}{section.1.7}% 20
+\BOOKMARK [2][-]{subsection.1.7.7}{DMFT\137HRHO}{section.1.7}% 21
+\BOOKMARK [2][-]{subsection.1.7.8}{DMFT\137CONSTRAINTS}{section.1.7}% 22
+\BOOKMARK [2][-]{subsection.1.7.9}{DMFT\137SOLVER}{section.1.7}% 23
+\BOOKMARK [2][-]{subsection.1.7.10}{DMFT\137ETOT}{section.1.7}% 24
+\BOOKMARK [0][-]{chapter.2}{Tests and Numerical problems}{}% 25
+\BOOKMARK [0][-]{appendix.A}{Matsubara frequencies}{}% 26
+\BOOKMARK [1][-]{section.A.1}{Evaluation using residual theorem}{appendix.A}% 27
+\BOOKMARK [2][-]{subsection.A.1.1}{Matsubara sums}{section.A.1}% 28
+\BOOKMARK [2][-]{subsection.A.1.2}{Matsubara sums on finite grids}{section.A.1}% 29
+\BOOKMARK [0][-]{appendix.B}{The Green function}{}% 30
+\BOOKMARK [1][-]{section.B.1}{Generic properties}{appendix.B}% 31
+\BOOKMARK [2][-]{subsection.B.1.1}{Green's function with negative Matsubara frequencies}{section.B.1}% 32
+\BOOKMARK [2][-]{subsection.B.1.2}{Density of states}{section.B.1}% 33
+\BOOKMARK [1][-]{section.B.2}{Project Green's function onto local orbitals}{appendix.B}% 34
+\BOOKMARK [2][-]{subsection.B.2.1}{Laurentexpansion of the non-interacting Green's function}{section.B.2}% 35
+\BOOKMARK [2][-]{subsection.B.2.2}{Laurent expansion of the Green's function \(new\)}{section.B.2}% 36
+\BOOKMARK [0][-]{appendix.C}{Dividing the correlation contribution into a static and a dynamic part}{}% 37
+\BOOKMARK [0][-]{appendix.D}{Hartree-Fock energy}{}% 38
+\BOOKMARK [0][-]{appendix.E}{Mixing of the self energy}{}% 39
+\BOOKMARK [1][-]{section.E.1}{Structure of the self-consistency}{appendix.E}% 40
+\BOOKMARK [1][-]{section.E.2}{Euler-Lagrange equations}{appendix.E}% 41
+\BOOKMARK [1][-]{section.E.3}{Model Green's function}{appendix.E}% 42
+\BOOKMARK [0][-]{appendix.F}{Usage}{}% 43
+\BOOKMARK [1][-]{subsection.F.0.1}{Control file}{appendix.F}% 44
+\BOOKMARK [2][-]{subsection.F.0.2}{Structure file}{subsection.F.0.1}% 45
+\BOOKMARK [0][-]{appendix.G}{Bloch representation}{}% 46
+\BOOKMARK [0][-]{appendix.H}{Traditional formulation of the dynamical mean-field theory}{}% 47

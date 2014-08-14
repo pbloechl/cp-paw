@@ -1,0 +1,95 @@
+\documentclass[11pt,a4paper]{report}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                 %%
+%%    Header file for the Phi-S-X Series                           %%
+%%                                                                 %%
+%%    german version header_gm.tex is derived from header.tex      %%
+%%    by uncommenting the line ``\setboolean{german}{true}'' below %%
+%%                                                                 %%
+%%    Never edit the german version! all changes must be done      %%
+%%    in the english version header.tex                            %%
+%%                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{../header}
+\hypersetup{pdftitle=paw_brillouin}
+\begin{document}
+\begin{titlepage}
+\begin{center}
+\vspace*{3.5cm}
+{\huge \textbf{Coding standards for the CP-PAW code}}\\
+\vspace{0.5cm}
+{\large Peter E. Bl\"ochl}
+\vspace{0.5cm} 
+\end{center}
+
+\vfill
+\begin{center}
+Copyright Peter E. Bl\"ochl; Sept.2, 2013-\today\\
+{\small
+Institute of Theoretical Physics;
+Clausthal University of Technology;\\ 
+D-38678 Clausthal Zellerfeld; Germany;\\
+http://www.pt.tu-clausthal.de/atp/}
+\end{center}
+\end{titlepage}
+\noindent            
+\tableofcontents
+%====================================================================
+\chapter{Testsuite}
+%====================================================================
+\cite{bloechl94_prb50_17953}
+%====================================================================
+\section{Functionality tests of the main code}
+%====================================================================
+\begin{itemize}
+\item silicon, wave function optimization, safeortho=T
+\item silicon, structure dynamics (initial phonon sitortion in the
+  structure)
+\item silicon, cell dynamics with fixed relative atomic positions.
+\item silicon, thermostats for atoms, small friction for electrons
+\item silicon, thermostat for atoms and wave functions
+\item silicon, check all options in !CONTROL!ANALYSE
+\item silicon, add a fraction of an electron, (charged cells)
+\item iron, wave function optimization, spin polarized, safeortho=F,
+  fixed occupations
+\item iron, wave function optimization, spin polarized, safeortho=F,
+  mermin block with tetra+
+\item iron, wave function optimization, spin polarized, safeortho=F,
+  mermin block with mermin functional and finite temperature
+\item iron cell dynamics with tetra+
+\item NaCl, two atoms per unit cell, wave function optimization
+\item H$_2$O, wave function optimization: test isolated molecule
+  (isolate on)
+\item H$_2$O, structure optimization: test isolated molecule (isolate
+  on)
+\item OH$^-$, wave function optimization: test charged isolated
+  molecule (isolate on)
+\item OH$^-$, structure optimization: test charged isolated molecule
+  (isolate on)
+\item OH$^-$: test COSMO
+\item Ne dimer: test van der Waals
+\item test !structure!orbpot
+\item test !structure!CONSTRAINTS
+\end{itemize}
+
+%====================================================================
+\section{Functionality tests of tools}
+%====================================================================
+
+\begin{itemize}
+\item silicon, band structure (Tool test)
+\item silicon, density of states (Tool test)
+\end{itemize}
+
+%====================================================================
+\section{Accuracy test}
+%====================================================================
+\begin{itemize}
+\item G2 database
+\end{itemize}
+
+
+\clearpage
+\bibliographystyle{unsrtnat}
+\bibliography{../all}
+\end{document}  

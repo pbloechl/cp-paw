@@ -1,0 +1,403 @@
+\documentclass[11pt,a4paper]{report}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                 %%
+%%    Header file for the Phi-S-X Series                           %%
+%%                                                                 %%
+%%    german version header_gm.tex is derived from header.tex      %%
+%%    by uncommenting the line ``\setboolean{german}{true}'' below %%
+%%                                                                 %%
+%%    Never edit the german version! all changes must be done      %%
+%%    in the english version header.tex                            %%
+%%                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{../header}
+\hypersetup{pdftitle=paw_brillouin}
+\begin{document}
+\begin{titlepage}
+\begin{center}
+\vspace*{3.5cm}
+{\huge \textbf{The DOS tool of the CP-PAW code}}\\
+\vspace{0.5cm}
+{\large Peter E. Bl\"ochl}
+\vspace{0.5cm} 
+\end{center}
+
+\vfill
+\begin{center}
+Copyright Peter E. Bl\"ochl; Sept.2, 2013-\today\\
+{\small
+Institute of Theoretical Physics;
+Clausthal University of Technology;\\ 
+D-38678 Clausthal Zellerfeld; Germany;\\
+http://www.pt.tu-clausthal.de/atp/}
+\end{center}
+\end{titlepage}
+\noindent            
+\tableofcontents
+%====================================================================
+\chapter{Todo}
+%====================================================================
+\begin{itemize}
+\item When only a subset of k-points is used, the Brillouin-zone
+  integration of a general matrix element violates the symmetry of the
+  crystal.  The symmetry can be recovered if the matrix elements to be
+  integrated are averaged over the complete point group
+  operations. This implies in general that orbitals centered on one
+  atom will be transformed into orbitals centered on other atoms.
+\end{itemize}
+%====================================================================
+\chapter{Background}
+%====================================================================
+%============================================================================
+\subsubsection{Expectation values and matrix elements}
+%============================================================================
+The expectation value of a one-particle operator $\hat{A}$ can be evaluated
+as Brillouin zone integral.
+\begin{eqnarray}
+\langle{A}\rangle
+=\sum_n\frac{1}{V_G}\int d^3k\; f_{\beta,\mu}(\epsilon_n(\vec{k}))
+A_{n}(\vec{k})
+\end{eqnarray}
+where $f_{\beta,\mu}(\epsilon)$ is the Fermi distribution, $V_G$ is
+the volume of the reciprocal unit cell and
+\begin{eqnarray}
+A_{n}(\vec{k})=\langle\psi_n(\vec{k})|\hat{A}|\psi_n(\vec{k})\rangle
+\end{eqnarray}
+are the matrix elements of the operator $\hat{A}$
+
+%============================================================================
+\subsubsection{Density of states}
+%============================================================================
+In order to understand how a material responds to external stimuli, it
+is often useful to split off the Fermi distribution
+\begin{eqnarray}
+\langle{A}\rangle=\int d\epsilon\; D^{(A)}(\epsilon)
+f_{\beta,\mu}(\epsilon)
+\end{eqnarray}
+wher
+\begin{eqnarray}
+D^{A}(\epsilon)=
+\sum_n\frac{1}{V_G}\int d^3k\; A_{n}(\vec{k})\delta(\epsilon-\epsilon_n(\vec{k}))
+\end{eqnarray}
+is the A-weighted density of states.
+
+%============================================================================
+\subsubsection{Local orbitals}
+%============================================================================
+Let us introduce local orbitals $|\chi_{\alpha,\vec{t}}\rangle$, which
+are characterized by an identifier $\alpha$, that is unique for each
+orbital in a unit cell, and a lattice translation vector, that
+identifies the relative lattice displacements.
+
+A wave function is decomposed into local orbitals using the projector
+functions $|\pi_{\alpha,\vec{t}}\rangle$, which obey the
+bi-orthogonality condition
+$\langle\pi_{\alpha,\vec{t}}|\chi_{\beta,\vec{t'}}\rangle=\delta_{\alpha,\beta}
+\delta_{\vec{t},\vec{t'}}$, as
+\begin{eqnarray}
+|\psi_n(\vec{k})\rangle
+&=&\sum_{\alpha}\sum_{\vec{t}}
+|\chi_{\alpha,\vec{t}}\rangle
+\langle\pi_{\alpha,\vec{t}}|\psi_n(\vec{k})\rangle
+\nonumber\\
+&=&\sum_{\alpha}\sum_{\vec{t}}
+|\chi_{\alpha,\vec{t}}\rangle
+\langle\pi_{\alpha,\vec{0}}|\psi_n(\vec{k})\rangle\e{i\vec{k}\vec{t}}
+\end{eqnarray}
+
+In a basis of local orbitals the matrix elements can be separated out
+\begin{eqnarray}
+A_{n}(\vec{k})=\langle\psi_n(\vec{k})|\pi_{\alpha,\vec{t}}\rangle
+\langle\chi_{\alpha,\vec{t}}|\hat{A}|\chi_{\beta,\vec{t'}}\rangle
+\langle\pi_{\beta,\vec{t'}}|\psi_n(\vec{k})\rangle
+\end{eqnarray}
+
+Now we can also abstract the density of states from the operator for
+which the matrix elements shall be evaluated.
+Thus we obtain the matrix element
+\begin{eqnarray}
+\langle{A}\rangle=
+\sum_{\alpha,\beta}\langle\chi_{\alpha,\vec{t}}|\hat{A}|\chi_{\beta,\vec{t'}}\rangle
+\left\lbrace\int d\epsilon\; D_{\beta,\vec{t'},\alpha,\vec{t}}(\epsilon)
+f_{\beta,\mu}(\epsilon)\right\rbrace
+\end{eqnarray}
+where
+\begin{eqnarray}
+D_{\alpha,\vec{t},\beta,\vec{t'}}(\epsilon)
+&=&
+\sum_n\frac{1}{V_G}\int d^3k\; 
+\langle\pi_{\alpha,\vec{t}}|\psi_n(\vec{k})\rangle
+\;\delta(\epsilon-\epsilon_n(\vec{k}))\;
+\langle\psi_n(\vec{k})|\pi_{\beta,\vec{t'}}\rangle
+\nonumber\\
+&=&
+\sum_n\frac{1}{V_G}\int d^3k\; 
+\langle\pi_{\alpha,\vec{0}}|\psi_n(\vec{k})\rangle
+\;\delta(\epsilon-\epsilon_n(\vec{k}))\;
+\langle\psi_n(\vec{k})|\pi_{\beta,\vec{0}}\rangle\e{i\vec{k}(\vec{t'}-\vec{t})}
+\end{eqnarray}
+is the density-of-states matrix.
+
+%============================================================================
+\subsubsection{General orbitals}
+%============================================================================
+Sometimes, it is convenient to use complex orbitals
+\begin{eqnarray}
+|\Phi\rangle=\sum_{\alpha,\vec{t}}|\chi_{\alpha,\vec{t}}\rangle C_{\alpha,\vec{t}}
+\end{eqnarray}
+Then we can calculate the corresponding density of states
+as
+\begin{eqnarray}
+D_{\Phi,\Psi}(\epsilon)
+&=&\sum_{\alpha,\vec{t},\beta,\vec{t'}}
+\Bigl(C^\Phi_{\alpha,\vec{t}}\Bigr)^*
+D_{\alpha,\vec{t},\beta,\vec{t'}}(\epsilon)
+C^\Psi_{\beta,\vec{t'}}
+\nonumber\\
+&=&
+\sum_n\frac{1}{V_G}\int d^3k\; 
+\biggl[\sum_\alpha \Bigl(C^\Phi_{\alpha,\vec{t}}\Bigr)^*
+\langle\pi_{\alpha,\vec{0}}|\psi_n(\vec{k})\rangle
+\e{-i\vec{k}\vec{t}}
+\biggr]
+\;\delta(\epsilon-\epsilon_n(\vec{k}))\;
+\biggl[\sum_\alpha 
+\Bigl(C^\Psi_{\beta,\vec{t'}}\Bigr)^*
+\langle\pi_{\beta,\vec{0}}|\psi_n(\vec{k})\rangle
+\e{-i\vec{k}\vec{t'}}
+\biggr]^*
+\nonumber\\
+\end{eqnarray}
+Therefore a general orbital is a characterized sequence of indices $\alpha$,
+lattice translation vectors $\vec{t}$, and coefficients $C_{\alpha,\vec{t}}$.
+
+The factors
+\begin{eqnarray}
+\mathcal{K}^\Phi_{n}(\vec{k})=\sum_\alpha \Bigl(C^\Phi_{\alpha,\vec{t}}\Bigr)^*
+\langle\pi_{\alpha,\vec{0}}|\psi_n(\vec{k})\rangle
+\e{-i\vec{k}\vec{t}}
+\end{eqnarray}
+can be evaluated so that
+\begin{eqnarray}
+D_{\Phi,\Psi}(\epsilon)
+&=&
+\sum_n\frac{1}{V_G}\int d^3k\; 
+\Bigl(\mathcal{K}^\Phi_{n}(\vec{k})\Bigr)
+\;\delta(\epsilon-\epsilon_n(\vec{k}))\;
+\Bigl(\mathcal{K}^\Psi_{n}(\vec{k})\Bigr)^*
+\nonumber\\
+\end{eqnarray}
+
+
+
+
+%============================================================================
+\subsubsection{Matrix elements}
+%============================================================================
+
+
+
+
+%====================================================================
+\chapter{Routines}
+%====================================================================
+\cite{bloechl94_prb50_17953}
+
+%====================================================================
+\section{FLOW}
+%====================================================================
+\begin{itemize}
+\item \verb|readcntl|: Collect data names from !dcntl!files!file. Attach
+  files.
+%
+\item read pdos file:
+%
+\item \verb|readcntl$orbitals|: Build up a set or named orbitals, that
+  may used to define weights or Coops. The data entry is
+  !dcntl!orbital. The orbitals are stored as coefficient vectors in the
+  orbitals\_module. Each orbital is normalized.
+%
+\item \verb|readcntl$sets|: construct matrix elements for all band
+  states. Matrix elements are either crystal orbital overlap
+  populations COOPS or WEIGHTS.
+\begin{verbatim}
+!dcntl
+  !coop
+     !orb1 ... !end
+     !orb2 ... !end
+  !end
+  !weight type= spin= !end
+  !weight 
+    !orb ... !end
+  !end
+!end
+\end{verbatim}
+Type can be 'all', 'total', 'empty'
+
+Coops and weights are both matrix elements of the
+  type 
+\begin{eqnarray}
+A^{(\vec{a},\vec{b})}_{n}(\vec{k})
+=\sum_{\alpha,\beta}
+a^*_{\alpha}
+\langle\pi_\alpha|\psi_n(\vec{k})\rangle
+\langle\psi_n(\vec{k})|\pi_\beta\rangle
+b_{\beta}
+\end{eqnarray}
+For weights the vectors $\vec{a},\vec{b}$ are identical, while for
+COOP's they are different.
+
+\textbf{Is the Bloch phase factor properly accounted for?}
+
+\textbf{ are the projections scaled by the volume integral?}
+
+An array \verb|SET(NB,NKPT,nspin,ISET)| is produced, which contains
+the matrix elements for all states.
+
+
+\item readcntl\$grid
+\item readcntl\$output
+\end{itemize}
+
+%====================================================================
+\section{Basic entities}
+%====================================================================
+The most basic data structure is that of an orbital. An orbital is a
+set of orbital indices, translation vectors and complex coefficients
+$C_{\alpha,\vec{t}}$.
+
+The data structure on the next level is what we call a set. A set is a
+collection of pairs of orbitals. The set defines the weight of a
+projected density of states or the weight for a fat band structure.
+
+The sets are then converted into matrix elements $A_{n}(\vec{k})$,
+which will be passed on to define projected density of states or fat
+bands.
+
+
+%====================================================================
+\section{READCNTL}
+%====================================================================
+
+%====================================================================
+\section{Orbitals(new)}
+%====================================================================
+\begin{verbatim}
+module orbitals_module
+type orbitalcoefficient_type
+  integer(4) :: ipro
+  integer(4) :: it(3)
+  complex(8) :: c
+end type orbitalcoefficient_type
+type orbital_type
+  character(32) :: name
+  integer(4)    :: nchi
+  integer(4)    :: nchix
+  type(orbitalcoefficient_type), pointer :: chi(:)
+end type orbital_type
+integer(4)                :: norbi=0      ! #(orbitals)
+integer(4)                :: norbix=0     ! max#(orbitals)
+integer(4)    ,parameter  :: norbistep=10 ! step in #(orbitals)
+integer(4)    ,parameter  :: nchistep=10 ! step in #(coefficients)
+type(orbital_type),allocatable :: orbi(:)      ! orbital list
+integer(4)                :: selectedorbital=0
+end module orbitals_module
+\end{verbatim}
+
+
+The orbitals object has the following functions:
+\begin{verbatim}
+subroutine orbitals$neworbital(name)
+subroutine orbitals$selectorbital(name)
+subroutine orbitals$iselectorbital(iorb)
+subroutine orbitals$setchi(ipro,it,c)
+subroutine orbitals$getnchi(nchi)
+subroutine orbitals$getchi(ichi,ipro,it,c)
+subroutine orbitals$addorbital(name,it,c)
+subroutine orbitals$normalize()
+\end{verbatim}
+The data structures are dynamical, so that one need not worry obout
+the size of arrays. An orbital is a set of coefficients $C$ alongside
+with an orbital index in the basi unit cell and a lattice translation
+vector in relative coordinates. (Thus, the lattice translation vector
+is a triple of integer numbers.)
+
+A general orbital must be created by calling
+\verb|ORBITALS$NEWORBITAL(NAME)|. The orbital can later be identified
+by its name. The name 'none' is reserved and unselects all orbitals.
+
+before one can do something to an orbital one has to select it either
+by name or by number. This can be done using
+either \verb|ORBITALS$SELECTORBITAL(NAME)| or
+\verb|ORBITALS$ISELECTORBITAL(IORB)|.
+
+Using the functions \verb|setchi| and \verb|getchi| contributions of
+local orbitals can be added or retrieved.
+
+
+
+%====================================================================
+\section{Orbitals}
+%====================================================================
+The internal orbitals object maintains a list of orbitals. Each
+orbital is characterized by an id and it is described by a coefficient
+vector.
+
+The object contains the following entities:
+\begin{verbatim}
+MODULE ORBITALS_MODULE
+SUBROUTINE ORBITALS$SETORB(NAME_,LENG_,ORBITAL_)
+SUBROUTINE ORBITALS$GETORB(NAME_,LENG_,ORBITAL_)
+SUBROUTINE READONEORB(LL_CNTL,NAT,LMX,rbas,RPOS,NPRO,ORBITAL)
+   SUBROUTINE RESOLVEATOM(ATOMEX,IAT,IT)
+      SUBROUTINE RESOLVEEXTENDEDNAME(XNAME,NAME,IT)
+   SUBROUTINE RESOLVEROTATION(DZ_,DX_,ROT)
+   SUBROUTINE MAKEORBITAL(ATOM,LMXX,ORB,NPRO_,ORBITAL)
+SUBROUTINE NORMALIZEORBITAL(NPRO_,ORBITAL)
+\end{verbatim}
+
+
+%====================================================================
+\section{READONEORB}
+%====================================================================
+Readoneorb can read an orbital from the control file and returns a
+coefficient vector. It can either simply pick a predefined orbital
+from the list
+\begin{verbatim}
+    name= fac= 
+\end{verbatim}
+or it provide a new orbital with a new name
+\begin{verbatim}
+    name=  atom=  type= z= nnz= x= nnx= fac=
+\end{verbatim}
+\begin{itemize}
+\item \verb|ATOM| uses the extended notation
+\item The \verb|type|-identifier is case insensitive
+\item z as vector or the atom nnz define the local z-axis: The
+  local z axis points towards the atom specified by nnz.
+\item x as vector or nnz defines the local x-axis: The local x axis is
+  perpendicular to the local z axis, and it lies in the plane of the
+  local z-axis and the specified x-vector. Note that the sign of the
+  x-vector defines the orientation of the y-vector.
+\item the allowed values for type are 's', 'px', 'py', 'pz', 'sp1',
+  'sp2', 'sp3', 'dx2-y2', 'dxz', 'dyz', 'dxy', 'd3z2-r2'. The orbitals
+  'sp1', 'sp2', 'sp3' all point towards the z-direction. The orbital
+  is oriented according to the local coordinate
+  system. \textbf{currently it is not possible to specify f-orbitals}
+\item fac is a prefactor.
+\end{itemize}
+
+The input produces a local orbital vector, which is specific for a
+given atom. In the routine makeorbital, this vector is placed into an
+orbital vector for the entire system.
+
+
+
+\appendix
+%=================================================================
+\section{}
+%================================================================
+
+\bibliographystyle{unsrtnat}
+\bibliography{../all}
+\end{document}  
