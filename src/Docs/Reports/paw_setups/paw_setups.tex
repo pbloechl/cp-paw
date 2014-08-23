@@ -79,16 +79,18 @@ Let us consider a spherical one-particle Hamiltonian $\hat{h}$. We
 construct energy-dependent partial waves by radially integrating the
 radial Schr\"odinger equation 
 \begin{eqnarray}
-(\hat{h}-\epsilon)|\phi(\epsilon)\rangle=0
+(\hat{h}-\epsilon)|\phi_{ref}(\epsilon)\rangle=0
 \end{eqnarray}
 outward with the boundary
 conditions 
 \begin{eqnarray}
-\lim_{|\vec{r}|\rightarrow0}\frac{\phi(\epsilon,\vec{r})}
+\lim_{|\vec{r}|\rightarrow0}\frac{\phi_{ref}(\epsilon,\vec{r})}
 {|\vec{r}|^\ell Y_{\ell,m}(\vec{r})}=1
 \end{eqnarray}
 at the origin. That is, the radial parts of all partial wave behave at
-the origin like $r^\ell$.
+the origin like $r^\ell$. We use the subscript $ref$ to distinguish it
+from the partial waves introduced later, which differ by an
+energy-dependent scale factor.
 
 The only difference to the common construction is that we do not
 normalize the partial waves within a sphere, but by the boundary
@@ -112,16 +114,15 @@ the Hamiltonian. The other wave functions are obtained by radially
 integrating the Schr\"odinger equation outward, starting with
 vanishing value and derivative, so that
 \begin{eqnarray}
-\lim_{\vec{r}\rightarrow0}|\frac{\langle\vec{r}|u_n\rangle}{|\vec{r}|^{\ell+1}}=0
+\lim_{\vec{r}\rightarrow0}\frac{\langle\vec{r}|u_n\rangle}{|\vec{r}|^{\ell+1}}=0
 \qquad\text{for $n>1$}
 \end{eqnarray}
 
 
-The node-less wave functions do not
-have any nodes, but look like Slater orbitals, in the sense that they
-grow at the origin as a power and that they decay exponentially at
-large distance. Their behavior at the origin
-is\cite{bloechl12_arxiv1210_5937}
+The node-less wave functions $|u_n\rangle$ do not have any nodes, but
+look like Slater orbitals, in the sense that they grow at the origin
+as a power and that they decay exponentially at large distance. Their
+behavior at the origin is\cite{bloechl12_arxiv1210_5937}
 \begin{eqnarray}
 u_{n}(\vec{r})
 =\left(\frac{2m_e}{\hbar^2}\right)^{n-1}
@@ -135,45 +136,65 @@ the n lowest true wave functions. The all-electron wave functions can
 be recovered from the node-less wave functions
 via\cite{bloechl12_arxiv1210_5937}
 \begin{eqnarray}
-|\phi_n\rangle=\sum_{m=1}^n|u_m\rangle \prod_{j=1}^{m-1}(\epsilon_j-\epsilon_n)
+|\phi_{ref,n}\rangle=\sum_{m=1}^n|u_m\rangle \prod_{j=1}^{m-1}(\epsilon_j-\epsilon_n)
 =\biggl[\sum_{m=1}^n|u_m\rangle 
 \prod_{j=m}^{n-1}\frac{1}{(\epsilon_j-\epsilon_n)}
-\biggr]\prod_{k=1}^{n-1}(\epsilon_j-\epsilon_n)
+\biggr]\prod_{k=1}^{n-1}(\epsilon_k-\epsilon_n)
 \end{eqnarray}
 
 %====================================================================
 \subsubsection{Node-reduced partial waves}
 %====================================================================
 Secondly, we define \cite{bloechl12_arxiv1210_5937} a sequence of
-energy-dependent \textbf{node-reduced partial wave}
-\index{node-reduced partial wave} through
+energy-dependent \textbf{node-reduced partial waves}
+\index{node-reduced partial wave} $|q_n(\epsilon)\rangle$ through
 \begin{eqnarray}
 (\hat{h}-\epsilon)|q_n(\epsilon)\rangle=-|u_{n-1}\rangle
+\label{eq:defnodereducedpartialwave}
 \end{eqnarray}
 with the boundary conditions
 \begin{eqnarray}
-\lim_{\vec{r}\rightarrow0}|
+\lim_{\vec{r}\rightarrow0}
 \frac{\langle\vec{r}|q_n(\epsilon)\rangle}
 {\langle\vec{r}|u_n\rangle}=1
 \qquad\text{for $n>1$}
 \end{eqnarray}
 
-The node-reduced wave functions have $n-1$ nodes less than the true
+The node-reduced wave functions have (typically\footnote{As shown in
+  \cite{bloechl12_arxiv1210_5937}, the nodal theorem fails at high
+  energies, so that the statement is correct for practical purposes,
+  but incorrect in a strict sense.}) $n-1$ nodes less than the true
 wave function. Near the origin, they are very similar to $|u_n\rangle$
 over nearly the entire energy range.
 
-
-The all-electron partial wave can be constructed from the node-reduced
-partial wave and the lower node-less bound states
+The all-electron partial wave $|\phi(\epsilon)\rangle$ can be
+constructed from the node-reduced partial wave $|q_n(\epsilon)\rangle$
+and the lower node-less bound states $|u_m\rangle$
 as\cite{bloechl12_arxiv1210_5937}
 \begin{eqnarray}
-|\phi(\epsilon)\rangle=\biggl[|q_n(\epsilon)\rangle
+|\phi_{ref}(\epsilon)\rangle=\biggl[|q_n(\epsilon)\rangle
 +\sum_{m=1}^{n-1}|u_m\rangle\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}
 \biggr]
-\prod_{k=1}^{n-1}(\epsilon_j-\epsilon)
-\label{eq:aephifromnodereduced}
+\prod_{k=1}^{n-1}(\epsilon_k-\epsilon)
+\label{eq:aephireffromnodereduced}
 \end{eqnarray}
 
+In practice we focus on the particular node-reduced wave functions,
+for which the nodes of all core states are eliminated, that is for
+which $n=n_c+1$ is the quantum number of the lowest valence (non-core)
+state.
+
+In order to avoid the scale factor
+$\prod_{k=1}^{n-1}(\epsilon_k-\epsilon)$, we introduce a new
+all-electron partial wave $|\phi_n(\epsilon)\rangle$
+\begin{eqnarray}
+|\phi_n(\epsilon)\rangle&\defas&
+|\phi_{ref}(\epsilon)\rangle\frac{1}{\prod_{k=1}^{n-1}(\epsilon_k-\epsilon)}
+\nonumber\\
+&=&|q_n(\epsilon)\rangle
++\sum_{m=1}^{n-1}|u_m\rangle\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}
+\label{eq:aephifromnodereduced}
+\end{eqnarray}
 
 %====================================================================
 \subsubsection{Series expansion of the node-reduced partial wave}
@@ -188,8 +209,12 @@ nodeless functions for given set of energies $\{\epsilon_{n+j}; j\ge1\}$ via
 (\hat{h}-\epsilon)|\bar{q}_{n}^{(0)}(\epsilon)\rangle&=&-|u_{n-1}\rangle 
 \label{eq:qbardiffgl0}
 \end{eqnarray}
-These equations have great similarity with those of the nodeless
-equations \eq{eq:nodelesseq}.
+where
+$|\bar{q}_{n}^{(0)}(\epsilon)\rangle=|\bar{q}_{n}(\epsilon)\rangle$
+defined in \eq{eq:defnodereducedpartialwave}. \eq{eq:qbardiffgl0} and
+\eq{eq:qbardiffgl} have great similarity with those of
+the nodeless equations \eq{eq:nodelesseq}.
+
 
 The sequence defined by \eq{eq:qbardiffgl} and \eq{eq:qbardiffgl0} can
 be constructed by the recursive equation
@@ -205,17 +230,6 @@ be constructed by the recursive equation
 \label{eq:recursionqbar}
 \end{eqnarray}
 
-In the special case that all energies $\epsilon_{n+k}$ are chosen to
-be identical, this series expansion produces the Taylor expansion
-coefficients
-\begin{eqnarray}
-|q_n^{(j)}(\epsilon)\rangle=
-\frac{(-1)^j}{j!}\partial_\epsilon^j|q_n(\epsilon)\rangle
-\label{eq:taylorexpansioncoefficientsqn}
-\end{eqnarray}
-
-
-
 \eq{eq:recursionqbar} is shown recursively: We assume that
 \eq{eq:qbardiffgl} holds for $j$ and show that  \eq{eq:recursionqbar}
 obeys \eq{eq:qbardiffgl} for $j+1$.
@@ -229,10 +243,10 @@ obeys \eq{eq:qbardiffgl} for $j+1$.
 \Bigr)
 \nonumber\\
 &\eqrel{eq:qbardiffgl}{=}&
-\frac{-1}{\epsilon-\epsilon_n}
+\frac{-1}{\epsilon-\epsilon_{n+j}}
 \Bigl(
--|\bar{q}_n^{(j-1)}(\epsilon_{n+j-1})\rangle
-+|\bar{q}_n^{(j-1)}(\epsilon_{n+j-1})\rangle
+\underbrace{-|\bar{q}_n^{(j-1)}(\epsilon_{n+j-1})\rangle
++|\bar{q}_n^{(j-1)}(\epsilon_{n+j-1})\rangle}_{=0}
 +(\epsilon-\epsilon_{n+j})|\bar{q}_n^{(j)}(\epsilon_{n+j})\rangle
 \Bigr)
 \nonumber\\
@@ -244,41 +258,55 @@ completes the proof that $|q_{n}^{(j)}(\epsilon)\rangle$ defined in
 \eq{eq:qbardiffgl} obeys the recursion \eq{eq:recursionqbar}.
 
 
-
-From this series we can again recover the node-reduced partial wave as
+From the series defined by \eq{eq:qbardiffgl} and
+\eq{eq:qbardiffgl0}, we can again recover the node-reduced partial
+wave as
 \begin{eqnarray}
 |q_n(\epsilon)\rangle&=&|\bar{q}_n^{(0)}(\epsilon)\rangle
 \nonumber\\
-&=&|\bar{q}_n^{(0)}(\epsilon_n)\rangle
-+|\bar{q}_{n}^{(1)}(\epsilon)\rangle(\epsilon_n-\epsilon_)
+&\eqrel{eq:recursionqbar}{=}&|\bar{q}_n^{(0)}(\epsilon_n)\rangle
++|\bar{q}_{n}^{(1)}(\epsilon)\rangle(\epsilon_n-\epsilon)
 \nonumber\\
-&=&|\bar{q}_n^{(0)}(\epsilon_n)\rangle
+&\eqrel{eq:recursionqbar}{=}&|\bar{q}_n^{(0)}(\epsilon_n)\rangle
 +|\bar{q}_{n}^{(1)}(\epsilon_{n+1})\rangle(\epsilon_n-\epsilon)
 +|\bar{q}_{n}^{(2)}(\epsilon)\rangle
 (\epsilon_{n+1}-\epsilon)(\epsilon_{n}-\epsilon)
 \nonumber\\
-&=&\sum_{k=0}^{j-1}
+&=&\biggl(\sum_{k=0}^{j-1}
 |\bar{q}_{n}^{(k)}(\epsilon_{n+k})\rangle
-\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon)
+\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon)\biggr)
 +|\bar{q}_n^{(j)}(\epsilon)\rangle
 \prod_{m=0}^{j-1}(\epsilon_{n+m}-\epsilon)
+\label{eq:qnfromqj}
 \end{eqnarray}
-
 In this derivation, no assumptions have been made regarding the
-energies $\epsilon_{n+j}$. Using all energies equal, results in the
-Taylor expanstion given above. Using bound state energies in sequence
-results in a nodeless construction.
+energies $\epsilon_{n+j}$. The value of $j$ is arbitrary.
+
+
+In the special case that all energies $\epsilon_{n+k}$ are chosen to
+be identical, the series expansion \eq{eq:recursionqbar} produces the
+Taylor-expansion coefficients
+\begin{eqnarray}
+|\bar{q}_n^{(j)}(\epsilon)\rangle=
+\frac{(-1)^j}{j!}\partial_\epsilon^j|q_n(\epsilon)\rangle
+\label{eq:taylorexpansioncoefficientsqn}
+\end{eqnarray}
+Using all energies equal, \eq{eq:qnfromqj} results in the Taylor
+series with coefficients from \eq{eq:taylorexpansioncoefficientsqn}.
+
+Using instead bound-state energies in sequence, \eq{eq:qbardiffgl} and
+\eq{eq:qbardiffgl0} results in a nodeless construction.
 
 This flexibility can be exploited to set up an expansion with bound
 states and with scattering states. This is important if we wish to
 describe semi-core states, valence states and scattering states on the
 same footing.
 
-From \eq{eq:aephifromnodereduced}, we obtain the expression for the
-full energy-dependent wave function.
+From \eq{eq:aephifromnodereduced} and \eq{eq:qnfromqj}, we obtain the
+expression for the full energy-dependent wave function, which holds
+for arbitrary values of $j$.
 \begin{eqnarray}
-|\phi(\epsilon)\rangle
-\frac{1}{\prod_{k=1}^{n-1}(\epsilon_j-\epsilon)}
+|\phi_n(\epsilon)\rangle
 &=&
 \underbrace{
 |\bar{q}_n^{(j)}(\epsilon)\rangle
@@ -293,6 +321,7 @@ full energy-dependent wave function.
 \underbrace{
 \left(\sum_{m=1}^{n-1}|u_m\rangle\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}\right)
 }_{\text{core contribution}}
+\label{eq:phincompletediscreteandcont}
 \end{eqnarray}
 
 Interesting is that the energy-dependent function
@@ -309,34 +338,73 @@ energies $\epsilon_{n+m}$ with $m<j$.
 \subsubsection{Pseudization}
 %====================================================================
 
-The node-reduced wave function have a similar shape over the entire
-energy region. This suggests to change them by the same,
-energy-independent function $|k\rangle$, because this is likely not to
-introduce extra nodes and to produce wave functions that are equally
-suited for a plane wave expansion.
+The node-reduced wave function $|q_n(\epsilon)\rangle$ have a similar
+shape in the central region over the entire energy region. This
+suggests to change them by the same, energy-independent function
+$|k\rangle$, because this is likely not to introduce extra nodes and
+to produce wave functions that are equally suited for a plane wave
+expansion.
 
 Thus we obtain a definition of our pseudo partial waves over the
 entire energy region
 \begin{eqnarray}
-|\tilde{\phi}(\epsilon)\rangle
-\frac{1}{\prod_{k=1}^{n-1}(\epsilon_j-\epsilon)}
+|\tilde{\phi}_n(\epsilon)\rangle
 =|q_n(\epsilon)\rangle+|k\rangle
+\label{eq:defphitildenofe}
 \end{eqnarray}
 Having a well behaved representation of the pseudo partial waves, we
 can be quite sure that we do not add ghost states. If each partial
 wave is pseudized individually, one easily obtains a polynomial
-representation of the energy dependent partial wave that contains
+representation of the energy-dependent partial wave that contains
 divergences.  The construction of $|k\rangle$ is described in
 section~\ref{sec:determinedeltepseudo}.
 
 %====================================================================
 \subsubsection{Truncation of the series expansion}
 %====================================================================
-In order to obtain individual partial waves, we truncate the expansion
-for the energy dependent partial wave to $N_j$ terms
+Now we introduce a parameter $N_j$ which replaces the arbitrary $j$
+in \eq{eq:phincompletediscreteandcont}
 \begin{eqnarray}
-|\phi(\epsilon)\rangle
-\frac{1}{\prod_{k=1}^{n-1}(\epsilon_j-\epsilon)}
+|\phi_n(\epsilon)\rangle
+&\eqrel{eq:phincompletediscreteandcont}{=}&
+\underbrace{
+|\bar{q}_n^{(N_j)}(\epsilon)\rangle
+\left(\prod_{m=0}^{N_j-1}(\epsilon_{n+m}-\epsilon)\right)
++
+\sum_{k=0}^{N_j-1}
+|\bar{q}_{n}^{(k)}(\epsilon_{n+k})\rangle
+\left(\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon)\right)
+}_{|q_n(\epsilon)\rangle}
+\nonumber\\
+&+&
+\underbrace{
+\left(\sum_{m=1}^{n-1}|u_m\rangle\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}\right)
+}_{\text{core contribution}}
+\label{eq:phinofeexact}
+\\
+|\tilde{\phi}_n(\epsilon)\rangle
+&\eqrel{eq:phincompletediscreteandcont}{=}&
+\underbrace{
+|\bar{q}_n^{(N_j)}(\epsilon)\rangle
+\left(\prod_{m=0}^{N_j-1}(\epsilon_{n+m}-\epsilon)\right)
++
+\sum_{k=0}^{N_j-1}
+|\bar{q}_{n}^{(k)}(\epsilon_{n+k})\rangle
+\left(\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon)\right)
+}_{|q_n(\epsilon)\rangle}
+\nonumber\\
+&&+|k\rangle
+\label{eq:phitildenofeexact}
+\end{eqnarray}
+
+The contribution of the energy-dependent partial wave
+$|\bar{q}_n^{(N_j)}(\epsilon)\rangle$ is the same in both expressions.
+This suggests introduce an approximation which ignores this
+contribution: we truncate the expansion for the energy-dependent
+partial wave to $N_j$ terms. $n$ is the band index of the lowest
+valence (non-core) state.
+\begin{eqnarray}
+|\phi_n(\epsilon)\rangle
 &\approx&
 \sum_{k=0}^{N_j-1}
 |\bar{q}_{n}^{(k)}(\epsilon_{n+k})\rangle
@@ -346,7 +414,7 @@ for the energy dependent partial wave to $N_j$ terms
 \sum_{m=1}^{n-1}|u_m\rangle\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}
 }_{\text{core contribution}}
 \nonumber\\
-|\tilde{\phi}(\epsilon)\rangle\frac{1}{\prod_{k=1}^{n-1}(\epsilon_j-\epsilon)}
+|\tilde{\phi}_n(\epsilon)\rangle
 &\approx&
 \sum_{k=0}^{N_j-1}
 |\bar{q}_{n}^{(k)}(\epsilon_{n+k})\rangle
@@ -354,20 +422,46 @@ for the energy dependent partial wave to $N_j$ terms
 +|k\rangle
 \label{eq:truncatedpspartialwithk}
 \end{eqnarray}
-This representation of the energy dependent partial wave is exact for
-the energies $\epsilon_{n+j}$ for $0\le j\le N_j-1$.
+This representation of the energy-dependent partial wave is exact for
+the energies $\epsilon_{n+j}$ for $0\le j\le N_j-1$. The difference
+between both expressions is exact over the entire energy range.
 
 A basis set describing the pseudo partial waves is
 \begin{eqnarray}
-|\tilde{\phi}^{(0)}\rangle&=&|q_n(\epsilon_n)\rangle+|k\rangle
+|\tilde{\phi}_n^{(0)}(\epsilon_n)\rangle&=&|\bar{q}_n^{(0)}(\epsilon_n)\rangle+|k\rangle
 \nonumber\\
-|\tilde{\phi}^{(j)}\rangle&=&|\bar{q}_n^{(j)}(\epsilon_{n+j})\rangle
+|\tilde{\phi}_n^{(j)}(\epsilon_{n+j})\rangle
+&=&|\bar{q}_n^{(j)}(\epsilon_{n+j})\rangle
 \qquad\text{for $1\le j\le N_j-1$}
 \label{eq:tildephijfromqbar}
 \end{eqnarray}
+(Remember that
+$|q_n(\epsilon_n)\rangle=|\bar{q}^{0}_n(\epsilon_n)\rangle$.)
 Note, that only the first pseudo partial wave differs from its
 node-reduced partial wave. This is because the difference $|k\rangle$
 has been chosen energy independent.
+
+The construction of the all-electron wave functions
+$|\phi_n^{(j)}(n+j)\rangle$ is non-trivial: We first consider the
+nodeless equation without distinguishing between valence and core
+states. We use these factors to subtract the core states. For the
+contribution of the valence states, we only subtract the
+core-conrtibution, namely
+$|\phi_n^{(m)}\rangle-|q_n^{(m)}\rangle$. The resulting equation can
+be implemented recursively.
+\begin{eqnarray}
+|\phi_n^{(j)}(\epsilon_{n+j})\rangle&=&
+|q_n^{(j)}(\epsilon_{n+j})\rangle
++\sum_{m=1}^{n-1}|u_m\rangle\prod_{k=m}^{n+j-1}\frac{1}{\epsilon_k-\epsilon_{n+j}}
+\nonumber\\
+&&
++\sum_{m=0}^{j-1}\Bigl(|\phi_n^{(m)}(\epsilon_{n+m})\rangle-|q_n^{(m)}(\epsilon_{n+m})\rangle\Bigr)
+\prod_{k=m}^{n+j-1}\frac{1}{\epsilon_{n+k}-\epsilon_{n+j}}
+\end{eqnarray}
+This equation ensures that the partial waves
+$|\phi_n^{(j)}(\epsilon_{n+j})\rangle$ are orthogonal to the core
+states.
+
 
 %====================================================================
 \subsubsection{Core orthogonalization}
@@ -389,17 +483,18 @@ The projector functions must obey the biorthogonality condition and
 the bare projector functions must fulfill the closure relation
 \begin{eqnarray}
 |\bar{p}^{(j)}\rangle=(\tilde{h}-\epsilon_{n+j})
-|\tilde{\phi}(\epsilon_{n+j})\rangle \qquad\text{for $j=0,\ldots,j_x$}
+|\tilde{\phi}_n(\epsilon_{n+j})\rangle \qquad\text{for $j=0,\ldots,N_j$}
 \end{eqnarray}
 which implies that the scattering properties shall be exactly obeyed at
 the chosen energies $\epsilon_{n+j}$.
 
 The pseudo partial waves at the energies are
 \begin{eqnarray}
-|\tilde{\phi}(\epsilon_{n+p})\rangle
+|\tilde{\phi}_n(\epsilon_{n+p})\rangle
 &\eqrel{eq:truncatedpspartialwithk}{=}&
 \sum_{k=0}^{N_j-1}|\bar{q}_n^{(k)}(\epsilon_{n+k})\rangle
-\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon_{n+p})+|k\rangle
+\underbrace{\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon_{n+p})}
+_{\text{$=0$ for $k\ge p+1$}}+|k\rangle
 \nonumber\\
 &=&\sum_{k=0}^{p}|\bar{q}_n^{(k)}(\epsilon_{n+k})\rangle
 \prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon_{n+p})+|k\rangle
@@ -409,12 +504,14 @@ The pseudo partial waves at the energies are
 \label{eq:tildepsienplusp}
 \end{eqnarray}
 (the terms that drop out in the second line vanish because of the
-energy factor contains a zero term.)
+energy factor contains a zero term.) Interestingly, this equation not
+only holds for the truncated expansion of the partial wave, but also
+for the full one given in \eq{eq:phitildenofeexact}.
 
-The expression {eq:tildepsienplusp} holds strictly, as long as there
-are no degernate valued in the sequence $\epsilon_{n+p}$. If two or
+The expression \eq{eq:tildepsienplusp} holds strictly, as long as there
+are no degenerate values in the sequence $\epsilon_{n+p}$. If two or
 more $\epsilon_{n+p}$ are identical, there is only a single
-independent partial wave for this set of energies. As a result the
+independent partial wave for this set of energies. As a result, the
 space of bare projector functions derived from these partial waves is
 too small. For each degenerate set of partial waves we need to
 introduce first and higher derivatives of the partial waves.
@@ -422,20 +519,35 @@ introduce first and higher derivatives of the partial waves.
 The bare projector functions are obtained as follows
 \begin{eqnarray}
 (\hat{\tilde{h}}-\epsilon_{n+p})
-|\tilde{\phi}(\epsilon_{n+p})\rangle
-&=&\sum_{k=0}^{p}
+|\tilde{\phi}_n(\epsilon_{n+p})\rangle
+&\eqrel{eq:tildepsienplusp}{=}&
+\sum_{k=0}^{p}
 (\hat{\tilde{h}}-\epsilon_{n+p})
-|\tilde{\phi}^{(k)}\rangle
+|\tilde{\phi}_n^{(k)}(\epsilon_{n+k})\rangle
 \prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon_{n+p})
 \nonumber\\
-&=&
-(\hat{\tilde{h}}-\epsilon_{n})|\tilde{\phi}^{(0)}\rangle
-+|\tilde{\phi}^{(0)}\rangle(\epsilon_n-\epsilon_{n+p})
+&\eqrel{eq:tildephijfromqbar}{=}&
+(\hat{\tilde{h}}-\epsilon_{n})|\tilde{\phi}_n^{(0)}(\epsilon_{n})\rangle
++|\tilde{\phi}^{(0)}_n(\epsilon_{n})\rangle(\epsilon_n-\epsilon_{n+p})
+\nonumber\\
+&&+
+\sum_{k=1}^{p}
+\Bigl(\hat{h}-\epsilon_{n+k}+\hat{\tilde{h}}-\hat{h}\Bigr)
+|\bar{q}_n^{(k)}(\epsilon_{n+k})\rangle
+\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon_{n+p})
+\nonumber\\
+&&+
+\sum_{k=1}^{p}
+|\bar{q}_n^{(k)}(\epsilon_{n+k})\rangle(\epsilon_{n+k}-\epsilon_{n+p})
+\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon_{n+p})
+\nonumber\\
+&\eqrel{eq:qbardiffgl}{=}&
+(\hat{\tilde{h}}-\epsilon_{n})|\tilde{\phi}_n^{(0)}(\epsilon_{n})\rangle
++|\tilde{\phi}^{(0)}_n(\epsilon_{n})\rangle(\epsilon_n-\epsilon_{n+p})
 \nonumber\\
 &-&
 \underbrace{\sum_{k=1}^{p}
-\overbrace{|q_n^{(k-1)}(\epsilon_{n+k-1})\rangle
-}^{-(\hat{h}-\epsilon_{n+k})|q_n^{(k)}\rangle}
+|q_n^{(k-1)}(\epsilon_{n+k-1})\rangle
 \prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon_{n+p})}
 _{
 \sum_{k=0}^{p-1}
@@ -476,17 +588,32 @@ _{
 &=&
 (\hat{\tilde{h}}-\epsilon_{n})|\tilde{\phi}^{(0)}\rangle
 +
-(\epsilon_n-\epsilon_{n+p})
 \biggl(
 |\tilde{\phi}^{(0)}\rangle-|q_n^{(0)}(\epsilon_{n})\rangle
 +(\hat{\tilde{h}}-\hat{h})
-|q_n^{(1)}(\epsilon_{n+1})\rangle
+|q_n^{(1)}(\epsilon_{n+1})\rangle\biggr)(\epsilon_n-\epsilon_{n+p})
 \nonumber\\
 &+&\sum_{k=2}^{p}
 (\hat{\tilde{h}}-\hat{h})
 |q_n^{(k)}(\epsilon_{n+k})\rangle
-\prod_{m=1}^{k-1}(\epsilon_{n+m}-\epsilon_{n+p})\biggr)
+\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon_{n+p})
+\nonumber\\
+&=&\sum_{j=0}^{p}|\bar{p}^{(j)}\rangle
+\prod_{k=0}^{j-1}(\epsilon_{n+k}-\epsilon_{n+p})
 \end{eqnarray}
+Thus
+\begin{eqnarray}
+\Bigl(\hat{\tilde{h}}-\epsilon_{n+p}\Bigr)
+\underbrace{\sum_{j=0}^{p}|\tilde{\phi}^{(j)}(\epsilon_{n+k})\rangle
+\prod_{k=0}^{j-1}(\epsilon_{n+k}-\epsilon_{n+p})}
+_{|\tilde{\phi}_n(\epsilon_{n+p})\rangle}
+&=&\underbrace{\sum_{j=0}^{p}|\bar{p}^{(j)}\rangle
+\prod_{k=0}^{j-1}(\epsilon_{n+k}-\epsilon_{n+p})
+}_{|\bar{p}(\epsilon_{n+p})\rangle}
+\end{eqnarray}
+
+
+
 
 The bare projector functions can be spanned by the $N_j$ independent functions
 \begin{eqnarray}
@@ -497,13 +624,53 @@ The bare projector functions can be spanned by the $N_j$ independent functions
 |q_n^{(1)}(\epsilon_{n+1})\rangle
 \nonumber\\
 |\bar{p}^{(j)}\rangle&=&(\hat{\tilde{h}}-\hat{h})|q_n^{(j)}(\epsilon_{n+j})\rangle
-\qquad\text{for $j\ge2$}
+\qquad\text{for $2\le j\le N_j$}
 \end{eqnarray}
 This selection is independent from the choice of the energies
 $\epsilon_{n+p}$ used to define the sequence of node-reduced wave
-functions. That is the result is equally valid if all these energies
-are identical.
+functions. The energies must, however not be chosen identical, because
+this would produce trivial results. Rather, the limes where the
+energies become similar must be taken with great care.
 
+
+It may be interesting to also evaluate energy-dependent projector
+functions
+\begin{eqnarray}
+|\bar{p}(\epsilon)\rangle&\defas&
+\Bigl(\hat{\tilde{h}}-\epsilon\Bigr)|\tilde{\phi}_n(\epsilon)\rangle
+\nonumber\\
+&\eqrel{eq:defphitildenofe}{=}&
+\Bigl(\hat{\tilde{h}}-\epsilon\Bigr)
+\Bigl(|q_n(\epsilon)\rangle-|q_n(\epsilon_n)\rangle+
+|\tilde{\phi}_n(\epsilon_n)\rangle\Bigr)
+\nonumber\\
+&\eqrel{eq:defphitildenofe}{=}&
+\underbrace{\Bigl(\hat{h}-\epsilon\Bigr)|q_n(\epsilon)\rangle}_{|u_{n-1}\rangle}
++\Bigl(\hat{\tilde{h}}-\hat{h}\Bigr)|q_n(\epsilon)\rangle
+\nonumber\\
+&-&\underbrace{
+\Bigl(\hat{h}-\epsilon_n\Bigr)|q_n(\epsilon_n)\rangle}_{|u_{n-1}\rangle}
++\Bigl(\hat{h}-\epsilon_n-\hat{\tilde{h}}+\epsilon\Bigr)|q_n(\epsilon_n)\rangle
+\nonumber\\
+&+&\underbrace{\Bigl(\hat{\tilde{h}}-\epsilon_n\Bigr)|\tilde{\phi}_n(\epsilon_n)\rangle}_{=0}
++\Bigl(\epsilon_n-\epsilon\Bigr)|\tilde{\phi}_n(\epsilon_n)\rangle
+\nonumber\\
+&=&\Bigl(\hat{\tilde{h}}-\hat{h}\Bigr)
+\underbrace{
+\Bigl(|q_n(\epsilon)\rangle-|q_n(\epsilon_n)\rangle\Bigr)
+}_{|\bar{q}_n^{(1)}(\epsilon)\rangle(\epsilon_n-\epsilon)}
++\Bigl(\epsilon_n-\epsilon\Bigr)
+\Bigl(|\tilde{\phi}_n(\epsilon_n)\rangle
+-|q_n(\epsilon_n)\rangle\Bigr)
+\nonumber\\
+&=&\Bigl[
+\Bigl(\hat{\tilde{h}}-\hat{h}\Bigr)
+|\bar{q}_n^{(1)}(\epsilon)\rangle
++
+\underbrace{|\tilde{\phi}_n(\epsilon_n)\rangle
+-|q_n(\epsilon_n)\rangle}_{|k\rangle}\Bigr]
+\Bigl(\epsilon_n-\epsilon\Bigr)
+\end{eqnarray}
 
 %====================================================================
 \subsubsection{Bi-orthogonalization}
@@ -522,10 +689,14 @@ We do this while maintaining the partial waves, i.e.
 \textbf{The biorthogonalization deteriorates quickly, if the number of
   partial waves is increased.}
 
-
 \petertt{Question: does the integrand for the overlap between
   projector function and partial wave fall off sufficiently fast with
   distance? Note, that the partial waves increase exponentially.}
+
+\petertt{The matrix $\langle p'^{(j)}|\tilde{\phi}^{(n)}\rangle$
+  becomes singular, because the partial waves do not contribute any
+  more in the region, where the pseudo Hamiltonian differs
+  sufficiently from the all-electron Hamiltonian.}
 
 
 %====================================================================
@@ -604,7 +775,7 @@ first two energy derivatives
 &=&3|\ddot{f}\rangle
 \end{eqnarray}
 
-At the same time we determine 
+At the same time, we determine 
 \begin{eqnarray}
 \hat{t}|f\rangle&=&\frac{\hat{\vec{p}}^2}{2m_e}|f\rangle
 =(\epsilon-v)|f\rangle
@@ -637,6 +808,9 @@ The coefficients are computed as follows:
 \item we add $f,\dot{f}$ to $\ddot{f},\dddot{f}$ so that their value
   and derivatives at $r_c$ vanish, and we replace $\phi$
   differentiably by $f,\dot{f}$ inside $r_c$.
+\begin{enumerate}
+\item First we extend $\phi$ differentiable inside $r_c$ using the
+  first two functions $f$ and $\dot{f}$
 \begin{eqnarray}
 \phi(r)&=&f(r)c_1 + \dot{f}(r)c_2
 \\
@@ -650,7 +824,11 @@ The coefficients are computed as follows:
 \frac{1}{f(r_c)\dot{f'}(r_c)-f'(r_c)\dot{f}(r_c)}
 \left(\begin{array}{cc}\dot{f'}(r_c)&-\dot{f}(r_c)\\-f'(r_c)&f(r_c)\end{array}\right)
 \left(\begin{array}{c}\phi(r_c)\\\phi'(r_c)\end{array}\right)
-\nonumber\\
+\end{eqnarray}
+%
+\item now we subtract the $f,\dot{f}$ from the remaining two functions
+  so that the resulting $g_3,g_4$ go differentiably to zero at $r_c$.
+\begin{eqnarray}
 g_3(r)&:=&\ddot{f}(r)-f(r) c_1^{\ddot{f}}-\dot{f}(r)c_2^{\ddot{f}}
 \nonumber\\
 g_4(r)&:=&\dddot{f}(r)-f(r) c_1^{\dddot{f}}-\dot{f}(r)c_2^{\dddot{f}}
@@ -661,7 +839,7 @@ g_4(r)&:=&\dddot{f}(r)-f(r) c_1^{\dddot{f}}-\dot{f}(r)c_2^{\dddot{f}}
 \left(\begin{array}{cc}\dot{f'}(r_c)&-\dot{f}(r_c)\\-f'(r_c)&f(r_c)\end{array}\right)
 \left(\begin{array}{c}\ddot{f}(r_c)\\\ddot{f'}(r_c)\end{array}\right)
 \end{eqnarray}
-
+\end{enumerate}
 \item values and derivatives of the kinetic energies are adjusted
   consistently.
 \item then we add $\ddot{f},\dddot{f}$ to the new $\phi$, so that
@@ -703,7 +881,7 @@ derivative of $\hat{t}\phi$.
   $0.7 r_{cov}$ seems to be the best choice. The energies are relative
   to the result for $r_c=0.7 r_{cov}$ and $E_{PW}=50$~Ry. Given that
   we will use a plane wave cutoff of 30Ry for most calculations an
-  augmentation radius of 0.7-0.8~$r_cov$ appears to be the best choice.}
+  augmentation radius of 0.7-0.8~$r_{cov}$ appears to be the best choice.}
 \end{figure}
 
 
@@ -2116,13 +2294,478 @@ j can also be considered a sum over all shells.
 %=====================================================================
 \chapter{Setup construction and Setup parameters}
 %=====================================================================
+%=====================================================================
+\section{Special cases}
+%=====================================================================
+%=====================================================================
+\subsection{Oxygen molecule}
+%=====================================================================
+The oxygen molecule is one of the most challenging systems. The reason
+is the following.
+\begin{itemize}
+\item It is a small atom because it is on the very right of the
+  periodic table. The large effective core charge results in a small
+  atomic radius. Furthermore it has many electrons that contribute to
+  the total energy. Finally, compared to the atoms such as fluorine
+  and neon it forms strong bonds.
+\item the bond distance is very short. It amounts to only 83~\% of the
+  sum of the covalent radii.
+\end{itemize}
+For this reason, oxygen is probably the single one atom that
+determines the plane wave cutoff that needs to be used for general
+materials.  It is therefore important to determine the cutoff radii
+for the pseudization carefully. In Fig.~\ref{o2_eatinev_ndlssofrad} we
+show the atomization energy as function of cutoff radius. 
 
-NAME (species name)
-Z   (species name ->z)
-M
-RAD  for density of states
-lrhox
-npro
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=0.5\linewidth,clip=true]
+{Figs/O2_atomizationenergy/eofrc.eps}
+\end{center}
+\caption{\label{o2_eatinev_ndlssofrad}The atomization energy of the
+  oxygen molecule as function of the cutoff radius (in units of the
+  covalent radius) for the partial wave pseudization. The calculations
+  have been computed with plane wave cutoffs of 30 Ry, 50 Ry, 100 Ry
+  and 150 Ry. The plane wave cutoff for the density was twice that for
+  the wave functions. The pseudization has been performed with the
+  nodeless construction. The calculation has been done with the PBE
+  functional. The data with E$_{PW}=30$~Ry are shifted because the
+  plane wave cutoff for the density is too low.}
+\end{figure}
+
+The total energy is not completely converged wuth a plane wave cutoff
+of 60~Ry for the density.
+
+
+\begin{verbatim}
+  !SPECIES   NAME='O_'  M=80. NPRO=1 1 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_O' EL='O' ZV= 6.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.65 0.65 0.65 0.65
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.65 VAL0_X=-3.8 !END
+      !CORE  POW=2. RC/RCOV=.65 !END
+    !END
+  !END
+\end{verbatim}
+
+
+%=====================================================================
+\subsection{Hydrogen}
+%=====================================================================
+Hydrogen is the second most important element, because it often
+saturates bonds. Therefore, I explore the hydrtogen molecule and water
+as its oxide.
+
+\textbf{Important Remark!} Special caution is required because the
+h-atom nearly impossible to calculate with full spin poslarization:
+The density of one spin direction vanishes completely. Therfore the
+hydrogen atom is calculated with a moment of 0.499~$\hbar$. An energy
+of 2.544~mH needs to be subtracted from the calculated energy of the
+isolated atom.
+
+As seen in Fig.~\ref{h2_setuptest}, the reaction energy from the
+hydrogen molecule and the water molecule is nearly independent of the
+cutoff radius up to the covalent radius. The atomization energy,
+however, depends strongly on the cutoff: It changes by about 0.05~eV
+from $r_c=0.5 r_{cov}$ to $r_c=1.0 r_{cov}$. While we cannot say which
+is the optimum result we will use $r_c=1.2~r_{cov}$. Up to this radius
+the reaction energy H$_2$+O$\rightarrow$H$_2$O is still independent of
+the radius, and the atomization energy of the hydrogen molecule
+becomes independent of the radius for larher distances. (This is only
+a weak argument, though.) Finally we consider the plane wave
+convergence to choose the larger radius. While hydrogen does not
+dominate convergence as individual atom, there are usually many
+hydrogen atoms in a material.
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=0.5\linewidth,clip=true]
+{Figs/H_setuptest/eofrc.eps}
+\end{center}
+\caption{\label{h2_setuptest}The atomization energy of the hydrogen
+  molecule (black, circles) as function of the cutoff radius (in units
+  of the covalent radius) for the partial wave pseudization.  The
+  calculations have been computed with a plane wave cutoff of 50
+  Ry. The plane wave cutoff for the density was twice that for the
+  wave functions. The pseudization has been performed with the
+  nodeless construction. The calculation has been done with the PBE
+  functional.}
+\end{figure}
+
+\begin{verbatim}
+  !SPECIES   NAME='H_'  M=2. NPRO=1 1 LRHOX=2 RAD/RCOV=1.2
+    !NTBO    NOFL=1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_H' EL='H' ZV= 1.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=1.2 1.2  1.2  1.2 
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=1. VAL0_X=-1.6 !END
+      !CORE  POW=2. RC/RCOV=1.  !END
+    !END
+  !END
+\end{verbatim}
+
+%=====================================================================
+\subsection{Carbon}
+%=====================================================================
+Due to its importance in organic chemistry and biochemistry, carbon is
+considered the third most important element.
+
+Interesting is that the energies shown in Fig.~\ref{c_setuptest} are
+fairly independent of the chosen pseudization cutoff if the plane wave
+cutoff is sufficiently large. This is probably due to the nodeless
+construction, for which the pseudo wave function turns continuously
+into the nodeless wave function when the radius is reduced, which the
+traditional construction introduces a node or a sharp turn to avoid
+the node.
+
+This behavior (independce of the energy from the pseudization radius)
+is very different from that for oxygen, for which the energy of the
+oxygen molecule depends strongly on the pseudization radius. In
+Fig.~\ref{c_setuptest} we studied also CO and CO2. Here the behavior
+is close to that of the oxygen molecule.
+
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=0.5\linewidth,clip=true]
+{Figs/C_setuptest/eofrc.eps}
+\end{center}
+\caption{\label{c_setuptest}The atomization energy of the methane
+  CH$_4$ (black circle), Ethene C$_2$H$_4$ (blue square) and ethane
+  C$_2$H$_6$ (orange diamond) as function of the pseudization cutoff
+  radius (in units of the covalent radius) for carbon.  The
+  calculations have been computed with a plane wave cutoff of 50 Ry
+  and 100 Ry. The plane wave cutoff for the density was twice that for
+  the wave functions. The pseudization has been performed with the
+  nodeless construction. The calculation has been done with the PBE
+  functional.}
+\end{figure}
+
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=0.5\linewidth,clip=true]
+{Figs/C_setuptest/eofrc_100ry_withcoandco2.eps}
+\end{center}
+\caption{\label{c_setuptest1}The atomization energy of CO (red circle)
+  and CO$_2$ blue square) as function of the pseudization radius (in
+  units of the covalent radius) for carbon.  Also shown are the total
+  energies of methane CH$_4$ (blue dashed), Ethene C$_2$H$_4$ (green
+  dashed) and ethane C$_2$H$_6$ (orange dashed).  The calculations
+  have been computed with a plane wave cutoff of 100 Ry. The plane
+  wave cutoff for the density is twice that for the wave
+  functions. The pseudization has been performed with the nodeless
+  construction. The calculation has been done with the PBE
+  functional.}
+\end{figure}
+
+
+\begin{verbatim}
+  !SPECIES   NAME='C_'  M=40. NPRO=1 1 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_C' EL='C' ZV= 4.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.85 0.85 0.85 0.85 
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.75  VAL0_X=-2.7 !END
+      !CORE  POW=2. RC/RCOV=0.75  !END
+    !END
+  !END
+\end{verbatim}
+
+%=====================================================================
+\subsection{Setups for the G2 database}
+%=====================================================================
+
+
+\begin{verbatim}
+  !SPECIES   NAME='H_'  M=2. NPRO=1 1 LRHOX=2 RAD/RCOV=1.2
+    !NTBO    NOFL=1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_H' EL='H' ZV= 1.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=1.2 1.2  1.2  1.2 
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=1.2 VAL0_X=-1.6 !END
+      !CORE  POW=2. RC/RCOV=1.2 !END
+    !END
+  !END
+
+  !SPECIES   NAME='LI'  M=40. NPRO=1 1  LRHOX=4 RAD/RCOV=1.0
+    !NTBO    NOFL=1 0 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_LI' EL='LI' ZV= 1.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.861 .861 .861  .861 
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=.861 VAL0_X=-0.8 !END
+      !CORE  POW=2. RC/RCOV=.861  !END
+    !END
+  !END
+
+  !SPECIES   NAME='BE'  M=40. NPRO=1 1 0 LRHOX=2 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_BE' EL='BE' ZV= 2.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.882 .882 .882 .882
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=.882 VAL0_X= -1.6 !END
+      !CORE  POW=2. RC/RCOV=.882 !END
+    !END
+  !END
+
+  !SPECIES   NAME='B_'  M=40. NPRO=1 1 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_B' EL='B' ZV= 3.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.75 .75 .75 .75
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=.774 VAL0_X= -3.9 !END
+      !CORE  POW=2. RC/RCOV=.774 !END
+    !END
+  !END
+
+  !SPECIES   NAME='C_'  M=40. NPRO=1 1 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_C' EL='C' ZV= 4.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.85 0.85 0.85 0.85 
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.75  VAL0_X=-2.7 !END
+      !CORE  POW=2. RC/RCOV=0.75  !END
+    !END
+  !END
+
+  !SPECIES   NAME='N_'  M=40. NPRO=1 1 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_N' EL='N' ZV= 5.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.75 0.75 0.75  0.75
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.75 VAL0_X=-4.3 !END
+      !CORE  POW=2. RC/RCOV=0.75  !END
+    !END
+  !END
+
+  !SPECIES   NAME='O_'  M=80. NPRO=1 1 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_O' EL='O' ZV= 6.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.65 0.65 0.65 0.65
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.65 VAL0_X=-3.8 !END
+      !CORE  POW=2. RC/RCOV=.65 !END
+    !END
+  !END
+
+  !SPECIES   NAME='F_'  M=80. NPRO=1 1 1 LRHOX=2 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_F' EL='F_' ZV= 7.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.8 0.8 0.8  0.8 
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.75 VAL0_X=-3.5 !END
+      !CORE  POW=2. RC/RCOV=0.75  !END
+    !END
+  !END
+\end{verbatim}
+
+
+\begin{verbatim}
+  !SPECIES   NAME='Na'  M=40. NPRO=2 2 1 LRHOX=4 RAD/RCOV=1.0
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_NA' EL='NA' ZV= 9.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.780 0.790 0.804
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.766 VAL0_X=-1.1  !END
+      !CORE  POW=2. RC/RCOV=0.766  !END
+    !END
+  !END
+
+  !SPECIES   NAME='Al'  M=40. NPRO=2 2 1 LRHOX=4 RAD/RCOV=1.0
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_AL' EL='AL' ZV= 3.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.919 .919 .919 .919
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=.919 VAL0_X= -1.5 !END
+      !CORE  POW=2. RC/RCOV=.919 !END
+    !END
+  !END
+
+  !SPECIES   NAME='Si'  M=40. NPRO=2 2 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_SI' EL='SI' ZV= 4.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.953 0.953 0.953 0.953 
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.953  VAL0_X= -1.8 !END
+      !CORE  POW=2. RC/RCOV=0.953  !END
+    !END
+  !END
+
+  !SPECIES   NAME='P_'  M=40. NPRO=2 2 1 LRHOX=2 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_P' EL='P_' ZV= 5.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.899 0.899 0.899  0.899 
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=.899 VAL0_X=-2.4 !END
+      !CORE  POW=2. RC/RCOV=.899 !END
+    !END
+  !END
+
+  !SPECIES   NAME='S_'  M=40. NPRO=2 2 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_S' EL='S_' ZV= 6.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.954 0.960  0.882  0.882
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.742 VAL0_X=-3.3 !END
+      !CORE  POW=2. RC/RCOV=0.742 !END
+    !END
+  !END
+
+  !SPECIES   NAME='CL'  M=40. NPRO=2 2 1 LRHOX=2 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_CL' EL='CL' ZV= 7.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.802 0.802 0.802 0.802 
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.802 VAL0_X=-3.5 !END
+      !CORE  POW=2. RC/RCOV=0.802  !END
+    !END
+  !END
+
+  !SPECIES   NAME='Br'  M=40. NPRO=1 1 1 LRHOX=2 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_BR' EL='BR' ZV= 7.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.975 .975 .975 .975
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=.975 VAL0_X= -2.0 !END
+      !CORE  POW=2. RC/RCOV=.975 !END
+    !END
+  !END
+\end{verbatim}
+
+%=====================================================================
+\subsubsection{Results}
+%=====================================================================
+The results are shown in Fig.~\ref{devfromcppaw}. The large deviation
+between CP-PAW and Scuseria's result may be due to the fact that these
+are the largest molecules. (On my side I need to optimize the atomic
+structure with the new setups.)
+
+The largest deviations from Vasp and GPAW are for
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=\linewidth,clip=true]{Figs/G2test/devfromcppaw.eps}
+\end{center}
+\caption{\label{devfromcppaw} Deviation from the CP-PAW result for the
+  atomization energy in eV in the G2 database for GPAW (black), VASP
+  (red), Gauss (blue), Scuseria (green). The molecules are identified
+  in alphabetical order (Careful! not unique!).}
+\end{figure}
+\begin{figure}[h!]
+
+\begin{center}
+\includegraphics[width=\linewidth,clip=true]{Figs/G2test/devfromcppawlim.eps}
+\end{center}
+\caption{\label{devfromcppawlim} Deviation from the CP-PAW result for the
+  atomization energy in eV in the G2 database for GPAW (black), VASP
+  (red), Gauss (blue), Scuseria (green). The molecules are identified
+  in alphabetical order (Careful! not unique!).}
+\end{figure}
+
+%=====================================================================
+\subsection{Transition metals}
+%=====================================================================
+The biggest challenge for transition metal atoms are the
+p-states. They have a maximum that lies very far out. If one pseudizes
+this wave function a sharp bend is required to avoid introduing nodes.
+\begin{itemize}
+\item The best remedy is to include the semi-core states with the same
+  quantum number as the d-electrons. They have a similar radial
+  extent. The valence s and p-states will have nodes in a natural way.
+%
+\item Restricting the valence electrons to teh true valence states
+  requires that the pseudization radius for the s and p states is
+  moved sufficiently far out, so that a reasonable shape of the pseudo
+  partial waves results.
+\end{itemize}
+
+%=====================================================================
+\subsection{Benchmarks}
+%=====================================================================
+
+
+\begin{itemize}
+\item 2005 Paier\cite{paier05_jcp122_234102}: 
+\end{itemize}
+
+
+\begin{center}
+\begin{tabular}{|l|r|}
+\hline
+& Kresse \\
+\hline
+H  & 0.8 \\
+Li & 1.3 \\
+Be & 1.9 \\
+C  & 1.1 \\
+N  & 1.1 \\
+O  & 1.1 \\
+F  & 1.0 \\
+Si & 1.9 \\
+P  & 1.5 \\
+S  & 1.5 \\
+Cl & 1.5 \\
+Na & 1.7 \\
+\hline
+\end{tabular}
+\end{center}
+The data ``Kresse'' are the cutoff parameters for the pseudo wave
+functions in VASP according to Paier\cite{paier05_jcp122_234102}.
 
 
 
