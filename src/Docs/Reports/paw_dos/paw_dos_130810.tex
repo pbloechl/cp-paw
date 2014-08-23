@@ -35,6 +35,17 @@ http://www.pt.tu-clausthal.de/atp/}
 \noindent            
 \tableofcontents
 %====================================================================
+\chapter{Todo}
+%====================================================================
+\begin{itemize}
+\item When only a subset of k-points is used, the Brillouin-zone
+  integration of a general matrix element violates the symmetry of the
+  crystal.  The symmetry can be recovered if the matrix elements to be
+  integrated are averaged over the complete point group
+  operations. This implies in general that orbitals centered on one
+  atom will be transformed into orbitals centered on other atoms.
+\end{itemize}
+%====================================================================
 \chapter{Background}
 %====================================================================
 %============================================================================
@@ -128,9 +139,9 @@ D_{\alpha,\vec{t},\beta,\vec{t'}}(\epsilon)
 is the density-of-states matrix.
 
 %============================================================================
-\subsubsection{Complex orbitals}
+\subsubsection{General orbitals}
 %============================================================================
-Sometimes it is convenient to use complex orbitals
+Sometimes, it is convenient to use complex orbitals
 \begin{eqnarray}
 |\Phi\rangle=\sum_{\alpha,\vec{t}}|\chi_{\alpha,\vec{t}}\rangle C_{\alpha,\vec{t}}
 \end{eqnarray}
@@ -160,10 +171,30 @@ C^\Psi_{\beta,\vec{t'}}
 Therefore a general orbital is a characterized sequence of indices $\alpha$,
 lattice translation vectors $\vec{t}$, and coefficients $C_{\alpha,\vec{t}}$.
 
+The factors
+\begin{eqnarray}
+\mathcal{K}^\Phi_{n}(\vec{k})=\sum_\alpha \Bigl(C^\Phi_{\alpha,\vec{t}}\Bigr)^*
+\langle\pi_{\alpha,\vec{0}}|\psi_n(\vec{k})\rangle
+\e{-i\vec{k}\vec{t}}
+\end{eqnarray}
+can be evaluated so that
+\begin{eqnarray}
+D_{\Phi,\Psi}(\epsilon)
+&=&
+\sum_n\frac{1}{V_G}\int d^3k\; 
+\Bigl(\mathcal{K}^\Phi_{n}(\vec{k})\Bigr)
+\;\delta(\epsilon-\epsilon_n(\vec{k}))\;
+\Bigl(\mathcal{K}^\Psi_{n}(\vec{k})\Bigr)^*
+\nonumber\\
+\end{eqnarray}
+
+
+
 
 %============================================================================
-\subsubsection{Angular-momentum weights and COOP's}
+\subsubsection{Matrix elements}
 %============================================================================
+
 
 
 
@@ -171,6 +202,7 @@ lattice translation vectors $\vec{t}$, and coefficients $C_{\alpha,\vec{t}}$.
 \chapter{Routines}
 %====================================================================
 \cite{bloechl94_prb50_17953}
+
 %====================================================================
 \section{FLOW}
 %====================================================================
@@ -227,6 +259,20 @@ the matrix elements for all states.
 \item readcntl\$output
 \end{itemize}
 
+%====================================================================
+\section{Basic entities}
+%====================================================================
+The most basic data structure is that of an orbital. An orbital is a
+set of orbital indices, translation vectors and complex coefficients
+$C_{\alpha,\vec{t}}$.
+
+The data structure on the next level is what we call a set. A set is a
+collection of pairs of orbitals. The set defines the weight of a
+projected density of states or the weight for a fat band structure.
+
+The sets are then converted into matrix elements $A_{n}(\vec{k})$,
+which will be passed on to define projected density of states or fat
+bands.
 
 
 %====================================================================
@@ -237,34 +283,38 @@ the matrix elements for all states.
 \section{Orbitals(new)}
 %====================================================================
 \begin{verbatim}
-TYPE ORBITALCOEFFICIENT_TYPE
-  INTEGER(4) :: IPRO
-  INTEGER(4) :: IT(3)
-  COMPLEX(8) :: C
-END TYPE ORBITALCOEFFICIENT_TYPE
-TYPE ORBItal_TYPE
-  CHARACTER(32) :: NAME
-  INTEGER(4)    :: NChi
-  INTEGER(4)    :: NChix
-  TYPE(ORBItalCOEFFICIENT_TYPE), POINTER :: CHI(:)
-END TYPE ORBItal_TYPE
-INTEGER(4)                :: NORBi=0      ! #(ORBITALS)
-INTEGER(4)                :: NORBiX=0     ! MAX#(ORBITALS)
-INTEGER(4)    ,PARAMETER  :: NORBiSTEP=10 ! STEP IN #(ORBITALS)
-INTEGER(4)    ,PARAMETER  :: NchiSTEP=10 ! STEP IN #(coefficients)
-TYPE(ORBItal_TYPE),allocatable :: ORBI(:)      ! orbital list
+module orbitals_module
+type orbitalcoefficient_type
+  integer(4) :: ipro
+  integer(4) :: it(3)
+  complex(8) :: c
+end type orbitalcoefficient_type
+type orbital_type
+  character(32) :: name
+  integer(4)    :: nchi
+  integer(4)    :: nchix
+  type(orbitalcoefficient_type), pointer :: chi(:)
+end type orbital_type
+integer(4)                :: norbi=0      ! #(orbitals)
+integer(4)                :: norbix=0     ! max#(orbitals)
+integer(4)    ,parameter  :: norbistep=10 ! step in #(orbitals)
+integer(4)    ,parameter  :: nchistep=10 ! step in #(coefficients)
+type(orbital_type),allocatable :: orbi(:)      ! orbital list
 integer(4)                :: selectedorbital=0
+end module orbitals_module
 \end{verbatim}
 
 
 The orbitals object has the following functions:
 \begin{verbatim}
-SUBROUTINE ORBITALS$NEWORBITAL(NAME)
-SUBROUTINE ORBITALS$SELECTORBITAL(NAME)
-subroutine ORBITALS$ISELECTORBITAL(IORB)
-SUBROUTINE ORBITALS$SETCHI(IPRO,IT,C)
-SUBROUTINE ORBITALS$GETNCHI(NCHI)
-SUBROUTINE ORBITALS$GETCHI(ICHI,IPRO,IT,C)
+subroutine orbitals$neworbital(name)
+subroutine orbitals$selectorbital(name)
+subroutine orbitals$iselectorbital(iorb)
+subroutine orbitals$setchi(ipro,it,c)
+subroutine orbitals$getnchi(nchi)
+subroutine orbitals$getchi(ichi,ipro,it,c)
+subroutine orbitals$addorbital(name,it,c)
+subroutine orbitals$normalize()
 \end{verbatim}
 The data structures are dynamical, so that one need not worry obout
 the size of arrays. An orbital is a set of coefficients $C$ alongside
