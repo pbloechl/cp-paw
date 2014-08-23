@@ -2294,13 +2294,478 @@ j can also be considered a sum over all shells.
 %=====================================================================
 \chapter{Setup construction and Setup parameters}
 %=====================================================================
+%=====================================================================
+\section{Special cases}
+%=====================================================================
+%=====================================================================
+\subsection{Oxygen molecule}
+%=====================================================================
+The oxygen molecule is one of the most challenging systems. The reason
+is the following.
+\begin{itemize}
+\item It is a small atom because it is on the very right of the
+  periodic table. The large effective core charge results in a small
+  atomic radius. Furthermore it has many electrons that contribute to
+  the total energy. Finally, compared to the atoms such as fluorine
+  and neon it forms strong bonds.
+\item the bond distance is very short. It amounts to only 83~\% of the
+  sum of the covalent radii.
+\end{itemize}
+For this reason, oxygen is probably the single one atom that
+determines the plane wave cutoff that needs to be used for general
+materials.  It is therefore important to determine the cutoff radii
+for the pseudization carefully. In Fig.~\ref{o2_eatinev_ndlssofrad} we
+show the atomization energy as function of cutoff radius. 
 
-NAME (species name)
-Z   (species name ->z)
-M
-RAD  for density of states
-lrhox
-npro
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=0.5\linewidth,clip=true]
+{Figs/O2_atomizationenergy/eofrc.eps}
+\end{center}
+\caption{\label{o2_eatinev_ndlssofrad}The atomization energy of the
+  oxygen molecule as function of the cutoff radius (in units of the
+  covalent radius) for the partial wave pseudization. The calculations
+  have been computed with plane wave cutoffs of 30 Ry, 50 Ry, 100 Ry
+  and 150 Ry. The plane wave cutoff for the density was twice that for
+  the wave functions. The pseudization has been performed with the
+  nodeless construction. The calculation has been done with the PBE
+  functional. The data with E$_{PW}=30$~Ry are shifted because the
+  plane wave cutoff for the density is too low.}
+\end{figure}
+
+The total energy is not completely converged wuth a plane wave cutoff
+of 60~Ry for the density.
+
+
+\begin{verbatim}
+  !SPECIES   NAME='O_'  M=80. NPRO=1 1 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_O' EL='O' ZV= 6.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.65 0.65 0.65 0.65
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.65 VAL0_X=-3.8 !END
+      !CORE  POW=2. RC/RCOV=.65 !END
+    !END
+  !END
+\end{verbatim}
+
+
+%=====================================================================
+\subsection{Hydrogen}
+%=====================================================================
+Hydrogen is the second most important element, because it often
+saturates bonds. Therefore, I explore the hydrtogen molecule and water
+as its oxide.
+
+\textbf{Important Remark!} Special caution is required because the
+h-atom nearly impossible to calculate with full spin poslarization:
+The density of one spin direction vanishes completely. Therfore the
+hydrogen atom is calculated with a moment of 0.499~$\hbar$. An energy
+of 2.544~mH needs to be subtracted from the calculated energy of the
+isolated atom.
+
+As seen in Fig.~\ref{h2_setuptest}, the reaction energy from the
+hydrogen molecule and the water molecule is nearly independent of the
+cutoff radius up to the covalent radius. The atomization energy,
+however, depends strongly on the cutoff: It changes by about 0.05~eV
+from $r_c=0.5 r_{cov}$ to $r_c=1.0 r_{cov}$. While we cannot say which
+is the optimum result we will use $r_c=1.2~r_{cov}$. Up to this radius
+the reaction energy H$_2$+O$\rightarrow$H$_2$O is still independent of
+the radius, and the atomization energy of the hydrogen molecule
+becomes independent of the radius for larher distances. (This is only
+a weak argument, though.) Finally we consider the plane wave
+convergence to choose the larger radius. While hydrogen does not
+dominate convergence as individual atom, there are usually many
+hydrogen atoms in a material.
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=0.5\linewidth,clip=true]
+{Figs/H_setuptest/eofrc.eps}
+\end{center}
+\caption{\label{h2_setuptest}The atomization energy of the hydrogen
+  molecule (black, circles) as function of the cutoff radius (in units
+  of the covalent radius) for the partial wave pseudization.  The
+  calculations have been computed with a plane wave cutoff of 50
+  Ry. The plane wave cutoff for the density was twice that for the
+  wave functions. The pseudization has been performed with the
+  nodeless construction. The calculation has been done with the PBE
+  functional.}
+\end{figure}
+
+\begin{verbatim}
+  !SPECIES   NAME='H_'  M=2. NPRO=1 1 LRHOX=2 RAD/RCOV=1.2
+    !NTBO    NOFL=1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_H' EL='H' ZV= 1.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=1.2 1.2  1.2  1.2 
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=1. VAL0_X=-1.6 !END
+      !CORE  POW=2. RC/RCOV=1.  !END
+    !END
+  !END
+\end{verbatim}
+
+%=====================================================================
+\subsection{Carbon}
+%=====================================================================
+Due to its importance in organic chemistry and biochemistry, carbon is
+considered the third most important element.
+
+Interesting is that the energies shown in Fig.~\ref{c_setuptest} are
+fairly independent of the chosen pseudization cutoff if the plane wave
+cutoff is sufficiently large. This is probably due to the nodeless
+construction, for which the pseudo wave function turns continuously
+into the nodeless wave function when the radius is reduced, which the
+traditional construction introduces a node or a sharp turn to avoid
+the node.
+
+This behavior (independce of the energy from the pseudization radius)
+is very different from that for oxygen, for which the energy of the
+oxygen molecule depends strongly on the pseudization radius. In
+Fig.~\ref{c_setuptest} we studied also CO and CO2. Here the behavior
+is close to that of the oxygen molecule.
+
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=0.5\linewidth,clip=true]
+{Figs/C_setuptest/eofrc.eps}
+\end{center}
+\caption{\label{c_setuptest}The atomization energy of the methane
+  CH$_4$ (black circle), Ethene C$_2$H$_4$ (blue square) and ethane
+  C$_2$H$_6$ (orange diamond) as function of the pseudization cutoff
+  radius (in units of the covalent radius) for carbon.  The
+  calculations have been computed with a plane wave cutoff of 50 Ry
+  and 100 Ry. The plane wave cutoff for the density was twice that for
+  the wave functions. The pseudization has been performed with the
+  nodeless construction. The calculation has been done with the PBE
+  functional.}
+\end{figure}
+
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=0.5\linewidth,clip=true]
+{Figs/C_setuptest/eofrc_100ry_withcoandco2.eps}
+\end{center}
+\caption{\label{c_setuptest1}The atomization energy of CO (red circle)
+  and CO$_2$ blue square) as function of the pseudization radius (in
+  units of the covalent radius) for carbon.  Also shown are the total
+  energies of methane CH$_4$ (blue dashed), Ethene C$_2$H$_4$ (green
+  dashed) and ethane C$_2$H$_6$ (orange dashed).  The calculations
+  have been computed with a plane wave cutoff of 100 Ry. The plane
+  wave cutoff for the density is twice that for the wave
+  functions. The pseudization has been performed with the nodeless
+  construction. The calculation has been done with the PBE
+  functional.}
+\end{figure}
+
+
+\begin{verbatim}
+  !SPECIES   NAME='C_'  M=40. NPRO=1 1 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_C' EL='C' ZV= 4.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.85 0.85 0.85 0.85 
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.75  VAL0_X=-2.7 !END
+      !CORE  POW=2. RC/RCOV=0.75  !END
+    !END
+  !END
+\end{verbatim}
+
+%=====================================================================
+\subsection{Setups for the G2 database}
+%=====================================================================
+
+
+\begin{verbatim}
+  !SPECIES   NAME='H_'  M=2. NPRO=1 1 LRHOX=2 RAD/RCOV=1.2
+    !NTBO    NOFL=1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_H' EL='H' ZV= 1.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=1.2 1.2  1.2  1.2 
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=1.2 VAL0_X=-1.6 !END
+      !CORE  POW=2. RC/RCOV=1.2 !END
+    !END
+  !END
+
+  !SPECIES   NAME='LI'  M=40. NPRO=1 1  LRHOX=4 RAD/RCOV=1.0
+    !NTBO    NOFL=1 0 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_LI' EL='LI' ZV= 1.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.861 .861 .861  .861 
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=.861 VAL0_X=-0.8 !END
+      !CORE  POW=2. RC/RCOV=.861  !END
+    !END
+  !END
+
+  !SPECIES   NAME='BE'  M=40. NPRO=1 1 0 LRHOX=2 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_BE' EL='BE' ZV= 2.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.882 .882 .882 .882
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=.882 VAL0_X= -1.6 !END
+      !CORE  POW=2. RC/RCOV=.882 !END
+    !END
+  !END
+
+  !SPECIES   NAME='B_'  M=40. NPRO=1 1 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_B' EL='B' ZV= 3.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.75 .75 .75 .75
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=.774 VAL0_X= -3.9 !END
+      !CORE  POW=2. RC/RCOV=.774 !END
+    !END
+  !END
+
+  !SPECIES   NAME='C_'  M=40. NPRO=1 1 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_C' EL='C' ZV= 4.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.85 0.85 0.85 0.85 
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.75  VAL0_X=-2.7 !END
+      !CORE  POW=2. RC/RCOV=0.75  !END
+    !END
+  !END
+
+  !SPECIES   NAME='N_'  M=40. NPRO=1 1 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_N' EL='N' ZV= 5.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.75 0.75 0.75  0.75
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.75 VAL0_X=-4.3 !END
+      !CORE  POW=2. RC/RCOV=0.75  !END
+    !END
+  !END
+
+  !SPECIES   NAME='O_'  M=80. NPRO=1 1 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_O' EL='O' ZV= 6.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.65 0.65 0.65 0.65
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.65 VAL0_X=-3.8 !END
+      !CORE  POW=2. RC/RCOV=.65 !END
+    !END
+  !END
+
+  !SPECIES   NAME='F_'  M=80. NPRO=1 1 1 LRHOX=2 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_F' EL='F_' ZV= 7.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.8 0.8 0.8  0.8 
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.75 VAL0_X=-3.5 !END
+      !CORE  POW=2. RC/RCOV=0.75  !END
+    !END
+  !END
+\end{verbatim}
+
+
+\begin{verbatim}
+  !SPECIES   NAME='Na'  M=40. NPRO=2 2 1 LRHOX=4 RAD/RCOV=1.0
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_NA' EL='NA' ZV= 9.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.780 0.790 0.804
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.766 VAL0_X=-1.1  !END
+      !CORE  POW=2. RC/RCOV=0.766  !END
+    !END
+  !END
+
+  !SPECIES   NAME='Al'  M=40. NPRO=2 2 1 LRHOX=4 RAD/RCOV=1.0
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_AL' EL='AL' ZV= 3.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.919 .919 .919 .919
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=.919 VAL0_X= -1.5 !END
+      !CORE  POW=2. RC/RCOV=.919 !END
+    !END
+  !END
+
+  !SPECIES   NAME='Si'  M=40. NPRO=2 2 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_SI' EL='SI' ZV= 4.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.953 0.953 0.953 0.953 
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.953  VAL0_X= -1.8 !END
+      !CORE  POW=2. RC/RCOV=0.953  !END
+    !END
+  !END
+
+  !SPECIES   NAME='P_'  M=40. NPRO=2 2 1 LRHOX=2 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_P' EL='P_' ZV= 5.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.899 0.899 0.899  0.899 
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=.899 VAL0_X=-2.4 !END
+      !CORE  POW=2. RC/RCOV=.899 !END
+    !END
+  !END
+
+  !SPECIES   NAME='S_'  M=40. NPRO=2 2 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_S' EL='S_' ZV= 6.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.954 0.960  0.882  0.882
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.742 VAL0_X=-3.3 !END
+      !CORE  POW=2. RC/RCOV=0.742 !END
+    !END
+  !END
+
+  !SPECIES   NAME='CL'  M=40. NPRO=2 2 1 LRHOX=2 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_CL' EL='CL' ZV= 7.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.802 0.802 0.802 0.802 
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.802 VAL0_X=-3.5 !END
+      !CORE  POW=2. RC/RCOV=0.802  !END
+    !END
+  !END
+
+  !SPECIES   NAME='Br'  M=40. NPRO=1 1 1 LRHOX=2 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_BR' EL='BR' ZV= 7.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.975 .975 .975 .975
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=.975 VAL0_X= -2.0 !END
+      !CORE  POW=2. RC/RCOV=.975 !END
+    !END
+  !END
+\end{verbatim}
+
+%=====================================================================
+\subsubsection{Results}
+%=====================================================================
+The results are shown in Fig.~\ref{devfromcppaw}. The large deviation
+between CP-PAW and Scuseria's result may be due to the fact that these
+are the largest molecules. (On my side I need to optimize the atomic
+structure with the new setups.)
+
+The largest deviations from Vasp and GPAW are for
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=\linewidth,clip=true]{Figs/G2test/devfromcppaw.eps}
+\end{center}
+\caption{\label{devfromcppaw} Deviation from the CP-PAW result for the
+  atomization energy in eV in the G2 database for GPAW (black), VASP
+  (red), Gauss (blue), Scuseria (green). The molecules are identified
+  in alphabetical order (Careful! not unique!).}
+\end{figure}
+\begin{figure}[h!]
+
+\begin{center}
+\includegraphics[width=\linewidth,clip=true]{Figs/G2test/devfromcppawlim.eps}
+\end{center}
+\caption{\label{devfromcppawlim} Deviation from the CP-PAW result for the
+  atomization energy in eV in the G2 database for GPAW (black), VASP
+  (red), Gauss (blue), Scuseria (green). The molecules are identified
+  in alphabetical order (Careful! not unique!).}
+\end{figure}
+
+%=====================================================================
+\subsection{Transition metals}
+%=====================================================================
+The biggest challenge for transition metal atoms are the
+p-states. They have a maximum that lies very far out. If one pseudizes
+this wave function a sharp bend is required to avoid introduing nodes.
+\begin{itemize}
+\item The best remedy is to include the semi-core states with the same
+  quantum number as the d-electrons. They have a similar radial
+  extent. The valence s and p-states will have nodes in a natural way.
+%
+\item Restricting the valence electrons to teh true valence states
+  requires that the pseudization radius for the s and p states is
+  moved sufficiently far out, so that a reasonable shape of the pseudo
+  partial waves results.
+\end{itemize}
+
+%=====================================================================
+\subsection{Benchmarks}
+%=====================================================================
+
+
+\begin{itemize}
+\item 2005 Paier\cite{paier05_jcp122_234102}: 
+\end{itemize}
+
+
+\begin{center}
+\begin{tabular}{|l|r|}
+\hline
+& Kresse \\
+\hline
+H  & 0.8 \\
+Li & 1.3 \\
+Be & 1.9 \\
+C  & 1.1 \\
+N  & 1.1 \\
+O  & 1.1 \\
+F  & 1.0 \\
+Si & 1.9 \\
+P  & 1.5 \\
+S  & 1.5 \\
+Cl & 1.5 \\
+Na & 1.7 \\
+\hline
+\end{tabular}
+\end{center}
+The data ``Kresse'' are the cutoff parameters for the pseudo wave
+functions in VASP according to Paier\cite{paier05_jcp122_234102}.
 
 
 
