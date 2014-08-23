@@ -1,0 +1,46 @@
+#!/bin/bash
+#  this script performs a subset of calculations for the Hands-On PAW course
+#   
+#  Here: Malonaldehyde
+#
+#  It relies on a data structure in the ROOT directory specified below
+#  with a SRC directory containing all input files required, and a
+#  SANDBOX directory where the calculations are performed, and where
+#  the resulting files are kept.
+#
+function error {
+  if [[ $1 != 0 ]] ; then 
+    error "in $0:$THIS: $2"
+    exit $IERR
+  fi
+  IERR=$(echo "$IERR+1" |bc -l)
+}
+
+ROOT='/Users/ptpb/Tree/PhiSX/Praktikum/Calculations'
+SRC=$ROOT/Container
+SANDBOX=$ROOT/Sandbox
+IERR=1
+cd $SANDBOX; error $? "not in sandbox"
+#
+#==================================================================
+#== chapter 5. AIMD with Malonaldehyde
+#==================================================================
+#==molecular dynamics==============================================
+PREV=c3o2h4_3
+THIS=c3o2h4_5
+cp $PREV.rstrt $THIS.rstrt           ; error $? "copy rstrt failed"
+cp $SRC/$THIS.strc  $THIS.strc       ; error $? "copy strc failed"
+cp $SRC/$THIS.cntl $THIS.cntl        ; error $? "copy cntl failed"
+if [[ -e  $THIS.prot ]] ; then rm $THIS.prot ; fi
+paw_fast.x $THIS.cntl 1>out 2>&1     ; error $? "paw_fast.x failed"
+paw_show -ap $THIS $THIS.show_ap.dat ; error $? "paw_show.x failed"
+paw_show -ar $THIS $THIS.show_ar.dat ; error $? "paw_show.x failed"
+paw_show -t $THIS $THIS.show_t.dat   ; error $? "paw_show.x failed"
+%
+cp $SRC/${THIS}a.rstrt $THIS.rstrt   ; error $? "copy rstrt failed"
+paw_tra.x  $THIS.tcntl               ; error $? "paw_tra failed"
+cp $SRC/${THIS}b.rstrt $THIS.rstrt   ; error $? "copy rstrt failed"
+paw_tra.x  $THIS.tcntl               ; error $? "paw_tra failed"
+cp $SRC/${THIS}c.rstrt $THIS.rstrt   ; error $? "copy rstrt failed"
+paw_tra.x  $THIS.tcntl               ; error $? "paw_tra failed"
+

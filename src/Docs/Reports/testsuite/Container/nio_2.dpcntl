@@ -1,0 +1,21 @@
+!dpcntl
+   Emin[ev]=-21. emax[ev]=10. ymin=0. ymax=8. 
+  !graph prefix='Dos/' ezero[ev]=14.39960 scale=1.
+    !set id='total'   fillcolor='black'            !end
+    !set id='op'      fillcolor='red'      stack=F !end
+    !set id='os'      fillcolor='yellow'   stack=T !end
+    !set id='nis'     fillcolor='blue'     stack=T !end
+    !set id='nip'     fillcolor='blue'    stack=T !end
+    !set id='nit2g'   fillcolor='green'  stack=T !end
+    !set id='nieg'    fillcolor='orange'   stack=T !end
+  !end
+  !graph prefix='Dos/' ezero[ev]=14.39960 scale=1. ymin=-5. ymax=5.
+    !set id='ni1t2g'   fillcolor='green'  stack=T          !end
+    !set id='ni1eg'   fillcolor='orange'  stack=T          !end
+  !end
+  !graph prefix='Dos/' ezero[ev]=14.39960 scale=1. ymin=-5. ymax=5.
+    !set id='ni2t2g'   fillcolor='green'  stack=T          !end
+    !set id='ni2eg'   fillcolor='orange'  stack=T          !end
+  !end
+!end
+!eob

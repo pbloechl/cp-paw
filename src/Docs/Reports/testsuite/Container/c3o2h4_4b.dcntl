@@ -1,0 +1,73 @@
+!DCNTL
+  !GENERIC  PREFIX='Dos_M/'  !END
+  !GRID  BROADENING[K]=2000. !END
+  !WEIGHT ID='total' TYPE='TOTAL' !END
+  !WEIGHT ID='os' 
+    !ATOM NAME='O_5' TYPE='s' !END 
+    !ATOM NAME='O_6' TYPE='s' !END 
+  !END
+  !WEIGHT ID='op' 
+    !ATOM NAME='O_5' TYPE='p' !END 
+    !ATOM NAME='O_6' TYPE='p' !END 
+  !END
+  !WEIGHT ID='cs' 
+    !ATOM NAME='C_1' TYPE='s' !END 
+    !ATOM NAME='C_2' TYPE='s' !END 
+    !ATOM NAME='C_3' TYPE='s' !END 
+  !END
+  !WEIGHT ID='cp' 
+    !ATOM NAME='C_1' TYPE='p' !END 
+    !ATOM NAME='C_2' TYPE='p' !END 
+    !ATOM NAME='C_3' TYPE='p' !END 
+  !END
+  !WEIGHT ID='hs' 
+    !ATOM NAME='H_4' TYPE='s' !END 
+    !ATOM NAME='H_9' TYPE='s' !END 
+  !END
+  !WEIGHT ID='cpi' 
+    !ORB ATOM='C_1' TYPE='PY' NNZ='O_5' NNX='C_2' !END 
+    !ORB ATOM='C_2' TYPE='PY' NNZ='C_1' NNX='C_3' !END 
+    !ORB ATOM='C_3' TYPE='PY' NNZ='C_2' NNX='O_6' !END 
+  !END
+  !WEIGHT ID='opi' 
+    !ORB ATOM='O_5' TYPE='PY' NNZ='O_6' NNX='C_1' !END 
+    !ORB ATOM='O_6' TYPE='PY' NNZ='C_3' NNX='O_5' !END 
+  !END
+  !WEIGHT ID='hbridge' 
+    !ATOM NAME='H_8' TYPE='ALL' !END 
+  !END
+  !WEIGHT ID='osp2short' 
+    !ORB ATOM='O_6' TYPE='SP2' NNZ='H_8' !END 
+  !END
+  !WEIGHT ID='osp2long' 
+    !ORB ATOM='O_5' TYPE='SP2' NNZ='H_8' !END 
+  !END
+  !COOP ID='ohshort' 
+    !ORB1 ATOM='O_6' TYPE='SP2' NNZ='H_8' !END 
+    !ORB2 ATOM='H_8' TYPE='S'   NNZ='O_6' !END 
+  !END
+  !COOP ID='ohlong' 
+    !ORB1 ATOM='O_5' TYPE='SP2' NNZ='H_8' !END 
+    !ORB2 ATOM='H_8' TYPE='S'   NNZ='O_5' !END 
+  !END
+  !COOP ID='piccsingle' 
+    !ORB2 ATOM='C_1' TYPE='PY' NNZ='O_5' NNX='C_2' !END 
+    !ORB1 ATOM='C_2' TYPE='PY' NNZ='C_1' NNX='C_3' !END 
+  !END
+  !COOP ID='piccdouble' 
+    !ORB1 ATOM='C_2' TYPE='PY' NNZ='C_1' NNX='C_3' !END 
+    !ORB2 ATOM='C_3' TYPE='PY' NNZ='C_2' NNX='O_6' !END 
+  !END
+  !COOP ID='piocdouble' 
+    !ORB1 ATOM='O_5' TYPE='PY' NNZ='O_6' NNX='C_1' !END 
+    !ORB2 ATOM='C_1' TYPE='PY' NNZ='O_5' NNX='C_2' !END 
+  !END
+  !COOP ID='piocsingle' 
+    !ORB1 ATOM='O_6' TYPE='PY' NNZ='C_3' NNX='O_5' !END 
+    !ORB2 ATOM='C_3' TYPE='PY' NNZ='C_2' NNX='O_6' !END 
+  !END
+!END
+!EOB
+
+
+o5=c1h9-c2h4=c3h7-o6-h8

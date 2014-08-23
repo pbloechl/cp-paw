@@ -1,0 +1,29 @@
+!bcntl
+  !BANDSTRUCTURE MODE='DIAGONALISATION'
+    !line file='Dos_S/bands.dat' nk=30 NB=8 
+          kvec1=0. 0. 0. kvec2=1. 0. 0. kvecscale= 10.263 !end
+    !line file='Dos_S/bands.dat' nk=30 NB=8 tappend=T
+          kvec1=1. 0. 0. kvec2= 1.0 0.5 0.0  kvecscale= 10.263 !end
+    !line file='Dos_S/bands.dat' nk=30 NB=8 tappend=T
+          kvec1=1. 0.5 0.0 kvec2= .5 .5 .5  kvecscale= 10.263 !end
+    !line file='Dos_S/bands.dat' nk=30 NB=8 tappend=T
+          kvec1= .5 .5 0.5 kvec2=0. 0. 0. kvecscale= 10.263 !end
+    !line file='Dos_S/bands.dat' nk=30 NB=8 tappend=T
+          kvec1=0. 0. 0. kvec2=1. 1. 0.  kvecscale= 10.263 !end
+  !end
+!end
+!eob
+
+Bands are Gamma-X-W-L-Gamma-K-X
+0.00000   G
+1.00000   X   
+1.50000   W
+2.20711   L
+3.07313   G
+4.13379   K
+4.48735   X
+
+
+In xmgrace select Axis->Special and insert the values in the left and
+the symbols in the right column. Select Axis->Tickmarks: "Draw grid lines"
+

@@ -1,0 +1,40 @@
+!STRUCTURE 
+  !GENERIC LUNIT= 7.881106 !END  
+  !OCCUPATIONS empty=20 nspin=2  spin[hbar]=0. !END
+  !kpoints r=30. !end
+  !LATTICE T= 1.0 0.5 0.5 
+              0.5 1.0 0.5 
+              0.5 0.5 1.0 !END
+  !SPECIES NAME='NI'   ID='NI_.75_6.0' NPRO=2 1 2 LRHOX=2  !END
+  !SPECIES NAME= 'O_'  ID='O_.75_6.0' NPRO=2 2 1 LRHOX=2   !END
+  !ATOM  NAME= 'NI1'  R=  0.00    0.00      0.00   !END
+  !ATOM  NAME= 'NI2'  R=  1.00    1.00      1.00   !END
+  !ATOM  NAME= 'O_1'  R=  0.50    0.50      0.50   !END
+  !ATOM  NAME= 'O_2'  R=  1.50    1.50      1.50   !END
+  !ORBPOT_X
+    !POT  ATOM='NI1' VALUE=+0.1 TYPE='D' S=1 PWR=6. RC=2. !END
+    !POT  ATOM='NI2' VALUE=-0.1 TYPE='D' S=1 PWR=6. RC=2. !END
+  !END
+ !END 
+!EOB 
+
+
+NiO is calculated in the trigonal antiferromagnetic structure. Here,
+antiferromagnetic planes are stacked in (111)-direction.
+
+For the band gap see mueller08_prb78_85438.
+see also kim11_prb84_85132.
+
+
+Remark: a more compact, but less symmetric structure is 
+
+  !LATTICE T= 1.0  1.0 0.0 
+              0.5 -0.5 0.0 
+              0.0  0.5 0.5 !END
+  !ATOM  NAME= 'Ni1'  R=  0.00    0.00      0.00   !END
+  !ATOM  NAME= 'Ni2'  R=  0.50    0.50      0.00   !END
+  !ATOM  NAME= 'O_1'  R=  0.50    0.00      0.00   !END
+  !ATOM  NAME= 'O_2'  R=  1.00    0.50      0.00   !END
+
+However this the trigonal structure cannot be mapped onto the simple
+cubic unit cell!

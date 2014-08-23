@@ -1,0 +1,28 @@
+!DCNTL
+  !GENERIC  PREFIX='Dos_M/'  !END
+  !GRID  BROADENING[K]=2000. !END
+  !WEIGHT ID='total' TYPE='TOTAL' !END
+  !WEIGHT ID='os' 
+    !ATOM NAME='O_5' TYPE='s' !END 
+    !ATOM NAME='O_6' TYPE='s' !END 
+  !END
+  !WEIGHT ID='op' 
+    !ATOM NAME='O_5' TYPE='p' !END 
+    !ATOM NAME='O_6' TYPE='p' !END 
+  !END
+  !WEIGHT ID='cs' 
+    !ATOM NAME='C_1' TYPE='s' !END 
+    !ATOM NAME='C_2' TYPE='s' !END 
+    !ATOM NAME='C_3' TYPE='s' !END 
+  !END
+  !WEIGHT ID='cp' 
+    !ATOM NAME='C_1' TYPE='p' !END 
+    !ATOM NAME='C_2' TYPE='p' !END 
+    !ATOM NAME='C_3' TYPE='p' !END 
+  !END
+  !WEIGHT ID='hs' 
+    !ATOM NAME='H_4' TYPE='s' !END 
+    !ATOM NAME='H_9' TYPE='s' !END 
+  !END
+!END
+!EOB

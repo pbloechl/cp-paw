@@ -1,0 +1,23 @@
+!dpcntl
+  ezero[ev]=0.  emin[ev]=-30. emax[ev]=3. ymin=-0. ymax=7. 
+  !graph prefix='Dos_M/'
+    !SET ID='total' COLOR='BLACK'         !END
+    !SET ID='hs'     COLOR='BLUE'          !END
+    !SET ID='cs'     COLOR='green' stack=T !END
+    !SET ID='cp'     COLOR='green' stack=T !END
+    !SET ID='os'     COLOR='RED'   stack=T !END
+    !SET ID='op'     COLOR='RED'   stack=T !END
+  !end
+  !graph prefix='Dos_M/' ymin=0. ymax=0.2 scale=1.
+    !SET ID='hs' COLOR='blue' !END
+  !end
+  !graph prefix='Dos_M/' ymin=0. ymax=1.5 scale=0.5
+    !SET ID='os'   COLOR='yellow'         !END
+    !SET ID='op'   COLOR='red'    stack=T !END
+  !end
+  !graph prefix='Dos_M/' ymin=0. ymax=1. scale=0.3333
+    !SET ID='cs'   COLOR='cyan'         !END
+    !SET ID='cp'   COLOR='green'    stack=T !END
+  !end
+!end
+!eob
