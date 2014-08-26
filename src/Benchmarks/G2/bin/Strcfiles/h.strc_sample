@@ -1,0 +1,19 @@
+!STRUCTURE
+ !GENERIC LUNIT=1.8897269 !END
+ !OCCUPATIONS NBAND=2  NSPIN=2 CHARGE[E]=0.0 SPIN[HBAR]=0.499  !END
+ !LATTICE T=  0.0 5.0  5.0  5.0  0.0 5.0  5.0  5.0  0.0 !END
+ !SPECIES NAME= 'H_'  @HYDROGEN@ !END
+   !ATOM NAME='H_1'      R=    0.0000000    0.0000000    0.0000000 !END
+ !ISOLATE NF=3 RC=0.5 RCFAC=1.5 GMAX2=3.0 !END
+!END
+!EOB
+ 
+ 
+ 
+Attention! The hydrogen atom with full spin polarization easily
+becomes unstable.  One spin-channel is completely empty. Avoid the
+problem with a spin of 0.499 instead of 0.5. Correct the result with
+0.001*de. Reduce the time step while keepin the mass large.  Increase
+friction.
+ 
+ The unit cell has been chosen smaller  and fixed.

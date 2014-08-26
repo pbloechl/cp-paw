@@ -1,0 +1,59 @@
+#!/bin/bash
+#====================================================================
+#  creates the file readpaw.in containing a list of the total energies
+#  for all calculatesd systems in Cases
+#
+#  An entry is prepared for all molecules listed in Samples 
+#  fro which a protocoll exists in the corresponding subdirectory 
+#  of the directory Cases
+#=================================================================
+THISDIR=$(pwd)
+G1DIR=$THISDIR
+#
+#== define directory holding the structure files
+SAMPLEDIR=$G1DIR/bin/Strcfiles
+if [[ ! -d $SAMPLEDIR ]]; then 
+   echo "error in $0: SAMPLEDIR does not exist"
+   exit 1 
+fi
+#== define directory with species information
+STPDIR=$G1DIR/bin/Speciesfiles
+if [[ ! -d $STPDIR ]]; then 
+   echo "error in $0: STPDIR does not exist"
+   exit 1 
+fi
+CASESDIR=$G1DIR/Cases
+#
+#####################################################################
+##       compile g2_analyse.f90
+#####################################################################
+echo "compiling g2_analyse.f90 ..."
+gfortran -g -o g2_analyse.x ${G1DIR}/bin/g2_analyse.f90
+RC=$?
+if [[ $RC != 0 ]] ; then echo "error in $0: compilation failed"; exit 1 ; fi
+#
+#####################################################################
+## update readpaw.in
+#####################################################################
+echo "building readpaw.in ..."
+if [[ -f readpaw.in ]] ; then rm readpaw.in ; fi
+for FILE in ${SAMPLEDIR}/*.strc_sample ; do
+  NAME=${FILE%.strc_sample} # strip extension
+  NAME=${NAME##*/}     #  remove all preceeding directories
+  DIR=$CASESDIR/$NAME
+  if  ! test -s $DIR ; then
+    echo 'system $NAME does not exist; exit'
+  fi
+  X=$(paw_get -n -w etot ${DIR}/$NAME)
+  if [[ ! $X  = error* ]] ; then
+    echo "  '$NAME' $X " >>${G1DIR}/readpaw.in
+  fi
+done
+#
+#####################################################################
+##  run analysis
+#####################################################################
+echo "building readpaw.out ..."
+g2_analyse.x <readpaw.in >readpaw.out
+echo " ...done"
+exit 0
