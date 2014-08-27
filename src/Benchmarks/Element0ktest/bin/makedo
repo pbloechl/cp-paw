@@ -31,7 +31,7 @@ for X in bin/Strcfiles/* ; do
               >${PDIR}/${SY}.strc
   cp bin/sample.cntl ${PDIR}/${SY}.cntl
   cd ${PDIR}
-  paw_waittillempty -n 3
+  # remark paw_waittillempty is called inside paw_scanlat
   paw_scanlat -p ${SY} -l "99.02 99.35 98.68 99.01 99.34 99.67 100.00 100.33 100.66 100.99 101.32 101.65 101.98"
   cd $THISDIR
   echo '... $X done'
