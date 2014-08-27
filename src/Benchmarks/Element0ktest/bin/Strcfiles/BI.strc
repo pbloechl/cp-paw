@@ -1,0 +1,18 @@
+!STRUCTURE
+  !GENERIC LUNIT[AA]=1.00000 !END
+  !OCCUPATIONS EMPTY=5 NSPIN=1 !END
+  !KPOINTS R=45. !END
+  !LATTICE T=   4.58866   0.00000   0.00000
+               -2.29433   3.97390   0.00000
+                0.00000   0.00000  12.18223 !END
+  @BI.species@
+  !ATOM name='BI1'  R=   0.00000   0.00000   2.84747  !END
+  !ATOM name='BI2'  R=   0.00000   0.00000   9.33476  !END
+  !ATOM name='BI3'  R=   2.29435   1.32462   6.90818  !END
+  !ATOM name='BI4'  R=   2.29435   1.32462   1.21323  !END
+  !ATOM name='BI5'  R=  -0.00002   2.64928  10.96900  !END
+  !ATOM name='BI6'  R=  -0.00002   2.64928   5.27405  !END
+!END
+!EOB
+
+Samse structur type as As

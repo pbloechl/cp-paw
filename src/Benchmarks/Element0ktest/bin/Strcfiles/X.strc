@@ -1,0 +1,12 @@
+!STRUCTURE
+  !GENERIC LUNIT[AA]=1.00000 !END
+  !OCCUPATIONS EMPTY=5 NSPIN=1 !END
+  !KPOINTS R=45. !END
+  !LATTICE T=
+             
+              !END
+  @X.species@
+  !ATOM name='BR1'  R=  !END
+!END
+!EOB
+

@@ -1,0 +1,19 @@
+!STRUCTURE
+  !GENERIC LUNIT[AA]=1.00000 !END
+  !OCCUPATIONS EMPTY=5 NSPIN=1 !END
+  !KPOINTS R=45. !END
+  !LATTICE T=  3.82055   0.00000   0.00000
+              -1.91028   3.30869   0.00000
+               0.00000   0.00000  10.78963 !END
+  @AS.species@
+  !ATOM name='AS1'  R=  0.00000   0.00000   2.44461 !END
+  !ATOM name='AS2'  R=  0.00000   0.00000   8.34502 !END
+  !ATOM name='AS3'  R=  1.91029   1.10289   6.04111 !END
+  !ATOM name='AS4'  R=  1.91029   1.10289   1.15190 !END
+  !ATOM name='AS5'  R= -0.00002   2.20581   9.63773 !END
+  !ATOM name='AS6'  R= -0.00002   2.20581   4.74852 !END
+!END
+!EOB
+
+
+From AS.cif Lejaeghere et. al.
