@@ -107,8 +107,7 @@ for FILE in $SAMPLEDIR/*.strc_sample ; do
     echo "LIST=\"\$LIST ${ROOT}\"" >>$DOSCRIPT
 done
 echo "for X in \$LIST; do"         >>$DOSCRIPT
-#submit no more than 3 jobs at a time
-echo " paw_waittillempty -n 3"     >>$DOSCRIPT 
+echo " paw_waittillempty -n 3" >>$DOSCRIPT #submit no more than 3 jobs at a time
 echo " calcone \$X &"              >>$DOSCRIPT
 echo "done"                        >>$DOSCRIPT 
 echo 'exit 0'                      >>$DOSCRIPT
