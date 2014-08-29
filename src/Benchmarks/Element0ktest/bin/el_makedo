@@ -55,19 +55,18 @@ echo '#!/bin/bash'                                 >$DOSCRIPT
 echo '# this file is created automatically by el_makedo'    >>$DOSCRIPT
 echo "export ELDIR=$ELDIR"                        >>$DOSCRIPT
 echo 'function calcone {'                         >>$DOSCRIPT
-echo 'ROOT=${ELDIR}/$1'                           >>$DOSCRIPT
-echo 'rm ${ROOT}_*.out'                           >>$DOSCRIPT
-echo 'rm ${ROOT}_*.err'                           >>$DOSCRIPT
-echo 'rm ${ROOT}_*_ballstick.dx'                  >>$DOSCRIPT
-echo 'rm ${ROOT}_*_constr.report'                 >>$DOSCRIPT
-echo 'rm ${ROOT}_*_r.tra'                         >>$DOSCRIPT
-echo 'rm ${ROOT}_*.pdos'                          >>$DOSCRIPT
-echo 'cp ${ELDIR}/sample.cntl ${ROOT}.cntl'       >>$DOSCRIPT
 echo 'echo doing $1'                              >>$DOSCRIPT
+echo 'ROOT=${ELDIR}/$1'                           >>$DOSCRIPT
+echo 'PDIR=${ROOT%/*}'                            >>$DOSCRIPT
+echo 'SY=${ROOT##*/}'                             >>$DOSCRIPT
+echo 'cp ${ELDIR}/sample.cntl ${ROOT}.cntl'       >>$DOSCRIPT
+echo 'BACK=$(pwd)'                                >>$DOSCRIPT
+echo 'cd ${PDIR}'                                 >>$DOSCRIPT
 echo 'paw_scanlat -j 3 -p ${SY} -l \
              "98.02 98.35 98.68 99.01 99.34 99.67 100.00 \
              100.33 100.66 100.99 101.32 101.65 101.98" \
-             1>${ROOT}.err 2>&1' >>$DOSCRIPT
+             1>${ROOT}.err 2>&1'                  >>$DOSCRIPT
+echo 'cd ${BACK}'                                 >>$DOSCRIPT
 echo  'echo $1 done'                              >>$DOSCRIPT
 echo '}'                                          >>$DOSCRIPT
 ################################################################
@@ -76,6 +75,7 @@ echo '}'                                          >>$DOSCRIPT
 # Produce a shell script calcall_sample to be executed
 ################################################################
 echo "LIST=\"\""                                 >>$DOSCRIPT
+ if [[ ! -d $CASESDIR ]] ; then mkdir $CASESDIR;  fi
 for FILE in $STRCDIR/*.strc_sample ; do
   if [[ $V = yes ]] ; then echo "doing FILE=$FILE" ; fi
   NAME=${FILE%.strc_sample} # strip extension
@@ -100,7 +100,7 @@ for FILE in $STRCDIR/*.strc_sample ; do
   if [[ $V = yes ]] ; then echo "... $NAME done"; fi
 done
 echo "for X in \$LIST; do" >>$DOSCRIPT
-echo "  calcone \$X "        >>$DOSCRIPT
+echo "  calcone \$X "      >>$DOSCRIPT
 echo "done"                >>$DOSCRIPT 
 echo 'exit 0'              >>$DOSCRIPT
 chmod +x $DOSCRIPT
