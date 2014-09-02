@@ -1,0 +1,81 @@
+\documentclass{book}
+\usepackage[T1]{fontenc}
+%\usepackage[standard-baselineskips]{cmbright}
+\usepackage{cmbright}
+\def\usedfonts{CM-Bright}
+\usepackage{graphicx} % includegraphics
+\begin{document}
+%=========================================================================
+\section*{Status}
+%=========================================================================
+
+
+
+%=========================================================================
+\section*{Overview}
+%=========================================================================
+The benchmark Element0ktest is based on the work by Lejaeghere
+\cite{lejaeghere14_critrevsolstmatsci39_1,lejaeghere13_arxiv1204_2733}.
+It includes the Elemental structures at zero Kelvin. The equation of
+state, i.e. equilibrium volume, bulk modulus and the derivative of the
+latter are compared the data calculated with the Wien2k code.
+
+The test consists of
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+bin/Strcfiles & directory holding all structure files, yet without species
+information \\
+bin/el\_makedo & bash script which rebuilds the input data in the Cases directory \\
+bin/specieslist & container of the species information for all elements\\
+bin/splitspecies.f90 & code to split up specieslist\\
+\hline
+\end{tabular}
+\end{center}
+
+To build up the test, 
+\begin{enumerate}
+\item change the file specieslist so that the desired setup
+  construction is selected for each element.
+%
+\item split up the specieslist into individual files
+\begin{verbatim}
+cd bin
+gfortran -o splitspecies.x splitspecieslist.f90
+splitspecies.x < specieslist 
+mv *.species Speciesfiles/
+mv *.species_sc Speciesfiles/
+\end{verbatim}
+ensure that the species files ly in bin/Speciesfiles
+%
+\item construct an bash script to run the jobs
+\begin{verbatim}
+bin/el_makedo
+\end{verbatim}
+This creates a new bash script el\_do\_sample. 
+%
+\item copy \verb|el_do_sample| into \verb|el_do|. Unselect elements
+  that shall not be studied by deleting or by commenting out the
+  corresponding lines in the list.
+%
+\item construct a file \verb|sample.cntl|, which will be used by all
+  calculation. Take special care to remove \verb|START=T|, when the
+  restart files are present and if they shall be used.
+%
+\item perform the paw calculation by executing 
+\begin{verbatim}
+el_do -j 3 -- 1>out 2>&1 &
+\end{verbatim}
+The calculation may take up to a few days. The calculations fill up
+the directory \verb|Cases| which will contain one subdirectory for
+each element.
+%
+\item when the calculations are finished, update the result files \verb|etot.dat|, \verb|gap.dat| and \verb|murn.in| with
+\begin{verbatim}
+el_do -u
+\end{verbatim}
+
+\end{enumerate}
+
+
+\end{document}
