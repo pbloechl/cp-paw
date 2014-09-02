@@ -1,0 +1,19 @@
+!STRUCTURE
+  !GENERIC LUNIT[AA]=1.00000 !END
+  !OCCUPATIONS EMPTY=5 NSPIN=1 !END
+  !KPOINTS R=45. !END
+  !LATTICE T=   8.57701   0.00000   0.00000
+                0.00000   4.55422   0.00000
+                0.00000   0.00000  10.18381 !END
+  @I_.species@
+  !ATOM name='I_1'  R=   0.00000   1.65819   8.94719 !END
+  !ATOM name='I_2'  R=   0.00000   0.61892   3.85528 !END
+  !ATOM name='I_3'  R=   0.00000   3.93530   6.32853 !END
+  !ATOM name='I_4'  R=   0.00000   2.89603   1.23662 !END
+  !ATOM name='I_5'  R=   4.28850   3.93530   8.94719 !END
+  !ATOM name='I_6'  R=   4.28851   2.89603   3.85528 !END
+  !ATOM name='I_7'  R=   4.28850   1.65819   6.32853 !END
+  !ATOM name='I_8'  R=   4.28851   0.61892   1.23662 !END
+!END
+!EOB
+

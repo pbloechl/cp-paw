@@ -1,28 +1,47 @@
 !
 !     ...1.........2.........3.........4.........5.........6.........7.........8
       PROGRAM MAIN
+!     **************************************************************************
+!     **  SPLITSPECIESLIST                                                    **
+!     **                                                                      **
+!     **  READ THE FILE SPECIESLIST HOLDING THE SPECIES BLOCKS FOR THE ENTIRE **
+!     **  PERIODIC TABLE, AND CONSTRUCT FROM EACH OF THE SPECIES BLOCKS       **
+!     **  A FILE XX.SPECIES  IN THE DIRECTORY SPECIEFIED BELOW AS "DIRECTORY" **
+!     **                                                                      **
+!     **  EXECUTE AS: SPLITSPECIESLIST.X <SPECIESLIST                         **
+!     **                                                                      **
+!     **************************************************************************
       IMPLICIT NONE
       INTEGER(4),PARAMETER :: NLINE=20
       CHARACTER(128)       :: LINE(NLINE)
       INTEGER(4)           :: NFIL=10
-      INTEGER(4)           :: IL,I1
+      INTEGER(4)           :: IL        !LINE INDEX 
+      INTEGER(4)           :: I1
       CHARACTER(64)        :: ID
       CHARACTER(64)        :: NAME
       LOGICAL(4)           :: TSEMICORE
       CHARACTER(64)        :: FILE
       CHARACTER(64)        :: DIRECTORY
-      LOGICAL(4)           :: TON
+      LOGICAL(4)           :: TON ! TRUE IF CURRENTLY SCANNING SPECIES BLOCK
+!     **************************************************************************
+!
+!     == DEFINE DIRECTORY WHICH WILL HOLD THE SPECIES FILES
       DIRECTORY='S'//LOWER_CASE('PECIESFILES/FROM') &
      &        //'S'//LOWER_CASE('PECIESLIST/')
-
-      TON=.FALSE.
+!DIRECTORY='./'
+!
+!     ==========================================================================
+!     == SCAN LINE-BY-LINE THROUGH THE SPECIESLIST SUPPLIED ON STANDARD IN    ==
+!     ==========================================================================
+      TON=.FALSE.   
       IL=0
       DO 
         IL=IL+1
         IF(IL.GT.NLINE) EXIT
-        READ(5,FMT='(A)',END=1000)LINE(IL)
+!       == READ ONE FURTHER LINE FROM SPECIESALIST =============================
+        READ(5,FMT='(A)',END=1000)LINE(IL)  
 !
-!       == PUT BEGINNING OF FILE TO THE TOP
+!       == PUT BEGINNING OF FILE TO THE TOP (LINE(1)) OF THE LINE-LIST =========
         IF(INDEX(LINE(IL),'!SPECIES').NE.0) THEN
           TON=.TRUE.
           LINE(1)=LINE(IL)
@@ -31,13 +50,13 @@
         END IF
 !
 !       == COLLECT ELEMENT NAME ================================================
+!       == SINGLE LETTER ELEMENT SYMBOLS KEEP THE UNDERSCORE ===================
         IF(INDEX(LINE(IL),'NAME=').NE.0) THEN
           I1=INDEX(LINE(IL),'NAME=')+5
           READ(LINE(IL)(I1:),*)NAME
-          IF(NAME(2:2).EQ.'_')NAME(2:2)=' '
         END IF
 !
-!       == COLLECT ID OF THE SETUP CONSTRUCTION ================================
+!       == COLLECT SETUP ID OF THE SETUP CONSTRUCTION ==========================
         IF(INDEX(LINE(IL),'ID=').NE.0) THEN
           I1=INDEX(LINE(IL),'ID=')+3
           READ(LINE(IL)(I1:),*)ID
