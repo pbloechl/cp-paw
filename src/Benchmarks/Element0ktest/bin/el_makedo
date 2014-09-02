@@ -53,21 +53,45 @@ TMPDIR=$THISDIR                # directory for temporary files
 #######################################################################
 echo '#!/bin/bash'                                 >$DOSCRIPT
 echo '# this file is created automatically by el_makedo'    >>$DOSCRIPT
+echo 'export OPTNS="" '                            >>$DOSCRIPT
+echo 'while getopts :uhv0 OPT ; do'                  >>$DOSCRIPT
+echo '  case $OPT in'                              >>$DOSCRIPT
+echo '    h)'                                      >>$DOSCRIPT
+echo '      echo "options: u, h, v, 0"'            >>$DOSCRIPT
+echo '      exit 0'                                >>$DOSCRIPT
+echo '      ;;'                                    >>$DOSCRIPT
+echo '    u)'                                      >>$DOSCRIPT
+echo '      OPTNS="$OPTNS -u"'                     >>$DOSCRIPT
+echo '      ;;'                                    >>$DOSCRIPT
+echo '    v)'                                      >>$DOSCRIPT
+echo '      OPTNS="$OPTNS -v"'                     >>$DOSCRIPT
+echo '      ;;'                                    >>$DOSCRIPT
+echo '    0)'                                      >>$DOSCRIPT
+echo '      OPTNS="$OPTNS -0"'                     >>$DOSCRIPT
+echo '      ;;'                                    >>$DOSCRIPT
+echo '   \?)'                                     >>$DOSCRIPT
+echo '      echo "error in $0" >&2'               >>$DOSCRIPT
+echo '      echo "invalid option -$OPTARG" >&2'   >>$DOSCRIPT
+echo '      echo "retrieve argument list with:" >&2'>>$DOSCRIPT
+echo '      echo "$0 -h" >&2'                     >>$DOSCRIPT
+echo '      exit 1'                               >>$DOSCRIPT
+echo '      ;;'                                   >>$DOSCRIPT
+echo '  esac'                                     >>$DOSCRIPT
+echo 'done'                                       >>$DOSCRIPT
 echo "export ELDIR=$ELDIR"                        >>$DOSCRIPT
 echo 'function calcone {'                         >>$DOSCRIPT
-echo 'echo doing $1'                              >>$DOSCRIPT
+echo 'echo $0: doing $1'                          >>$DOSCRIPT
 echo 'ROOT=${ELDIR}/$1'                           >>$DOSCRIPT
 echo 'PDIR=${ROOT%/*}'                            >>$DOSCRIPT
 echo 'SY=${ROOT##*/}'                             >>$DOSCRIPT
 echo 'cp ${ELDIR}/sample.cntl ${ROOT}.cntl'       >>$DOSCRIPT
 echo 'BACK=$(pwd)'                                >>$DOSCRIPT
 echo 'cd ${PDIR}'                                 >>$DOSCRIPT
-echo 'paw_scanlat -j 3 -p ${SY} -l \
+echo 'paw_scanlat $OPTNS -j 3 -p ${SY} -l \
              "98.02 98.35 98.68 99.01 99.34 99.67 100.00 \
-             100.33 100.66 100.99 101.32 101.65 101.98" \
-             1>${ROOT}.err 2>&1'                  >>$DOSCRIPT
+             100.33 100.66 100.99 101.32 101.65 101.98" ' >>$DOSCRIPT
 echo 'cd ${BACK}'                                 >>$DOSCRIPT
-echo  'echo $1 done'                              >>$DOSCRIPT
+echo  'echo $0: $1 done'                          >>$DOSCRIPT
 echo '}'                                          >>$DOSCRIPT
 ################################################################
 # Scan Samples directory and update all structure files in the 
