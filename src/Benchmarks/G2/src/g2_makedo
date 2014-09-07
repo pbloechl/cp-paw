@@ -32,21 +32,20 @@ THISDIR=$(pwd)
 if [[ $V = yes ]] ; then echo THISDIR=$THISDIR ; fi
 G1DIR=$THISDIR
 #
-#== define directory holding the structure files
-SAMPLEDIR=$G1DIR/bin/Strcfiles
-if [[ ! -d $SAMPLEDIR ]]; then 
-   echo "error in $0: SAMPLEDIR does not exist"
-   exit 1 
-fi
-#== define directory with species information
-STPDIR=$G1DIR/bin/Speciesfiles
+SAMPLEDIR=$G1DIR/src/Strcfiles # directory holding the structure files
+STPDIR=$G1DIR/src/Speciesfiles # directory with species information
+CASESDIR=$G1DIR/Cases
+DOSCRIPT=$G1DIR/g2_do_sample
+#
 if [[ ! -d $STPDIR ]]; then 
    echo "error in $0: STPDIR does not exist"
    exit 1 
 fi
+if [[ ! -d $SAMPLEDIR ]]; then 
+   echo "error in $0: SAMPLEDIR does not exist"
+   exit 1 
+fi
 #
-CASESDIR=$G1DIR/Cases
-DOSCRIPT=$G1DIR/g2_do_sample
 #######################################################################
 #  prepare calcall_sample
 #######################################################################
@@ -74,15 +73,14 @@ echo '}'                                          >>$DOSCRIPT
 # Produce a shell script calcall_sample to be executed
 ################################################################
 echo "LIST=\"\""                                 >>$DOSCRIPT
+if [[ ! -d $CASESDIR ]] ; then mkdir $CASESDIR ; fi
 for FILE in $SAMPLEDIR/*.strc_sample ; do
   if [[ $V = yes ]] ; then echo FILE=$FILE ; fi
 
   NAME=${FILE%.strc_sample} # strip extension
   NAME=${NAME##*/}     #  remove all preceeding directories
   DIR=$CASESDIR/$NAME
-  if [[ ! -d $DIR ]] ; then
-    mkdir $DIR
-  fi
+  if [[ ! -d $DIR ]] ; then mkdir $DIR; fi
   paw_resolve -r"LATTICE=0.0 8.5 8.5 8.5 0.0 8.5 8.5 8.5 0.0" \
               -fHYDROGEN=$STPDIR/h.species \
               -fLITHIUM=$STPDIR/li.species \
@@ -103,7 +101,6 @@ for FILE in $SAMPLEDIR/*.strc_sample ; do
   #   create sample control file
     ROOT=${DIR}/$NAME
     ROOT=${ROOT#$G1DIR/} 
-#    echo 'calcone' ${ROOT} >>$DOSCRIPT
     echo "LIST=\"\$LIST ${ROOT}\"" >>$DOSCRIPT
 done
 echo "for X in \$LIST; do"         >>$DOSCRIPT
@@ -113,8 +110,3 @@ echo "done"                        >>$DOSCRIPT
 echo 'exit 0'                      >>$DOSCRIPT
 chmod +x $DOSCRIPT
 exit 0
-
-
-
-
-

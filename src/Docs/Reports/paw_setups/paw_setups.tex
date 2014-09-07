@@ -2482,6 +2482,49 @@ is close to that of the oxygen molecule.
   !END
 \end{verbatim}
 
+
+%=====================================================================
+\subsection{Transition metals}
+%=====================================================================
+For the transition metals including the noble metals and the post
+transition metals of group 12, that is Zn, Cd, and Hg, I obtained
+ghost states until I set the value of the pseudopotential at the
+origin to zero.
+
+\begin{verbatim}
+  !SPECIES NAME='CU' NPRO=1 1 1  LRHOX=2 
+    !AUGMENT  ID='CU_NDLSS_V0' Z=  29.00000 ZV=11.
+             TYPE='NDLSS' RBOX/RCOV=  1.200 RCSM/RCOV=  0.250
+             RCL/RCOV=  0.800  0.800  0.800  0.800  0.800
+      !GRID DMIN=   0.100E-05 DMAX=     0.100 RMAX=    20.000 !END
+      !POT  POW=  3.000 RC/RCOV=  0.702 VAL0=0. !END
+      !CORE POW=  3.000 RC/RCOV=  0.702 !END
+    !END
+  !END
+
+  !SPECIES NAME='AG' NPRO=1 1 1  LRHOX=2 
+    !AUGMENT  ID='AG_NDLSS_V0' Z=  47.00000 ZV=11.
+             TYPE='NDLSS' RBOX/RCOV=  1.200 RCSM/RCOV=  0.250
+             RCL/RCOV=  0.800  0.800  0.800  0.800  0.800
+      !GRID DMIN=   0.100E-05 DMAX=     0.100 RMAX=    20.000 !END
+      !POT  POW=  3.000 RC/RCOV=  0.702 val0=0. !END
+      !CORE POW=  3.000 RC/RCOV=  0.702 !END
+    !END
+  !END
+
+  !SPECIES NAME='AU' NPRO=1 1 1 1 LRHOX=2 
+    !AUGMENT  ID='AU_NDLSS_V0' Z=  79.00000 ZV=11.
+             TYPE='NDLSS' RBOX/RCOV=  1.200 RCSM/RCOV=  0.250
+             RCL/RCOV=  0.800  0.800  0.800  0.800  0.800
+      !GRID DMIN=   0.100E-05 DMAX=     0.100 RMAX=    20.000 !END
+      !POT  POW=  3.000 RC/RCOV=  0.702 val0=0. !END
+      !CORE POW=  3.000 RC/RCOV=  0.702 !END
+    !END
+  !END
+\end{verbatim}
+
+
+
 %=====================================================================
 \subsection{Setups for the G2 database}
 %=====================================================================
