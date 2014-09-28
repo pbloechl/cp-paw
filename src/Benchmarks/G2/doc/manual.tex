@@ -1,0 +1,89 @@
+\documentclass[a4paper,10pt]{report}
+\usepackage[T1]{fontenc}
+%\usepackage[standard-baselineskips]{cmbright}
+\usepackage{cmbright}
+\def\usedfonts{CM-Bright}
+\usepackage{graphicx} % includegraphics
+\begin{document}
+\title{{\Huge Molecule Benchmark Environment G2}}
+\author{Peter Bl\"ochl}
+\date{\today}
+\maketitle
+\tableofcontents
+\chapter{Description}
+%=========================================================================
+\section{Overview}
+%=========================================================================
+The normal workflow is as follows:
+\begin{enumerate}
+\item change to the directory with the G2 database, containing a
+  directory ``src'', the directory ``doc'' and the file sample.cntl,
+\item execute \verb|src/g2_makedo|. A file \verb|g2_do_sample| is
+  constructed, the directory \verb|Cases| holding the directories of
+  the individual projects is constructed, and the stucture files in
+  all these directories will be constructed.
+\item adjust the file sample.cntl. This file will be used for all paw
+  calculations.
+\item make a copy \verb|g2_do| of \verb|g2_do_sample|, delete or
+  comment out the lines with the projects that shall not be
+  considered.
+\item execute \verb|g2_do|. 
+\item execute \verb|src/g2_analyse|
+\item inspect file readpaw.out
+\end{enumerate}
+
+
+In order to adjust the speciesfiles, change the files with extension
+\verb|.species| in the directory \verb|src/Speciesfiles|.
+ 
+
+%=====================================================
+\section{Description of Individual scripts}
+%=====================================================
+
+
+%=====================================================
+\section{Problems}
+%=====================================================
+\begin{itemize}
+\item Some of the atoms cannot be converged with Safeortho=F because of 
+its energy-level structure
+\item The hydrogen atom has problems probably because there is no spin
+density in the minority spin direction. NO! it seems to be also
+safeortho. Again YES: I get problems also with SAFEORTHO=T. It helps
+to make a calculation with spin[hbar]=0.499 and then multiply the
+energy level difference with 0.001. 
+\begin{center}
+\includegraphics[width=0.5\linewidth,clip=t]{Figs/hydrogenetot.eps}
+\begin{tabular}{|l|r|r|r|}
+\hline
+$\frac{1}{2}\hbar-S$ & $E_{tot}[H]$ & $\epsilon_\uparrow$[eV]& $\epsilon_\downarrow$[eV] \\
+\hline
+0.001 &  -0.4984656 &  -7.621&   -0.388 \\
+0.005 &  -0.4974234 &  -7.646&   -0.627\\ 
+0.010 &  -0.4961265 &  -7.686&   -0.831 \\
+0.020 &  -0.4935614 &  -7.766&   -1.091 \\
+\hline
+\end{tabular}
+\end{center}
+\begin{eqnarray*}
+E_{tot}[H]=-0.49872+0.258(\frac{1}{2}-S/hbar)
+\end{eqnarray*}
+If we perform calculations with a spin of $0.4990 \hbar$, the total
+energy is too high by $0.2544\times 10^3$~H.
+
+The unit cell for hydrogen has been fixed to a lattice constant of
+10~\AA to avoid instabilitis.
+
+\item Be2 may need a larger cell!
+\item take care of zero point vibration energy
+\item in DFT soe of the atoms are non-psherical
+\item The G2 database contains some open shell systems besides atoms:
+BeH (spin=0.5$\hbar$), CH,\ldots
+\begin{itemize}
+\item C$_2$ is has a band crossing of a sigma state and a doublet of
+$\pi$ states right at the energy minimum
+\end{itemize}
+\end{itemize}
+
+\end{document}
