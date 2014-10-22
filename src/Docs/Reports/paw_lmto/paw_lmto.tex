@@ -45,7 +45,7 @@ http://www.pt.tu-clausthal.de/atp/}
   waves in a sphere.
 %
 \item using only sp like tight-binding orbitals and local exchange
-  lead to an increase of the band gap of silicon avove 1.3 eV. After
+  lead to an increase of the band gap of silicon above 1.3 eV. After
   adding the d-orbitals to the HF term collapsed the band gap
   dramatically below the dft value. Core-valence echange seems to have
   an important effect on the band gap too.
@@ -78,23 +78,25 @@ http://www.pt.tu-clausthal.de/atp/}
   we can add the same pairs of exponential tails as for the lower
   tailed partial waves.
 
-  Currently we use the following rule: Rule: (1) Each head function
-  has exactly one tail function attributed to it.  Thus we can
-  identify the phidot function uniquely by looking for the tail
-  function with the correct angular momentum.  From (1) follows, that
-  there is at most one tail function per site and angular momentum.
+  (The following is probably no more true. please check!) Currently we
+  use the following rule: Rule: (1) Each head function has exactly one
+  tail function attributed to it.  Thus we can identify the phidot
+  function uniquely by looking for the tail function with the correct
+  angular momentum.  From (1) follows, that there is at most one tail
+  function per site and angular momentum.
 %
 \item Suggestion: the exponential functions for the tailed expansion
   are determined by trial and error. A more systematic approach for
   the tail function would be to (1) build a Hankel function on a
-  neighboring site, wich is augmented by (a) a bare Bessel function
-  and (b) by a screened scattering partial wave. (1a) In order to make
-  the formulatiuon less dependent on the neighbor distance, we could
-  also include the gradients of these functions. (2) Thes functions
-  are expanded about the central site into an angular momemtum
-  expansion.  (3) a reasonably weighted least square fit of the
-  exponential tails to these functions will provide a ``optimum
-  shape'' of the tails for each angular momentum.
+  neighboring site, which is augmented by (a) a bare Bessel function
+  and (b) by a screened scattering partial wave
+  $|\dot{\bar{phi}}\rangle$. (1a) In order to make the formulation
+  less dependent on the neighbor distance, we could also include the
+  gradients of these functions. (2) These functions are expanded about
+  the central site into an angular-momentum expansion.  (3) a
+  reasonably weighted least-square fit of the exponential tails to
+  these functions will provide a ``optimum shape'' of the tails for
+  each angular momentum.
 %
 \item The orbitals in the tailed one-center expansion and as
   multicenter expansions can be compared using \verb|LMTO_PLOTORBS|.
@@ -122,7 +124,15 @@ The concept of linear augmented waves\cite{andersen75_prb12_3060} is
 as follows:
 \begin{enumerate}
 \item At first, a so-called \textbf{envelope function}\index{envelope
-  function} $|K^\infty_\alpha\rangle$ is defined.
+  function} $|K^\infty_\alpha\rangle$ is defined.\footnote{The
+  superscript $\infty$ denotes that the function extends over all
+  space, a superscript $\Omega$ denotes that the function is truncated
+  (set to zero) outside the augmentation sphere $\Omega_{R}$ centerd
+  at the site denoted by the index. The superscript $I$ denotes that
+  the function is limited to the interstitial region, that is outside
+  all augmentation spheres. If the augmentation spheres overlap, the
+  function in the interstitial region is defined by subtraction of all
+  sphere contributions.}
 %
 \item In a second step, this envelope function is expanded about each
   atomic site into spherical harmonics.  More generally, they are
@@ -143,8 +153,11 @@ as follows:
 
   The difference between the full envelope function and its expansion
   into head and tail functions is the \textbf{interstitial envelope
-    function}\index{interstitial envelope function}
-  $|K^I_\alpha\rangle$.
+    function}\index{interstitial envelope function}\footnote{The
+    interstitial envelope function is confined mostly in the region in
+    between the atoms, but it also accounts for the overlap of the
+    atomic regions and so-called higher partial waves not taken care of
+    in the regular partial-wave expansion.}  $|K^I_\alpha\rangle$.
 %
 \item In the third step the head and tail functions are replaced
   differentially at some sphere radius by \textbf{partial
@@ -189,8 +202,8 @@ appendix~\ref{app:solidhankel}.
 %====================================================================
 \subsection{Hankel and Bessel functions as head and tail functions}
 %====================================================================
-Defining the envelope function via a isotropic and translationally
-invariant differential equation of second order, has the advantage
+Defining the envelope function via an isotropic and translationally
+invariant differential equation of second order has the advantage
 that the solution can be expanded about different centers into regular
 solutions of the same differential equation with specific angular
 momenta. The regular solutions of the Helmholtz equation are the
@@ -232,9 +245,9 @@ angular momenta $L=(\ell,m)$.
 
 The superscript $\infty$ denotes that the function extends over all
 space, a superscript $\Omega$ denotes that the function is truncated
-(set to zero) outside the augmentation sphere $\Omega_{R}$ centerd at
+(set to zero) outside the augmentation sphere $\Omega_{R}$ centered at
 the site denoted by the index. The superscript $I$ denotes that the
-function is limited to the interstitial region, that is outside all
+function is limited to the interstitial region, that is, outside all
 augmentation spheres. If the augmentation spheres overlap, the
 function in the interstitial region is defined by subtraction of all
 sphere contributions.
@@ -255,6 +268,14 @@ H_{L''}(\vec{R}'-\vec{R})
 \end{eqnarray}
 \end{myshadowminipage}
 
+With $C_{L,L',L''}$, we denote the \textbf{Gaunt
+  coefficients}\index{Gaunt coeffocients} defined by
+\begin{eqnarray}
+Y_L'(\vec{r})Y_{L''}(\vec{r})=\sum_L Y_{L}(\vec{r})C_{L,L',L''}
+\end{eqnarray}
+Note, that the Gaunt coefficients for spherical and real spherical
+harmonics differ.\footnote{In practice, we use real spherical
+  harmonics and the corresponding Gaunt coefficients.}
 
 The bare structure constants are hermitean\footnote{We use that
   $H_L(\vec{r})=(-1)^\ell H_L(-\vec{r})$ and that the Gaunt
@@ -390,7 +411,7 @@ following section.
 %====================================================================
 The screened structure constants are calculated on a cluster of atomic
 sites. The calculation can, in principle, be done for each single
-screened Hankel function independently. In practice we do the
+screened Hankel function independently. In practice, we do the
 calculations for all atoms centered on a given site in one step.
 
 We go back to the defining equation system
@@ -487,7 +508,10 @@ The local orbitals have the form
 &+&\sum_{R',L'}|K^I_{R',L'}\rangle\Bigl[ \delta_{R',L',R_\alpha,L_\alpha}-\bar{Q}_{R',L'}
 \bar{S}^\dagger_{R',L',R_\alpha,L_\alpha}\Bigr]
 \end{eqnarray}
-where, according to \eq{eq:tborbinlmto},
+wherethe new partial waves $|\phi^K_\alpha\rangle$ and
+$|\phi^{\bar{J}}_\alpha\rangle$ are superpositions of the valence and
+scattering partial waves that match differentiably to the head and
+tail functions $|K_\alpha\rangle$ and $|\bar{J}_\alpha\rangle$.
 \begin{eqnarray}
 |\phi^K_\alpha\rangle&=&
 \overbrace{
@@ -507,8 +531,20 @@ where, according to \eq{eq:tborbinlmto},
 Note, that in the factor $JBARTOPHIDOT$ does not depend on the choice
 of $|\phi\rangle$.
 
-Thus, the matrix elements
-$\langle\tilde{p}_\gamma|\tilde{\chi}_\alpha\rangle$ has the form
+With $W_\alpha[f,g]$ we denote the \textbf{Wronskian}\index{Wronskian}
+\begin{eqnarray}
+W_\alpha[f,g]\defas f_\alpha (\partial_r g_\alpha)-(\partial_r f_\alpha)g_\alpha
+=\det\left[\begin{array}{cc}f&g\\\partial_rf&\partial_rg\end{array}\right]
+\end{eqnarray}
+which is used to match two functions differentiably to a third via
+\begin{eqnarray}
+y(x)\rightarrow f(x)\frac{W[y,g]}{W[f,g]}+g(x)\frac{W[y,f]}{W[g,f]}
+\end{eqnarray}
+
+
+The matrix elements
+$\langle\tilde{p}_\gamma|\tilde{\chi}_\alpha\rangle$, which will be
+needed later, have the form
 \begin{eqnarray}
 \langle\tilde{p}_\gamma|\tilde{\chi}_\alpha\rangle
 =\langle\tilde{p}_\gamma|\tilde{\phi}^K_\alpha\rangle
@@ -523,9 +559,9 @@ $\langle\tilde{p}_\gamma|\tilde{\chi}_\alpha\rangle$ has the form
 %====================================================================
 \section{Coefficients of the tight-binding orbital}
 %====================================================================
-%===============================================================================
+%====================================================================
 \subsection{Introduction}
-%===============================================================================
+%====================================================================
 In this section, I describe how to determine the wave functions in
 terms of local orbitals, if the projections
 $\langle\tilde{p}_\gamma|\tilde{\psi}\rangle$ onto the pseudo wave
@@ -825,20 +861,47 @@ orbitals, but there is an additional factor, which cuts of the
 exchange correlation contribution at large radii, where the density
 vanishes.
 
-Idea!
+Let us simplify the expression by introducing the symbols
+$n_R=n^\chi_R(\vec{r})$ and $n_t=n^\chi_{\sigma,\sigma'}(\vec{r})$.
+The expression above can be written in the
+following form:
+\begin{eqnarray}
+E_{xc}^{\hat{W}_R}=\int d^3r\; n_t(\vec{r})
+\epsilon_{xc}[n_t(\vec{r})]
+\left(\frac{n_R(\vec{r})}{n_t(\vec{r})}\right)^2
+\end{eqnarray}
+With $f_{xc}:=n_t\epsilon_{xc}[n_t]$ and
+$\mu_{xc}:=\frac{df_{xc}}{dn}$, we obtaim
+\begin{eqnarray}
+dE_{xc}^{\hat{W}_R}
+&=&\int d^3r\; 
+\left(\frac{n_R}{n_t}\right)^2\mu_{xc} dn_t
++f_{xc}2\left(\frac{n_R}{n_t}\right)^2\frac{dn_R}{n_R}
+-f_{xc}2\left(\frac{n_R}{n_t}\right)^2\frac{dn_t}{n_t}
+\nonumber\\
+&=&\int d^3r\; 
+\biggl[
+\left(\frac{n_R}{n_t}\right)^2\mu_{xc} 
+-2f_{xc}\left(\frac{n_R}{n_t}\right)^2\frac{1}{n_t}\biggr]dn_t
++\biggl[2f_{xc}\left(\frac{n_R}{n_t}\right)^2\frac{1}{n_R}\biggr] dn_R
+\end{eqnarray}
+
+We start from two density matrices, which are the same at the moment.
+
+see \verb|lmto_simpledc_new|.
+
+
+
+
+%====================================================================
+\subsubsection{Idea}
+%====================================================================
 \begin{eqnarray}
 E_{xc}^{\hat{W}_R}=\sum_{a,b,c,d}\int d^3r\; 
 \chi^*_a(r)\chi_b(r)\chi^*_d(r)\chi_c(r)
 \frac{\epsilon_{xc}[n^\chi_{\sigma,\sigma'}(\vec{r})]}
 {n^\chi(\vec{r})}
 \end{eqnarray}
-
-
-
-
-We start from two density matrices, which are the same at the moment.
-
-see \verb|lmto_simpledc_new|.
 
 
 
