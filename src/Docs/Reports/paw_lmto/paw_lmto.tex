@@ -756,6 +756,22 @@ HPROJ_{\gamma,n}&=&\sum_\beta M^\dagger_{\gamma,\beta}\cdot HTBC_{\beta,n}
 This operation is performed in
 \verb|lmto$projtontbo| with \verb|ID='BACK'|.
 
+%====================================================================
+\section{Tailed representation of the natural tight-binding orbitals}
+%====================================================================
+The tailed representation replaces the multi-center expansion of the
+natural tight-binding orbitals by a one-center expansion. The
+underlying idea the short-ranged tails of the screened orbitals can be
+approximatd by exponential tails, that are matched to the one-center
+expansion of the orbitals at the central site. Thus both the head and
+the tail functions centered on the central site are extended by a
+superposition of exponential tails.
+
+
+
+
+
+
 
 
 
@@ -842,7 +858,6 @@ is calculated first using \verb|potpar1(isp)%prok| and
   only potpar(isp)\%ktophi is used to extract the $\phi$
   contribution.}
 
-
 %====================================================================
 \section{U-tensor}
 %====================================================================
@@ -863,27 +878,75 @@ vanishes.
 
 Let us simplify the expression by introducing the symbols
 $n_R=n^\chi_R(\vec{r})$ and $n_t=n^\chi_{\sigma,\sigma'}(\vec{r})$.
+With $n^s_R$ and $n^s_t$ we denote the spherical parts of the
+respective densities.
+
+If the frozen-core density is employed, the contribution of the core
+must not be included in the double counting term.
+
 The expression above can be written in the
 following form:
 \begin{eqnarray}
-E_{xc}^{\hat{W}_R}=\int d^3r\; n_t(\vec{r})
+E_{xc}^{\hat{W}_R}&=&
+\int d^3r\; 
+\biggl[
+n_t(\vec{r})
 \epsilon_{xc}[n_t(\vec{r})]
-\left(\frac{n_R(\vec{r})}{n_t(\vec{r})}\right)^2
+-n^{core}(\vec{r})
+\epsilon_{xc}[n^{core}(\vec{r})]
+\biggr]
+\left(\frac{n^s_R(\vec{r})}{n^s_t(\vec{r})}\right)^2
+\nonumber\\
+&=&
+\int d^3r\; f_{xc}(\vec{r})
+\left(\frac{n^s_R(\vec{r})}{n^s_t(\vec{r})}\right)^2
 \end{eqnarray}
-With $f_{xc}:=n_t\epsilon_{xc}[n_t]$ and
-$\mu_{xc}:=\frac{df_{xc}}{dn}$, we obtaim
+With $f_{xc}:=n_t\epsilon_{xc}[n_t]-n^{core}\epsilon_{xc}[n^{core}]$ and
+$\mu_{xc}:=\frac{df_{xc}}{dn_t}$, we obtain
 \begin{eqnarray}
 dE_{xc}^{\hat{W}_R}
 &=&\int d^3r\; 
-\left(\frac{n_R}{n_t}\right)^2\mu_{xc} dn_t
-+f_{xc}2\left(\frac{n_R}{n_t}\right)^2\frac{dn_R}{n_R}
--f_{xc}2\left(\frac{n_R}{n_t}\right)^2\frac{dn_t}{n_t}
+\left(\frac{n^s_R}{n^s_t}\right)^2\mu_{xc} dn_t
++f_{xc}2\left(\frac{n^s_R}{n^s_t}\right)^2\frac{dn^s_R}{n^s_R}
+-f_{xc}2\left(\frac{n^s_R}{n^s_t}\right)^2\frac{dn^s_t}{n^s_t}
 \nonumber\\
 &=&\int d^3r\; 
 \biggl[
-\left(\frac{n_R}{n_t}\right)^2\mu_{xc} 
--2f_{xc}\left(\frac{n_R}{n_t}\right)^2\frac{1}{n_t}\biggr]dn_t
-+\biggl[2f_{xc}\left(\frac{n_R}{n_t}\right)^2\frac{1}{n_R}\biggr] dn_R
+\left(\frac{n^s_R}{n^s_t}\right)^2\mu_{xc} 
+-2f^s_{xc}\left(\frac{n^s_R}{n^s_t}\right)^2\frac{1}{n^s_t}\biggr]dn_t
++\biggl[2f^s_{xc}\left(\frac{n^s_R}{n^s_t}\right)^2\frac{1}{n^s_R}\biggr] dn^s_R
+\end{eqnarray}
+which yields the two potentials
+\begin{eqnarray}
+v_t&\defas&\left(\frac{n^s_R}{n^s_t}\right)^2
+\biggl[\mu_{xc} -\frac{2f^s_{xc}}{n^s_t}\biggr]
+\nonumber\\
+v_R&\defas&\left(\frac{n^s_R}{n^s_t}\right)^2\frac{2f^s_{xc}}{n^s_R}
+\end{eqnarray}
+For the cutoff function $(n^s_R/n^s_t)^2$ we consider only the
+spherical contributions of the density and we ignore the spin
+contributions. This is accounted for in the derivations by only
+considering the spherical part $f^s_{xc}$ of $f_{xc}$, while
+maintaining the non-spherical contributions to $\mu_{xc}$.
+
+The total density $n_t$ contains also the core density. If the core
+valence Fock term is included, they are part of the correlated
+electrons and need to be considered in the density $n_R$.
+
+The double counting correction has the negative sign, because the
+DFT-expression needs to be subtracted.\footnote{This subtraction is
+  done outside the routine calculating the double counting term.}  Its
+energy and the corresponding contributions to the auxiliary
+Hamiltonian are
+\begin{eqnarray}
+E_{dc}&=&-\int d^3r\; \left(\frac{n^s_R}{n^s_t}\right)^2f^s_{xc}
+\nonumber\\
+d\hat{\tilde{H}}_{dc}&=&
+-|\tilde{\pi}_\alpha\rangle\langle\chi_\alpha|\hat{v}_t|\chi_\beta\rangle
+\langle\tilde{\pi}_\beta|
+-|\tilde{p}_\alpha\rangle
+\langle\phi_\alpha|\hat{v}_R|\phi_\beta\rangle
+\langle\tilde{p}_\beta|
 \end{eqnarray}
 
 We start from two density matrices, which are the same at the moment.

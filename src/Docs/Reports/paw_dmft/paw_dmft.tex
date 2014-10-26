@@ -140,10 +140,13 @@ related to the one-particle density matrix via (see Eq.~BPP24)
 
 In practice, we perform calculations at fixed particle
 number. Therefore, we calculate the \textbf{Helmholtz
-  potential}\index{Helmholtz potential}
+  potential}\index{Helmholtz potential} by adding the term with the
+particle number\footnote{$N_{\beta,\mu}=\sum_n f_n$ is the particle
+  number of the equilibrium ensemble defined by a temperature and the
+  chemical potential.} $N_{\beta,\mu}$ to the grand potential.
 \begin{eqnarray}
 A_{\beta,N}[\hat{h}+\hat{W}]
-&=&\stat_\mu\Bigl\lbrace\Omega_{\beta,\mu}+\mu N_\mu\Bigr\rbrace
+&=&\stat_\mu\Bigl\lbrace\Omega_{\beta,\mu}+\mu N_{\beta,\mu}\Bigr\rbrace
 \nonumber\\
 &=&\min_{|\psi_n\rangle,f_n\in[0,1]}\stat_{\mu,\Lambda}
 \biggl\lbrace\sum_n f_n\langle\psi_n|\hat{h}|\psi_n\rangle
@@ -295,7 +298,7 @@ We distinguish two different corrections:
     E_{X}& =&-\frac{1}{2}\sum_{a,b,c,d}U_{a,b,d,c}\rho_{c,a}\rho_{d,b}
   \end{eqnarray}
 
-  For the Hartree Fock contribution we restrict the U-tensor to on-site
+  For the Hartree-Fock contribution we restrict the U-tensor to on-site
   contributions and certain bond-terms. In the spirit of the hybrid
   functionals or the GW method, we scale the U-tensor. The neglect of
   U-tensor elements that do not reside on an atom pair is motivated by
@@ -783,7 +786,7 @@ U_{a,b,c,d}=\sum_{\sigma,\sigma'}\int d^3r\int d^3r\;
 
 The U-tensor can then be approximated to yield $\hat{W}_1$ and
 $\hat{W}_2$. Typically, these approximations amount to multiplying
-matrix elements with scale factors and to leavingf certain elements
+matrix elements with scale factors and to leaving certain elements
 out completely.
 
 %====================================================================
@@ -977,8 +980,10 @@ The fundamental variables are
   function, if the dynamic self energy is taken into account.
 \end{itemize}
 
-From the site-diagonal self energies, we obtain as direct sum. The self
-energy that connects each orbital in a unit cell with each other. 
+From the site-diagonal self energies $\mat{\Sigma}_{dyn,R}$, we obtain
+the global self energy $\mat{\Sigma}_{dyn}$ as direct sum. The global
+self energy is formally a matrix that connects each orbital in a unit
+cell with each other one.
 \begin{eqnarray}
 \mat{\Sigma}_{dyn}(i\omega_\nu)=\bigoplus_{R\in\text{unit cell}}
 \mat{\Sigma}_{dyn,R}(i\omega_\nu)
@@ -990,7 +995,7 @@ This self energy is independent of $\vec{k}$.
 %====================================================================
 \subsubsection{Local Green's function}
 %====================================================================
-Then local Green's function is obtains as Brillouin-zone integral
+Then local Green's function is obtained as Brillouin-zone integral
 \begin{eqnarray}
 \mat{G}_{R}(i\omega_\nu)
 =\frac{1}{N_k}\sum_{\vec{k}}\mat{P}_R\mat{G}_{\vec{k}}(i\omega_\nu)
@@ -1008,8 +1013,8 @@ matrix onto the subspace of orbitals on a given site.
 %============================================================
 A consistent choice for the Laurent expansion for the Green's function
 and self energy has turned out to be non-trivial. The most consistent
-approach apepars to write down an approximate form for the
-high-frequency tail of the Matsubara sum in the dynanic correlation
+approach appears to write down an approximate form for the
+high-frequency tail of the Matsubara sum in the dynamic correlation
 correction, and to extract the Laurent expansion coefficients from the
 stationary conditions.
 
@@ -1045,7 +1050,7 @@ Side Remark:\footnote{In order to rationalize the form of the
   Kadanoff-Baym functional, we look for a functional $X$ , that
   provides Dyson's equation as functional derivative of the self
   energy. We do not make any reference regarding the representation of
-  the Green's function. We onmly require $d \Tr[A^n]=n A^{n-1}dA$ and
+  the Green's function. We only require $d \Tr[A^n]=n A^{n-1}dA$ and
   $\ln[1-A]=-\sum_{n=1}^\infty \frac{1}{n}A^n$.
 
  We start with Dyson's equation
@@ -1054,7 +1059,7 @@ G=G_{0}+G_0\Sigma G
 =G_0+\sum_{n=1}G_0\Bigl(\Sigma G_0\Bigr)^n
 =\sum_{n=0}G_0\Bigl(\Sigma G_0\Bigr)^n
 \end{eqnarray}
-We define a functional $X[G,\Sigma$ so that
+We define a functional $X[G,\Sigma]$ so that
 \begin{eqnarray}
 \left.\frac{\delta X[G,\Sigma]}{\delta\Sigma}\right|_{G_0}=
 G-\sum_{n=0}G_0\Bigl(\Sigma G_0\Bigr)^n
@@ -1135,7 +1140,7 @@ third order term in inverse temperature of the Matsubara sum does not
 contribute. However we will postpone this for the time being.
 
 Another alternative would be to truncate the power-series expansion of
-thelogarithm beyond a certain value and to inlcude all Laurent
+the logarithm beyond a certain value and to include all Laurent
 expansion terms of the Matsubara sum which are produced by the
 Green's-function and self-energy expansion up to a certain order.
 
@@ -1171,9 +1176,11 @@ Then, the functional $X$
 \biggl(\mathcal{\mat{S}}^{(0)}-\mat{\Gamma}\biggr)
 \biggr]^2\biggr\rbrace
 \biggr\rbrace
+\label{eq:161forx}
 \end{eqnarray}
 
-The functional derivatives with respect to the self energy is
+The functional derivatives of \eq{eq:161forx} with respect to the self
+energy is
 \begin{eqnarray}
 \frac{dX}{d\mathcal{\mat{S}}^{(0)}}
 &=&
@@ -1195,7 +1202,8 @@ With the Laurent expansion of the non-interacting Green's function,
 \mat{S}^{-1}
 \end{eqnarray}
 
-The derivative with respect to the Green's function yields
+The derivative of \eq{eq:161forx} with respect to the Green's function
+yields
 \begin{eqnarray}
 \frac{dX}{d\mathcal{\mat{G}}^{(2)}}
 &=&
@@ -1294,8 +1302,8 @@ local contributions $\mat{\Sigma}_{dyn,R}$ via \eq{eq:sigmafromlocal}.
 The overlap matrix $\mat{S}_{\vec{k}}$ is obtained from
 \eq{eq:defoverlapmatrix}.
 
-$N_k$ is the number of k-points in considered for the grid in the
-Brillouin zone integration.
+$N_k$ is the number of k-points on the grid for the Brillouin-zone
+integration.
 
 \begin{eqnarray}
 \bar{\mat{h}}_{a,b,\vec{k}}=
@@ -1408,11 +1416,11 @@ call dmft_addtohpsi()
 \item \verb|DMFT_COLLECTNATORB|: The orbital coefficients
   $\langle\pi_a|\psi_n\rangle$ have been calculated by the LMTO object
   and they are kept in the module of \verb|paw_waves|.  The orbital
-  coefficients are placed into as
+  coefficients are placed into as 
   \verb|kset(ik)%pipsi(ndim,nchi,nb,nspin)|. Also the occupations are
   kept as \verb|kset(ik)%f(nb,nspin)| (without spin degeneracy,
   i.e. $f_n\in[0,1]$). The k-point weights are kept
-  as\verb|kset(ik)%wkpt|. Again the spin degeneracy has been
+  as \verb|kset(ik)%wkpt|. Again the spin degeneracy has been
   removed. However special k-points have half the weight as general
   k-points. \petertt{This should be checked explicitely!}
 %
@@ -1483,8 +1491,8 @@ $\bar{\mat{h}}_{\vec{k}}$ is kept as \verb|KSET(IKPT)%HRHO|.
 These states will be called local natural orbitals (This will be
 changed.).
 
-The orbital coefficients of the local orthonormal orbitals are
-calculated as
+The orbital coefficients $\langle\pi_a|\phi_{R,j}\rangle$ of the local
+orthonormal orbitals are calculated as
 \footnote{The spirit follows from the construction of local natural
   orbitals along the following lines
 \begin{eqnarray}
@@ -1526,7 +1534,7 @@ y^*_{a,i}S^{-1}_{a,c}
 \langle\pi_a|\phi_{R,j}\rangle&=&\sum_{b} S^{-1}_{R,a,b} y_{b,j}
 \end{eqnarray}
 
-The local density matrix $\mat{\rho}_R$ andf the local inverse overlap
+The local density matrix $\mat{\rho}_R$ and the local inverse overlap
 matrix $\mat{S}^{-1}_R$ are obtained as Brillouin zone intergral
 projected onto the lcoal site
 \begin{eqnarray}
@@ -1634,13 +1642,13 @@ The result and its Laurent expansion terms are stored in
   \end{enumerate}
   The external solver may make additional approximations to the
   U-tensor or to the Kadanoff-Baym functional. However, these
-  approximationa must be consistent across the dynamical correlation
+  approximations must be consistent across the dynamical-correlation
   correction.
 %
-\item \verb|DMFT_MIX| mixes the self energy: The self energy cannot be simply
-  inserted into the Green's function for the next iteration, because
-  the changes for small Matsubara frequencies would be too
-  violent. Therefore it needs some preconditioning.
+\item \verb|DMFT_MIX| mixes the self energy: The self energy cannot
+  simply be inserted into the Green's function for the next iteration,
+  because the changes for small Matsubara frequencies would be too
+  violent. Therefore, it needs some preconditioning.
 
   The underlying ideas related to the mixing are described in
   appendix~\ref{sec:mixing} on p.~\pageref{sec:mixing}.
@@ -1741,13 +1749,13 @@ until $\delta\rho$ vanishes.
 With the correct Lagrange multiplier, the new Green's function is
 obtained.
 %
-\item \verb|DMFT_RHOLOCAL|: For the Hartree Fock and DFT double
-  countinfg terms, we need the local density matrix, which is
+\item \verb|DMFT_RHOLOCAL|: For the Hartree-Fock and DFT
+  double-counting terms, we need the local density matrix, which is
   calculatecd directly form the k-dependent density matrix als
   Brillouin zone sum.
 %
 \item \verb|DMFT_STATICSOLVER|: Calculates the static contribution to
-  the correlation energy, i.e. the screened Hartree Fock term and the
+  the correlation energy, i.e. the screened Hartree-Fock term and the
   DFT double counting correction and its derivatives. These terms do
   not affect the density matrix constraint.
 
