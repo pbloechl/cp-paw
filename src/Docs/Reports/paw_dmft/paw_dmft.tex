@@ -404,6 +404,29 @@ defined in \eq{eq:defhbar}.
 \eq{eq:rhoopt} can be veryfied from the stationary conditions by going
 into a basis of eigenstates of $\hat{h}_{eff}$.
 
+
+The Hamiltonian $\hat{h}_{eff}$ has, like $\bar{h}$, no spectral
+information. It simply reflects the occupations. If an orbital obtains
+partial fluctuations due to quantum fluctuations\footnote{With quantum
+  fluctuations we mean for example electron-hole pairs, which screen
+  the bare interaction. Electron-hole pairs lead fractional
+  occupations beyond the effect of thermal fluctuations.},
+$\hat{h}_{eff}$ places this state near the Fermi level, where the
+Fermi distribution give it the desired occupation.
+
+The spectral information is contained in the Hamiltonian
+\begin{eqnarray}
+\hat{h}_{bare}=\frac{\hat{\vec{p}}^2}{2m_e}+v_{ext}+v_{Hartree}+v_{xc}
+\end{eqnarray}
+which reflects the Kohn-Sham energy levels. When the Green's function
+is calculated we will see that this Hamiltonian, respectively
+$\mat{h}-\mat{\Gamma}$ acts as ``non-interacting'' Hamiltonian to
+which the self energy (including double counting) is added to give the
+quasi-particle spectrum.
+
+
+
+
 %====================================================================
 \section{Dynamic-correlation correction}
 \label{sec:dyncorelcorr}
@@ -1463,7 +1486,7 @@ The scaled U-tensor is kept as \verb|ATOMSET(iat)%U|
 \item \verb|DMFT_HRHO|: (see also section~\ref{sec:routinedmfthrho} on
 p.~\pageref{sec:routinedmfthrho}.) Calculate the non-interacting
 Hamiltonian $\bar{\mat{h}}_{\vec{k}}$ that produces the specified
-density matrix.
+(k-dependent) density matrix.
 \begin{eqnarray}
 \bar{h}_{\vec{k},a,b}=\mu S_{\vec{k},a,b}+\sum_{n}
 \langle\chi_a|\psi'_{\vec{k},n}\rangle\frac{1}{\beta}
@@ -1953,6 +1976,14 @@ obtain it from the k-dependent $\mat{S}^{-1}$ by summing over k-points
 and cutting out the corresponding submatrix. However, it is not
 allowed to do the same thing for the overlap matrix itself!
 
+We approach the problem by a formulation of natural orbitals for the
+local density matrix. This choice is not convenient in the end,
+because the resulting basisset depends on the instantaneous electronic
+structure. Nevertheless the point of view taken allows me to formulate
+the problem. Later we change it such that we use quasi atomic orbitals
+instead of the natural orbitals, which are less dependent on the
+electronic structure.
+
 The one-particle density matrix in this sub-Hilbert space has the form
 \begin{eqnarray}
 \hat{\rho}_{\mathcal{C}_R}
@@ -1992,6 +2023,10 @@ The natural orbitals are
 =\sum_{\alpha\in\mathcal{C}_R}|\chi_\alpha\rangle
 \underbrace{\Bigl(\mat{S}^{-1}\mat{V}\Bigr)_{\alpha,j}}_{\mat{V}^{\dagger,-1}_{\alpha,j}}
 \end{eqnarray}
+Remember that the natural orbitals are not the ones used in the
+calculation! The orbitals chosen are discussed in the following
+section.
+
 
 The matrix $\mat{V}$ is placed into the structure
 \verb|atomset%natorb%chiphi|, together with the occupations $\bar{f}$
@@ -2047,7 +2082,7 @@ eigenvectors.
 \label{sec:routinedmfthrho}
 %====================================================================
 Calculate the non-interacting Hamiltonian $\bar{\mat{h}}$ that
-produces the specified density matrix.
+produces the specified (k-dependent) density matrix.
 \begin{eqnarray}
 \bar{h}_{a,b}(\vec{k})=\mu S_{a,b}(\vec{k})+\sum_n\langle\chi_a|\psi_n'\rangle
 \frac{1}{\beta}\ln\left[\frac{1-f'_n}{f'_n}\right]
@@ -2084,7 +2119,7 @@ $f'_n$ differ from the original natural orbitals.
            &=&S_{a,d}\langle\pi_d|\psi'_n\rangle f'_n
      \nonumber\\
            \mat{\rho} \Bigl(\mat{S} \vec{x}_n\Bigr)
-           &=&\mat{S}^{-1}\Bigl(\mat{S} \vec{c}_n\Bigr) f'_n
+           &=&\mat{S}^{-1}\Bigl(\mat{S} \vec{x}_n\Bigr) f'_n
      \end{eqnarray}
 
      Thus, for each k-point solve the generalized eigenvalue problem
@@ -2814,7 +2849,7 @@ where $D$ is the density of states. $f_\mu(\epsilon)$ is the Fermi function.
 \end{eqnarray}
 Thus $dN/d\mu$ provides us with a broadened density of states.
 
-No we generalize the relation obtained for independent Fermions to
+Now we generalize the relation obtained for independent Fermions to
 interacting Fermions. The number of states function $N_{a,b}(\mu)$ can
 be obtained from the Green's function
 \begin{eqnarray}
@@ -2843,6 +2878,10 @@ obtained as derivative with respect to $\mu$.
 \nonumber\\
 \end{eqnarray}
 
+This relation is however only valid for non-interacting electrons,
+because a self energy may depend itself on the chemical potential.
+
+
 %====================================================================
 \section{Project Green's function onto local orbitals}
 %====================================================================
@@ -2858,7 +2897,7 @@ as
 \hat{G}(i\omega_\nu)&=&
 \sum_{a,b}|\chi_a\rangle
 \biggl\lbrace
-\sum_n\langle\pi_a|\psi_n\rangle
+\sum_{n,n'}\langle\pi_a|\psi_n\rangle
 \biggl[
 (i\hbar\omega_\nu+\mu)\delta_{n,n'}
 \nonumber\\
@@ -2876,21 +2915,44 @@ orbitals $|\chi_a\rangle$ using
 $|\psi_n\rangle=\sum_a|\chi_a\rangle\langle\pi_a|\psi_n\rangle$.
 
 
-In order to evaluate Green's function, we still need to refer to the
+In order to evaluate the Green's function, we still need to refer to the
 band states. The Green's function can, however, also be expressed
 without making direct use of the band states, namely as
+\begin{myshadowminipage}{Green's function in matrix form}
 \begin{eqnarray}
-\mat{G}_{a,b}(i\omega_\nu)
-=\biggl[(i\hbar\omega_\nu+\mu)\mat{S}
+\hat{G}(i\omega_\nu)=\sum_{a,b}|\chi_a\rangle G_{a,b}(i\omega_\nu)\langle\chi_b|
+\end{eqnarray}
+with
+\begin{eqnarray}
+&&G_{a,b}(i\omega_\nu)
+\nonumber\\
+&=&
+\biggl\lbrace
+\sum_{n,n'}\langle\pi_a|\psi_n\rangle
+\biggl[
+(i\hbar\omega_\nu+\mu)\delta_{n,n'}
+-\sum_{c,d}\langle\psi_n|\pi_c\rangle
+\Bigl(h_{c,d}+\Sigma_{c,d}(i\omega_\nu)\Bigr)
+\langle\pi_d|\psi_{n'}\rangle
+\biggr]^{-1}_{n,n'}
+\langle\psi_{n'}|\pi_b\rangle
+\biggr\rbrace
+\nonumber\\
+&=&\biggl[(i\hbar\omega_\nu+\mu)\mat{S}
 -\mat{h}-\mat{\Sigma}(i\omega_\nu)\biggr]^{-1}
-_{a,b}
 \label{eq:greenlocform1}
 \end{eqnarray}
-where
+where\footnote{in a representation of Bloch states the inverse overlap
+  calculation is calculated for each k-point and inverted.}
 \begin{eqnarray}
-S^{-1}_{a,b}=\sum_k\langle\pi_a|\psi_n\rangle \langle\psi_n|\pi_b\rangle
+S^{-1}_{a,b}=\langle\pi_a|\psi_n\rangle \langle\psi_n|\pi_b\rangle
 \label{eq:inverses}
 \end{eqnarray}
+\end{myshadowminipage}
+
+
+
+
 
 \textbf{Proof:}
 Here, I will show that the Green's function matrix 
@@ -2975,7 +3037,7 @@ q.e.d.
 
 
 %============================================================
-\subsection{Laurentexpansion of the non-interacting Green's function}
+\subsection{Laurent expansion of the non-interacting Green's function}
 %============================================================
 We determine the Laurent expansion terms of $\bar{\mat{G}}$
 \begin{eqnarray}
@@ -3277,6 +3339,390 @@ _{\delta\Phi^{LW}_{\beta,dyn}/\delta\mathcal{\mat{G}}^{(3)}}
 \frac{1}{(i\hbar\omega_\nu)^3}\biggr]}
 _{\delta\Phi^{LW}_{\beta,dyn}/\delta\mathcal{\mat{G}}^{(3)}}
 \mat{S}^{-1}
+\end{eqnarray}
+
+%==============================================================================
+\chapter{in progress: Green function in matrix form}
+\label{sec:Greenmatrix}
+%==============================================================================
+The Green function of the non-interacting system has the form
+\begin{eqnarray}
+G_{a,b}(i\omega_\nu)
+=\sum_n\langle\pi_a|\psi_n\rangle\frac{1}{i\hbar\omega_\nu+\mu-\epsilon_n}
+\langle\psi_n|\pi_b\rangle
+\label{eq:greenmatrix1a}
+\end{eqnarray}
+Note, that the sum over $n$ includes the sum over $k$-points, and that
+the orbital indices may refer to orbitals from different unit
+cells. In practice the Green's function is calculated for each k-point
+individually, with orbitals only from one unit cell. The full Green's
+function can then be recovered from those $k$- projected Green's
+functions by a summation and using the corresponding
+phase factors.
+
+The density matrix is defined by
+\begin{eqnarray}
+\rho_{a,b}&=&\sum_{n}\langle\pi_a|\psi_n\rangle
+ f(\epsilon_n)\langle\psi_n|\pi_b\rangle
+\end{eqnarray}
+If (1) the Matsubara sum is complete and (2) the sum in the Green's
+function is perfomed over all states with non-zero occupations, the
+density matrix has the form
+\begin{eqnarray}
+\rho_{a,b}&=&\sum_n\langle\pi_a|\psi_n\rangle\biggl(
+ \frac{1}{\beta}\sum_\nu\e{i\hbar\omega\beta0^+}
+\frac{1}{i\hbar\omega_\nu+\mu-\epsilon_n}
+\biggr)
+\langle\psi_n|\pi_b\rangle
+\nonumber\\
+&=&\frac{1}{\beta}\sum_\nu\e{i\hbar\omega\beta0^+}\mat{G}(i\omega_\nu)
+\end{eqnarray}
+
+
+
+Let us rewrite the Green's function in terms of a matrix
+equation that does not involve a sum over all states, but with
+matrices on the space of local orbitals. As shown below, the result is
+\begin{myshadowminipage}{}
+\begin{eqnarray}
+G_{a,b}(i\omega_\nu)
+&=&\sum_{n,n'}\langle\pi_a|\psi_n\rangle
+\biggl((i\hbar\omega_\nu+\mu)\delta_{n,n'}-
+\sum_{c,d}\langle\psi_n|\pi_c\rangle h_{c,d}\langle\pi_d|\psi_{n'}\rangle
+-\Delta_{n,n'}\biggr)^{-1}_{n,n'}
+\langle\psi_{n'}|\pi_b\rangle
+\nonumber\\
+\label{eq:greenmatrix2a}
+\end{eqnarray}
+with\footnote{To motivate the form for $\mat{h}$, equate the denominator of both
+  expressions for the Greens function, which gives
+\begin{eqnarray}
+\epsilon_n\delta_{n,n'}
+&=&\sum_{c,d}\langle\psi_n|\pi_c\rangle h_{c,d}\langle\pi_d|\psi_{n'}\rangle
++\Delta_{n,n'}
+\nonumber\\
+\Rightarrow\quad
+\sum_{n,n'}\langle\pi_a|\psi_n\rangle
+\Bigl(\epsilon_n\delta_{n,n'}-\Delta_{n,n'}\Bigr)
+\langle\psi_{n'}|\pi_b\rangle
+&=&\sum_{n,n'}\sum_{c,d}\langle\pi_a|\psi_n\rangle\langle\psi_n|\pi_c\rangle 
+h_{c,d}\langle\pi_d|\psi_{n'}\rangle\langle\psi_{n'}|\pi_b\rangle
+\nonumber\\
+&&\hspace{-7cm}
+\Leftrightarrow\quad h_{c,d}=\sum_{a,b}
+\Bigl(\sum_m\langle\pi_a|\psi_m\rangle\langle\psi_m|\pi_c\rangle \Bigr)^{-1}_{c,a}
+\Bigl(\sum_{n,n'}\langle\pi_a|\psi_n\rangle
+\Bigl(\epsilon_n\delta_{n,n'}-\Delta_{n,n'}\Bigr)
+\langle\psi_{n'}|\pi_b\rangle\Bigr)
+\Bigl(\sum_{m'}
+\langle\pi_d|\psi_{m'}\rangle\langle\psi_{m'}|\pi_b\rangle \Bigr)^{-1}_{b,d}
+\nonumber
+\end{eqnarray}
+If we set $\Delta=0$, we obtain our choice for $\mat{h}$.}
+\begin{eqnarray}
+h_{c,d}&=&
+\sum_{a,b}
+\Bigl(\sum_{m}
+\langle\pi_a|\psi_m\rangle\langle\psi_m|\pi_c\rangle \Bigr)^{-1}_{c,a}
+\Bigl(\sum_{n}\langle\pi_a|\psi_n\rangle\epsilon_n
+\langle\psi_n|\pi_b\rangle\Bigr)
+\Bigl(\sum_{m'}\langle\pi_d|\psi_{m'}\rangle
+\langle\psi_{m'}|\pi_b\rangle \Bigr)^{-1}_{b,d}
+\nonumber\\
+P_{n,n'}&=&
+\sum_{a,b}\langle\psi_n|\pi_a\rangle
+\Bigl(\sum_{m}
+\langle\pi_b|\psi_m\rangle\langle\psi_m|\pi_a\rangle \Bigr)^{-1}_{a,b}
+\langle\pi_b|\psi_{n'}\rangle
+\nonumber\\
+\mat{\Delta}&=&\mat{\epsilon}-\mat{P}\mat{\epsilon}\mat{P}
+\end{eqnarray}
+It is shown that $\mat{P}$ is a projection operator in the space of
+band states, namely $\mat{P}^2=\mat{P}$, while $\mat{P}\neq \mat{1}$.
+\end{myshadowminipage}
+
+%==================================================
+\subsubsection{$\mat{\Delta}$ and projection}
+%==================================================
+
+\begin{eqnarray}
+\mat{P}\langle\psi|\pi\rangle=\langle\psi|\pi\rangle
+\end{eqnarray}
+which is shown as follows
+\begin{eqnarray}
+\sum_{n'}P_{n,n'}\langle\psi_{n'}|\pi_c\rangle
+&=&\sum_{n'}\underbrace{\sum_{a,b}\langle\psi_n|\pi_a\rangle
+\Bigl(\sum_{m}
+\langle\pi_b|\psi_m\rangle\langle\psi_m|\pi_a\rangle \Bigr)^{-1}_{a,b}
+\langle\pi_b|\psi_{n'}\rangle}_{P_{n,n'}}
+\langle\psi_{n'}|\pi_c\rangle
+\nonumber\\
+&=&
+\sum_{a,b}\langle\psi_n|\pi_a\rangle
+\underbrace{\Bigl(\sum_{m}
+\langle\pi_b|\psi_m\rangle\langle\psi_m|\pi_a\rangle \Bigr)^{-1}_{a,b}
+\Bigl(\sum_{n'}\langle\pi_b|\psi_{n'}\rangle\langle\psi_{n'}|\pi_c\rangle\Bigr)
+}_{\delta_{a,c}}
+=\langle\psi_n|\pi_c\rangle
+\nonumber
+\end{eqnarray}
+
+With this equation, we obtain
+\begin{eqnarray}
+\langle\pi|\psi\rangle\mat{\Delta}\langle\psi|\pi\rangle=0
+\end{eqnarray}
+This proof is
+\begin{eqnarray}
+\langle\pi|\psi\rangle\mat{\Delta}\langle\psi|\pi\rangle
+=
+\langle\pi|\psi\rangle
+\Bigl(\mat{\epsilon}-\mat{P}\mat{\epsilon}\mat{P}\Bigr)
+\langle\psi|\pi\rangle=0
+\nonumber
+\end{eqnarray}
+
+
+
+%==================================================
+\subsubsection{Hamilton matrix and projection}
+%==================================================
+A useful relation is 
+\begin{eqnarray}
+\sum_{c,d}\langle\psi_n|\pi_c\rangle h_{c,d}
+\langle\pi_d|\psi_{n'}\rangle
+=\sum_{m}P_{n,m}\epsilon_mP_{m,n'}
+\label{eq:greenmatrixpep}
+\end{eqnarray} 
+which is shown by insertion
+\begin{eqnarray}
+&&\sum_{c,d}\langle\psi_n|\pi_c\rangle h_{c,d}
+\langle\pi_d|\psi_{n'}\rangle
+\nonumber\\
+&=&\sum_{c,d}
+\langle\psi_n|\pi_c\rangle 
+\overbrace{\sum_{a,b}
+\Bigl(\sum_m\langle\pi_a|\psi_m\rangle\langle\psi_m|\pi_c\rangle \Bigr)^{-1}_{c,a}
+\Bigl(\sum_{n''}
+\langle\pi_a|\psi_{n''}\rangle
+\epsilon_{n''}
+\langle\psi_{n''}|\pi_b\rangle\Bigr)
+\Bigl(\sum_{m'}
+\langle\pi_d|\psi_{m'}\rangle\langle\psi_{m'}|\pi_b\rangle \Bigr)^{-1}_{b,d}
+}^{h_{cd}}
+\langle\pi_d|\psi_{n'}\rangle
+\nonumber\\
+&=&
+\sum_{n''}
+\underbrace{\Bigl[\sum_{c,a}
+\langle\psi_n|\pi_c\rangle 
+\Bigl(\sum_m\langle\pi_a|\psi_m\rangle\langle\psi_m|\pi_c\rangle \Bigr)^{-1}_{c,a}
+\langle\pi_a|\psi_{n''}\rangle\Bigr]}_{P_{n,n''}}
+\epsilon_{n''}
+\underbrace{\Bigl[\sum_{b,d}\langle\psi_{n''}|\pi_b\rangle
+\Bigl(\sum_{m'}
+\langle\pi_d|\psi_{m'}\rangle\langle\psi_{m'}|\pi_b\rangle \Bigr)^{-1}_{b,d}
+\langle\pi_d|\psi_{n'}\rangle\Bigr]}_{P_{n'',n'}}
+\nonumber\\
+&=&\Bigl(\sum_{m}P_{n,m}\epsilon_{m}P_{m,n}\Bigr)
+\nonumber
+\end{eqnarray}
+which proves \eq{eq:greenmatrixpep}
+
+%==================================================
+\subsubsection{Proof of the identity between \eq{eq:greenmatrix1a}
+and \eq{eq:greenmatrix2a}.}
+%==================================================
+The identity between \eq{eq:greenmatrix1a} and \eq{eq:greenmatrix2a} is
+exact irrespective of the completeness of the band states or the local
+orbitals. This can be shown with the help of \eq{eq:greenmatrixpep}. It is sufficient to show that the denominators are identical,
+namely that
+\begin{eqnarray}
+\epsilon_n\delta_{n,n'}
+&=&\sum_{c,d}\langle\psi_n|\pi_c\rangle h_{c,d}
+\langle\pi_d|\psi_{n'}\rangle+\Delta_{n,n'}
+\nonumber\\
+&=&\underbrace{\Bigl(\sum_{n''}P_{n,m}\epsilon_{n''}P_{n'',n'}\Bigr)}
+_{\sum_{c,d}\langle\psi_n|\pi_c\rangle h_{c,d}
+\langle\pi_d|\psi_{n'}\rangle}
++\underbrace{
+\Bigl(\epsilon_n\delta_{n,n'}-\sum_{m}P_{n,m}\epsilon_mP_{m,n'}\Bigr)
+}_{\Delta_{n,n'}}
+\nonumber
+\end{eqnarray}
+which completes the proof of the identity between \eq{eq:greenmatrix1a}
+and \eq{eq:greenmatrix2a}.
+
+%==================================================
+\subsubsection{Self energy from the uncorrelated orbitals}
+%==================================================
+The Green's function without the additional term $\mat{\Delta}$ can be
+expressed with the help of \eq{eq:greenlocform1} from
+p.~\pageref{eq:greenlocform1} in matrix form without reference to the
+natural orbitals which we define as unperturbed (by the uncorrelated
+orbitals) Green's function
+\begin{eqnarray}
+\mat{G}^{-1}_{0,a,b}(i\omega_\nu)\defas
+&=&\sum_{n,n'}\langle\pi_a|\psi_n\rangle
+\biggl((i\hbar\omega_\nu+\mu)\delta_{n,n'}-
+\sum_{c,d}\langle\psi_n|\pi_c\rangle h_{c,d}\langle\pi_d|\psi_{n'}\rangle
+\biggr)^{-1}_{n,n'}
+\langle\psi_{n'}|\pi_b\rangle
+\nonumber\\
+&\eqrel{eq:greenlocform1}{=}&
+\biggl[(i\hbar\omega_\nu+\mu)\mat{S}-\mat{h}\biggr]^{-1}_{a,b}
+\end{eqnarray}
+with
+\begin{eqnarray}
+\mat{S}^{-1}=\langle\pi_a|\psi_n\rangle\langle\psi_n|\pi_b\rangle
+\end{eqnarray}
+
+We can derive a self energy, which connects this Green function to the
+full Green's function by a Dyson's equation.
+\begin{eqnarray}
+\mat{G}^{-1}&=&\mat{G}^{-1}_0-\mat{\Sigma}
+\nonumber\\
+\mat{\Sigma}&=&\biggl[(i\hbar\omega_\nu+\mu)\mat{S}-\mat{h}\biggr]
+-\mat{G}^{-1}
+\nonumber\\
+&=&\underbrace{\mat{P}(\mat{\epsilon}-\mat{\mu})(\mat{1}-\mat{P})}_{\mat{H}_{AB}}
+\underbrace{
+\biggl((\mat{1}-\mat{P})\biggl((i\hbar\omega_\nu+\mu)\mat{1}
+-\mat{\epsilon}\biggr)(\mat{1}-\mat{P})
+\biggr)^{-1}
+}_{G_{BB}(i\omega_\nu)}
+\underbrace{(\mat{1}-\mat{P})
+(\mat{\epsilon}-\mat{\mu})\mat{P}}_{\mat{H}_{BA}}
+\end{eqnarray}
+
+
+%==================================================
+\subsubsection{Partitioning}
+%==================================================
+The introduction of the projection operator $\mat{P}$ allows one to
+break up the Hamiltonian into a part related to the correlated
+orbitals, a part outside and the hopping between correlated orbitals
+and the others.
+
+Let me first review the partitioning of Green's functions
+\begin{eqnarray}
+-\mat{H}_{BA}\mat{G}_{AB}+(x\mat{1}_{BB}-\mat{H}_{BB})\mat{G}_{BA}&=&\mat{0}_{BA}
+\nonumber
+\\
+&&\hspace{-9cm}\Rightarrow\quad
+\mat{G}_{BA}=(x\mat{1}_{BB}-\mat{H}_{BB})^{-1}\mat{H}_{BA}\mat{G}_{AB}
+\label{eq:greenmaggba}\\
+\Bigl(x\mat{1}_{AA}-\mat{H}_{AA}\Bigr)\mat{G}_{AA}
+-\mat{H}_{AB}\mat{G}_{BA}&=&\mat{1}_{AA}
+\nonumber\\
+\eqrel{eq:greenmaggba}{\Rightarrow}\quad
+\Bigl(x\mat{1}_{AA}-\mat{H}_{AA}
+-\mat{H}_{AB}
+(x\mat{1}_{BB}-\mat{H}_{BB})^{-1}\mat{H}_{BA}\Bigr)\mat{G}_{AA}
+&=&\mat{1}_{AA}
+\nonumber\\
+&&\hspace{-9cm}\Rightarrow\quad\mat{G}_{AA}=
+\Bigl[x\mat{1}_{AA}-\mat{H}_{AA}
+-\underbrace{\mat{H}_{AB}
+(x\mat{1}_{BB}-\mat{H}_{BB})^{-1}\mat{H}_{BA}}_{\Sigma(x)}\Bigr]^{-1}
+\end{eqnarray}
+
+The relation between these subblocks and the projected quantities is
+non-trivial, which can be seen as follows:
+\begin{eqnarray}
+\mat{P}\Bigl[(i\hbar\omega_\nu+\mu)\mat{1}-\mat{\epsilon}\Bigr]^{-1}\mat{P}
+=\langle\psi|\pi\rangle\mat{S}\mat{G}(i\omega_\nu)\mat{S}\langle\pi|\psi\rangle
+\end{eqnarray}
+
+
+
+===================following is unchecked========================
+
+
+
+The diagonal matrix of the eigenvalues of the band states can be
+partitioned in the form
+\begin{eqnarray}
+\mat{\epsilon}&=&\mat{P}\mat{\epsilon}\mat{P}+
+\underbrace{\mat{\epsilon}-\mat{P}\mat{\epsilon}\mat{P}}_{\underbrace{\Delta}}
+\nonumber\\
+&=&
+\mat{P}\mat{\epsilon}\mat{P}
++\mat{P}\mat{\epsilon}\Bigl(\mat{1}-\mat{P}\Bigr)
++\Bigl(\mat{1}-\mat{P}\Bigr)\mat{\epsilon}\mat{P}
++\Bigl(\mat{1}-\mat{P}\Bigr)\mat{\epsilon}\Bigl(\mat{1}-\mat{P}\Bigr)
+\end{eqnarray}
+
+This suggests to do the following definitions
+\begin{eqnarray}
+\mat{G}_{AA}&=&\mat{P}\mat{G}\mat{P}
+\nonumber\\
+\mat{G}_{AB}&=&\mat{P}\mat{G}(\mat{1}-\mat{P})
+\nonumber\\
+\mat{1}_{AA}&=& \mat{P}^2
+\nonumber\\
+\mat{0}_{AB}&=& \mat{P}(\mat{1}-\mat{P})
+\nonumber\\
+\mat{H}_{AA}&=& \mat{P}(\mat{\epsilon}-\mu\mat{1})\mat{P}
+\end{eqnarray}
+
+
+Next we partition the Green's function
+\begin{eqnarray}
+\left(\begin{array}{cc}
+x\mat{1}_{AA}-\mat{H}_{AA}&-\mat{H}_{AB}\\
+-\mat{H}_{BA}&x\mat{1}_{BB}-\mat{H}_{BB}
+\end{array}\right)
+\left(\begin{array}{cc}
+\mat{G}_{AA}(x)&\mat{G}_{AB}(x)\\
+\mat{G}_{BA}(x)&\mat{G}_{BB}(x)
+\end{array}\right)
+&=&
+\left(\begin{array}{cc}
+\mat{1}_{AA}&\mat{0}_{AB}\\
+\mat{0}_{BA}&\mat{1}_{BB}
+\end{array}\right)
+\end{eqnarray}
+Our goal is to find the Green's function $\mat{G}_{AA}$ for the
+correlated orbitals.
+
+
+This can now be written in the form
+\begin{eqnarray}
+\mat{G}_{AA}(x)&=&
+\Bigl[x\underbrace{\mat{P}}_{\mat{1}_{AA}}-
+\underbrace{\mat{P}(\mat{\epsilon}-\mat{\mu})\mat{P}}_{\mat{H}_{AA}}
+\nonumber\\
+&&-\underbrace{\mat{P}(\mat{\epsilon}-\mat{\mu})(\mat{1}-\mat{P})}_{\mat{H}_{AB}}
+\biggl((\mat{1}-\mat{P})(x\mat{1}-\mat{\epsilon}+\mat{\mu})(\mat{1}-\mat{P})
+\biggr)^{-1}
+\underbrace{(\mat{1}-\mat{P})
+(\mat{\epsilon}-\mat{\mu})\mat{P}}_{\mat{H}_{BA}}
+\Bigr]^{-1}
+\end{eqnarray}
+
+
+Determine
+\begin{eqnarray}
+\sum_n\langle\pi_a|\psi_n\rangle\langle\psi_n|\pi_b\rangle
+=\sum_{c} U_{a,c}\lambda_c U^\dagger_{c,b}
+\end{eqnarray}
+with $\mat{U}\mat{U}^\dagger=\mat{1}$.
+\begin{eqnarray}
+\biggl(\sum_n\langle\pi_a|\psi_n\rangle
+\langle\psi_n|\pi_b\rangle\biggr)^{-1}_{a,b}
+&=&\sum_{c} U_{a,c}\frac{1}{\lambda_c} U^\dagger_{c,b}
+\nonumber\\
+\mat{P}&=&
+\sum_{a,b}\langle\psi_n|\pi_a\rangle
+\biggl(\sum_m\langle\pi|\psi_m\rangle
+\langle\psi_m|\pi\rangle\biggr)^{-1}_{a,b}
+\langle\pi_b|\psi_n\rangle
+\nonumber\\
+&=&
+\sum_{c}\biggl(\sum_a\langle\psi_n|\pi_a\rangle 
+U_{a,c}\biggr)
+\frac{1}{\lambda_c} 
+\biggl(U^\dagger_{c,b}\langle\pi_b|\psi_n\rangle\biggr)
 \end{eqnarray}
 
 
