@@ -867,14 +867,29 @@ is calculated first using \verb|potpar1(isp)%prok| and
 The double-counting correction is that of Eq.~36 of the paper by
 Bl\"ochl, Walther, Pruschke\cite{bloechl11_prb84_205101}.
 \begin{eqnarray}
-E_{xc}^{\hat{W}_R}=\int d^3r\; n^\chi_R(\vec{r})
+E_{xc}^{\hat{W}_R}
+&=&
+\int d^3r\; n^\chi_R(\vec{r})
 \epsilon_{xc}[n^\chi_{\sigma,\sigma'}(\vec{r})]
 \frac{n^\chi_R(\vec{r})}{n^\chi(\vec{r})}
+\nonumber\\
+&=&
+\int d^3r\; \biggl(n^\chi(\vec{r})
+\epsilon_{xc}[n^\chi_{\sigma,\sigma'}(\vec{r})]\biggr)
+\left(\frac{n^\chi_R(\vec{r})}{n^\chi(\vec{r})}\right)^2
 \end{eqnarray}
 The exchange correlation density is calculated with the correlated
 orbitals, but there is an additional factor, which cuts of the
 exchange correlation contribution at large radii, where the density
 vanishes.
+
+For hybrid functionals only the scaled Hartree-Fock energy is added,
+so that the double counting is weighted as well and it is furthermore
+limited to the exchange term only. \textbf{This will be different, if
+  also corrections for the correlation energies are added.}
+
+Other double-counting schemes are discussed in appendix~\ref{app:dc}.
+
 
 Let us simplify the expression by introducing the symbols
 $n_R=n^\chi_R(\vec{r})$ and $n_t=n^\chi_{\sigma,\sigma'}(\vec{r})$.
@@ -1899,12 +1914,486 @@ The routines related to Gaussians have been moved into the file
 !!$      CALL LMTO_ONSITEOVERLAP()
 \end{verbatim}
 
+%====================================================================
+\chapter{Double counting}
+%====================================================================
+%====================================================================
+\section{Other double counting schemes}
+%====================================================================
+An excellent review of double-counting terms has been discussed by
+Nekrasov et al.\cite{nekrasov12_arxiv1208_4732}.  
+
+
+%=====================================================================
+\subsubsection{Around-mean-field (AMF) and fully-localized limit (FLL)}
+%=====================================================================
+In LDA+U, two double-counting schemes are in common use: one is called
+around mean-field (AMF)\cite{anisimov91_prb44_943} and the other is
+called fully localized limit (FLL)\cite{czyzyk94_prb49_14211}.
+
+In the Hubbard model, the two approximations have the
+form\cite{nekrasov12_arxiv1208_4732}. 
+\begin{eqnarray}
+\hat{H}^{dc}_{AMF}&=&\frac{1}{2}U\sum_\sigma\hat{n}_{d,\sigma}(\hat{n}_d-n_\sigma^0)
+-\frac{1}{2}J\sum_\sigma\hat{n}_{d,\sigma}(\hat{n}_{d,\sigma}-n_\sigma^0)
+\nonumber\\
+\hat{H}^{dc}_{FLL}&=&\frac{1}{2}Un_d(n_d-1)
+-\frac{1}{2}J\sum_\sigma\hat{n}_{d,\sigma}(\hat{n}_{d,\sigma}-1)
+\end{eqnarray}
+with
+\begin{eqnarray}
+n_{d,\sigma}&=&\sum_m \langle \hat{n}_{m,\sigma}\rangle
+\nonumber\\
+n_{d}&=&\sum_\sigma n_{d,\sigma}
+\nonumber\\
+n^0_\sigma&=&\frac{1}{2(2\ell+1)}\sum_{m,\sigma} n_{m,\sigma}
+\nonumber\\
+n^0&=&\sum_\sigma n^0_\sigma
+\end{eqnarray}
+\texttt{It is still unclear what are operators and what are numbers,
+  but I believe all are numbers.}
+
+%=====================================================================
+\subsubsection{Nekrasov, Pavlov Sadovskii scheme}
+%=====================================================================
+Nekrasov et al.\cite{nekrasov12_arxiv1208_4732} proposes a new scheme
+which amounts to removing the density of the correlated orbitals from
+the integral for the exchange-correlation term.  The corresponding
+double-counting energy would be
+\begin{eqnarray}
+E^{DC}=E_{xc}[n_t-n_{corr}]-E_{xc}[n_t]
+\end{eqnarray}
+where $n_t$ is the density of all orbitals, while $n_{corr}$ is the
+density of the correlated orbitals only.
+
+
+%=====================================================================
+\subsubsection{Bl\"ochl-Walther-Pruschke scheme}
+%=====================================================================
+Our scheme\cite{bloechl11_prb84_205101} differs in that it divides the
+DFT exchange correlation energy based on a partitioning of the
+two-particle density, where $n(\vec{r})=\sum_R n_R(\vec{r})$
+\begin{eqnarray}
+E_{xc}
+&=&\int d^3r\;n(\vec{r})
+\frac{1}{2}\int d^3r'\frac{e^2 \int_0^1d\lambda\;h_\lambda (\vec{r},\vec{r'})}
+{4\pi\epsilon|\vec{r}-\vec{r'}|}
+\nonumber\\
+&=&\frac{1}{2}\sum_{R,R'}\int d^3r\int d^3r'
+\left(\frac{n_R(\vec{r})}{n(\vec{r})}\right)
+\biggl(
+n(\vec{r})
+\frac{e^2 \int_0^1d\lambda\;h_\lambda (\vec{r},\vec{r'})}
+{4\pi\epsilon|\vec{r}-\vec{r'}|}\biggr)
+\left(\frac{n_{R'}(\vec{r'})}{n(\vec{r'})}\right)
+\end{eqnarray}
+This formulation takes into account that the electrons are
+indistinguishable and that each electron contributes equally to the
+exchange correlation energy. Furthermore, the partitions of the
+expression add up to the total exchange-correlation energy (when also
+the inter-site terms are included).
+
+The model rests on a well defined expression for the two-particle
+density, namely
+\begin{eqnarray}
+n^{(2)}(\vec{r},\vec{r'})=n^{(1)}(\vec{r})n^{(1)}(\vec{r'})
++
+\frac{1}{2}\sum_{R,R'}
+\left(\frac{n_R(\vec{r})}{n(\vec{r})}\right)
+\biggl(
+n(\vec{r})h_{\lambda=1} (\vec{r},\vec{r'})
+\biggr)
+\left(\frac{n_{R'}(\vec{r'})}{n(\vec{r'})}\right)
+\end{eqnarray}
+and an expression for the kinetic-energy correction 
+\begin{eqnarray}
+T-T_s
+&=&\frac{1}{2}\sum_{R,R'}\int d^3r\int d^3r'
+\left(\frac{n_R(\vec{r})}{n(\vec{r})}\right)
+\biggl(
+n(\vec{r})
+\frac{e^2 \int_0^1d\lambda\;\Bigl(h_\lambda (\vec{r},\vec{r'})
+-h_{\lambda=1} (\vec{r},\vec{r'})\Bigr)}
+{4\pi\epsilon|\vec{r}-\vec{r'}|}\biggr)
+\left(\frac{n_{R'}(\vec{r'})}{n(\vec{r'})}\right)
+\nonumber\\
+\end{eqnarray}
+Note, however, that only the total exchange-correlation energy
+including Coulomb and kinetic energy contributions is a density
+functional, whereas both contributions can be expressed individually
+as density-matrix functional.
+
+
+
+Thus, a double-counting correction for a set of correlated orbitals,
+which contribute $n_R$ to the total density would be
+\begin{eqnarray}
+E_{dc}
+&=&-\frac{1}{2}\sum_{R}\int d^3r\int d^3r'
+\left(\frac{n_R(\vec{r})}{n(\vec{r})}\right)
+\biggl(
+n(\vec{r})
+\frac{e^2 \int_0^1d\lambda\;h_\lambda (\vec{r},\vec{r'})}
+{4\pi\epsilon|\vec{r}-\vec{r'}|}\biggr)
+\left(\frac{n_{R}(\vec{r'})}{n(\vec{r'})}\right)
+\end{eqnarray}
+
+
+
+This integral can be approximated further as
+\begin{eqnarray}
+E_{xc}
+&=&-\frac{1}{2}\sum_{R}\int d^3r\; n(\vec{r})\epsilon[n(\vec{r})]
+\left(\frac{n_R(\vec{r})}{n(\vec{r})}\right)^2
+\end{eqnarray}
+
+
+%====================================================================
+\subsection{Around mean field (AMF)}
+%====================================================================
+The original expression, AMF, for the double counting term is derived
+from the mean-field approximation of the Hubbard model.
+
+\textbf{This section is unfinished. It is an attempt to derive the AMF
+  limit consistent with our U-tensor}
+We start out from the interaction
+\begin{eqnarray}
+\hat{W}&=&
+\frac{1}{2}\sum_{i,j,k,l}W_{i,j,l,k} 
+\hat{c}^\dagger_i\hat{c}^\dagger_j\hat{c}_k\hat{c}_l
+\end{eqnarray}
+with 
+\begin{eqnarray}
+W_{i,j,k,l}&=&
+\int d^4x\int d^4x'\; \frac{e^2
+\chi_i^*(\vec{x})\chi_j^*(\vec{x'})\chi_k(\vec{x})\chi_l(\vec{x})}
+{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+\nonumber\\
+&=&
+\delta_{\sigma_i,\sigma_k}
+\delta_{\sigma_j,\sigma_l}
+\int d^3r\int d^3r'\; \frac{e^2
+\phi_i^*(\vec{r})\phi_j^*(\vec{r'})\phi_k(\vec{r})\phi_l(\vec{r})}
+{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+=\delta_{\sigma_i,\sigma_k}
+\delta_{\sigma_j,\sigma_l}
+U_{i,j,k,l}
+\end{eqnarray}
+where the spin-orbitals
+$\chi_i(\vec{r},\sigma)=\phi_i(\vec{r})\delta_{\sigma,\sigma_i}$ are
+decomposed into a outer product of a spatial orbital $\phi_i(\vec{r})$
+and a spinor. The interaction has the internal symmetry
+\begin{eqnarray}
+W_{i,j,k,l}=W_{j,i,l,k}=W^*_{k,l,i,j}=W^*_{l,k,j,i}
+\end{eqnarray}
+
+In order to arrive at the mean-field Hamiltonian, we express the wave
+function in terms of wave function of a non-interacting system,
+i.e. by Slater determinants. This non-interacting system is then
+optimized to minimize the expectation value of the Hamiltonian
+containing the interaction. (See Bogoljubov inequality) The result is
+the Hartree-Fock approximation.
+
+The ground state is
+\begin{eqnarray}
+|\Phi_0\rangle=
+\prod_n \left(\hat{a}_n^\dagger\right)^{\sigma_n}|\mathcal{O}\rangle
+\end{eqnarray}
+where $\vec{\sigma}\in\{0,1\}^\infty$ is the occupation number
+representation of the Slater determinant.  The orbitals making up the
+Slater determinant are $|\phi_n\rangle$
+\begin{eqnarray}
+\hat{a}_n^\dagger=\sum_j\hat{c}^\dagger_j\langle\pi_j|\psi_n\rangle
+\end{eqnarray}
+with a complete set of one-particle orbitals and the bi-orthogonality
+condition this relationship can be inverted
+\begin{eqnarray}
+\sum_n\hat{a}_n^\dagger\langle\psi_n|\chi_i\rangle
+=\sum_j\hat{c}^\dagger_j
+\underbrace{\langle\pi_j|
+\underbrace{\sum_n|\psi_n\rangle\langle\psi_n|}_{=1}|\chi_i\rangle}_{\delta_{i,j}}
+=\hat{c}^\dagger_i
+\end{eqnarray}
+
+\begin{eqnarray}
+\langle \Phi|\hat{a}^\dagger_m\hat{a}^\dagger_n\hat{a}_o\hat{a}_p|\Phi\rangle
+&=&\delta_{m,o}\delta_{n,p}
+\langle \Phi|\hat{a}^\dagger_m
+\underbrace{\hat{a}^\dagger_n\hat{a}_m}_{\delta_{m,n}-\hat{a}_m\hat{a}^\dagger_n}
+\hat{a}_n
+|\Phi\rangle
++\delta_{m,p}\delta_{n,o}
+\langle \Phi|\hat{a}^\dagger_m\underbrace{\hat{a}^\dagger_n\hat{a}_n\hat{a}_m
+}_{-(\delta_{m,n}-\hat{a}_m\hat{a}^\dagger_n)\hat{a}_n}
+|\Phi\rangle
+\nonumber\\
+&&-\delta_{m,p}\delta_{n,o}\delta_{m,n}
+\langle \Phi|\hat{a}^\dagger_m\hat{a}^\dagger_m\underbrace{\hat{a}_m\hat{a}_m}
+_{=0}|\Phi\rangle
+\nonumber\\
+&=& \delta_{m,o}\delta_{n,p}
+\Bigl[
+\delta_{m,n}\langle \Phi|\hat{a}^\dagger_m
+\hat{a}_n|\Phi\rangle
+-
+\langle \Phi|\hat{a}^\dagger_m
+\hat{a}_m|\Phi\rangle\langle \Phi|\hat{a}^\dagger_n
+\hat{a}_n|\Phi\rangle\Bigr]
+\nonumber\\
+&-& \delta_{m,p}\delta_{n,o}
+\Bigl[
+\delta_{m,n}\langle \Phi|\hat{a}^\dagger_m
+\hat{a}_n|\Phi\rangle
+-
+\langle \Phi|\hat{a}^\dagger_m
+\hat{a}_m|\Phi\rangle\langle \Phi|\hat{a}^\dagger_n
+\hat{a}_n|\Phi\rangle\Bigr]
+\nonumber\\
+&=& -\delta_{m,o}\delta_{n,p}
+\langle \Phi|\hat{a}^\dagger_m
+\hat{a}_m|\Phi\rangle\langle \Phi|\hat{a}^\dagger_n
+\hat{a}_n|\Phi\rangle
++ \delta_{m,p}\delta_{n,o}
+\langle \Phi|\hat{a}^\dagger_m
+\hat{a}_m|\Phi\rangle\langle \Phi|\hat{a}^\dagger_n
+\hat{a}_n|\Phi\rangle
+\nonumber\\
+&=&f_mf_n\Bigl[\delta_{m,o}\delta_{n,p}-\delta_{m,p}\delta_{n,o}\Bigr]
+\end{eqnarray}
+Here the occupations are those of the reverence Slater determinant,
+the mean field.
+
+Now we can evaluate the matrix elements for the interaction as
+\begin{eqnarray}
+\langle\Phi_0|\hat{c}^\dagger_i\hat{c}^\dagger_j\hat{c}_k\hat{c}_l|\Phi_0\rangle
+&=&\sum_{m,n,o,p}\langle\psi_m|\chi_i\rangle\langle\psi_n|\chi_j\rangle
+\langle\Phi_0|\hat{a}^\dagger_m\hat{a}^\dagger_n\hat{a}_o\hat{a}_p|\Phi_0\rangle
+\langle\chi_k|\psi_o\rangle\langle\chi_l|\psi_p\rangle
+\nonumber\\
+&=&\sum_{m,n,o,p}\langle\psi_m|\chi_i\rangle\langle\psi_n|\chi_j\rangle
+\Bigl[
+f_mf_n\Bigl[\delta_{m,o}\delta_{n,p}-\delta_{m,p}\delta_{n,o}\Bigr]
+\Bigr]
+\langle\chi_k|\psi_o\rangle\langle\chi_l|\psi_p\rangle
+\nonumber\\
+&=&
+\sum_{m,n}
+f_mf_n
+\langle\psi_m|\chi_i\rangle\langle\psi_n|\chi_j\rangle
+\langle\chi_k|\psi_m\rangle\langle\chi_l|\psi_n\rangle
+-
+\sum_{m,n}
+f_mf_n
+\langle\psi_m|\chi_i\rangle\langle\psi_n|\chi_j\rangle
+\langle\chi_k|\psi_n\rangle\langle\chi_l|\psi_m\rangle
+\nonumber\\
+&=&
+\underbrace{\sum_{m}
+\langle\chi_k|\psi_m\rangle f_m
+\langle\psi_m|\chi_i\rangle}_{\rho_{k,i}}
+\underbrace{\sum_{m}
+\langle\chi_l|\psi_n\rangle f_n\langle\psi_n|\chi_j\rangle 
+}_{\rho_{l,j}}
+-
+\underbrace{\sum_{m}
+\langle\chi_l|\psi_m\rangle f_m\langle\psi_m|\chi_i\rangle}_{\rho_{l,i}}
+\underbrace{\sum_{n}
+\langle\chi_k|\psi_n\rangle f_n\langle\psi_n|\chi_j\rangle}_{\rho_{k,j}}
+\nonumber\\
+&=&\rho_{k,i}\rho_{l,j}-\rho_{l,i}\rho_{k,j}
+\nonumber\\
+&=&
+\langle\Phi_0|\hat{c}^\dagger_i\hat{c}_k|\Phi_0\rangle
+\langle\Phi_0|\hat{c}^\dagger_j\hat{c}_l|\Phi_0\rangle
+-\langle\Phi_0|\hat{c}^\dagger_i\hat{c}_l|\Phi_0\rangle
+\langle\Phi_0|\hat{c}^\dagger_j\hat{c}_k|\Phi_0\rangle
+\end{eqnarray}
+This is the expectation value of a Slater determinant which is the
+zero'th order term for an expansion in the deviation from these mean
+values.
+
+
+The density matrix has the form
+\begin{eqnarray}
+\rho_{i,j}&=&\langle\Phi_0|\hat{c}^\dagger_j\hat{c}_{i}|\Phi_0\rangle
+=\sum_{m,n}\langle\psi_m|\chi_j\rangle\langle\chi_i|\psi_n\rangle
+\underbrace{\langle\Phi_0|\hat{a}^\dagger_m\hat{c}_{n}|\Phi_0\rangle}_{\delta_{m,n}f_n}
+=\sum_{n}\chi_i|\psi_n\rangle f_n\langle\psi_n|\chi_j\rangle\langle
+\end{eqnarray}
+
+
+
+\begin{eqnarray}
+\hat{c}^\dagger_i\hat{c}^\dagger_j\hat{c}_k\hat{c}_l
+&=&\hat{c}^\dagger_i\hat{c}^\dagger_j\hat{c}_k\hat{c}_l
+\nonumber\\
+&=&
+\langle\Phi_0|\hat{c}^\dagger_i\hat{c}_k|\Phi_0\rangle
+\langle\Phi_0|\hat{c}^\dagger_j\hat{c}_l|\Phi_0\rangle
+-\langle\Phi_0|\hat{c}^\dagger_i\hat{c}_l|\Phi_0\rangle
+\langle\Phi_0|\hat{c}^\dagger_j\hat{c}_k|\Phi_0\rangle
+\end{eqnarray}
+
+
+
+
+interaction in terms of products of one-particle operators
+$\hat{c}^\dagger_i\hat{c}_j$. There are two equivalent forms for this, namely
+\begin{eqnarray}
+\hat{c}^\dagger_i\hat{c}^\dagger_j\hat{c}_k\hat{c}_l
+&=&\delta_{j,k}\hat{c}^\dagger_i\hat{c}_l
+-\hat{c}^\dagger_i\hat{c}_k\hat{c}^\dagger_j\hat{c}_l 
+\nonumber\\
+&=&\delta_{j,l}\hat{c}^\dagger_i\hat{c}_k
+-\hat{c}^\dagger_i\hat{c}_l\hat{c}^\dagger_j\hat{c}_k 
+\end{eqnarray}
+
+
+
+
+
+Similarly the products of the field operators can be rewritten in a
+number of different ways
+\begin{eqnarray}
+\hat{c}^\dagger_i\hat{c}^\dagger_j\hat{c}_k\hat{c}_l
+&=&-\hat{c}^\dagger_i\hat{c}^\dagger_j\hat{c}_l\hat{c}_k
+=-\hat{c}^\dagger_j\hat{c}^\dagger_i\hat{c}_k\hat{c}_l
+=\hat{c}^\dagger_j\hat{c}^\dagger_i\hat{c}_l\hat{c}_k
+\nonumber\\
+=\delta_{j,k}\hat{c}^\dagger_i\hat{c}_l
+-\hat{c}^\dagger_i\hat{c}_k\hat{c}^\dagger_j\hat{c}_l &=&
+\end{eqnarray}
+
+
+
+\begin{eqnarray}
+\nonumber\\
+&=&
+\frac{1}{2}\sum_{i,j,k,l}W_{i,j,l,k} 
+\frac{1}{2}\biggl[-\biggl(
+\hat{c}^\dagger_i\hat{c}_k\hat{c}^\dagger_j\hat{c}_l
+-\delta_{k,j}\hat{c}^\dagger_i\hat{c}_l\biggr)
++\biggl(
+\hat{c}^\dagger_i\hat{c}_l\hat{c}^\dagger_j\hat{c}_k
+-\delta_{j,l}\hat{c}^\dagger_i\hat{c}_k\biggr)\biggr]
+\nonumber\\
+&\stackrel{i\leftrightarrow l}{=}&
+\frac{1}{2}\sum_{i,j,k,l}\frac{W_{i,j,k,l}-W_{i,j,l,k}}{2} 
+\biggl(\hat{n}_{i,k}\hat{n}_{j,l}-\delta_{k,j}\hat{n}_{i,l}\biggr)
+\end{eqnarray}
+
+In the mean-field approximation, terms that are quadratic in
+$\hat{n}-\langle\hat{n}\rangle$ are ignored.
+\begin{eqnarray}
+\hat{W}_{MF}&=&
+\frac{1}{2}\sum_{i,j,k,l}\frac{W_{i,j,k,l}-W_{i,j,l,k}}{2} 
+\biggl(\langle\hat{n}_{i,k}\rangle\langle\hat{n}_{j,l}\rangle-\delta_{k,j}
+\langle\hat{n}_{i,l}\rangle\biggr)
+\nonumber\\
+&+&
+\frac{1}{2}\sum_{i,j,k,l}\frac{W_{i,j,k,l}-W_{i,j,l,k}}{2} 
+\biggl([\hat{n}_{i,k}-\langle\hat{n}_{i,k}\rangle]\langle\hat{n}_{j,l}\rangle
++\langle\hat{n}_{i,k}\rangle[\hat{n}_{j,l}-\langle\hat{n}_{j,l}\rangle]
+-\delta_{k,j}[\hat{n}_{i,l}-\langle\hat{n}_{i,l}\rangle]\biggr)
+\nonumber\\
+&=&
+\frac{1}{2}\sum_{i,j,k,l}\frac{W_{i,j,k,l}-W_{i,j,l,k}}{2} 
+\biggl(\hat{n}_{i,k}\langle\hat{n}_{j,l}\rangle
++\langle\hat{n}_{i,k}\rangle\hat{n}_{j,l}
+-\delta_{k,j}\hat{n}_{i,l}
+-\langle\hat{n}_{i,k}\rangle\langle\hat{n}_{j,l}\rangle\biggr)
+\nonumber\\
+\end{eqnarray}
+The resulting Hamiltonian is a one-particle hamiltonian, which depends
+parametrically on the occupations., i.e the density matrix.
+
+This Hamiltonian can be derived consistently\footnote{Both, the the
+  total energy and the derived one-particle hamiltonian is consistent
+  with the mean-field form of the interaction.} from the
+density-matrix functional with the density matrix
+$\rho_{i,j}=\langle\hat{c}^\dagger_i\hat{c}_j\rangle$
+\begin{eqnarray}
+E^{DC}_{AMF}
+&=&
+\frac{1}{2}\sum_{i,j,k,l}\frac{W_{i,j,k,l}-W_{i,j,l,k}}{2} 
+\biggl(\rho_{i,k}\rho_{j,l}-\delta_{k,j}\rho_{i,l}\biggr)
+\end{eqnarray}
+
+In order to arrive at the common expression, we consider the
+\textbf{density-density approximation}\index{density-density
+  approximation} , that is we consider only density matrices that are
+diagonal in the orbital and spin coordinates
+\begin{eqnarray}
+E^{DC}_{AMF}
+&\approx&
+\frac{1}{2}\sum_{\sigma,\sigma'}\sum_{i,j}\frac{W_{i,j,i,j}-W_{i,j,j,i}}{2} 
+\rho_{i,i}\rho_{j,j}
+-
+\frac{1}{2}\sum_{i,j}\frac{W_{i,j,i,j}-W_{i,j,j,i}}{2} 
+\rho_{i,i}
+\nonumber\\
+&=&
+\frac{1}{2}\sum_{i\neq j}\frac{W_{i,j,j,i}-W_{i,j,i,j}}{2} 
+\rho_{i,i}(\rho_{j,j}+1)
+\end{eqnarray}
+The terms with $i=j$ cancel.
+\begin{eqnarray}
+E^{DC}_{AMF}
+&\approx&
+\frac{1}{2}\sum_{m,m'}\frac{U_{m,m',m,m'}-U_{m,m',m',m}\delta_{\sigma,\sigma'}}{2} 
+n_{m,\sigma}n_{m',\sigma'}
+\nonumber\\
+&-&
+\frac{1}{2}\sum_{i}
+\biggl(\sum_{m',\sigma'}\frac{U_{m,m',m',m}-U_{m,m',m,m'}
+\delta_{\sigma,\sigma'}}{2}\biggr)
+n_{m,\sigma}
+\nonumber\\
+&=&
+\frac{1}{2}\sum_\sigma\sum_{m}\frac{U_{m,m,m,m}}{2}n_{m,\sigma}n_{m,\bar{\sigma}}
+\nonumber\\
+&+&\frac{1}{2}\sum_{m\neq m'}\sum_{\sigma,\sigma'}
+\frac{U_{m,m',m,m'}-U_{m,m',m',m}\delta_{\sigma,\sigma'}}{2} 
+n_{m,\sigma}n_{m',\sigma'}
+\nonumber\\
+&-&
+\frac{1}{2}\sum_{i}
+\biggl(\sum_{m'}
+\frac{2U_{m,m',m',m}-U_{m,m',m,m'}}{2}\biggr)n_{m,\sigma}
+\end{eqnarray}
+
+
+%====================================================================
+\subsection{Definition of U and J parameters}
+%====================================================================
+The U- and J-parameters for one angular-momentum shell are defined by
+the U-tensor as follows
+\begin{eqnarray}
+U&:=&\frac{1}{(2\ell+1)^2}\sum_{m_1,m_2} U_{m_1,m_2,m_1,m_2}
+\label{eq:ldaplusudefu}
+\\
+J&:=&U-\frac{1}{2\ell(2\ell+1)}\sum_{m_1,m_2}\left( U_{m_1,m_2,m_1,m_2}
+-U_{m_1,m_2,m_2,m_1}\right)
+\label{eq:ldaplusudefj}
+\end{eqnarray}
+where the Coulomb matrix elements are
+\begin{eqnarray}
+U_{i,j,k,l}&=&\int d^3r\int d^3r'\;
+\frac{e^2\chi^*_i(\vec{r})\chi^*_j(\vec{r'})\chi_k(\vec{r})\chi_l(\vec{r'})}
+{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+\label{eq:defcoulombmatrixelement}
+\end{eqnarray}
+The indices used here are spatial-orbital indices.
+
+
+
 %=====================================================================
 \chapter{Changelog, Bugfixes}
 %=====================================================================
 \begin{itemize}
 %
-\item the core-valence exchange contribution differs from the old version,
+\item the core-valence exchange contribution differs from the old
+Other double counting schemes are discussed in appendix~\ref{app:dc}version,
   because it also includes the projection on the phidot functions.
 %
 \item there has been a bug in \verb|lmto$screen|, which has been fixed

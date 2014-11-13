@@ -38,6 +38,48 @@ http://www.pt.tu-clausthal.de/atp/}
 %====================================================================
 \newpage
 %====================================================================
+\chapter{Todo}
+%====================================================================
+%====================================================================
+\section{Time-inversion symmetry}
+%====================================================================
+At the moment, we still describe density matrices as real objects in a
+(total-density, magnetization-vector-density)-representation. This has
+been used because it exploits time-inversion symmetry. The plan is to
+change this to complex matrices, because the method can then be
+generalized to non-equilibrium problems, such as calculations with a
+fixed current density.
+
+
+Regarding time-inversion symmetry there are still a few open
+questions. Even after lifting the restriction to real density matrices
+in a (total-density, magnetization-vector-density) representation, it
+may be convenient to separate (large) equilibrium quantities from
+(small) non-equilibrium quantities.
+
+ The implications of time-inversion symmetry for
+non-collinear calculations are unclear to me. Back-ground on
+time-inversion symmetry can be found in P. B\"ochl, \textit{$\Phi$SX:
+  Advanced topics of theoretical physics II, The electronic structure
+  of matter}.
+\begin{itemize}
+\item Is a non-collinear calculation time-inversion symmetric? 
+  In our
+  calculations the magnetic field is replaced by a exchange
+  correlation potential. The exchange correlation potential has the
+  property that it is invariant with respect to a sign-change of the
+  spin density. That is a sign-change of the spin induces a sign
+  change of the spin-dependent potential. Whether this can be
+  exploited for a non-collinear calculation is unclear.
+%
+\item can time-inversion symmetry be used to relate the wave functions
+  with opposite wave vector with each other?
+%
+\item How does time-inversion symmetry enter in current-density
+  functional theory?
+\end{itemize}
+
+%====================================================================
 \chapter{SPINOR object}
 %ATTENTION: This is derived from the section Working wity 
 %Spin orbitals of the methods book
