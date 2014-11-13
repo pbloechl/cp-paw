@@ -1,0 +1,21 @@
+!CONTROL
+  !GENERIC NSTEP=500 START=F !END 
+  !FOURIER EPWPSI=30. CDUAL=2.0 !END
+  !DFT     TYPE=10 !END 
+  !PSIDYN FRIC=0.0
+     !AUTO_X FRIC(-)=0.3 FACT(-)=0.97 FRIC(+)=0.3 FACT(+)=1.0 MINFRIC=0.01 !END
+  !END
+  !RDYN_X FRIC=0.0
+     !AUTO_X FRIC(-)=0.3 FACT(-)=0.97 FRIC(+)=0.3 FACT(+)=1.0 MINFRIC=0.01 !END
+  !END
+  !CELL FRIC=0.0  !END
+  !FILES
+    !FILE ID='RETART_OUT' EXT=F NAME='/dev/null' !END
+  !END
+!END
+!EOB 
+
+
+Test energy conservation of the cell dynamics without friction. No restart
+file is produced.
+
