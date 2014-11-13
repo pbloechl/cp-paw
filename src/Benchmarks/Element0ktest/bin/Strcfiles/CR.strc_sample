@@ -1,0 +1,17 @@
+!STRUCTURE
+  !GENERIC LUNIT[AA]=1.00000 !END
+  !OCCUPATIONS EMPTY=5 NSPIN=2 !END
+  !KPOINTS R=45. !END
+  !LATTICE T=  2.87727        0.00000        0.00000
+               0.00000        2.87727        0.00000
+               0.00000        0.00000        2.87727 !END
+  @CR.species@
+  !ATOM name='CR1'  R=  0.00000        0.00000        0.00000 !END
+  !ATOM name='CR2'  R=  1.43863        1.43863        1.43863 !END
+  !ORBPOT_X
+    !POT ATOM='CR1' VALUE=+0.1 TYPE='D' RC=1.5 S=1 !END
+    !POT ATOM='CR2' VALUE=-0.1 TYPE='D' RC=1.5 S=1 !END
+  !END
+!END
+!EOB
+

@@ -1,0 +1,10 @@
+!DPCNTL
+  EMIN[EV]=-12. EMAX[EV]=10. EZERO[EV]= 10.41372 YMIN=-0.0 YMAX=0.7
+  !GRAPH PREFIX='Dos_A2a/' 
+    !SET ID='total'  COLOR='BLACK'          !END
+    !SET ID='s'    COLOR='BLUE'           !END
+    !SET ID='p'    COLOR='GREEN'  STACK=T !END
+    !SET ID='d'    COLOR='ORANGE' STACK=T !END
+  !END
+!END
+!EOB

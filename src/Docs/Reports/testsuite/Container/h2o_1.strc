@@ -1,0 +1,14 @@
+!STRUCTURE
+  !GENERIC LUNIT=1.88796 !END   
+  !OCCUPATIONS EMPTY=5 !END
+  !LATTICE T= 0.00000 6.00000  6.00000               
+              6.00000 0.00000  6.00000               
+              6.00000 6.00000  0.0000 !END
+  !SPECIES NAME='O_' ID='O_.75_6.0' M=5. NPRO=1 1 0 LRHOX=2  !END 
+  !SPECIES NAME='H_' ID='H_.75_6.0' M=2. NPRO=1 1 0 LRHOX=2  !END 
+  !ATOM    NAME= 'O_1'  R= 0.00  0.00  0.00 !END
+  !ATOM    NAME= 'H_2'  R= 1.05  0.00  0.00 !END
+  !ATOM    NAME= 'H_3'  R= 0.00  1.05  0.00 !END
+  !ISOLATE !END
+!END 
+!EOB

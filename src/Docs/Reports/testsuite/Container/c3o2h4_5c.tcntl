@@ -1,0 +1,7 @@
+!TCNTL
+  !MOVIE FORMAT='XYZ' SKIP=10
+    !VIEWBOX C=0. 0. 0. T=15. 0. 0. 0. 15. 0. 0. 0. 15. !END
+    !file ext=F name='movie.xyz' !end
+  !END
+!END
+!EOB

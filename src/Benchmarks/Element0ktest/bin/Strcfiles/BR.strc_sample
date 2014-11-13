@@ -1,0 +1,31 @@
+!STRUCTURE
+  !GENERIC LUNIT[AA]=1.00000 !END
+  !OCCUPATIONS EMPTY=5 NSPIN=1 !END
+  !KPOINTS R=45. !END
+  !LATTICE T=  8.22860   0.00000   0.00000
+               0.00000   4.22731   0.00000
+               0.00000   0.00000   9.03323 !END
+  @BR.species@
+  !ATOM name='BR1'  R=   0.00000   1.58837   7.97490  !END
+  !ATOM name='BR2'  R=   0.00000   0.52529   3.45828  !END
+  !ATOM name='BR3'  R=   0.00000   3.70202   5.57495  !END
+  !ATOM name='BR4'  R=   0.00000   2.63894   1.05833  !END
+  !ATOM name='BR5'  R=   4.11430   3.70202   7.97490  !END
+  !ATOM name='BR6'  R=   4.11430   2.63894   3.45828  !END
+  !ATOM name='BR7'  R=   4.11430   1.58837   5.57495  !END
+  !ATOM name='BR8'  R=   4.11430   0.52529   1.05833  !END
+!END
+!EOB
+
+
+
+
+
+
+
+
+
+
+
+
+

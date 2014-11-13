@@ -1,0 +1,17 @@
+#!/bin/sh
+# 
+TMPFILE=$(mktemp tmp.XXXXXX)  # define tempfile
+for X in *.species ; do
+  ## introduce here the sed change command
+#  sed -e s:"RCL/RCOV=.75 .75 .75 .75":"RCL/RCOV=.5 .5 .5 .5":  $X > ${TMPFILE}
+  sed -e s:"VAL0=":"VAL0_X=":  $X > ${TMPFILE}
+  ## check change command
+  RC=$?
+  if [[ $RC != 0 ]] ; then 
+    echo "error in $0: sed command failed on file $X"
+    exit 1
+  fi
+  cp ${TMPFILE} ${X}
+done
+rm ${TMPFILE}
+exit 0

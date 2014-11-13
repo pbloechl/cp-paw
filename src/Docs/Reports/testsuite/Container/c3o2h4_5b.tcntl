@@ -1,0 +1,33 @@
+!TCNTL
+  !MODE ID='O1-H'
+    !BOND ATOM1='O_1' ATOM2='H_9' scale=1. !END
+  !END
+  !MODE ID='O5-H'
+    !BOND ATOM1='O_5' ATOM2='H_9' scale=1. !END
+  !END
+  !MODE ID='O1-O5'
+    !BOND ATOM1='O_1' ATOM2='O_5' scale=1. !END
+  !END
+  !MODE ID='DBN'
+    !BOND ATOM1='O_1' ATOM2='C_2' scale=+1. !END
+    !BOND ATOM1='C_2' ATOM2='C_3' scale=-1. !END
+    !BOND ATOM1='C_3' ATOM2='C_4' scale=+1. !END
+    !BOND ATOM1='C_4' ATOM2='O_5' scale=-1. !END
+  !END
+  !MODE ID='ODB'
+    !BOND ATOM1='O_1' ATOM2='C_2' scale=+1. !END
+    !BOND ATOM1='C_4' ATOM2='O_5' scale=-1. !END
+  !END
+  !MODE ID='CDB'
+    !BOND ATOM1='C_2' ATOM2='C_3' scale=-1. !END
+    !BOND ATOM1='C_3' ATOM2='C_4' scale=+1. !END
+  !END
+  !OUTPUT ID='O1-H' FILENAME='o1-h.dat' !END
+  !OUTPUT ID='O5-H' FILENAME='o5-h.dat' !END
+  !OUTPUT ID='O1-O5' FILENAME='o1-o5.dat' !END
+  !OUTPUT ID='DBN' FILENAME='dbn.dat' !END
+  !OUTPUT ID='ODB' FILENAME='odb.dat' !END
+  !OUTPUT ID='CDB' FILENAME='cdb.dat' !END
+  !OUTPUT ID='O1-H' type='VELOCITY' FILENAME='o1-h.vdat' !END
+!END
+!EOB

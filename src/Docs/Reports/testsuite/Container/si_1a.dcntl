@@ -1,0 +1,30 @@
+!DCNTL
+  !GENERIC  PREFIX='Dos_Sa/' !END
+  !GRID  !END
+  !WEIGHT ID='total' TYPE='TOTAL' !END
+  !WEIGHT ID='s' 
+    !ATOM NAME='SI1' TYPE='S' !END 
+    !ATOM NAME='SI2' TYPE='S' !END 
+  !END
+  !WEIGHT ID='p' 
+    !ATOM NAME='SI1' TYPE='P' !END 
+    !ATOM NAME='SI2' TYPE='P' !END 
+  !END
+  !WEIGHT ID='d' 
+    !ATOM NAME='SI1' TYPE='D' !END 
+    !ATOM NAME='SI2' TYPE='D' !END 
+  !END
+  !WEIGHT ID='0s' 
+    !ATOM NAME='0_3' TYPE='S' !END 
+    !ATOM NAME='0_4' TYPE='S' !END 
+  !END
+  !WEIGHT ID='0p' 
+    !ATOM NAME='0_3' TYPE='P' !END 
+    !ATOM NAME='0_4' TYPE='P' !END 
+  !END
+  !WEIGHT ID='0d' 
+    !ATOM NAME='0_3' TYPE='D' !END 
+    !ATOM NAME='0_4' TYPE='D' !END 
+  !END
+!END
+!EOB

@@ -1,0 +1,120 @@
+#!/bin/bash
+################################################################################
+#
+#         FILE: g2_makedo
+#
+#        USAGE:  g2_makedo
+#
+#      OPTIONS: 
+#
+#  DESCRIPTION: 
+#
+#  g2_makedo is part of the suite to test the CP-PAW code against the
+#  G2 database.  
+#
+#  1) it constructs a shell script "g2_do_sample", which executes all
+#  test calculations. Undesired test calculations can be removed
+#
+#  2) it updates all structure input files in the directory "Cases"
+#   using the structure input files in the directory "Samples" and the
+#   species information from "bin/Species"
+#
+#  Example:
+#
+#    paw_makedo
+#
+#       AUTHOR: Peter Bloechl; peter.bloechl@tu-clausthal.de
+#      CREATED: 17. Aug 2014
+#
+################################################################################
+export V=yes
+THISDIR=$(pwd)
+if [[ $V = yes ]] ; then echo THISDIR=$THISDIR ; fi
+G1DIR=$THISDIR
+#
+#== define directory holding the structure files
+SAMPLEDIR=$G1DIR/bin/Strcfiles
+if [[ ! -d $SAMPLEDIR ]]; then 
+   echo "error in $0: SAMPLEDIR does not exist"
+   exit 1 
+fi
+#== define directory with species information
+STPDIR=$G1DIR/bin/Speciesfiles
+if [[ ! -d $STPDIR ]]; then 
+   echo "error in $0: STPDIR does not exist"
+   exit 1 
+fi
+#
+CASESDIR=$G1DIR/Cases
+DOSCRIPT=$G1DIR/g2_do_sample
+#######################################################################
+#  prepare calcall_sample
+#######################################################################
+echo '#!/bin/bash'                                 >$DOSCRIPT
+echo '# this file is created automatically by g2_makedo'    >>$DOSCRIPT
+echo "export G1DIR=$G1DIR"                        >>$DOSCRIPT
+echo 'function calcone {'                         >>$DOSCRIPT
+echo 'ROOT=${G1DIR}/$1'                           >>$DOSCRIPT
+echo 'rm ${ROOT}.out'                             >>$DOSCRIPT
+echo 'rm ${ROOT}.err'                             >>$DOSCRIPT
+echo 'rm ${ROOT}_ballstick.dx'                    >>$DOSCRIPT
+echo 'rm ${ROOT}_constr.report'                   >>$DOSCRIPT
+echo 'rm ${ROOT}_r.tra'                           >>$DOSCRIPT
+echo 'rm ${ROOT}.pdos'                            >>$DOSCRIPT
+echo 'cp ${G1DIR}/sample.cntl ${ROOT}.cntl'       >>$DOSCRIPT
+echo 'cp ${ROOT}.rstrt ${ROOT}.rstrt_save1'       >>$DOSCRIPT
+echo 'echo doing $1'                              >>$DOSCRIPT
+echo 'paw_fast.x ${ROOT}.cntl 1>${ROOT}.err 2>&1' >>$DOSCRIPT
+echo '#doppaw ${ROOT}.cntl 1>${ROOT}.err 2>&1'    >>$DOSCRIPT
+echo  'echo $1 done'                              >>$DOSCRIPT
+echo '}'                                          >>$DOSCRIPT
+################################################################
+# Scan Samples directory and update all structure files in the 
+#    Cases directory
+# Produce a shell script calcall_sample to be executed
+################################################################
+echo "LIST=\"\""                                 >>$DOSCRIPT
+for FILE in $SAMPLEDIR/*.strc_sample ; do
+  if [[ $V = yes ]] ; then echo FILE=$FILE ; fi
+
+  NAME=${FILE%.strc_sample} # strip extension
+  NAME=${NAME##*/}     #  remove all preceeding directories
+  DIR=$CASESDIR/$NAME
+  if [[ ! -d $DIR ]] ; then
+    mkdir $DIR
+  fi
+  paw_resolve -r"LATTICE=0.0 8.5 8.5 8.5 0.0 8.5 8.5 8.5 0.0" \
+              -fHYDROGEN=$STPDIR/h.species \
+              -fLITHIUM=$STPDIR/li.species \
+              -fBERYLLIUM=$STPDIR/be.species \
+              -fBORON=$STPDIR/b.species \
+              -fCARBON=$STPDIR/c.species \
+              -fNITROGEN=$STPDIR/n.species \
+              -fOXYGEN=$STPDIR/o.species \
+              -fFLOURINE=$STPDIR/f.species \
+              -fSODIUM=$STPDIR/na.species \
+              -fALUMINIUM=$STPDIR/al.species \
+              -fSILICON=$STPDIR/si.species \
+              -fPHOSPHORUS=$STPDIR/p.species \
+              -fSULFUR=$STPDIR/s.species \
+              -fCHLORINE=$STPDIR/cl.species \
+              -fBROMIUM=$STPDIR/br.species \
+               $FILE > $DIR/${NAME}.strc
+  #   create sample control file
+    ROOT=${DIR}/$NAME
+    ROOT=${ROOT#$G1DIR/} 
+#    echo 'calcone' ${ROOT} >>$DOSCRIPT
+    echo "LIST=\"\$LIST ${ROOT}\"" >>$DOSCRIPT
+done
+echo "for X in \$LIST; do"         >>$DOSCRIPT
+echo " paw_waittillempty -n 3" >>$DOSCRIPT #submit no more than 3 jobs at a time
+echo " calcone \$X &"              >>$DOSCRIPT
+echo "done"                        >>$DOSCRIPT 
+echo 'exit 0'                      >>$DOSCRIPT
+chmod +x $DOSCRIPT
+exit 0
+
+
+
+
+

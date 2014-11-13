@@ -2735,7 +2735,10 @@ this wave function a sharp bend is required to avoid introduing nodes.
 \end{itemize}
 
 %=====================================================================
-\subsection{Benchmarks}
+\section{Benchmarks}
+%=====================================================================
+%=====================================================================
+\subsection{G2 database}
 %=====================================================================
 
 
@@ -2766,6 +2769,246 @@ Na & 1.7 \\
 \end{center}
 The data ``Kresse'' are the cutoff parameters for the pseudo wave
 functions in VASP according to Paier\cite{paier05_jcp122_234102}.
+
+%=====================================================================
+\subsection{Bulk element table}
+%=====================================================================
+Lejaghere et al.\cite{lejaeghere14_critrevsolstmatsci39_1} have set up
+a test set for the solid low-temperature form of the elements up to
+Rn. The lanthanides and actinides are not taken into account.
+
+\begin{itemize}
+\item The plane wave cutoff for vasp was 400~eV=29.4~Ry for most
+elements and 600~eV=44.1~Ry for He, B, C, N, O, F, Ne.
+\item the k-points set is chosen so that 6750 k/points are there per atom.
+This compares to R=80 in our notation.
+\item the plane wave cutoff for the density has been chosen with
+  CDUAL=4.
+\item the k-integration has been done with the tetrahedron method with
+  Bl\"ochl correction
+\item Magnetism
+\begin{itemize}
+\item antiferromagnetic are Cr, O
+\item ferrimagnetic Mn
+\item ferromagnetic are Fe, Co, Ni
+\end{itemize}
+\item Spin-orbit coupling has been taken into account for atoms
+  heavier than Lu.
+\item The equation of state has been calculated for a 13-point grid of
+  equilibrium volumes from -6~\% to +6~\%. (For H,N,S,Halogens, Noble
+  gas elements a wider grid has been used.)  This is similar to a
+  13-point grid with equi-spaced lattice constants in steps of
+  0.33~\%.
+\end{itemize}
+
+The list of reference data calculated by Lejaeghere et
+al.\cite{lejaeghere14_critrevsolstmatsci39_1} with the Wien2k code are
+repeated in tables~\ref{tab:wieneqs_a} and \ref{tab:wieneqs_a}.
+
+
+
+
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{|r|l|r|r|r|r|}
+\hline
+Nr. & El. & V0[\AA$^3]$ & B0 & B1 & space gr.\\
+\hline
+  1 & 'H '&    17.387D0&    10.315D0&     3.025D0&194 \\
+  2 & 'HE'&    17.778D0&     0.847D0&     6.534D0&195 \\
+  3 & 'LI'&    20.216D0&    13.879D0&     3.754D0&166 \\
+  4 & 'BE'&     7.915D0&   123.039D0&     3.154D0&194 \\
+  5 & 'B '&     7.245D0&   237.599D0&     3.476D0&166 \\
+  6 & 'C '&    11.654D0&   209.648D0&     3.565D0&194 \\
+  7 & 'N '&    28.896D0&    54.288D0&     3.753D0&205 \\
+  8 & 'O '&    18.564D0&    51.231D0&     3.927D0& 12 \\
+  9 & 'F '&    19.347D0&    35.015D0&     4.246D0& 15 \\
+ 10 & 'NE'&    24.349D0&     1.242D0&     8.664D0&225 \\
+ 11 & 'NA'&    37.089D0&     7.728D0&     3.736D0&166 \\
+ 12 & 'MG'&    22.934D0&    35.748D0&     4.263D0&194 \\
+ 13 & 'AL'&    16.503D0&    77.512D0&     4.667D0&225 \\
+ 14 & 'SI'&    20.553D0&    88.673D0&     4.227D0&227 \\
+ 15 & 'P '&    21.614D0&    68.863D0&     4.416D0& 64 \\
+ 16 & 'S '&    17.346D0&    85.495D0&     4.440D0& 70 \\
+ 17 & 'CL'&    39.175D0&    19.324D0&     4.489D0& 64 \\
+ 18 & 'AR'&    52.209D0&     0.704D0&     7.838D0&225 \\
+ 19 & 'K '&    73.710D0&     3.586D0&     3.734D0&229 \\
+ 20 & 'CA'&    42.208D0&    17.300D0&     3.167D0&225 \\
+ 21 & 'SC'&    24.621D0&    54.559D0&     3.402D0&194 \\
+ 22 & 'TI'&    17.407D0&   112.712D0&     3.591D0&194 \\
+ 23 & 'V '&    13.517D0&   185.231D0&     3.731D0&229 \\
+ 24 & 'CR'&    11.910D0&   183.841D0&     7.374D0&229 \\
+ 25 & 'MN'&    11.611D0&   131.159D0&     0.852D0&217 \\
+ 26 & 'FE'&    11.451D0&   196.127D0&     6.137D0&229 \\
+ 27 & 'CO'&    10.948D0&   216.191D0&     5.076D0&194 \\
+ 28 & 'NI'&    10.986D0&   204.685D0&     4.852D0&225 \\
+ 29 & 'CU'&    12.017D0&   143.702D0&     5.198D0&225 \\
+ 30 & 'ZN'&    15.270D0&    75.617D0&     5.377D0&194 \\
+ 31 & 'GA'&    20.377D0&    49.087D0&     5.330D0& 64 \\
+ 32 & 'GE'&    24.094D0&    59.486D0&     5.084D0&227 \\
+ 33 & 'AS'&    22.571D0&    69.732D0&     4.294D0&166 \\
+ 34 & 'SE'&    29.973D0&    47.637D0&     4.548D0&152 \\
+ 35 & 'BR'&    39.780D0&    22.629D0&     5.154D0& 64 \\
+ 36 & 'KR'&    65.226D0&     0.851D0&    22.009D0&225 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{\label{tab:wieneqs_a}Equation of state parameters for the
+  elements as calculated with the wien-2k code. (Source: Supplemental
+  material to the paper of Lejaeghere et
+  al.\cite{lejaeghere14_critrevsolstmatsci39_1}) }
+\end{table}
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{|r|l|r|r|r|r|}
+\hline
+Nr. & El. & V0[\AA$^3]$ & B0 & B1 & space gr.\\
+\hline
+ 37 & 'RB'&    91.130D0&     2.842D0&     2.321D0&229 \\
+ 38 & 'SR'&    54.561D0&    11.333D0&     4.172D0&225 \\
+ 39 & 'Y '&    32.864D0&    41.320D0&     2.952D0&194 \\
+ 40 & 'ZR'&    23.402D0&    94.061D0&     3.247D0&194 \\
+ 41 & 'NB'&    18.155D0&   168.691D0&     3.504D0&229 \\
+ 42 & 'MO'&    15.825D0&   260.410D0&     4.264D0&229 \\
+ 43 & 'TC'&    14.472D0&   301.391D0&     4.555D0&194 \\
+ 44 & 'RU'&    13.810D0&   315.359D0&     4.955D0&194 \\
+ 45 & 'RH'&    14.082D0&   260.576D0&     5.440D0&225 \\
+ 46 & 'PD'&    15.326D0&   170.442D0&     5.854D0&225 \\
+ 47 & 'AG'&    17.855D0&    91.328D0&     5.799D0&225 \\
+ 48 & 'CD'&    22.866D0&    44.247D0&     7.089D0&194 \\
+ 49 & 'IN'&    27.497D0&    34.759D0&     4.870D0&139 \\
+ 50 & 'SN'&    36.883D0&    36.020D0&     5.038D0&227 \\
+ 51 & 'SB'&    31.786D0&    50.718D0&     4.495D0&166 \\
+ 52 & 'TE'&    35.009D0&    44.806D0&     4.703D0&152 \\
+ 53 & 'I '&    50.339D0&    18.699D0&     5.222D0& 64 \\
+ 54 & 'XE'&    87.318D0&     0.569D0&    -0.724D0&225 \\
+ 55 & 'CS'&   117.748D0&     1.964D0&     3.592D0&229 \\
+ 56 & 'BA'&    63.200D0&     8.431D0&     3.299D0&229 \\
+ 57 & 'LU'&    29.060D0&    47.725D0&     4.048D0&194 \\
+ 58 & 'HF'&    22.551D0&   108.082D0&     3.225D0&194 \\
+ 59 & 'TA'&    18.296D0&   193.730D0&     4.774D0&229 \\
+ 60 & 'W '&    16.175D0&   302.590D0&     4.300D0&229 \\
+ 61 & 'RE'&    14.987D0&   364.610D0&     4.466D0&194 \\
+ 62 & 'OS'&    14.320D0&   402.199D0&     4.352D0&194 \\
+ 63 & 'IR'&    14.533D0&   341.743D0&     6.958D0&225 \\
+ 64 & 'PT'&    15.678D0&   251.750D0&     5.342D0&225 \\
+ 65 & 'AU'&    17.993D0&   139.863D0&     5.985D0&225 \\
+ 66 & 'HG'&    29.716D0&     8.155D0&     8.077D0&139 \\
+ 67 & 'TL'&    31.456D0&    26.683D0&     4.565D0&194 \\
+ 68 & 'PB'&    32.000D0&    39.551D0&     5.954D0&225 \\
+ 69 & 'BI'&    36.939D0&    42.556D0&     4.626D0&166 \\
+ 70 & 'PO'&    37.570D0&    45.523D0&     5.018D0&221 \\
+ 71 & 'RN'&    92.765D0&     0.544D0&    13.133D0&225 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{\label{tab:wieneqs_b}Equation of state parameters for the
+  elements as calculated with the wien-2k code. (Source: Supplemental
+  material to the paper of Lejaeghere et
+  al.\cite{lejaeghere14_critrevsolstmatsci39_1}) }
+\end{table}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

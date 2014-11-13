@@ -1,0 +1,19 @@
+!STRUCTURE
+ !GENERIC LUNIT=1.8897269 !END
+ !OCCUPATIONS NBAND=5  NSPIN=2 CHARGE[E]=0.0 SPIN[HBAR]=1.0
+    !state b=2 s=1 f=1.d0 !end
+    !state b=3 s=1 f=1.d0 !end
+    !state b=4 s=1 f=1.d0 !end
+    !state b=2 s=2 f=0.3333333 !end
+    !state b=3 s=2 f=0.3333333 !end
+    !state b=4 s=2 f=0.3333334 !end
+ !END
+ !LATTICE T= @LATTICE@ !END
+ !SPECIES NAME= 'S_' @SULFUR@ !END
+   !ATOM NAME='S_1'      R=    0.0000000    0.0000000    0.0000000 !END
+ !ISOLATE NF=3 RC=0.5 RCFAC=1.5 GMAX2=3.0 !END
+ !CONSTRAINTS
+   !FREEZE ATOM='S_1' !END
+ !END
+!END
+!EOB

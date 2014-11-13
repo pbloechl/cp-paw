@@ -1,0 +1,22 @@
+!TCNTL
+  !TEMPERATURE  RETARD[PS]=0.1 
+     !FILE EXT=T NAME='_t.dat' !END
+  !END
+  !TEMPERATURE  RETARD[PS]=0.1 
+     !SELECT ATOMS='H_9' !END
+     !FILE EXT=T NAME='_t_h9.dat' !END
+  !END
+  !TEMPERATURE  RETARD[PS]=0.1 
+     !SELECT ATOMS='H_9' 'H_6' 'H_7' 'H_8' !END
+     !FILE EXT=T NAME='_t_h.dat' !END
+  !END
+  !TEMPERATURE  RETARD[PS]=0.1 
+     !SELECT ATOMS= 'C_2' 'C_3' 'C_4' !END
+     !FILE EXT=T NAME='_t_c.dat' !END
+  !END
+  !TEMPERATURE  RETARD[PS]=0.1 
+     !SELECT ATOMS='O_5' 'O_1' !END
+     !FILE EXT=T NAME='_t_o.dat' !END
+  !END
+!END
+!EOB

@@ -1,0 +1,13 @@
+!STRUCTURE
+  !GENERIC LUNIT[AA]=1.00000 !END
+  !OCCUPATIONS EMPTY=5 NSPIN=1 !END
+  !KPOINTS R=45. !END
+  !LATTICE T=  0.00000        2.73921        2.73921
+               2.73921        0.00000        2.73921
+               2.73921        2.73921        0.00000 !END
+  @SI.species@
+  !ATOM name='SI1'  R=  0.00000        0.00000        0.00000 !END
+  !ATOM name='SI2'  R=  1.36960        1.36960        1.36960 !END
+!END
+!EOB
+
