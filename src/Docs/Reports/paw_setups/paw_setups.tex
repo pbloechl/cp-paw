@@ -57,7 +57,30 @@ http://www.pt.tu-clausthal.de/atp/}
 \item Tsequentialaugment is not relevant for the total energies of a
   pure dft calculation. The changes for Si2 have been less than $\mu$H
   for individual energies and less for the converged total energy.
-
+%
+\item Suggestion: If we monitor for a given setup the energy as
+  function of the plane wave cutoff, we may use that to correct the
+  lattice constants obtained with variable unit cell
+  shape. (Cell-dynamics). There plane wave convergence produces an
+  additional inward pressure that needs to be opposed by a negative
+  pressure.
+\begin{eqnarray}
+ p=-\frac{2}{3V}\frac{dE_{tot}}{dE_{PW}}
+\end{eqnarray}
+ The derivation for a cubic crystal is as folllows
+\begin{eqnarray}
+E_{PW}&=&\frac{1}{2}\left(\frac{2\pi}{a}\right)^2
+\qquad\Rightarrow\qquad
+\frac{dE_{PW}}{da}=\frac{2E_{PW}}{a}
+\nonumber\\
+a&=&\sqrt[3]{V}\qquad\Rightarrow\qquad
+\frac{da}{dV}=\frac{1}{3}V^{-\frac{2}{3}}
+\nonumber\\
+p&=&\frac{dE}{dV}=-\frac{dE_{tot}}{dE_{PW}}\frac{dE_{PW}}{da}\frac{da}{dV}
+=\frac{dE_{tot}}{dE_{PW}}\frac{2E_{PW}}{a}\frac{1}{3}V^{-\frac{2}{3}}
+\nonumber\\
+&=&\frac{2E_{PW}}{3V}\frac{dE_{tot}}{dE_{PW}}
+\end{eqnarray}
 \end{itemize}
 
 %====================================================================
@@ -2481,7 +2504,7 @@ is close to that of the oxygen molecule.
     !END
   !END
 \end{verbatim}
-
+ 
 
 %=====================================================================
 \subsection{Transition metals}
@@ -2490,6 +2513,21 @@ For the transition metals including the noble metals and the post
 transition metals of group 12, that is Zn, Cd, and Hg, I obtained
 ghost states until I set the value of the pseudopotential at the
 origin to zero.
+
+\begin{myshadowminipage}{Rule for transition metal setups}
+\begin{enumerate}
+\item Set the pseudopotential at the center to zero or some other
+  well-chosen value!
+\item A radius of RCL=RCOV for the nodeless construction for
+  transition metals is to small, when more than one partial wave per
+  angular momentum is used. Increasing the s and p cutoff to 1.2 helps
+\end{enumerate}
+\end{myshadowminipage}
+
+A cutoff radius of 1~$r_{cov}$ is too large: lattice constant for MnO
+was much too large. Decreasing it to 0.8~$r_{cov}$ gave very good results.
+
+
 
 \begin{verbatim}
   !SPECIES NAME='CU' NPRO=1 1 1  LRHOX=2 
@@ -2523,6 +2561,29 @@ origin to zero.
   !END
 \end{verbatim}
 
+
+
+%=====================================================================
+\subsubsection{Mn}
+%=====================================================================
+For manganese without semi-core states we need a cutoff for the
+d-electrons of 0.8~$r_{cov}$ to get the correct lattice constant for
+MnO. Chosing the s and p-electrons with a larger radius does not
+improve the plane wave convergence. (It is not clear yet whether the
+convergence is dominated by the oxygen setup, though)
+Crucial is to set the potential at the origin to zero.
+
+\begin{verbatim}
+  !SPECIES NAME='PR' NPRO=1 1 1 1 LRHOX=4
+    !AUGMENT  ID='PR_NDLSS_V0' Z=  59.00000 ZV= 5.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=  0.250
+             RCL/RCOV=  0.8  0.8  0.8  0.8  1.0
+      !GRID DMIN=   1.e-6 DMAX= 0.100 RMAX= 9.000 !END
+      !POT  POW=  3.000 RC/RCOV=  0.902 val0=0. !END
+      !CORE POW=  3.000 RC/RCOV=  0.702  !END
+    !END
+  !END
+\end{verbatim}
 
 
 %=====================================================================
