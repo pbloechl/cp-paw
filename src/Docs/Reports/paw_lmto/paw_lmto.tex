@@ -50,9 +50,12 @@ http://www.pt.tu-clausthal.de/atp/}
   dramatically below the dft value. Core-valence echange seems to have
   an important effect on the band gap too.
 %
-\item double counting in \verb|paw_lmto| and \verb|paw_dmft| is in
-  error. It takes the partial wave density matrix do do it
-  properly. currently only the density of AEF is used.
+%% \item double counting in \verb|paw_lmto| and \verb|paw_dmft| is in
+%%   error. It takes the partial wave density matrix do do it
+%%   properly. currently only the density of AEF is used.
+
+%%   Double counting fixed before Nov. 13, 2014 (Commit 106f8a0). Both
+%%   versions of double counting can be addressed by a hard-wired switch.
 %
 \item The charge sumrule is not correct! The calculation for an H-atom
   yields $Tr[\rho O]\approx 0.2$. The problem is not the difference
@@ -90,7 +93,7 @@ http://www.pt.tu-clausthal.de/atp/}
   the tail function would be to (1) build a Hankel function on a
   neighboring site, which is augmented by (a) a bare Bessel function
   and (b) by a screened scattering partial wave
-  $|\dot{\bar{phi}}\rangle$. (1a) In order to make the formulation
+  $|\dot{\bar{\phi}}\rangle$. (1a) In order to make the formulation
   less dependent on the neighbor distance, we could also include the
   gradients of these functions. (2) These functions are expanded about
   the central site into an angular-momentum expansion.  (3) a
@@ -159,8 +162,8 @@ as follows:
     atomic regions and so-called higher partial waves not taken care of
     in the regular partial-wave expansion.}  $|K^I_\alpha\rangle$.
 %
-\item In the third step the head and tail functions are replaced
-  differentially at some sphere radius by \textbf{partial
+\item In the third step, the head and tail functions are replaced
+  differentiably at some sphere radius by \textbf{partial
     waves}\index{partial waves} of the atomic potential. For that
   purpose, we use as partial waves a solution of the Schr\"odinger
   equation for some energy, denoted as $|\phi_{\alpha}\rangle$ and its
@@ -192,11 +195,13 @@ inhomogeneous Helmholtz equation\footnote{I am not sure whether also
 =-4\pi(-1)^\ell\mathcal{Y}(\vec{\nabla})\delta(\vec{r})
 \label{eq:solidhelmholtzequation}
 \end{eqnarray}
-Here $\mathcal{Y}_\ell(\vec{r})=r^\ell Y_\ell(\vec{r})$ is a
+Here $\mathcal{Y}_L(\vec{r})\defas r^\ell Y_L(\vec{r})$ is a
 polynomial. With a gradient as argument, it becomes a differential
-operator.
+operator. With $Y_L(\vec{r})$ we denote a spherical or real harmonic
+function and $L\defas(\ell,m)$ is a composite index of angular
+momentum quantum number $\ell$ and magnetic quantum number $m$.
 
-Further detail about the Hankel and Bessel functions can be found in
+Further details about the Hankel and Bessel functions can be found in
 appendix~\ref{app:solidhankel}.
 
 %====================================================================
@@ -325,14 +330,15 @@ from screened Bessel functions $|\bar{J}^\Omega_{\beta}\rangle$, i.e.
 +|\bar{K}^I_{\alpha}\rangle
 \label{eq:kbarwithsbar}
 \end{eqnarray}
-The expansion coefficients $\bar{S}$ are the screened structure
-constants\index{Structure constants !screened}.
+The expansion coefficients $\bar{S}$ are the \textbf{screened structure
+constants}\index{Structure constants !screened}.
 
 
-By equating the two expressiones for the screened Hankel functions,
+By equating the two expressions for the screened Hankel functions,
 namely \eq{eq:kbarassuperposofkbare} and \eq{eq:kbarwithsbar}, we can
-extract the screened structure constants and the superposition
-coeffcients.
+extract the screened structure constants
+$\bar{S}^\dagger_{\beta,\alpha}$ and the superposition coefficients
+$c_{\beta,\alpha}$.
 \begin{eqnarray}
 \sum_\beta\Bigl[|K^\Omega_{\beta}\rangle
 -\sum_{\gamma}|J^\Omega_{\gamma}\rangle S^\dagger_{\gamma,\beta}
@@ -344,6 +350,7 @@ coeffcients.
 _{|\bar{J}^\Omega_{\beta}\rangle} \bar{S}^\dagger_{\beta,\alpha}
 +|\bar{K}^I_{\alpha}\rangle
 \nonumber\\
+\eqrel{eq:kbarassuperposofkbare}{\Rightarrow}\quad
 \sum_\beta
 |K^\Omega_{\beta}\rangle c_{\beta,\alpha}
 -\sum_{\beta,\gamma}|J^\Omega_{\gamma}\rangle S^\dagger_{\gamma,\beta} c_{\beta,\alpha}
@@ -354,6 +361,7 @@ _{|\bar{J}^\Omega_{\beta}\rangle} \bar{S}^\dagger_{\beta,\alpha}
 \bar{Q}_\beta \bar{S}^\dagger_{\beta,\alpha}\Bigr]
 -\sum_{\beta}|J^\Omega_{\beta}\rangle \bar{S}^\dagger_{\beta,\alpha}
 %+|\bar{K}^I_{\alpha}\rangle
+\nonumber\\
 \end{eqnarray}
 By comparing the coefficients, we obtain
 \begin{eqnarray}
@@ -362,6 +370,7 @@ c_{\beta,\alpha}&=&\delta_{\beta,\alpha}+
 \label{eq:definingeqsystemforsbara}
 \\
 \bar{S}^\dagger_{\gamma,\alpha}&=&\sum_\beta S^\dagger_{\gamma,\beta} c_{\beta,\alpha}
+\,,
 \label{eq:definingeqsystemforsbar}
 \label{eq:definingeqsystemforsbarb}
 \end{eqnarray}
@@ -398,7 +407,7 @@ and the expression of the screened Hankel functions
 \;.
 \end{eqnarray}
 
-Because, we calculate the screened structure constants on finite
+Because we calculate the screened structure constants on finite
 clusters, \eq{eq:defscreenedstructureconstants} should be considered
 of only formal value and should not be used in the actual
 calculations. Rather, the defining equations
@@ -417,8 +426,16 @@ calculations for all atoms centered on a given site in one step.
 We go back to the defining equation system
 \eq{eq:definingeqsystemforsbara}, \eq{eq:definingeqsystemforsbarb} and
 rewrite it in terms of vectors, which are defined on the cluster
-$B$. The index $\alpha$ labeling the vectors correspond to the
-envelope functions centered at the central site.
+$B$. The index $\alpha$ labeling the vectors counts the envelope
+functions centered at the central site. The dimension of the vectors
+and matrices defined below is given by angular momentum channels and
+sites with non-zero screening charge\footnote{Inclusion of orbitals
+  with vanishing screening charge does not affect the expansion
+  coefficients $c_{\alpha,\beta}$. However, it also includes the
+  structure constant matrix elements for the higher angular momenta
+  with vanishing screening charge. The contribution of the higher
+  angular momenta can be calculated after the screening has been
+  done.} $\bar{Q}$.
 
 The equations attain the form
 \begin{eqnarray}
@@ -431,7 +448,7 @@ The equations attain the form
 \label{eq:definingeqsystemforsbarvecb}
 \label{eq:definingeqsystemforsbarvec}
 \end{eqnarray}
-where the vectors $\vec{c}$, $\vec{s}_\alpha$ and $\vec{e}_\alpha$ are
+where the vectors $\vec{c}_\alpha$, $\vec{s}_\alpha$ and $\vec{e}_\alpha$ are
 defined by its components
 \begin{eqnarray}
 \Bigl(\vec{c}_\alpha\Bigr)_\beta&=&c_{\beta,\alpha}
@@ -440,7 +457,7 @@ defined by its components
 \nonumber\\
 \Bigl(\vec{e}_\alpha\Bigr)_\beta&=&\delta_{\beta,\alpha}
 \end{eqnarray}
-
+In matrix form, all these quantities are non-square matrices.
 
 \begin{eqnarray}
 \vec{c}_\alpha
@@ -460,10 +477,10 @@ defined by its components
 \mat{S}^\dagger\vec{c}_\alpha
 =\mat{S}^\dagger[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]^{-1}\vec{e}_\alpha
 \end{eqnarray}
-Interestingly the vector on the right-hand side $\vec{e}_\alpha$ can
-not be simply ignored as the matrix form suggests. This is specific to
-the calculation on the cluster. Because of this we cannot identify the
-contribution of these vectors with a unit matrix.
+Interestingly, the vector on the right-hand side $\vec{e}_\alpha$ can
+not be simply ignored as the matrix form seems to suggest. This is
+specific to the calculation on the cluster. Because of this, we cannot
+identify the contribution of these vectors with a unit matrix.
 
 
 
@@ -474,14 +491,15 @@ $[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]$. Then we solve the equation
 \begin{eqnarray}
 [\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]\vec{c}_\alpha&=&\vec{e}_\alpha
 \label{eq:forscreenedsa}
-\nonumber\\
+\\
 \vec{s}_\alpha&=&\mat{S}^\dagger\vec{c}_\alpha
 \label{eq:forscreenedsb}
 \end{eqnarray}
-for $\vec{c}_\alpha$ first using a standard routine for linear
-equation systems. From the result $\vec{c}_\alpha$, we obtain the
-screened structure constants $\vec{s}_\alpha$ by multiplication with
-the screened structure constants.
+for $\vec{c}_\alpha$ first from \eq{eq:forscreenedsa} using a standard
+routine for linear equation systems. Using the result for
+$\vec{c}_\alpha$, we obtain the screened structure constants
+$\vec{s}_\alpha$ from \eq{eq:forscreenedsb} by multiplication with the
+bare structure constants.
 
 Finally we obtain the screened structure constants as
 \begin{eqnarray}
@@ -492,7 +510,60 @@ Finally we obtain the screened structure constants as
 Note that the screened structure constants calculated on finite
 clusters are no more exactly hermitean.
 
+%====================================================================
+\subsection{Lower and higher angular momenta}
+%====================================================================
+The angular momentum expansion of a Hankel function
+$|K^\infty_\alpha\rangle$ about a neighboring size has infinitely many
+angular momentum contributions $|J^\Omega_\alpha\rangle$. The Hankel
+functions $|K^\Omega_\alpha\rangle$, on the other hand, are limited to
+a subset. We call the angular momenta, for which the Hankel functions
+$|K^\Omega_\alpha\rangle$ are taken into account, lower angular
+momenta, and those for which only the Bessel function
+$|J^\Omega_\alpha\rangle$ are considered, the higher angular momenta.
+The distinction reflects directly to the values of $\bar{Q}$, which
+are nonzero for the lower angular momenta and which vanish for the
+higher angular momenta. 
 
+To avoid the confusion between the choice of screening charges and the
+selection of tight-binding orbitals, we assume that there is an
+orbital considered for each non-zero screening charge. A truncation of
+the basisset is postponed.  With this choice, the left index of the
+expansion coefficients $c_{\beta,\alpha}$ in
+\eq{eq:kbarassuperposofkbare} runs over all sites in the cluster and
+angular momenta for which there is a non-zero screening charge
+$\bar{Q}_\beta$. The right index includes all orbital indices on the
+central site of the cluster.
+
+If there are two orbitals with the same leading angular momentum, they
+will have, per definition, the same envelope function and the same
+tails.\footnote{The difference between two such orbitals is thus
+  confined to the augmentation region of the central site, and can
+  probably be identified with a local orbital as they are used in
+  LAPW.} Thus, we consider only the angular momenta during the
+construction and expand the structure-constant array after the
+screening has been completed.
+
+\begin{center}
+\begin{tabular}{|c|l|}
+\hline
+A&indices of screened orbitals\\
+B&indices of non-zero screening charges\\
+C&indices of partial waves\\
+D&indices of angular momenta considered one-center expansion of 
+the tailed representation\\
+\hline
+\end{tabular}
+\end{center}
+
+Screened orbitals (A) can only be formed in channels with partial waves (C),
+because they require augmentation of the envelope function.
+
+Non-zero screening charges (B) are only possible where partial waves (C)
+exist, because the irregular contribution must be augmented.
+
+The number of screened orbitals (A) may be a subset of (B) the
+channels with non0zero screening charges.
 
 %====================================================================
 \section{Augmentation and Potential parameters}
@@ -508,7 +579,7 @@ The local orbitals have the form
 &+&\sum_{R',L'}|K^I_{R',L'}\rangle\Bigl[ \delta_{R',L',R_\alpha,L_\alpha}-\bar{Q}_{R',L'}
 \bar{S}^\dagger_{R',L',R_\alpha,L_\alpha}\Bigr]
 \end{eqnarray}
-wherethe new partial waves $|\phi^K_\alpha\rangle$ and
+where the new partial waves $|\phi^K_\alpha\rangle$ and
 $|\phi^{\bar{J}}_\alpha\rangle$ are superpositions of the valence and
 scattering partial waves that match differentiably to the head and
 tail functions $|K_\alpha\rangle$ and $|\bar{J}_\alpha\rangle$.
@@ -768,13 +839,9 @@ the tail functions centered on the central site are extended by a
 superposition of exponential tails.
 
 
-
-
-
-
-
-
-
+%====================================================================
+\chapter{Contributions to the Hamiltonian}
+%====================================================================
 %====================================================================
 \section{Core-valence exchange}
 %====================================================================
@@ -897,7 +964,7 @@ With $n^s_R$ and $n^s_t$ we denote the spherical parts of the
 respective densities.
 
 If the frozen-core density is employed, the contribution of the core
-must not be included in the double counting term.
+must not be included in the double-counting term.
 
 The expression above can be written in the
 following form:
@@ -948,9 +1015,9 @@ The total density $n_t$ contains also the core density. If the core
 valence Fock term is included, they are part of the correlated
 electrons and need to be considered in the density $n_R$.
 
-The double counting correction has the negative sign, because the
+The double-counting correction has the negative sign, because the
 DFT-expression needs to be subtracted.\footnote{This subtraction is
-  done outside the routine calculating the double counting term.}  Its
+  done outside the routine calculating the double-counting term.}  Its
 energy and the corresponding contributions to the auxiliary
 Hamiltonian are
 \begin{eqnarray}
@@ -991,14 +1058,84 @@ E_{xc}^{\hat{W}_R}=\sum_{a,b,c,d}\int d^3r\;
 \section{Workflow}
 %====================================================================
 \begin{verbatim}
----initialization----- POTPAR = potential parameters SBAR = screened
- structureconstants <ptilde|chitilde> tailed partial waves overlap
- (Onsite) utensor (Onsite) utensor (offsite) ...  ----cycle-----------
- TBC=<pi-tilde|psi> from PROJ=<ptilde|psitide> DENMAT density matrix
- in local orbitals ...  total energy and derivatives HAMIL hamiltonian
- matrix in tight-binding orbitals ...  HTBC = de/dtbc * 1/f HPROJ =
- de/dproj * 1/f
+  ---initialization----- 
+  POTPAR = potential parameters 
+  SBAR = screened structureconstants 
+  <ptilde|chitilde> tailed partial waves overlap (Onsite) 
+  utensor (Onsite) 
+  utensor (offsite) 
+  ...  
+  ----cycle-----------
+  TBC=<pi-tilde|psi> from PROJ=<ptilde|psitide> 
+  DENMAT density matrix in local orbitals 
+  ...  
+  total energy and derivatives 
+  HAMIL hamiltonian matrix in tight-binding orbitals 
+  ...  
+  HTBC = de/dtbc * 1/f 
+  HPROJ = de/dproj * 1/f
 \end{verbatim}
+
+%====================================================================
+\section{LMTO\_POTPAR}
+%====================================================================
+All information that depends directly on the partial waves is stored
+in the structure POTPAR.
+
+\begin{tabular}{|l|l|}
+\hline
+\hline
+\multicolumn{2}{|c|}{POTPAR Structure}\\
+\hline
+\hline
+RAD &  augmentation radius\\
+\hline
+\multicolumn{2}{|l|}{Quantities connected to head functions}\\
+\hline
+NHEAD & number of head functions\\
+LOFH(NHEAD) &  angular momentum\\
+ITAIL(NHEAD) & pointer to tail function\\
+LNOFH(NHEAD) & pointer to partial wave $|\phi\rangle$ and projector $\langle{p}|$\\
+KTOPHI(NHEAD) & $|K^\Omega\rangle\rightarrow |\phi\rangle c_{KTOPHI}
++|\dot{\bar{\phi}}\rangle c_{KTOPHIDOT}$
+\\
+KTOPHIDOT(NHEAD) & \\
+\hline
+\multicolumn{2}{|l|}{Quantities connected to tail functions}\\
+\hline
+NTAIL(NTAIL) & number of tail functions\\
+LOFT(NTAIL)  &  angular momentum\\
+LNOFT(NTAIL) & pointer to partial wave $|\phi\rangle$ and projector $\langle{p}|$\\
+QBAR(NTAIL)  & screening charge $|\bar{J}\rangle=|J\rangle-|K\rangle \bar{Q}$\\
+JBARTOPHIDOT(NTAIL)  & $|\bar{J}^\Omega\rangle\rightarrow 
+                |\dot{\bar{\phi}}\rangle c_{JBARTOPHIDOT}$\\
+\hline
+\multicolumn{2}{|l|}{Other stuff}\\
+\hline
+PROK(LNX,NHEAD) & $\langle\tilde{p}|\phi c_{ktopphi}+\dot{\bar{\phi}} c_{ktophidot}\rangle$\\
+PROJBAR(LNX,NTAIL) & $\langle\tilde{p}|\dot{\bar{\phi}} c_{jbartophidot}\rangle$
+\\
+PHIOV(LNX,LNX) & $\langle\phi_\alpha|\theta_\Omega|\phi_\beta\rangle$ \\
+\hline
+\multicolumn{2}{|l|}{Tailed representation}\\
+\hline
+TAILED\%GID & grid id  for the radial grid\\
+TAILED\%LNX & \\
+TAILED\%LMNX & \\
+TAILED\%LOX(LNX) & \\
+TAILED\%AEF(NR,LNX) & \\
+TAILED\%PSF(NR,LNX) & \\
+TAILED\%NLF(NR,LNX) & \\
+TAILED\%U(LMNX,LMNX,LMNX,LMNX) & \\
+TAILED\%OVERLAP(LMNX,LMNX) & \\
+TAILED\%QLN(2,LNX,LNX) & \\
+\hline
+\hline
+\end{tabular}
+The variable lnx and lmnx in the substructure TAILED differ from the
+corresponding functions from the partial wave expansion.
+
+
 
 %====================================================================
 \section{LMTO\$CLUSTERSTRUCTURECONSTANTS}
@@ -1027,7 +1164,7 @@ REAL(8)   ,INTENT(INOUT):: SBAR(NORB,N)
 
 
 
-First, the bare structure constants are evaluates on the cluster using
+First, the bare structure constants are evaluated on the cluster using
 \verb|LMTO\$STRUCTURECONSTANTS| and then the structure constants are
 screened using \verb|LMTO\$SCREEN|.
 
@@ -1443,7 +1580,7 @@ The following dependencies have been explored:
 The procedure apparently breaks down completely, if the augmentation
 radius is too large. The dependency becomes stronger, if more
 non-local terms are included. This may be due to the fact that the
-double counting term is only included for the local terms.
+double-counting term is only included for the local terms.
 %
 %================= rtail ================================================
 \item tail matching radius
@@ -1476,9 +1613,9 @@ double counting term is only included for the local terms.
   exponential tails ofg the tailed orbitals.
 
   It may also be due to the fact the these terms are not compensated
-  by the double counting term.
+  by the double-counting term.
 % 
-\item It should be noted that the double counting term is included
+\item It should be noted that the double-counting term is included
   only for local exchange.
 %
 \item Choose value of $-0.2<k^2<-0.5$~H 
@@ -1916,9 +2053,10 @@ The routines related to Gaussians have been moved into the file
 
 %====================================================================
 \chapter{Double counting}
+\label{app:dc}
 %====================================================================
 %====================================================================
-\section{Other double counting schemes}
+\section{Other double-counting schemes}
 %====================================================================
 An excellent review of double-counting terms has been discussed by
 Nekrasov et al.\cite{nekrasov12_arxiv1208_4732}.  
@@ -2051,7 +2189,7 @@ E_{xc}
 %====================================================================
 \subsection{Around mean field (AMF)}
 %====================================================================
-The original expression, AMF, for the double counting term is derived
+The original expression, AMF, for the double-counting term is derived
 from the mean-field approximation of the Hubbard model.
 
 \textbf{This section is unfinished. It is an attempt to derive the AMF
