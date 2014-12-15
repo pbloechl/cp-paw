@@ -1,0 +1,839 @@
+\documentclass[11pt,a4paper]{report}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                 %%
+%%    Header file for the Phi-S-X Series                           %%
+%%                                                                 %%
+%%    german version header_gm.tex is derived from header.tex      %%
+%%    by uncommenting the line ``\setboolean{german}{true}'' below %%
+%%                                                                 %%
+%%    Never edit the german version! all changes must be done      %%
+%%    in the english version header.tex                            %%
+%%                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{../header}
+\hypersetup{pdftitle=paw_brillouin}
+\newcommand{\petertt}[1]{\textcolor{red}{\texttt{#1}}}
+\begin{document}
+\begin{titlepage}
+\begin{center}
+\vspace*{3.5cm}
+{\huge \textbf{The CLASSICAL object of the CP-PAW code}}\\
+\vspace{0.5cm}
+{\large Peter E. Bl\"ochl}
+\vspace{0.5cm} 
+\end{center}
+
+\vfill
+\begin{center}
+Copyright Peter E. Bl\"ochl; Sept.2, 2013-\today\\
+{\small
+Institute of Theoretical Physics;
+Clausthal University of Technology;\\ 
+D-38678 Clausthal Zellerfeld; Germany;\\
+http://www.pt.tu-clausthal.de/atp/}
+\end{center}
+\end{titlepage}
+\noindent            
+\tableofcontents
+%====================================================================
+\chapter{Purpose and theoretical background}
+%====================================================================
+The CLASSICAL object implements a molecular dynamics tool for a
+general interatomic forcefield. In the classical molecular dynamics the
+total energy is expressed in terms of the atomic structure. 
+
+the classical object can also be used independent of the main paw-code
+using the front-end described in appendix~\ref{sec:frontend} on
+p.~\pageref{sec:frontend}.
+
+The object separates the evaluation of total energies and forces from
+the parameterized form of the force field by placing the potentials
+onto interpolation grids, from which value and derivatives are
+recovered by a spline interpolation.
+
+Available force-fields:
+\begin{itemize}
+\item The default force field is the Universal force field
+(UFF).\cite{rappe92_jacs114_10024}. 
+%
+\item The water model TIP4P by Joergensen et al.\cite{jorgensen83_jcp79_926}
+is currently in the process of implementation.
+\end{itemize}
+
+%====================================================================
+\chapter{Methods}
+%====================================================================
+%====================================================================
+\section{UFF force field}
+%====================================================================
+The UFF force field rest on the following publications
+\begin{itemize}
+\item Original UFF paper\cite{rappe92_jacs114_10024}.
+\item Charge equilibration\cite{rappe91_jpc95_3358}.
+\item Atom sizes and bond lengths\cite{okeefe92_jacs113_3226}.
+\item DREIDING\cite{mayo90_jpc90_8897}, a predecessor of UFF.
+\item Application of UFF to organic molecules\cite{casewit92_jacs114_10035}
+\item Application of UFF to main group compounds\cite{casewit92_jacs114_11046}
+\item see also\cite{addicoat14_jctc10_880}
+\end{itemize}
+%====================================================================
+\subsection{Bond stretch}
+%====================================================================
+The bond stretch term has the form\footnote{UFF also allows for a
+  Morse form for the bond distance.
+\begin{eqnarray}
+E^{bond}(r)&=&D\Bigl[\e{-\sqrt{k^{bond}/D^{bond}}(r-r^{bond})}-1\Bigr)^2
+\end{eqnarray}
+where $D=70$~kcal/mol times the bond order.  We have chosen the for
+of an harmonic oscillator, because it does not allow for bond
+breaking.} (UFF-Eq.1a)
+\begin{eqnarray}
+E^{bond}(r)&=&\frac{1}{2} k^{bond}\left(r-r^{bond}\right)^2
+\end{eqnarray}
+where $r$ is the present bond distance. The two parameters are the
+force constant $k^{bond}$ and the equilibrium bond distance
+$r^{bond}$.
+
+The equilibrium bond distance is determined by the covalent radii, the
+bond order $n$ and the electronegativities
+(UFF-Eqs.~2,3,4)\footnote{Attention! In the UFF paper is a sign error
+  for the electronegativity term in UFF Eq.4. See also comments for
+  UFF from MCCS TOWHEE.}
+\begin{eqnarray}
+r^{bond}=\Bigl(r^{cov}_i+r^{cov}_j\Bigr)
+\underbrace{\Bigl(1-0.1332\ln(n)\Bigr)}_{\text{bond order correction}}
+-
+\underbrace{r^{cov}_ir^{cov}_j
+\frac{\Bigl(\sqrt{\chi_i}-\sqrt{\chi_j}\Bigr)^2}
+{\Bigl(\chi_ir^{cov}_i+\chi_jr^{cov}_j\Bigr)^2}}
+_{\text{electronegativity correction}}
+\end{eqnarray}
+
+
+The force constant is calculated from effective charges $Z^*_i$ as
+\begin{eqnarray}
+k^{bond}_{i,j}&=&\frac{Z^*_iZ^*_j}{r^{bond}}\times 664.12\;\text{kcal/mol}
+\end{eqnarray}
+
+%====================================================================
+\subsection{Bond-angle terms}
+%====================================================================
+For the angle forces, two cases are distinguished: 
+\begin{itemize}
+\item for linear (n=2), trigonal (n=3), square planar (n=4), 
+octahedral environments (n=4) the following form is chosen (UFF-Eq.~10)
+\begin{eqnarray}
+E^{angle}(\theta)&=&k^{angle}\frac{1}{n^2}\Bigl(1-\cos(n\theta)\Bigr) 
+\end{eqnarray}
+\item for the general non-linear case with an ideal bond angle $\theta_0$
+the more complex form UFF-Eq.11,12) is selected.
+\begin{eqnarray}
+E^{angle}(\theta)&=&k^{angle}
+\frac{\Bigl(2\cos^2(\theta_0)+1\Bigr)
+-4\cos(\theta_0)\cos(\theta)
++\cos(2\theta)}{4\sin^2(\theta_0)}
+\end{eqnarray}
+\end{itemize}
+
+
+The force constants are given in UFF-Eq.13
+\begin{eqnarray}
+k^{angle}= \frac{Z^*_iZ^*_k}{r_{ik}^3}
+\frac{3r_{ij}r_{jk}\sin^2(\theta_0)
+-r_{ik}^2\cos(\theta_0)}{r_{ik}^2}
+\times 664.12 \text{kcal/mol}
+\end{eqnarray}
+
+\textcolor{red}{Careful!!! this equation is completely messed up!!!!}
+
+%====================================================================
+\subsection{Lennard-Jones potential}
+%====================================================================
+The Lennard-Jones potential has the form 
+\begin{eqnarray}
+E_{vdw}(d)=D^{vdw}\biggl[\Bigl(\frac{r^{vdw}}{d}\Bigr)^{12}-2
+\Bigl(\frac{r^{vdw}}{d}\Bigr)^{6}\Bigr)\biggr]
+\end{eqnarray}
+where $d$ is the actual distance between the two atoms The two
+parameters is the van-der Waals radius $r^{vdw}_{i,j}$ and the van der
+Waals energy $D^{vdw}_{i,j}$.  Thus implies that the Lennard-Jones
+potential has a minimum at radius $r^{vdw}$ with depth $D^{vdw}$.
+
+UFF defines Lennard Jones parameters for each atom type. For a pair,
+the parameters are combined using a geometric rule for the bond energies
+\begin{eqnarray}
+D^{vdw}_{i,j}&=&\sqrt{D^{vdw}_{i}D^{vdw}_{j}}
+\\
+r^{vdw}_{i,j}&=&\frac{1}{2}\left(r^{vdw}_i+r^{vdw}_j\right)
+\end{eqnarray}
+
+For the distance the UFF seems to be unspecific regarding whether the
+parameters are combined with the arithmetic mean or as the geometic
+mean.
+
+
+
+%====================================================================
+\section{Dummy atoms}
+%====================================================================
+Dummy atoms are fictitious atoms, which are introduced to allow to
+attach force fields to sites whihc are not atomic positions.
+
+The positions of the dummy atoms are a direct function of the
+positions of real atoms.
+\begin{eqnarray}
+R_D=\sum_j w_j \vec{R}_j
+\end{eqnarray}
+This step is performed in routine \verb|CLASSICAL_DUMMY_POSITION|.
+
+The forces on the physical atoms, which result from a force term
+acting on the dummy atom, can be also directly calculated.
+\begin{eqnarray}
+F_i=-\vec{\nabla}_iE(\vec{R}_i,\vec{R}_D(\vec{R}_i)=
+-\vec{\nabla}_iE(\vec{R}_i,\vec{R}_D)
+-w_i\vec{\nabla}_DE(\vec{R}_i,\vec{R}_D)
+\end{eqnarray}
+
+The positions of the dummy atoms are determined just before the total
+energy and forces are determioned. Right after calculating the forces,
+the forces acting on the dummy atom are mapped onto the real atoms,
+and the force on the dummy atom is set to zero.
+
+
+
+
+
+
+\begin{tabular}{|l|l|}
+\hline
+\hline
+Identifier & molecule \\
+\hline
+CPR   & cyclopentadienyl\\
+CPR\_B & cyclopentadienyl\\
+PIR    & olefin\\
+CIR    & allyl\\
+MTIP4P & water\\
+\hline
+\end{tabular}
+
+
+\begin{itemize}
+\item CPR,CPR\_B,PIR,CIR The position of the dummy atom is the
+  geometrical center of all carbon atoms with type C\_2 and C\_R, to
+  which it has a bond.
+%
+\item MTIP4P. The middle atom of the water molecule in the TIP4P model
+  is given as weighted sum of the positions of the real atoms. The
+  molecule is defined by the oxygen atom, the dummy atom is bonded to,
+  and the two hydrogen atoms bonded to this oxygen atom.
+\end{itemize}
+
+
+%====================================================================
+\section{TIP4P forcefield for water}
+%====================================================================
+The TIP4P forcefield\cite{jorgensen83_jcp79_926} for water uses a
+rigid atomic structure, a lennard-jones potential between oxygen atoms
+and charges on the hydrogen positions and a dummy atom. The parameters
+are given in table~\ref{tab:tip4ppar}.
+
+\begin{table}[htb!]
+\begin{center}
+\begin{tabular}{|l|c|}
+\hline
+\hline
+\multicolumn{2}{|c|}{TIP4P parameters}\\
+\hline
+$d(OH)$ & 0.9572~\AA\\
+$d(OM)$ & 0.1500~\AA\\
+$\angle(HOH)$ & 104.52$^\circ$\\
+$C_{12}$ & $0.6\times 10^6$~kcal/mol \AA$^{12}$\\
+$C_{6}$ & $0.61\times 10^3$~kcal/mol \AA$^{6}$\\
+$q(O)$ & $0$\\
+$q(M)$ & $-1.04$~e \\
+$q(H)$ & $+0.52$~e \\
+\hline
+\hline
+\end{tabular}
+\end{center}
+\caption{\label{tab:tip4ppar} Parameters for the TIP4P model from
+    Joergensen et al.\cite{jorgensen83_jcp79_926}.}
+\end{table}
+
+The TIP4P force field has the form
+\begin{eqnarray}
+E=\frac{1}{2}\sum_{m\neq n\in\text{molecules}} 
+\biggl[&&
+\frac{C_{12}}{|\vec{R}_{O,m}-\vec{R}_{O,n}|^{12}}
+-\frac{C_{6}}{|\vec{R}_{O,m}-\vec{R}_{O,n}|^{6}}
+\nonumber\\
+&+&\sum_{i,j\in\{M,H_1,H_2}\frac{Q_iQ_j}
+{4\pi\epsilon_0|\vec{R}_{i,m}-\vec{R}_{j,n}|}
+\biggr]
+\end{eqnarray}
+The sum is performed over all pairs of molecules\footnote{The factor
+  $\frac{1}{2}$ in front of the double sum avoids the double counting
+  of pairs.}  With $\vec{R}_{i,n}$ we denote the atom $i$
+($i\in\{O,M,H_1,H_2\}$)on the molecule $n$.  The Lennard-Jones
+potential acts only between pairs of oxygen atoms at positions
+$\vec{R}_{O,n}$. the electrostatic charges on the other hand are at
+the two hydrogen positions and the dummy atoms denoted by M.
+
+The atomic positions in a molecule are constained by three bond-length
+constraints. 
+\begin{eqnarray}
+d(H_1H_2)=2 \sin\left(\frac{\angle(HOH)}{2}\right) d(OH)
+\end{eqnarray}
+The position of the dummy atom is expressed by the real atomic positions
+\begin{eqnarray}
+\vec{R}_M&=&w_O \vec{R}_O+w_h\left(\vec{R}_{H_1}+\vec{R}_{H_2}\right)
+\nonumber\\
+w_O&=&\frac{d(O,M)}{\cos\left(\frac{\angle(HOH)}{2}\right) d(OH)}
+\\
+w_H&=&\frac{1-w_O}{2}
+\end{eqnarray}
+%====================================================================
+\section{Implementation}
+%====================================================================
+The TIP4P object is an object with multiple instances. Thus it must be
+selected with an idenitifier and unselected with the id 'none'.
+
+\begin{itemize}
+\item TIP4P\$SELECT(ID): selects an existing instance or creates a new
+  one. The instance is unselected with id='none'. The first time, any
+  instance is selected also the constants of the TIP4P model are
+  calculated and stored in the module.
+%
+\item TIP4P\$DUMMY\_POSITIONS(NAT,R): recalculates the position of the dummy
+  atoms from the positions of the real atoms.
+%
+\item TIP4P\$DUMMY\_FORCES(NAT,F): maps the forces acting on the dummy atom
+  onto the real atoms. The force on  the dummy atom is set to zero.
+%
+\item TIP4P\$CONSTRAINTS(NAT,MASS,R0,RP): enforces the constraints
+  that keep the structure of each water molecule rigid.
+\end{itemize}
+
+The object sets up an array that holds the pointers to the four atoms
+in a molecule. (After this step, the intramolecular bonds could be
+removed from the bond array.) This is done with TIP4P\$COLLECT().  In
+order to avoid that TIP4P\$COLLECT is executed several time, the
+variable \verb|this\%nwater| is initialized to -1. TIP4P\$COLLECT is
+executed only if \verb|this\%nwater| is negative. After execution it
+is either zero or positive.
+
+\subsection{Integration into the classical object}
+
+I have added the atom types O\_TIP4P,M\_TIP4P, and H\_TIP4P to the UFF
+atom types. By setting the effective charges to zero, I am avoiding
+any intramolecular bond or angle terms. The van der Waals parameters
+have been set to zero except for the oxygen atom. The van-der Waals
+parameters of TIP4P are imported into the UFF table.
+
+The atomic charges of the TIP4P water molecules are overwritten by the
+TIP4P charges.
+
+There are two operations that differ from the usual UFF operations,
+namely the treatment of the dummy atom M and the constraints that
+enforce the molecular structure.
+
+
+\appendix
+%====================================================================
+\chapter{Frontend of the classical object}
+\label{sec:frontend}
+%====================================================================
+This section contains a front-end of the classical object, which
+allows to adress the classical object directly.
+
+
+An example input file \verb|camno3.in| is given here
+\begin{verbatim} 
+!MDCNTL
+  !GENERIC LUNIT=7.218756758 LONGRANGE=F TRACE=F !END
+  !RDYN DT=5. FRIC=0. NSTEP=10000 !END
+  !LATTICE t=1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 !end
+  !ATOM NAME='CA1'  R=0.0  0.0  0.0  TYPE='CA6+2' q= 2. !END
+  !ATOM NAME='MN2'  R=0.5  0.5  0.5  TYPE='MN6+2' q= 4. !END
+  !ATOM NAME='O_3'  R=0.5  0.51 0.0  TYPE='O_1'   q=-2. !END
+  !ATOM NAME='O_4'  R=0.5  0.0  0.5  TYPE='O_1'   q=-2.  !END
+  !ATOM NAME='O_5'  R=0.0  0.5  0.5  TYPE='O_1'   q=-2.  !END
+  !BOND ATOM1='MN2' ATOM2='O_3:000' !END
+  !BOND ATOM1='MN2' ATOM2='O_3:001' !END
+  !BOND ATOM1='MN2' ATOM2='O_4:000' !END
+  !BOND ATOM1='MN2' ATOM2='O_4:010' !END
+  !BOND ATOM1='MN2' ATOM2='O_5:000' !END
+  !BOND ATOM1='MN2' ATOM2='O_5:100' !END
+!END
+!EOB
+\end{verbatim}
+
+Here is the source code of the front-end.
+\begin{verbatim} 
+     PROGRAM MAIN
+     USE LINKEDLIST_MODULE
+     USE STRINGS_MODULE
+     IMPLICIT NONE
+     CHARACTER(128) :: ROOT
+     CHARACTER(64)  :: ID
+     REAL(8)        :: DELTA
+     REAL(8)        :: ANNE
+     REAL(8)        :: EPOT
+     REAL(8)        :: EKIN
+     REAL(8)        :: ETOT
+     REAL(8)        :: PICO,SECOND
+     INTEGER(4)     :: NITER=100
+     INTEGER(4)     :: ITER
+     INTEGER(4)     :: NFILO
+     INTEGER(4)     :: NFIL
+     CHARACTER(128) :: INFILE
+     TYPE(LL_TYPE)  :: LL_IN
+     LOGICAL(4)     :: TCHK
+     INTEGER(4)     :: NARGS
+!    *******************************************************************
+     CALL CONSTANTS$GET('PICO',PICO)
+     CALL CONSTANTS$GET('SECOND',SECOND)
+     ID='MD'    
+     CALL LIB$NARGS(NARGS)
+     IF(NARGS.LT.1) THEN
+       CALL ERROR$MSG('THE NAME OF THE ROOTFILE MUST BE GIVEN')
+       CALL ERROR$STOP('MAIN')
+     END IF
+     CALL LIB$GETARG(1,ROOT)
+     CALL FILEHANDLER$SETROOT(ROOT)
+     CALL FILEHANDLER$SETFILE(+'PROT',.TRUE.,-'.PROT')
+     CALL FILEHANDLER$SETSPECIFICATION(+'PROT','STATUS','UNKNOWN')
+     CALL FILEHANDLER$SETSPECIFICATION(+'PROT','POSITION','REWIND')
+     CALL FILEHANDLER$SETSPECIFICATION(+'PROT','ACTION','WRITE')
+     CALL FILEHANDLER$SETSPECIFICATION(+'PROT','FORM','FORMATTED')
+     CALL FILEHANDLER$SETFILE('IN',.TRUE.,-'.IN')
+     CALL FILEHANDLER$SETSPECIFICATION('IN','STATUS','OLD')
+     CALL FILEHANDLER$SETSPECIFICATION('IN','POSITION','REWIND')
+     CALL FILEHANDLER$SETSPECIFICATION('IN','ACTION','READ')
+     CALL FILEHANDLER$SETSPECIFICATION('IN','FORM','FORMATTED')
+!
+!    ===================================================================
+!    ==  WRITE HEADER                                                 ==
+!    ===================================================================
+     CALL FILEHANDLER$UNIT(+'PROT',NFILO)
+     WRITE(NFILO,FMT='(" ")')
+     WRITE(NFILO,FMT='(72("*"))')
+     WRITE(NFILO,FMT='(72("*"),T15," MD TEST PROGRAM ")')
+     WRITE(NFILO,FMT='(72("*"))')
+!
+!    ===================================================================
+!    ==  READ BUFFER OF INPUT FILE                                    ==
+!    ===================================================================
+     CALL LINKEDLIST$NEW(LL_IN)
+     CALL FILEHANDLER$UNIT('IN',NFIL)
+     CALL LINKEDLIST$READ(LL_IN,NFIL)
+!    CALL LINKEDLIST$REPORT(LL_IN,NFILO)
+!
+!    ===================================================================
+!    ==  SWITCH TRACE INFORMATION OFF OR ON                           ==
+!    ===================================================================
+     CALL LINKEDLIST$SELECT(LL_IN,'~')
+     CALL LINKEDLIST$SELECT(LL_IN,'MDCNTL')
+     CALL LINKEDLIST$SELECT(LL_IN,'GENERIC')
+     CALL LINKEDLIST$EXISTD(LL_IN,'TRACE',1,TCHK)
+     IF(TCHK) CALL LINKEDLIST$GET(LL_IN,'TRACE',1,TCHK)
+     CALL TRACE$SETL4('ON',TCHK)
+!
+!    ===================================================================
+!    ==  READ CONTROL DATA                                            ==
+!    ===================================================================
+     CALL LINKEDLIST$SELECT(LL_IN,'~')
+     CALL LINKEDLIST$SELECT(LL_IN,'MDCNTL')
+     CALL LINKEDLIST$SELECT(LL_IN,'RDYN')
+!    __ TIMESTEP________________________________________________________
+     DELTA=10.D0
+     CALL LINKEDLIST$EXISTD(LL_IN,'DT',1,TCHK)
+     IF(TCHK)CALL LINKEDLIST$GET(LL_IN,'DT',1,DELTA)
+!    __FRICTION_________________________________________________________
+     ANNE=0.D0
+     CALL LINKEDLIST$EXISTD(LL_IN,'FRIC',1,TCHK)
+     IF(TCHK)CALL LINKEDLIST$GET(LL_IN,'FRIC',1,ANNE)
+!    __FRICTION_________________________________________________________
+     NITER=100
+     CALL LINKEDLIST$EXISTD(LL_IN,'NSTEP',1,TCHK)
+     IF(TCHK)CALL LINKEDLIST$GET(LL_IN,'NSTEP',1,NITER)
+!
+!    ===================================================================
+!    ==  INITIALIZE CLASSICAL OBJECT                                  ==
+!    ===================================================================
+     CALL SETUPCLASSICAL(LL_IN,ID)
+     CALL FILEHANDLER$UNIT(+'PROT',NFILO)
+     CALL CLASSICAL$SETI4('LOD',3)
+     CALL CLASSICAL$REPORT(NFILO)
+!
+!    ===================================================================
+!    ==  RUN CLASSICAL                                                ==
+!    ===================================================================
+     WRITE(NFILO,FMT='("#",A9,A10,3A15)')'ITER','T[PS]','ETOT','EKIN','EPOT'
+     DO ITER=1,NITER
+       CALL CLASSICAL$NEIGHBORS
+       CALL CLASSICAL$ETOT(EPOT)
+       CALL CLASSICAL$PROPAGATE(DELTA,ANNE)
+       CALL CLASSICAL$EKIN(DELTA,EKIN)
+       ETOT=EPOT+EKIN
+       WRITE(NFILO,FMT='(I10,F10.3,3F15.5)')ITER &
+    &                             ,DBLE(ITER-1)*DELTA/PICO/SECOND,ETOT,EKIN,EPOT
+       CALL CLASSICAL$SWITCH
+     ENDDO
+!
+!    ===================================================================
+!    ==  REPORT AND CLOSE DOWN                                        ==
+!    ===================================================================
+     CALL CLASSICAL$REPORT(NFILO)
+     WRITE(NFILO,FMT='()')
+     WRITE(NFILO,FMT='(72("*"))')
+     WRITE(NFILO,FMT='(72("*"),T15," MD TEST PROGRAM FINISHED ")')
+     WRITE(NFILO,FMT='(72("*"))')
+     STOP
+     END
+
+!    ...................................................................
+     SUBROUTINE SETUPCLASSICAL(LL_IN_,ID)
+     USE LINKEDLIST_MODULE
+     USE PERIODICTABLE_MODULE
+     IMPLICIT NONE
+     CHARACTER(*) ,INTENT(IN)  :: ID
+     TYPE(LL_TYPE),INTENT(IN)  :: LL_IN_
+     TYPE(LL_TYPE)             :: LL_IN
+     INTEGER(4)                :: NAT
+     INTEGER(4)                :: NBOND
+     REAL(8)      ,ALLOCATABLE :: R0(:,:)     !(3,NAT)
+     REAL(8)      ,ALLOCATABLE :: RM(:,:)     !(3,NAT)
+     REAL(8)      ,ALLOCATABLE :: QEL(:)      !(NAT)
+     REAL(8)      ,ALLOCATABLE :: MASS(:)     !(NAT)
+     CHARACTER(5) ,ALLOCATABLE :: TYPE(:)     !(NAT)
+     CHARACTER(16),ALLOCATABLE :: NAME(:)     !(NAT)
+     CHARACTER(16)             :: NAME1
+     CHARACTER(16)             :: NAME2
+     CHARACTER(32)             :: XNAME
+     CHARACTER(2)              :: EL
+     INTEGER(4)   ,ALLOCATABLE :: INDEX2(:,:) !(2,NBOND)
+     REAL(8)      ,ALLOCATABLE :: BO(:)       !(NBOND)
+     INTEGER(4)                :: IAT,IB
+     LOGICAL(4)                :: TCHK
+     REAL(8)                   :: PROTONMASS
+     REAL(8)                   :: SVAR
+     REAL(8)                   :: LUNIT
+     REAL(8)                   :: RBAS(3,3)
+     INTEGER(4)                :: IT(3)
+     LOGICAL(4)                :: TLONGRANGE
+!    *******************************************************************
+     CALL CONSTANTS$GET('U',PROTONMASS)
+     LL_IN=LL_IN_
+     CALL LINKEDLIST$SELECT(LL_IN,'~')
+     CALL LINKEDLIST$SELECT(LL_IN,'MDCNTL')
+     CALL LINKEDLIST$SELECT(LL_IN,'GENERIC')
+!    __READ LENGTH UNIT________________________________________________
+     LUNIT=1
+     CALL LINKEDLIST$EXISTD(LL_IN,'LUNIT',1,TCHK)
+     IF(TCHK) CALL LINKEDLIST$GET(LL_IN,'LUNIT',1,LUNIT)
+!
+     TLONGRANGE=.FALSE.
+     CALL LINKEDLIST$EXISTD(LL_IN,'LONGRANGE',1,TCHK)
+     IF(TCHK) CALL LINKEDLIST$GET(LL_IN,'LONGRANGE',1,TLONGRANGE)
+
+     CALL LINKEDLIST$SELECT(LL_IN,'~')
+     CALL LINKEDLIST$SELECT(LL_IN,'MDCNTL')
+     CALL LINKEDLIST$NLISTS(LL_IN,'ATOM',NAT)
+     CALL LINKEDLIST$NLISTS(LL_IN,'BOND',NBOND)
+!
+!    ===================================================================
+!    ==  ALLOCATE ARRAYS                                              ==
+!    ===================================================================
+     ALLOCATE(R0(3,NAT))
+     ALLOCATE(RM(3,NAT))
+     ALLOCATE(QEL(NAT))
+     ALLOCATE(MASS(NAT))
+     ALLOCATE(TYPE(NAT))
+     ALLOCATE(NAME(NAT))
+     ALLOCATE(INDEX2(5,NBOND))
+     ALLOCATE(BO(NBOND))
+!
+!    ===================================================================
+!    ==  READ DATA                                                    ==
+!    ===================================================================
+     CALL LINKEDLIST$EXISTL(LL_IN,'LATTICE',1,TCHK)
+     IF(TCHK) THEN
+       CALL LINKEDLIST$SELECT(LL_IN,'LATTICE',0)
+       CALL LINKEDLIST$EXISTD(LL_IN,'T',1,TCHK)
+       IF(.NOT.TCHK) THEN
+         CALL ERROR$MSG('LATTICE:T NOT SPECIFIED')
+         CALL ERROR$STOP('SETUPCLASSICAL')
+       END IF
+       CALL LINKEDLIST$GET(LL_IN,'T',1,RBAS)
+       RBAS(:,:)=RBAS(:,:)*LUNIT
+       CALL LINKEDLIST$SELECT(LL_IN,'..')
+     ELSE
+       RBAS(:,1)=(/1.0D0,0.D0,0.D0/)
+       RBAS(:,2)=(/0.0D0,1.D0,0.D0/)
+       RBAS(:,3)=(/0.0D0,0.D0,1.D0/)
+     END IF
+!
+     DO IAT=1,NAT
+       CALL LINKEDLIST$SELECT(LL_IN,'ATOM',IAT)
+!      __READ NAME_______________________________________________________
+       CALL LINKEDLIST$EXISTD(LL_IN,'NAME',1,TCHK)
+       IF(.NOT.TCHK) THEN
+         CALL ERROR$MSG('ATOM:NAME NOT SPECIFIED')
+         CALL ERROR$STOP('SETUPCLASSICAL')
+       END IF
+       CALL LINKEDLIST$GET(LL_IN,'NAME',1,NAME(IAT))
+!      __READ TYPE_______________________________________________________
+       CALL LINKEDLIST$EXISTD(LL_IN,'TYPE',1,TCHK)
+       IF(.NOT.TCHK) THEN
+         CALL ERROR$MSG('ATOM:TYPE NOT SPECIFIED')
+         CALL ERROR$STOP('SETUPCLASSICAL')
+       END IF
+       CALL LINKEDLIST$GET(LL_IN,'TYPE',1,TYPE(IAT))
+!      __READ POSITION___________________________________________________
+       CALL LINKEDLIST$EXISTD(LL_IN,'R',1,TCHK)
+       IF(.NOT.TCHK) THEN
+         CALL ERROR$MSG('ATOM:R NOT SPECIFIED')
+         CALL ERROR$STOP('SETUPCLASSICAL')
+       END IF
+       CALL LINKEDLIST$GET(LL_IN,'R',1,R0(:,IAT))
+       R0(:,IAT)=R0(:,IAT)*LUNIT
+!      __READ MASS_______________________________________________________
+       CALL LINKEDLIST$EXISTD(LL_IN,'M',1,TCHK)
+       IF(TCHK) THEN
+         CALL LINKEDLIST$GET(LL_IN,'M',1,MASS(IAT))
+       ELSE
+         EL=TYPE(IAT)
+         CALL PERIODICTABLE$GET(TYPE(IAT)(1:2),'MASS',SVAR)
+         MASS(IAT)=SVAR
+       END IF
+!
+!      __READ CHARGE_______________________________________________________
+       CALL LINKEDLIST$EXISTD(LL_IN,'Q',1,TCHK)
+       IF(TCHK) THEN
+         CALL LINKEDLIST$GET(LL_IN,'Q',1,QEL(IAT))
+       ELSE
+         QEL(IAT)=0.D0
+       END IF
+
+       CALL LINKEDLIST$SELECT(LL_IN,'..')
+     ENDDO
+     RM(:,:)=R0(:,:)
+!
+!    ===================================================================
+!    ==  READ BONDS                                                   ==
+!    ===================================================================
+     DO IB=1,NBOND
+       CALL LINKEDLIST$SELECT(LL_IN,'BOND',IB)
+!      __READ FIRST ATOM________________________________________________
+       CALL LINKEDLIST$EXISTD(LL_IN,'ATOM1',1,TCHK)
+       IF(.NOT.TCHK) THEN
+         CALL ERROR$MSG('BOND:ATOM1 NOT SPECIFIED')
+         CALL ERROR$STOP('SETUPCLASSICAL')
+       END IF
+       CALL LINKEDLIST$GET(LL_IN,'ATOM1',1,NAME1)
+       DO IAT=1,NAT
+         IF(NAME1.EQ.NAME(IAT))INDEX2(1,IB)=IAT
+       ENDDO
+!      __READ SECOND ATOM_______________________________________________
+       CALL LINKEDLIST$EXISTD(LL_IN,'ATOM2',1,TCHK)
+       IF(.NOT.TCHK) THEN
+         CALL ERROR$MSG('BOND:ATOM2 NOT SPECIFIED')
+         CALL ERROR$STOP('SETUPCLASSICAL')
+       END IF
+       CALL LINKEDLIST$GET(LL_IN,'ATOM2',1,XNAME)
+       CALL MD_RESOLVEEXTENDEDNAME(XNAME,NAME2,IT)
+       DO IAT=1,NAT
+         IF(NAME2.EQ.NAME(IAT))INDEX2(2,IB)=IAT
+       ENDDO
+       INDEX2(3:5,IB)=IT 
+
+!      __READ BOND ORDER_________________________________________________
+       CALL LINKEDLIST$EXISTD(LL_IN,'BO',1,TCHK)
+       IF(TCHK) THEN
+         CALL LINKEDLIST$GET(LL_IN,'BO',1,BO(IB))
+       ELSE
+         BO(IB)=1.D0
+       END IF
+!      _________________________________________________________________
+       IF(INDEX2(1,IB).EQ.0) THEN
+         CALL ERROR$MSG('BOND PARTNER ATOM1 NOT RECOGNIZED')
+         CALL ERROR$CHVAL('ATOM1',NAME1)
+         CALL ERROR$CHVAL('ATOM2',NAME2)
+         CALL ERROR$STOP('SETUPCLASSICAL')
+       END IF
+       IF(INDEX2(2,IB).EQ.0) THEN
+         CALL ERROR$MSG('BOND PARTNER ATOM2 NOT RECOGNIZED')
+         CALL ERROR$CHVAL('ATOM1',NAME1)
+         CALL ERROR$CHVAL('ATOM2',NAME2)
+         CALL ERROR$STOP('SETUPCLASSICAL')
+       END IF
+       CALL LINKEDLIST$SELECT(LL_IN,'..')
+     ENDDO
+!
+!    ===================================================================
+!    ==  INITIALIZE CLASSICAL                                         ==
+!    ===================================================================
+     CALL CLASSICAL$SELECT(ID)
+     CALL CLASSICAL$SETI4('NAT',NAT)
+     CALL CLASSICAL$SETI4('NBOND',NBOND)
+     CALL CLASSICAL$SETR8A('R(0)',3*NAT,R0)
+     CALL CLASSICAL$SETR8A('CELL(0)',3*3,RBAS)
+     CALL CLASSICAL$SETR8A('R(-)',3*NAT,RM)
+     CALL CLASSICAL$SETCHA('TYPE',NAT,TYPE)
+     CALL CLASSICAL$SETR8A('MASS',NAT,MASS)
+     CALL CLASSICAL$SETR8A('QEL',NAT,QEL)
+     CALL CLASSICAL$SETI4A('BOND',5*NBOND,INDEX2)
+     CALL CLASSICAL$SETR8A('BONDORDER',NBOND,BO)
+     CALL CLASSICAL$SETL4('LONGRANGE',TLONGRANGE)
+!
+!    ===================================================================
+!    ==  DEALLOCATE ARRAYS                                            ==
+!    ===================================================================
+     DEALLOCATE(R0)
+     DEALLOCATE(RM)
+     DEALLOCATE(QEL)
+     DEALLOCATE(MASS)
+     DEALLOCATE(TYPE)
+     DEALLOCATE(INDEX2)
+     DEALLOCATE(BO)
+     RETURN
+     END
+!
+!     ...1.........2.........3.........4.........5.........6.........7.........8
+      SUBROUTINE MD_RESOLVEEXTENDEDNAME(XNAME,NAME,IT)
+!     **************************************************************************
+!     **  RESOLVES THE EXTENDED ATOM NAME NOTATION, WHICH INCLUDES            **
+!     **  A LATTICE TRANSLATION                                               **
+!     **                                                                      **
+!     **  THE EXTENDED NOTATION INCLUDES AN INTEGER LATTICE TRANSLATIONS      **
+!     **  IN THE ATOM NAME FOLLOWING A COLON                                  **
+!     **                                                                      **
+!     **   'O_23:+1-1+1'  ATOM 'O_23' SHIFTED BY RBAS(:,1)-RBAS(:,2)+RBAS(:,3)**
+!     **                                                                      **
+!     **   THE '+'SIGNS ARE NOT REQUIRED.                                     **
+!     **   ONLY SINGLE-DIGIT TRANSLATIONS ARE PERMITTED                       **
+!     **                                                                      **
+!     **   ORIGINALLY: STRCIN_RESOLVEEXTENDEDNAME                             **
+!     **                                                                      **
+!     **************************************************************************
+      IMPLICIT NONE
+      CHARACTER(*),INTENT(IN) :: XNAME  ! EXTENDED ATOM NAME
+      CHARACTER(*),INTENT(OUT):: NAME   ! NON-EXTENDED ATOM NAME
+      INTEGER(4)  ,INTENT(OUT):: IT(3)  ! INTEGER LATTICE TRANSLATIONS
+      INTEGER(4)              :: ICOLON ! POSITION OF THE COLON IN XNAME
+      INTEGER(4)              :: IPOS,IND,SGN
+      INTEGER(4)              :: ICH    ! ASCII NUMBER OF THE SELECTED LETTER
+!     **************************************************************************
+      ICOLON=INDEX(XNAME,':')
+!     == RETURN IF NO TRANSLATION VECTOR GIVEN =================================
+      IF(ICOLON.EQ.0) THEN
+        NAME=XNAME
+        IT(:)=0
+        RETURN
+      END IF
+!
+!     ==========================================================================
+!     == RESOLVE EXTENDED ATOM NAME                                           ==
+!     ==========================================================================
+      NAME=XNAME(:ICOLON-1)
+      IPOS=ICOLON+1
+      IND=0
+      SGN=+1
+      DO WHILE(IND.LT.3) 
+        ICH=IACHAR(XNAME(IPOS:IPOS))
+!       ==  IACHAR('+')=43; IACHAR('-')=45; IACHAR('0')=48; IACHAR('1')=49;...
+        IF(ICH.GE.48.AND.ICH.LE.57) THEN
+          IND=IND+1
+          IT(IND)=SGN*(ICH-48)
+          SGN=+1
+        ELSE IF(ICH.EQ.43) THEN
+          SGN=+1
+        ELSE IF(ICH.EQ.45) THEN
+          SGN=-1
+        ELSE
+          CALL ERROR$MSG('ILLEGAL CHARACTER IN EXTENDED ATOM NOTATION')  
+          CALL ERROR$CHVAL('EXT. NAME ',XNAME)
+          CALL ERROR$CHVAL('ILLEGAL CHARACTER ',XNAME(IPOS:IPOS))
+          CALL ERROR$STOP('STRCIN_RESOLVEEXTENDEDNAME')
+        END IF
+        IPOS=IPOS+1
+      ENDDO
+      IF(XNAME(IPOS:).NE.' ') THEN
+        CALL ERROR$MSG('LETTERS FOUND BEYOND END OF EXTENDED ATOM NOTATION')  
+        CALL ERROR$CHVAL('EXT. NAME ',XNAME)
+        CALL ERROR$CHVAL('ADDITIONAL LETTERS ',XNAME(IPOS:))
+        CALL ERROR$STOP('STRCIN_RESOLVEEXTENDEDNAME')
+      END IF
+      RETURN
+      END
+\end{verbatim}
+
+%====================================================================
+\chapter{Errata on the original UFF paper.}
+%====================================================================
+These notes are taken from the UFF manual of the ADF Program system
+Release 2014. (They are blanked out in the pdf version to avoid
+copyright conflicts, when distributing the pdf.)
+
+
+%% %==============================================================================
+%% \subsubsection{Implementation of the Universal Force Field (UFF) in deMonNano}
+%% %==============================================================================
+%% As far as possible, UFF molecular mechanics forcefield in deMon
+%% follows the published forcefield definition in
+%% \cite{rappe92_jacs114_10024}.  In several cases, the definitions and
+%% expressions in \cite{rappe92_jacs114_10024} are not consistent with
+%% the published applications of the forcefield
+%% \cite{rappe92_jacs114_10024,casewit92_jacs114_10035,casewit92_jacs114_11046}.
+%% In those cases, an attept was made to correct the errors and
+%% omissions, using information
+%% from\cite{rappe91_jpc95_3358,okeefe92_jacs113_3226,mayo90_jpc90_8897}.
+%% The following changed were made, compared to the published UFF
+%% forcefield description (all equation and page numbers refer to
+%% \cite{rappe92_jacs114_10024}. ).
+
+%% 1. Sign error in Eq. 2 (equilibrium bond length) was corrected -
+%% electronegativity correction must be negative!
+
+%% 2. Equilibrium valence angle for O\_3\_z was corrected from 146.0 degree
+%% to 145.45 degree.
+
+%% 3. Bending periodicity (Eq. 10) for linear coordination was corrected
+%% from 1 to 2.
+
+%% 4. Sign errors were corrected in eqs. 13 and and unnumbered equation
+%% for the beta parameter (between eqs. 13 and 14).
+
+%% 5. The reference value of the UFF amide force constant, of 105.5
+%% kcal/mol/rad**2 (p. 10028) is wrong. The results are consistent with
+%% the force constant of 211.0 kcal/mol/rad**2.
+
+%% 6. Equilibrium torsional angle for a bond between a group-6A atom
+%% (oxygen ...) and an sp2 atom (90 degree) is wrong (p. 10028).  It
+%% should be 0 degree.
+
+%% 7. The conditional for the special-case sp2-sp3 torsion (p. 10029) is
+%% wrong, and should be inverted - see \cite{mayo90_jpc90_8897}.
+
+%% 8. The overall shape of the UFF torsional potential degenerates to a
+%% Heavyside function when one of the bond angles becomes linear, leading
+%% to failures in geometry optimization and force constant
+%% evaluation. The UFF torsional term was augmented with a smooth masking
+%% function, to avoid this. See "uff\_4centre.f90" for details.
+
+%% 9. UFF inversion potential is not defined in
+%% \cite{rappe92_jacs114_10024} for group 5A elements (from phosphorus
+%% down). Taking the equilibrium inversion coordinate of 87 degree, and
+%% the suitable expressions for the cosine weights (see
+%% uff\_get\_inversion\_shape in "uff\_database.f90") appears to reproduce
+%% published UFF structures and energetics.
+
+
+\printindex
+\clearpage
+\bibliographystyle{unsrtnat} 
+ \bibliography{../all}
+\end{document}  
+ 
