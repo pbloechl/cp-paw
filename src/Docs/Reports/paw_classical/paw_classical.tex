@@ -63,6 +63,113 @@ is currently in the process of implementation.
 %====================================================================
 \chapter{Methods}
 %====================================================================
+
+
+%====================================================================
+\section{Force-field terms}
+%====================================================================
+The force fields consists of long-ranged and short-ranged total energy
+contributions. 
+
+The short-ranged contributions are defined by a
+pre-determined network of bonds and contain
+\begin{itemize}
+\item bond terms
+\item angle terms
+\item torsions
+\item inversion terms
+\end{itemize}
+
+The long-ranged forces are calculated from a neighborlist that is
+regularly updated. It contains
+\begin{itemize}
+\item Coulomb terms
+\item Lennard-Jones terms
+\end{itemize}
+An important aspect of long-ranged contributions are \textbf{nonbonded
+  exclusions}\index{exclusions !nonbonded}\index{nonbonded
+  exclusions}: for atoms that are connected by short-ranged forces the
+long-ranged contributions are suppressed.
+
+
+%====================================================================
+\subsection{Non-bonded exclusions}
+%====================================================================
+Long-ranged forces are typically suppressed for atoms connected by
+bond or angle terms. This is the choice followed by
+UFF\cite{rappe92_jacs114_10024} (see their section II.G).
+
+These exclusions are evaluated in \verb|CLASSICAL_EXCLUSIONS| and
+stored as array \verb|MD\%EXCLUSIONS|. \verb|MD%EXCLUSIONS| is an
+array of pairs of two integers. The first integer encodes
+\footnote{The encoding and decoding can be performed with the routines
+  CLASSICAL\_ENCODEEXCLUSION and CLASSICAL\_DECODEEXCLUSION. The mapping to the integer $I$ is
+\begin{eqnarray}
+I=1+(t_1+M)
++\Bigl[1+2M\Bigr](t_2+M)
++\Bigl[(1+2M)^2\Bigr](t_3+M)
++\Bigl[(1+2M)^3\Bigr]R_1
++\Bigl[(1+2M)^3N\Bigr] R_2
+\end{eqnarray}
+where $(t_1,t_2,t_3)$ are the integer lattice translations of the
+second atom, $(R_1,R_2)$ are the two atom indices in the pair. $M$ is
+the largest lattice translation considered in the neighbor list and
+$N$ is the number of atoms in the unit cell.  The pair is ordered such
+that the first atom index is equal or larger than the second one,
+i.e. $R_1\ge R_2$. This choice makes the exclusion unique and it
+ensures that the largest index $I$ is as small as possible.
+} 
+the atom pair as (1st
+atom index, 2nd atom index, 3-d array of integer displacements by the
+lattice translation vectors of the second atom).
+
+The second integer specifies the \textbf{exclusion
+  type}\index{exclusion type}, because not all exclusions are treated
+the same way.
+\begin{center}
+\begin{tabular}{|c|l|l|}
+\hline
+type & explanation & used by \\
+\hline
+0 & 1,2 (bond) and 1,3 (angle) exclusions & UFF,AMBER\\
+1 & 1-4 exclusions                        & AMBER \\
+2 & complete exclusions                   & TIP4P \\
+\hline
+\end{tabular}
+\end{center}
+
+The exclusions are collected by scanning all bond, angle torsion terms
+subsequently. Finally they are sorted according to increasing index,
+and double counted exclusions are trimmed. Before a double counted
+exclusion is removed, its exclusion type is compared with the current
+one, in order to make sure that the ``dominant'' exclusion type is
+given to the exclusion that survives. The last exclusion is given a
+index -1 to signify to allow for a consistency check.
+
+In order to allow for a rapid search on the exclusion list, an array
+is formed that points for each atom to the 
+
+
+In classical\_exclusions a list of exclusions is set up on the basis
+of the list of short-ranged interactions (bonds, angles, torsions,
+inversions etc.) This can be done once and for all for a given network
+of short ranged interaction.
+
+In classical\_neighbors the exclusion information is transferred into
+the present neighborlist.
+
+in classical\_ecoulomb the long ranged interactions are evaluated.
+
+
+%====================================================================
+\subsection{Coulomb terms}
+%====================================================================
+%====================================================================
+\subsection{Lennard-Jones potential}
+%====================================================================
+
+
+
 %====================================================================
 \section{UFF force field}
 %====================================================================
