@@ -783,6 +783,7 @@ _{=:h_{\beta,\alpha}}d\rho_{\alpha,\beta}
 &=&\sum_{\alpha,\beta}h_{\beta,\alpha}
 \Bigl[
 \sum_n\langle\pi_\alpha|d\psi_n\rangle f_n\langle\psi_n|\pi_\beta\rangle
++\sum_n\langle\pi_\alpha|\psi_n\rangle df_n\langle\psi_n|\pi_\beta\rangle
 +\sum_n\langle\pi_\alpha|\psi_n\rangle f_n\langle{d}\psi_n|\pi_\beta\rangle
 \Bigr]
 \nonumber\\
@@ -796,6 +797,11 @@ f_n
 \langle{d}\psi_n|\pi_\beta\rangle 
 \underbrace{\sum_{\alpha}h_{\beta,\alpha} \langle\pi_\alpha|\psi_n\rangle}_{HTBC_{\beta,n}} f_n
 \nonumber\\
+&&+
+\sum_n\sum_{\beta}
+\langle\psi_n|\pi_\beta\rangle 
+\underbrace{\sum_{\alpha}h_{\beta,\alpha} \langle\pi_\alpha|\psi_n\rangle}_{HTBC_{\beta,n}} df_n
+\nonumber\\
 &=&\sum_n\sum_{\gamma}
 f_n
 \underbrace{\sum_{\alpha}
@@ -803,13 +809,19 @@ f_n
 \langle\psi_n|\pi_\beta\rangle h_{\beta,\alpha}}_{HTBC^\dagger_{n,\alpha}}
 M_{\alpha,\gamma}}_{HPROJ^\dagger_{n,\gamma}}
 \langle\tilde{p}_\gamma|d\tilde{\psi}_n\rangle 
-\nonumber\\
-&+&
++
 \sum_n\sum_{\gamma}
 \langle{d}\tilde{\psi}_n|\tilde{p}_\gamma\rangle 
 \underbrace{
 \sum_{\beta}M^\dagger_{\gamma,\beta}
 \underbrace{\sum_{\alpha}h_{\beta,\alpha} \langle\pi_\alpha|\psi_n\rangle}_{HTBC_{\beta,n}}}_{HPROJ_{\gamma,n}} f_n
+\nonumber\\
+&+&
+\sum_ndf_n\sum_{\gamma}
+\langle\tilde{\psi}_n|\tilde{p}_\gamma\rangle 
+\underbrace{
+\sum_{\beta}M^\dagger_{\gamma,\beta}
+\underbrace{\sum_{\alpha}h_{\beta,\alpha} \langle\pi_\alpha|\psi_n\rangle}_{HTBC_{\beta,n}}}_{HPROJ_{\gamma,n}} 
 \end{eqnarray}
 
 Thus, we first define the Hamiltonian $\mat{h}$ (HAMIL) 
@@ -823,9 +835,23 @@ HTBC_{\beta,n}&=&
 HPROJ_{\gamma,n}&=&\sum_\beta M^\dagger_{\gamma,\beta}\cdot HTBC_{\beta,n}
 \end{eqnarray}
 
-
 This operation is performed in
 \verb|lmto$projtontbo| with \verb|ID='BACK'|.
+
+
+Then the forces on the wave functions 
+\begin{eqnarray}
+\sum_{\gamma}
+\frac{1}{f_n}\frac{\delta \Delta E}{\delta\langle\psi_n|}
+=|\tilde{p}_\gamma\rangle HPROJ_{\gamma,n}
+\end{eqnarray}
+The forces acting on the occupations are, as usual, determined as
+\begin{eqnarray}
+\frac{\partial E}{\partial f_n}=\langle\psi_n|
+\biggl[
+\frac{1}{f_n}\frac{\delta E}{\delta\langle\psi_n|}
+\biggr]
+\end{eqnarray}
 
 %====================================================================
 \section{Tailed representation of the natural tight-binding orbitals}

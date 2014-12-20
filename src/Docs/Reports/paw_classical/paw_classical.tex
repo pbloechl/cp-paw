@@ -137,6 +137,12 @@ type & explanation & used by \\
 \hline
 \end{tabular}
 \end{center}
+\textcolor{red}{The distinction of complete exclusion from bond and
+  angle exclusions is unusual. In the QM-MM coupling it has been
+  necessary to have a charge balance but still avoid the diverging
+  Coulomb interactions at short distances. For this purpose the
+  interaction has been changed to the electrostatic interaction of
+  Gaussians. This need to be properly reported still}
 
 The exclusions are collected by scanning all bond, angle torsion terms
 subsequently. Finally they are sorted according to increasing index,
@@ -150,16 +156,16 @@ In order to allow for a rapid search on the exclusion list, an array
 is formed that points for each atom to the 
 
 
-In classical\_exclusions a list of exclusions is set up on the basis
-of the list of short-ranged interactions (bonds, angles, torsions,
-inversions etc.) This can be done once and for all for a given network
-of short ranged interaction.
-
-In classical\_neighbors the exclusion information is transferred into
-the present neighborlist.
-
-in classical\_ecoulomb the long ranged interactions are evaluated.
-
+\begin{enumerate}
+\item In \verb|classical_exclusions| a list of exclusions is set up on
+  the basis of the list of short-ranged interactions (bonds, angles,
+  torsions, inversions etc.) This can be done once and for all for a
+  given network of short ranged interaction.
+\item In \verb|classical_neighbors| the exclusion information is
+  transferred into the present neighborlist.
+\item in \verb|classical_ecoulomb| the long ranged interactions are
+  evaluated.
+\end{enumerate}
 
 %====================================================================
 \subsection{Coulomb terms}

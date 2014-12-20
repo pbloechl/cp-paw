@@ -744,6 +744,27 @@ the property
 \langle\pi_a|\delta\psi_n\rangle=0
 \end{eqnarray}
 
+However, there is no orthogonality between the orbitals and the
+remainder, that is $\langle\chi_\alpha|\delta\phi_n\rangle\neq0$.
+
+In order to estimate the importance of the remainder, consider the
+following thought experiment. Perform calculation with the
+self-consistent potential and introduce the constraints
+$\langle\pi_\alpha|\bar{\psi}_n\rangle=0$ for all $\alpha$. The
+constraints will push the wave functions up in energy. These wave
+functions serve as basis functions for the remainder
+$|\delta\psi_n\rangle=\sum_m|\bar{\psi}_m\rangle c_{m,n}$. If there
+are many constraints and there are no larger gaps between the atoms,
+the constrained wave functions $|\bar{\psi}_m\rangle$ will have high
+energies and therefore we can assume that they do not contribute much
+to the wave functions. As conclusion from our though experiment comes
+the notion that we can assume the remainder to be unimportant, if
+there are many projectors and if they do not leave any large gaps in
+space.
+
+
+
+
 %====================================================================
 \subsection{Energy correction}
 %====================================================================
@@ -883,6 +904,107 @@ S^{-1}_{a,b}\defas \sum_{n}\langle\pi_a|\psi_n\rangle\langle\psi_n|\pi_b\rangle
 and redefine the overlap $\langle\chi_a|\chi_b\rangle$ as the inverse
 of $\mat{S}$. We could consider this as a redefinition of the scalar
 product between the states $|\kappa_n\rangle$.
+
+%====================================================================
+\subsubsection{Derivatives}
+%====================================================================
+If the incompleteness is taken into account in the way suggested
+above, the density matrix functional not only depends on the density
+matrix, but also on the inverse overlap matrix.
+\begin{eqnarray}
+F[\mat{\rho},\mat{S}^{-1}]
+\end{eqnarray}
+The derivatives with respect to the natural orbitals and the
+occupations are
+\begin{eqnarray}
+dF&=&
+\frac{\partial F}{\partial\mat{\rho}}d\mat{\rho}
++\frac{\partial F}{\partial\mat{S}^{-1}}d\mat{S}^{-1}
+\nonumber\\
+&=&
+\sum_{\alpha,\beta}
+\frac{\partial F}{\partial\mat{\rho}_{\beta,\alpha}}
+\biggl(
+\sum_n\langle\pi_\beta|\delta\psi_n\rangle f_n\langle\psi_n|\pi_\alpha\rangle
++\sum_n\langle\pi_\beta|\psi_n\rangle df_n\langle\psi_n|\pi_\alpha\rangle
++\sum_n\langle\pi_\beta|\psi_n\rangle f_n\langle\delta\psi_n|\pi_\alpha\rangle
+\biggr)
+\nonumber\\
+&+&\frac{\partial F}{\partial\mat{S}^{-1}_{\beta,\alpha}}
+\biggl(
+\sum_n\langle\pi_\beta|\delta\psi_n\rangle\langle\psi_n|\pi_\alpha\rangle
++\sum_n\langle\pi_\beta|\psi_n\rangle\langle\delta\psi_n|\pi_\alpha\rangle
+\biggr)
+\nonumber\\
+&=&
+\sum_n df_n
+\Bigl(\sum_{\alpha,\beta}
+\langle\psi_n|\pi_\alpha\rangle
+\frac{\partial F}{\partial\mat{\rho}_{\beta,\alpha}}
+\langle\pi_\beta|\psi_n\rangle\biggr)
+\nonumber\\
+&+&\sum_n\frac{1}{f_n}\sum_{\alpha,\beta}\langle\delta\psi_n|\pi_\alpha\rangle
+\biggl[
+\frac{\partial F}{\partial\mat{\rho}_{\beta,\alpha}}\langle\pi_\beta|\psi_n\rangle
++\frac{\partial F}{\partial\mat{S}^{-1}_{\beta,\alpha}}
+\langle\pi_\beta|\psi_n\rangle\frac{1}{f_n}\biggr]+c.c.
+\end{eqnarray}
+Problematic is the term $\frac{1}{f_n}$, which diverges for empty
+states.
+
+For fully occupied states the two terms, those containing the
+derivative with respect to the density matrix and those with respect
+to the inverse overlap, act simultaneously. I believe that the two
+terms together suppress changes in the total energy that are due that
+the natural orbitals overlap better with the correlated orbitals.
+
+Let us single out the term that acts on empty or partially occupied
+states.
+\begin{eqnarray}
+dF&=&
+\sum_n df_n
+\sum_{\alpha,\beta}
+\Bigl[
+\langle\psi_n|\pi_\alpha\rangle
+\biggl(
+\frac{\partial F}{\partial\mat{\rho}_{\beta,\alpha}}
++\frac{\partial F}{\partial\mat{S}^{-1}_{\beta,\alpha}}\biggr)
+\langle\pi_\beta|\psi_n\rangle
++\langle\psi_n|\pi_\alpha\rangle
+\frac{\partial F}{\partial\mat{S}^{-1}_{\beta,\alpha}}
+\langle\pi_\beta|\psi_n\rangle\frac{1-f_n}{f_n}\biggr]
+\nonumber\\
+&+&\sum_n df_n
+\underbrace{\sum_{\alpha,\beta}
+\Bigl[-\langle\psi_n|\pi_\alpha\rangle
+\frac{\partial F}{\partial\mat{S}^{-1}_{\beta,\alpha}}
+\langle\pi_\beta|\psi_n\rangle
+-\langle\psi_n|\pi_\alpha\rangle
+\frac{\partial F}{\partial\mat{S}^{-1}_{\beta,\alpha}}
+\langle\pi_\beta|\psi_n\rangle\frac{1-f_n}{f_n}\biggr]}_{\text{correction}}
+\nonumber\\
+&+&\sum_n\frac{1}{f_n}\sum_{\alpha,\beta}\langle\delta\psi_n|\pi_\alpha\rangle
+\biggl[
+\biggl(\frac{\partial F}{\partial\mat{\rho}_{\beta,\alpha}}
++\frac{\partial F}{\partial\mat{S}^{-1}_{\beta,\alpha}}\biggr)
+\langle\pi_\beta|\psi_n\rangle
++\frac{\partial F}{\partial\mat{S}^{-1}_{\beta,\alpha}}
+\langle\pi_\beta|\psi_n\rangle\frac{1-f_n}{f_n}\biggr]+c.c.
+\nonumber\\
+\end{eqnarray}
+
+The term in the last line is a contribution to the force acting on the
+wave functions. The kohn-sham energies $\epsilon_n$ are usually
+determined from this force acting on the wave functions. In the
+present case, however, we need to add the term marked ``correction''
+in the second line to the Kohn-Sham energies.
+
+One potential remedy of the singularity for empty states is to replace
+$\frac{1-f}{f}$ by $1-f$. For states that are strongly occupied, that
+is for $f\rightarrow 1$ the two functions are similar. For weakly
+occupied states, that is for $f\rightarrow0$ the term is there, but
+not divergent.
+
 
 %====================================================================
 \section{Variational parameters for the Green's function}
@@ -2919,8 +3041,12 @@ In order to evaluate the Green's function, we still need to refer to the
 band states. The Green's function can, however, also be expressed
 without making direct use of the band states, namely as
 \begin{myshadowminipage}{Green's function in matrix form}
+For a hamiltonian $\hat{h}$ and a self energy $\hat{\Sigma}$ that can
+be expressed entirely in terms of projector functions, the Green's
+function in the approximate form of \eq{eq:latgreenfunc} has the form
 \begin{eqnarray}
-\hat{G}(i\omega_\nu)=\sum_{a,b}|\chi_a\rangle G_{a,b}(i\omega_\nu)\langle\chi_b|
+\hat{G}(i\omega_\nu)=\sum_{a,b}|\chi_a\rangle
+G_{a,b}(i\omega_\nu)\langle\chi_b|
 \end{eqnarray}
 with
 \begin{eqnarray}
@@ -3345,6 +3471,12 @@ _{\delta\Phi^{LW}_{\beta,dyn}/\delta\mathcal{\mat{G}}^{(3)}}
 \chapter{in progress: Green function in matrix form}
 \label{sec:Greenmatrix}
 %==============================================================================
+In the previous section we have shown the expression for the Green's
+function in the form \eq{eq:greenlocform1}, albeit under the strong
+condition that the hamiltonian can exactly be expressed in terms of
+the projector functions. The goal of this section is to perform the
+proof under weaker conditions.
+
 The Green function of the non-interacting system has the form
 \begin{eqnarray}
 G_{a,b}(i\omega_\nu)
@@ -3378,15 +3510,21 @@ density matrix has the form
 &=&\frac{1}{\beta}\sum_\nu\e{i\hbar\omega\beta0^+}\mat{G}(i\omega_\nu)
 \end{eqnarray}
 
-
-
 Let us rewrite the Green's function in terms of a matrix
 equation that does not involve a sum over all states, but with
 matrices on the space of local orbitals. As shown below, the result is
 \begin{myshadowminipage}{}
+The Green's function matrix of the form 
 \begin{eqnarray}
 G_{a,b}(i\omega_\nu)
-&=&\sum_{n,n'}\langle\pi_a|\psi_n\rangle
+=\sum_n^{N_x}\langle\pi_a|\psi_n\rangle\frac{1}{i\hbar\omega_\nu+\mu-\epsilon_n}
+\langle\psi_n|\pi_b\rangle
+\label{eq:greenmatrix1aa}
+\end{eqnarray}
+can be expressed as
+\begin{eqnarray}
+G_{a,b}(i\omega_\nu)
+&=&\sum_{n,n'}^{N_x}\langle\pi_a|\psi_n\rangle
 \biggl((i\hbar\omega_\nu+\mu)\delta_{n,n'}-
 \sum_{c,d}\langle\psi_n|\pi_c\rangle h_{c,d}\langle\pi_d|\psi_{n'}\rangle
 -\Delta_{n,n'}\biggr)^{-1}_{n,n'}
@@ -3394,8 +3532,8 @@ G_{a,b}(i\omega_\nu)
 \nonumber\\
 \label{eq:greenmatrix2a}
 \end{eqnarray}
-with\footnote{To motivate the form for $\mat{h}$, equate the denominator of both
-  expressions for the Greens function, which gives
+with\footnote{To motivate the form for $\mat{h}$, equate the
+  denominator of both expressions for the Greens function, which gives
 \begin{eqnarray}
 \epsilon_n\delta_{n,n'}
 &=&\sum_{c,d}\langle\psi_n|\pi_c\rangle h_{c,d}\langle\pi_d|\psi_{n'}\rangle
@@ -3420,64 +3558,81 @@ h_{c,d}\langle\pi_d|\psi_{n'}\rangle\langle\psi_{n'}|\pi_b\rangle
 \end{eqnarray}
 If we set $\Delta=0$, we obtain our choice for $\mat{h}$.}
 \begin{eqnarray}
-h_{c,d}&=&
+h_{c,d}&\defas&
 \sum_{a,b}
-\Bigl(\sum_{m}
+\Bigl(\sum_{m}^{N_x}
 \langle\pi_a|\psi_m\rangle\langle\psi_m|\pi_c\rangle \Bigr)^{-1}_{c,a}
-\Bigl(\sum_{n}\langle\pi_a|\psi_n\rangle\epsilon_n
+\Bigl(\sum_{n}^{N_x}\langle\pi_a|\psi_n\rangle\epsilon_n
 \langle\psi_n|\pi_b\rangle\Bigr)
-\Bigl(\sum_{m'}\langle\pi_d|\psi_{m'}\rangle
+\Bigl(\sum_{m'}^{N_x}\langle\pi_d|\psi_{m'}\rangle
 \langle\psi_{m'}|\pi_b\rangle \Bigr)^{-1}_{b,d}
 \nonumber\\
-P_{n,n'}&=&
+\label{eq:defhmatforgreensfunction}
+\\
+P_{n,n'}&\defas&
 \sum_{a,b}\langle\psi_n|\pi_a\rangle
-\Bigl(\sum_{m}
+\Bigl(\sum_{m}^{N_x}
 \langle\pi_b|\psi_m\rangle\langle\psi_m|\pi_a\rangle \Bigr)^{-1}_{a,b}
 \langle\pi_b|\psi_{n'}\rangle
-\nonumber\\
-\mat{\Delta}&=&\mat{\epsilon}-\mat{P}\mat{\epsilon}\mat{P}
+\label{eq:defpmat}
+\\
+\mat{\Delta}&\defas&\mat{\epsilon}-\mat{P}\mat{\epsilon}\mat{P}
+\label{eq:defdelta}
 \end{eqnarray}
+All vectors and matrices with band indices are considered to be
+objects in a $N_x$-dimensional space.
+
+
 It is shown that $\mat{P}$ is a projection operator in the space of
 band states, namely $\mat{P}^2=\mat{P}$, while $\mat{P}\neq \mat{1}$.
 \end{myshadowminipage}
 
+The presence of $\mat{\Delta}$ in \eq{eq:greenmatrix2a} demonstrates
+an important limitation of \eq{eq:greenlocform1} given
+on p.~\pageref{eq:greenlocform1}.
+
+
 %==================================================
 \subsubsection{$\mat{\Delta}$ and projection}
 %==================================================
-
+For $\mat{P}$ defined through \eq{eq:defpmat}, the identity
 \begin{eqnarray}
 \mat{P}\langle\psi|\pi\rangle=\langle\psi|\pi\rangle
+\label{eq:pprojequalsproj}
 \end{eqnarray}
-which is shown as follows
+holds. This is shown as follows
 \begin{eqnarray}
-\sum_{n'}P_{n,n'}\langle\psi_{n'}|\pi_c\rangle
-&=&\sum_{n'}\underbrace{\sum_{a,b}\langle\psi_n|\pi_a\rangle
-\Bigl(\sum_{m}
+\sum_{n'}^{N_x}P_{n,n'}\langle\psi_{n'}|\pi_c\rangle
+&\eqrel{eq:defpmat}{=}&\sum_{n'}^{N_x}
+\underbrace{\sum_{a,b}\langle\psi_n|\pi_a\rangle
+\Bigl(\sum_{m}^{N_x}
 \langle\pi_b|\psi_m\rangle\langle\psi_m|\pi_a\rangle \Bigr)^{-1}_{a,b}
 \langle\pi_b|\psi_{n'}\rangle}_{P_{n,n'}}
 \langle\psi_{n'}|\pi_c\rangle
 \nonumber\\
 &=&
 \sum_{a,b}\langle\psi_n|\pi_a\rangle
-\underbrace{\Bigl(\sum_{m}
+\underbrace{\Bigl(\sum_{m}^{N_x}
 \langle\pi_b|\psi_m\rangle\langle\psi_m|\pi_a\rangle \Bigr)^{-1}_{a,b}
-\Bigl(\sum_{n'}\langle\pi_b|\psi_{n'}\rangle\langle\psi_{n'}|\pi_c\rangle\Bigr)
+\Bigl(\sum_{n'}^{N_x}
+\langle\pi_b|\psi_{n'}\rangle\langle\psi_{n'}|\pi_c\rangle\Bigr)
 }_{\delta_{a,c}}
 =\langle\psi_n|\pi_c\rangle
 \nonumber
 \end{eqnarray}
+which proves \eq{eq:defpmat}.
 
-With this equation, we obtain
+With \eq{eq:defpmat}, we obtain
 \begin{eqnarray}
 \langle\pi|\psi\rangle\mat{\Delta}\langle\psi|\pi\rangle=0
 \end{eqnarray}
-This proof is
+which is shown as follows:
 \begin{eqnarray}
 \langle\pi|\psi\rangle\mat{\Delta}\langle\psi|\pi\rangle
-=
+\eqrel{eq:defdelta}{=}
 \langle\pi|\psi\rangle
 \Bigl(\mat{\epsilon}-\mat{P}\mat{\epsilon}\mat{P}\Bigr)
-\langle\psi|\pi\rangle=0
+\langle\psi|\pi\rangle\eqrel{eq:defpmat}{=}0
 \nonumber
 \end{eqnarray}
 
@@ -3498,9 +3653,10 @@ which is shown by insertion
 &&\sum_{c,d}\langle\psi_n|\pi_c\rangle h_{c,d}
 \langle\pi_d|\psi_{n'}\rangle
 \nonumber\\
-&=&\sum_{c,d}
-\langle\psi_n|\pi_c\rangle 
-\overbrace{\sum_{a,b}
+&\eqrel{eq:defhmatforgreensfunction}{=}&\sum_{c,d}
+\langle\psi_n|\pi_c\rangle \times
+\nonumber\\
+&&\overbrace{\sum_{a,b}
 \Bigl(\sum_m\langle\pi_a|\psi_m\rangle\langle\psi_m|\pi_c\rangle \Bigr)^{-1}_{c,a}
 \Bigl(\sum_{n''}
 \langle\pi_a|\psi_{n''}\rangle
@@ -3518,12 +3674,13 @@ which is shown by insertion
 \Bigl(\sum_m\langle\pi_a|\psi_m\rangle\langle\psi_m|\pi_c\rangle \Bigr)^{-1}_{c,a}
 \langle\pi_a|\psi_{n''}\rangle\Bigr]}_{P_{n,n''}}
 \epsilon_{n''}
-\underbrace{\Bigl[\sum_{b,d}\langle\psi_{n''}|\pi_b\rangle
+\nonumber\\
+&&\times\underbrace{\Bigl[\sum_{b,d}\langle\psi_{n''}|\pi_b\rangle
 \Bigl(\sum_{m'}
 \langle\pi_d|\psi_{m'}\rangle\langle\psi_{m'}|\pi_b\rangle \Bigr)^{-1}_{b,d}
 \langle\pi_d|\psi_{n'}\rangle\Bigr]}_{P_{n'',n'}}
 \nonumber\\
-&=&\Bigl(\sum_{m}P_{n,m}\epsilon_{m}P_{m,n}\Bigr)
+&\eqrel{eq:defpmat}{=}&\Bigl(\sum_{m}P_{n,m}\epsilon_{m}P_{m,n}\Bigr)
 \nonumber
 \end{eqnarray}
 which proves \eq{eq:greenmatrixpep}
@@ -3538,31 +3695,33 @@ orbitals. This can be shown with the help of \eq{eq:greenmatrixpep}. It is suffi
 namely that
 \begin{eqnarray}
 \epsilon_n\delta_{n,n'}
-&=&\sum_{c,d}\langle\psi_n|\pi_c\rangle h_{c,d}
-\langle\pi_d|\psi_{n'}\rangle+\Delta_{n,n'}
-\nonumber\\
-&=&\underbrace{\Bigl(\sum_{n''}P_{n,m}\epsilon_{n''}P_{n'',n'}\Bigr)}
+&=&\underbrace{\Bigl(\sum_{m}P_{n,m}\epsilon_{m}P_{m,n'}\Bigr)}
 _{\sum_{c,d}\langle\psi_n|\pi_c\rangle h_{c,d}
 \langle\pi_d|\psi_{n'}\rangle}
 +\underbrace{
 \Bigl(\epsilon_n\delta_{n,n'}-\sum_{m}P_{n,m}\epsilon_mP_{m,n'}\Bigr)
 }_{\Delta_{n,n'}}
+\nonumber\\
+&\stackrel{Eqs.~\ref{eq:greenmatrixpep},\ref{eq:defdelta}}{=}&
+\sum_{c,d}\langle\psi_n|\pi_c\rangle h_{c,d}
+\langle\pi_d|\psi_{n'}\rangle+\Delta_{n,n'}
 \nonumber
 \end{eqnarray}
-which completes the proof of the identity between \eq{eq:greenmatrix1a}
-and \eq{eq:greenmatrix2a}.
+When this identity is inserted into \eq{eq:greenmatrix1a}, we arrive
+directly at \eq{eq:greenmatrix2a}.  This completes the proof of the
+identity between \eq{eq:greenmatrix1a} and \eq{eq:greenmatrix2a}.
 
 %==================================================
 \subsubsection{Self energy from the uncorrelated orbitals}
 %==================================================
-The Green's function without the additional term $\mat{\Delta}$ can be
-expressed with the help of \eq{eq:greenlocform1} from
-p.~\pageref{eq:greenlocform1} in matrix form without reference to the
-natural orbitals which we define as unperturbed (by the uncorrelated
-orbitals) Green's function
+We define the Green's function without the additional term
+$\mat{\Delta}$ as unperturbed (by the uncorrelated orbitals) Green's
+function.  With the help of \eq{eq:greenlocform1} from
+p.~\pageref{eq:greenlocform1} it can be expressed in matrix form
+without reference to the natural orbitals.
 \begin{eqnarray}
-\mat{G}^{-1}_{0,a,b}(i\omega_\nu)\defas
-&=&\sum_{n,n'}\langle\pi_a|\psi_n\rangle
+\mat{G}^{-1}_{0,a,b}(i\omega_\nu)&\defas&
+\sum_{n,n'}\langle\pi_a|\psi_n\rangle
 \biggl((i\hbar\omega_\nu+\mu)\delta_{n,n'}-
 \sum_{c,d}\langle\psi_n|\pi_c\rangle h_{c,d}\langle\pi_d|\psi_{n'}\rangle
 \biggr)^{-1}_{n,n'}
@@ -3592,6 +3751,7 @@ full Green's function by a Dyson's equation.
 }_{G_{BB}(i\omega_\nu)}
 \underbrace{(\mat{1}-\mat{P})
 (\mat{\epsilon}-\mat{\mu})\mat{P}}_{\mat{H}_{BA}}
+\nonumber\\
 \end{eqnarray}
 
 
