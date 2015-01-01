@@ -2353,27 +2353,180 @@ show the atomization energy as function of cutoff radius.
   the wave functions. The pseudization has been performed with the
   nodeless construction. The calculation has been done with the PBE
   functional. The data with E$_{PW}=30$~Ry are shifted because the
-  plane wave cutoff for the density is too low.}
+  plane-wave cutoff for the density is too low.  The total energy is
+  not completely converged with a plane wave cutoff of 60~Ry for the
+  density.  }
 \end{figure}
 
-The total energy is not completely converged with a plane wave cutoff
-of 60~Ry for the density.
 
 
-\begin{verbatim}
-  !SPECIES   NAME='O_'  M=80. NPRO=1 1 1 LRHOX=4 RAD/RCOV=1.4
-    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+The plane wave convergence depends strongly on the cutoff radius as
+shown in Fig.~\ref{o2_epwconv}. For a plane wave cutoff below 50~Ry,
+the best choice is the smoothest setup (type4). This introduces errors
+of order 0.15~eV in the total energy. Relative errors can be expected
+to be smaller. The bond distance of the oxygen molecule for type 4
+setup is about 2~\% larger than for the type 1 setup. The experimental
+equilibrium lattice constant is 1.21~\AA.
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=0.45\linewidth,clip=true]
+{Figs/O2epwconv/o2_epwconvcoarse.eps}
+\includegraphics[width=0.45\linewidth,clip=true]
+{Figs/O2epwconv/o2_epwconvfine.eps}
+\end{center}
+\caption{\label{o2_epwconv}The convergence of the total energy (in
+  Hartree) of an oxygen molecule with plane-wave cutoff for different
+  cutoff radii. Black: type~1 setup with $r_c=0.65 r_{cov}$, red:
+  type~2 setup with $r_c=0.75 r_{cov}$, blue: type~3 setup with
+  $r_c=0.75 r_{cov}$, green: type~4 setup with $r_c=0.85 r_{cov}$. The
+  parameters for the setup types are specified in the
+  text. Calculations are performed with the PBE functional. The type~4
+  setup seems to be most convenient for plane wave cutoffs below
+  50~Ry.}\begin{center}
+  \includegraphics[width=0.45\linewidth,clip=true]
+        {Figs/O2epwconv/o2_distofrc.eps}
+\end{center}
+\caption{\label{o2_dist}Relative energy versus bond distance of the
+  oxygen molecule for different setups calculated with
+  $E_{PW}=50$~Ry. Black: type~1 setup with $r_c=0.65 r_{cov}$, red:
+  type~2 setup with $r_c=0.75 r_{cov}$, blue: type~3 setup with
+  $r_c=0.75 r_{cov}$, green: type~4 setup with $r_c=0.85 r_{cov}$. The
+  parameters for the setup types are specified in the
+  text. Calculations are performed with the PBE functional. The lines
+  are interpolations of a cube polynomial through the values ranging
+  from 1.18~\AA to 1.25~\AA in steps of 0.01~\AA. The bond distance
+  increases from d=1.223~\AA for $r_c=0.65 r_{cov}$ to d=1.233~\AA
+  (+0.8~\%) for $r_c=0.75 r_{cov}$ to d=1.246~\AA (+1.8~\%) for
+  $r_c=0.85 r_{cov}$.}
+\end{figure}
+\begin{itemize}
+\item type~1 setup with $r_c=0.65 r_{cov}$, pseudo potential at the
+  nuclear site not specified.
+{\tiny\begin{verbatim}
+ !SPECIES   NAME='O_'  M=80. NPRO=1 1 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.000
              TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
     !END 
     !AUGMENT ID='MY_NDLSS_O' EL='O' ZV= 6.
              TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
              RCL/RCOV=.65 0.65 0.65 0.65
       !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
-      !POT   POW=3. RC/RCOV=0.65 VAL0_X=-3.8 !END
+      !POT   POW=3. RC/RCOV=0.65 !END
       !CORE  POW=2. RC/RCOV=.65 !END
     !END
   !END
+\end{verbatim}}
+\item type~2 setup with $r_c=0.75 r_{cov}$, pseudo potential at the
+  origin at -1~H.
+{\tiny\begin{verbatim}
+  !SPECIES   NAME='O_'  M=80. NPRO=1 1 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.000
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_O' EL='O' ZV= 6.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.75 0.75 0.75 0.75
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.75 VAL0=-1. !END
+      !CORE  POW=2. RC/RCOV=.75 !END
+    !END
+  !END
+\end{verbatim}}
+\item blue: type~3 setup with $r_c=0.75 r_{cov}$, pseudo potential at the
+  origin at 0~H.
+{\tiny\begin{verbatim}
+  !SPECIES   NAME='O_'  M=80. NPRO=1 1 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.000
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_O' EL='O' ZV= 6.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.75 0.75 0.75 0.75
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.75 VAL0=0. !END
+      !CORE  POW=2. RC/RCOV=.75 !END
+    !END
+  !END
+\end{verbatim}}
+\item type~4 setup with $r_c=0.85 r_{cov}$, pseudo potential at the
+  origin at 0~H.
+{\tiny\begin{verbatim}
+ !SPECIES   NAME='O_'  M=80. NPRO=1 1 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.000
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_O' EL='O' ZV= 6.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.85 0.85 0.85 0.85
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.85 VAL0=0. !END
+      !CORE  POW=2. RC/RCOV=.85 !END
+    !END
+  !END
+\end{verbatim}}
+\end{itemize}
+
+For standard calculations, I recommend a setup with a cutoff radius of
+$r_c$=0.85~$r_{cov}$. Because the choice of the potential at the
+origin neither affected energies nor lattice constants, I set the
+value to -2~H in order to make the total pseudo potential as smooth
+as possible.
+\begin{verbatim}
+ !SPECIES   NAME='O_'  M=80. NPRO=1 1 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.000
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_O' EL='O' ZV= 6.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.85 0.85 0.85 0.85
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.85 VAL0=-2. !END
+      !CORE  POW=2. RC/RCOV=.85 !END
+    !END
+  !END
 \end{verbatim}
+
+ For highly accurate calculations the
+type-1 setup with a cutoff radius of $r_c$=0.65~$r_{cov}$ is
+recommended, albeit with a plane wave cutoff beyond 50~Ry.
+
+
+%=====================================================================
+\subsection{Jellium oxide}
+%=====================================================================
+Jellium oxide is the prototypical oxide, namely one without
+cations. It is calculated in the NaCl structure.
+{\tiny\begin{verbatim}
+ !SPECIES   NAME='O_'  M=80. NPRO=1 1 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.000
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_O' EL='O' ZV= 6.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.85 0.85 0.85 0.85
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.85 VAL0=-2. !END
+      !CORE  POW=2. RC/RCOV=.85 !END
+    !END
+  !END
+\end{verbatim}}
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=0.45\linewidth,clip=true]
+{Figs/Jello/eoxjello.eps}
+\end{center}
+\caption{\label{eoxjello} The oxidation energy of jello (jellium
+  oxide) with the lattice constant of CaO (4.8163~\AA) with a setup
+  using a cutoff parameter of $r_c=0.85$~$r_{cov}$.  }
+\end{figure}
+
+The convergence error of the oxidation energy is about one-half of the
+convergence error of zero-valent oxygen and about one-third of
+O$^{2-}$. This is because the convergence error is dominated by the
+O-p electrons. An increase of the number of p-electrons from 4 to 6
+thus increases the convergence error by 50~\%.
+
 
 
 %=====================================================================
@@ -2566,12 +2719,120 @@ was much too large. Decreasing it to 0.8~$r_{cov}$ gave very good results.
 %=====================================================================
 \subsubsection{Mn}
 %=====================================================================
-For manganese without semi-core states we need a cutoff for the
-d-electrons of 0.8~$r_{cov}$ to get the correct lattice constant for
-MnO. Chosing the s and p-electrons with a larger radius does not
-improve the plane wave convergence. (It is not clear yet whether the
-convergence is dominated by the oxygen setup, though)
-Crucial is to set the potential at the origin to zero.
+I performed calculations for MnO with the PBE0r
+functional.\footnote{Without hybrid functional MnO is a metal.}  The
+calculations have been performed with an oxygen setup with
+$r_c=0.85$~$r_{cov}$. 
+
+The setups are of the form
+\begin{verbatim}
+ !SPECIES NAME='MN' NPRO=1 1 1  LRHOX=4 RAD/RCOV=1.0
+    !NTBO    NOFL=1 0 1 CV=T  LHFWEIGHT=0.15
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=0.8 RTAIL/RCOV=1.0
+    !END
+    !AUGMENT  ID='MN_NDLSS_V0' Z=  25.00000 ZV= 7.
+             TYPE='NDLSS' RBOX/RCOV=  1.200 RCSM/RCOV=  0.250
+             RCL/RCOV=  1.0 1.0 1.0 1.0
+      !GRID DMIN=   0.100E-6 DMAX=     0.100 RMAX= 9.000 !END
+      !POT  POW=  3.000 RC/RCOV=  0.9 val0=0. !END
+      !CORE POW=  3.000 RC/RCOV=  0.9 !END
+    !END
+  !END
+ !SPECIES   NAME='O_'  NPRO=1 1 1 LRHOX=2 RAD/RCOV=1.2
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.1
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4
+    !END
+    !AUGMENT ID='MY_NDLSS_O' EL='O' ZV= 6.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.85 .85 .85 .85
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=.85 val0=-2. !END
+      !CORE  POW=2. RC/RCOV=.85 !END
+    !END
+  !END
+\end{verbatim}
+The partial waves corresponding to this setup are shown in
+Fig.~\ref{fig:mnpartialwaves}.
+\begin{figure}[!h]
+\begin{center}
+\includegraphics[width=0.8\linewidth]{Figs/Mn_setuptest/mnpartialwaves.eps}
+\end{center}
+\caption{\label{fig:mnpartialwaves} Partial waves for Mn for cutoff
+  radius 1.0-$r_{cov}$.  The s-partial waves are shown in black, the
+  p-type partial waves in read and the d-type partial waves are shown
+  in blue. The pseudo partial waves are drawn as full lines, the
+  all-electron partial waves are dashed, and the nodeless partial
+  waves are dotted.}
+\end{figure}
+
+As cutoff for the wave functions the values $r_c=0.8,0.9,1.0$ have
+been used. The cutoff for potential and core density has been changed
+to the same value except for $r_c=1r_{cov}$ for which it has been set
+to 0.9.
+
+Convergence problems occurred with two projector functions for the
+s-states (with small cutoff radius) and if the potential cutoff has
+been increased to 1.0.
+
+\begin{figure}[!h]
+\begin{center}
+\includegraphics[width=0.8\linewidth]{Figs/Mn_setuptest/mno_dos.eps}
+\end{center}
+\caption{\label{fig:mno_dos} Density of states for MnO using the PBE0r
+  functional for cutoff radii 0.8,0.9,1.0 $r_{cov}$ from top to bottom
+  for the Mn setup. The plane wave cutoff is 30~Ry.  The center of the
+  occupied Mn-d states apparently shifts downward with increasing
+  cutoff radius.}
+\end{figure}
+The density of states calculated with a plane wave cutoff of 30~ Ry is
+shown in Fig.~\ref{fig:mno_dos}. The center of the occupied Mn-d
+states apparently shifts downward with increasing cutoff radius. The
+center o the unoccupied Mn-d-states seems to move up, which may be a
+consequence of the increasing magnetic moment. This effect is not
+related to the limited plane wave cutoff: for the smallest cutoff
+radius I increased the plane wave cutoff to 50~Ry, which however, did
+not have an important effect on the density of states.
+
+
+\begin{figure}[!h]
+\begin{center}
+\includegraphics[width=0.5\linewidth,clip=true]{Figs/Mn_setuptest/eoxepwconv.eps}
+\end{center}
+\caption{\label{eoxepwconv}Energy per formula unit of MnO in
+  eV relative to  O$_2$ (lower lines) and to Jellium oxide (upper
+  lines) for cutoff radii 0.8, 0.9, 1.0 $r_{cov}$ for the Mn
+  setup. All curves have been shifted so that the converged values
+  fall onto zero ort 0.4 eV respectively.}
+\end{figure}
+The plane wave convergence shown in Fig.~\ref{eoxepwconv} is much
+better if the oxidation state is the same during a reaction. Therefore
+we obtain a a reaction energy of about 0.1~eV relative to jellium
+oxide, but a much worse convergence for the oxidation reaction.  Note
+that a Mn reference has not been subtracted, so that the results shown
+in Fig.~\ref{eoxepwconv} are a measure for the convergence of the
+total energy of Mn rather than that of an oxidation energy.
+
+\begin{figure}[!h]
+\begin{center}
+\includegraphics[width=0.5\linewidth,clip=true]{Figs/Mn_setuptest/mnoevsalat50ry.eps}
+\end{center}
+\caption{\label{fig:mno_evsalat50ry}Energy in eV relative to the
+  minimum vs. percentage deviation of the lattice constant from
+  4.445~\AA for for cutoff radii 0.8, 0.9, 1.0 $r_{cov}$ for the Mn
+  setup. The plane wave cutoff is 50~Ry.}
+\end{figure}
+The dependence of the lattice constant on the cutoff radii is minor as
+seen in Fig.~\ref{fig:mno_evsalat50ry}. With a cutoff of $r_c=r_{cov}$
+we obtain an expansion of the lattice constant by about 0.5~\%.
+
+
+
+%=====================================================================
+\subsubsection{Pr}
+%=====================================================================
+
+
+
 
 \begin{verbatim}
   !SPECIES NAME='PR' NPRO=1 1 1 1 LRHOX=4
@@ -2584,6 +2845,20 @@ Crucial is to set the potential at the origin to zero.
     !END
   !END
 \end{verbatim}
+The partial waves corresponding to this setup are shown in
+Fig.~\ref{fig:prpartialwaves}.
+\begin{figure}[!h]
+\begin{center}
+\includegraphics[width=0.8\linewidth]{Figs/Pr_setuptest/prpartialwaves.eps}
+\end{center}
+\caption{\label{fig:prpartialwaves} Partial waves for Pr for cutoff
+  radius ??~ $r_{cov}$.  The s-partial waves are shown in black, the
+  p-type partial waves in read, the d-type partial waves 
+  in blue and the f-type partial waves are shown
+  in green. The pseudo partial waves are drawn as full lines, the
+  all-electron partial waves are dashed, and the nodeless partial
+  waves are dotted.}
+\end{figure}
 
 
 %=====================================================================
