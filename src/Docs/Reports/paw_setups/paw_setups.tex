@@ -2315,6 +2315,393 @@ j can also be considered a sum over all shells.
 \end{enumerate}
 
 %=====================================================================
+\section{Ghost states}
+%=====================================================================
+Because the PAW equation corresponds to a separable form, we can no
+more rely on the nodal theorem, which says that the number of nodes
+increases with energy in a one-dimensional eigenvalue equation. Ghost
+states are a common problem in all-electron methods such as LMTO and
+LAPW.
+
+X. Gonze made a very careful analysis of ghost
+states\cite{gonze91_prb44_8503}. Here we generalize these results to
+teh PAW equation which has a complex overlap operator and which
+contains several projector functions per angular momentum.
+
+For the radial component of a pseudo partial wave for a given angular
+momentum the equation has the form
+\begin{eqnarray}
+\biggl[\hat{h}_0-\epsilon_n+\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle
+\Bigl(dH_{\alpha,\beta}-\epsilon_n dO_{\alpha,\beta}\Bigr)
+\langle\tilde{p}_\beta|\biggr]|\tilde{\phi}_n\rangle=0
+\end{eqnarray}
+and the normalization condition reads as
+\begin{eqnarray}
+\langle\tilde{\phi}_m|\Bigl(1+\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle
+dO_{\alpha,\beta}
+\langle\tilde{p}_\beta|\Bigr)|\tilde{\phi}_n\rangle=0
+\end{eqnarray}
+
+%=====================================================================
+\subsection{Expansion about the local hamiltonian}
+%=====================================================================
+\begin{eqnarray}
+\biggl[\hat{h}_0-\epsilon_n(\lambda)+\lambda 
+\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle
+\Bigl(dH_{\alpha,\beta}-\epsilon_n(\lambda) dO_{\alpha,\beta}\Bigr)
+\langle\tilde{p}_\beta|\biggr]|\tilde{\phi}_n(\lambda)\rangle=0
+\end{eqnarray}
+
+The unperturbed states are the states of the local hamiltonian
+\begin{eqnarray}
+\biggl[\hat{h}_0-\epsilon_n^{(0)}\biggr]|\tilde{\phi}_n^{(0)}\rangle=0
+\end{eqnarray}
+
+The first order term is
+\begin{eqnarray}
+0&=&
+\biggl[\hat{h}_0-\epsilon_n^{(0)}\biggr]|\tilde{\phi}_n^{(1)}\rangle
+\nonumber\\
+&+&
+\biggl[\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle
+\Bigl(dH_{\alpha,\beta}-\epsilon_n^{(0)} dO_{\alpha,\beta}\Bigr)
+\langle\tilde{p}_\beta|\biggr]|\tilde{\phi}_n^{(0)}\rangle
+-|\tilde{\phi}_n^{(0)}\rangle
+\epsilon_n^{(1)}
+\nonumber\\
+\Rightarrow\qquad
+0&=&
+\underbrace{
+\langle\tilde{\phi}_m^{(0)}|
+\biggl[\hat{h}_0-\epsilon_n^{(0)}\biggr]|\tilde{\phi}_n^{(1)}\rangle
+}_{\Bigl(\epsilon_m^{(0)}-\epsilon_n^{(0)}\Bigr)
+\langle\tilde{\phi}_m^{(0)}|\tilde{\phi}_n^{(1)}\rangle}
+\nonumber\\
+&+&
+\langle\tilde{\phi}_m^{(0)}|\biggl[\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle
+\Bigl(dH_{\alpha,\beta}-\epsilon_n^{(0)} dO_{\alpha,\beta}\Bigr)
+\langle\tilde{p}_\beta|\biggr]|\tilde{\phi}_n^{(0)}\rangle
+-\underbrace{\langle\tilde{\phi}_m^{(0)}|\tilde{\phi}_n^{(0)}\rangle
+}_{\delta_{m,n}}
+\epsilon_n^{(1)}
+\end{eqnarray}
+Thus we obtain
+\begin{eqnarray}
+\epsilon_n^{(1)}&=&
+\sum_{\alpha,\beta}\langle\tilde{\phi}_n^{(0)}|\tilde{p}_\alpha\rangle
+\Bigl(dH_{\alpha,\beta}-\epsilon_n^{(0)} dO_{\alpha,\beta}\Bigr)
+\langle\tilde{p}_\beta|\tilde{\phi}_n^{(0)}\rangle
+\end{eqnarray}
+and
+\begin{eqnarray}
+\langle\tilde{\phi}_m^{(0)}|\tilde{\phi}_n^{(1)}\rangle
+&=&\frac{\sum_{\alpha,\beta}
+\langle\tilde{\phi}_n^{(0)}|\tilde{p}_\alpha\rangle
+\Bigl(dH_{\alpha,\beta}-\epsilon_n^{(0)} dO_{\alpha,\beta}\Bigr)
+\langle\tilde{p}_\beta|\tilde{\phi}_n^{(0)}\rangle}
+{\epsilon_n^{(0)}-\epsilon_m^{(0)}}
+\qquad\text{for $m\neq n$}
+\end{eqnarray}
+
+%=====================================================================
+\subsection{Local hamiltonian as perturbation}
+%=====================================================================
+Let me consider the Hamiltonian $\hat{h}_0$ as perturbation.
+\begin{eqnarray}
+\biggl[\lambda \hat{h}_0-\epsilon_n(\lambda)
++\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle
+\Bigl(dH_{\alpha,\beta}-\epsilon_n(\lambda) dO_{\alpha,\beta}\Bigr)
+\langle\tilde{p}_\beta|\biggr]|\tilde{\phi}_n(\lambda)\rangle=0
+\end{eqnarray}
+
+In zero'th order one obtains
+\begin{eqnarray}
+\biggl[-\epsilon_n^{(0)}
++\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle
+\Bigl(dH_{\alpha,\beta}-\epsilon_n^{(0)} dO_{\alpha,\beta}\Bigr)
+\langle\tilde{p}_\beta|\biggr]|\tilde{\phi}_n^{(0)}\rangle=0
+\nonumber\\
+\Rightarrow\qquad
+\biggl[\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle
+dH_{\alpha,\beta}\langle\tilde{p}_\beta|\biggr]
+|\tilde{\phi}_n^{(0)}\rangle
+=
+\biggl[1+\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle
+dO_{\alpha,\beta}
+\langle\tilde{p}_\beta|\biggr]|\tilde{\phi}_n^{(0)}\rangle\epsilon_n^{(0)}
+\end{eqnarray}
+The solutions lie within the Hilbert space of the projector
+functions, that is they can be expanded in projector functions.
+\begin{eqnarray}
+|\tilde{\phi}_n^{(0)}\rangle&=&\sum_\alpha
+|\tilde{p}_\alpha\rangle c^{(0)}_{\alpha,n}
+=\sum_\alpha
+|\tilde{p}_\alpha\rangle 
+\underbrace{\sum_{\beta}
+\Bigl(\langle\tilde{p}|\tilde{p}\rangle\Bigr)^{-1}_{\alpha,\beta}
+\langle\tilde{p}_\beta|\tilde{\phi}_n^{(0)}\rangle
+}_{c^{(0)}_{\alpha,n}}
+\end{eqnarray}
+The coefficients are obtained from an matrix problem.
+\begin{eqnarray}
+dH_{\alpha,\beta}
+\langle\tilde{p}_\beta|\tilde{\phi}_n^{(0)}\rangle
+=
+\biggl[
+\Bigl(\langle\tilde{p}|\tilde{p}\rangle\Bigr)^{-1}_{\alpha,\beta}
++
+dO_{\alpha,\beta}\biggr]
+\langle\tilde{p}_\beta|\tilde{\phi}_n^{(0)}\rangle\epsilon_n^{(0)}
+\end{eqnarray}
+with
+\begin{eqnarray}
+\langle\tilde{\phi}_m^{(0)}|\tilde{p}_\alpha\rangle
+\biggl[
+\Bigl(\langle\tilde{p}|\tilde{p}\rangle\Bigr)^{-1}_{\alpha,\beta}
++
+dO_{\alpha,\beta}\biggr]
+\langle\tilde{p}_\beta|\tilde{\phi}_n^{(0)}\rangle=\delta_{m,n}
+\end{eqnarray}
+
+Thus we can write
+\begin{eqnarray}
+\langle\tilde{\phi}_m^{(0)}|
+\Bigl(\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle
+dH_{\alpha,\beta}
+\langle\tilde{p}_\beta|\Bigr)|\tilde{\phi}_n^{(0)}\rangle
+&=&
+\langle\tilde{\phi}_m^{(0)}|
+\Bigl(\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle
+\biggl[
+\Bigl(\langle\tilde{p}|\tilde{p}\rangle\Bigr)^{-1}_{\alpha,\beta}
++
+dO_{\alpha,\beta}\biggr]
+\langle\tilde{p}_\beta|\Bigr)|\tilde{\phi}_n^{(0)}\rangle\epsilon_n^{(0)}
+\nonumber\\
+&=&\delta_{m,n}\epsilon_n^{(0)}
+\end{eqnarray}
+
+\subsubsection{First order}
+
+\begin{eqnarray}
+0&=&\biggl[-\epsilon_n^{(0)}
++\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle
+\Bigl(dH_{\alpha,\beta}-\epsilon_n^{(0)} dO_{\alpha,\beta}\Bigr)
+\langle\tilde{p}_\beta|\biggr]|\tilde{\phi}^{(1)}_n\rangle
+\nonumber\\
+&&+
+\hat{h}_0|\tilde{\phi}_n^{(0)}\rangle
+-\biggl[1
++\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle
+dO_{\alpha,\beta}
+\langle\tilde{p}_\beta|\biggr]|\tilde{\phi}_n^{(0)}\rangle
+\epsilon_n^{(1)}
+\end{eqnarray}
+
+\begin{eqnarray}
+0&=&
+\underbrace{\langle\tilde{\phi}_m^{(0)}|\biggl[-\epsilon_n^{(0)}
++\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle
+\Bigl(dH_{\alpha,\beta}-\epsilon_n^{(0)} dO_{\alpha,\beta}\Bigr)
+\langle\tilde{p}_\beta|\biggr]}
+_{(\epsilon_m^{(0)}-\epsilon_n^{(0)})
+\langle\tilde{\phi}_m^{(0)}|
+\biggl(1+\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle dO_{\alpha,\beta}\Bigr)
+\langle\tilde{p}_\beta|}
+|\tilde{\phi}^{(1)}_n\rangle
+\nonumber\\
+&&+
+\langle\tilde{\phi}_m^{(0)}|\hat{h}_0|\tilde{\phi}_n^{(0)}\rangle
+-
+\underbrace{\langle\tilde{\phi}_m^{(0)}|\biggl[1
++\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle
+dO_{\alpha,\beta}
+\langle\tilde{p}_\beta|\biggr]|\tilde{\phi}_n^{(0)}\rangle}_{\delta_{m,n}}
+\epsilon_n^{(1)}
+\nonumber\\
+&=&
+(\epsilon_m^{(0)}-\epsilon_n^{(0)})
+\langle\tilde{\phi}_m^{(0)}|
+\biggl(1+\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle dO_{\alpha,\beta}
+\langle\tilde{p}_\beta|\Bigr)|\tilde{\phi}^{(1)}_n\rangle
++\langle\tilde{\phi}_m^{(0)}|\hat{h}_0|\tilde{\phi}_n^{(0)}\rangle
+-\delta_{m,n}\epsilon_n^{(1)}
+\end{eqnarray}
+Thus
+\begin{eqnarray}
+\epsilon_n^{(1)}&=&
+\langle\tilde{\phi}_n^{(0)}|\hat{h}_0|\tilde{\phi}_n^{(0)}\rangle
+\nonumber\\
+\langle\tilde{\phi}_m^{(0)}|
+\biggl(1+\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle dO_{\alpha,\beta}
+\langle\tilde{p}_\beta|\Bigr)|\tilde{\phi}^{(1)}_n\rangle
+&=&
+\frac{\langle\tilde{\phi}_m^{(0)}|\hat{h}_0|\tilde{\phi}_n^{(0)}\rangle}
+{\epsilon_n^{(0)}-\epsilon_m^{(0)}}
+\text{ for $m\neq n$}\\
+\end{eqnarray}
+
+%=====================================================================
+\subsubsection{Exact solution}
+%=====================================================================
+Let us divide the Hilbert space into the subspace of projector
+functions and the rest. Let $\hat{P}$ be the projection operator onto
+the subspace of the projector functions.
+
+\begin{eqnarray}
+0&=&\biggl[
+\hat{P}(\hat{h}_0-\epsilon)\hat{P}+\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle
+\Bigl(dH_{\alpha,\beta}-\epsilon dO_{\alpha,\beta}\Bigr)
+\langle\tilde{p}_\alpha|
+\nonumber\\
+&&+(\hat{1}-\hat{P})(\hat{h}_0-\epsilon)(\hat{1}-\hat{P})
+\nonumber\\
+&&+(\hat{1}-\hat{P})\hat{h}_0\hat{P}+\hat{P}\hat{h}_0(\hat{1}-\hat{P})
+\biggr]\Bigl(|\phi_i\rangle +|\phi_o\rangle\Bigr)
+\end{eqnarray}
+where $\hat{P}|\phi_o\rangle=(\hat{1}-\hat{P})|\phi_i\rangle=0$.
+
+This equation can be separated into the contributions for the two subspaces.
+\begin{eqnarray}
+0&=&\biggl[
+\hat{P}(\hat{h}_0-\epsilon)\hat{P}+\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle
+\Bigl(dH_{\alpha,\beta}-\epsilon dO_{\alpha,\beta}\Bigr)
+\langle\tilde{p}_\alpha|
+\biggr]|\phi_i\rangle
++\hat{P}\hat{h}_0(\hat{1}-\hat{P})|\phi_o\rangle
+\nonumber\\
+0&=&(\hat{1}-\hat{P})(\hat{h}_0-\epsilon)(\hat{1}-\hat{P})|\phi_o\rangle
++(\hat{1}-\hat{P})\hat{h}_0\hat{P}|\phi_i\rangle 
+\end{eqnarray}
+Let me define the Green's function of the outer subspace
+\begin{eqnarray}
+(\hat{1}-\hat{P})(\epsilon-\hat{h}_0)(\hat{1}-\hat{P})\hat{G}^{(o)}(\epsilon)
+=(\hat{1}-\hat{P})
+\end{eqnarray}
+so that
+\begin{eqnarray}
+|\phi_o\rangle&=&
+\hat{G}^{(o)}(\epsilon)(\hat{1}-\hat{P})\hat{h}_0\hat{P}|\phi_i\rangle 
+\end{eqnarray}
+Insertion into the first equation yields
+\begin{eqnarray}
+0&=&\biggl[
+\hat{P}(\hat{h}_0-\epsilon)\hat{P}+\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle
+\Bigl(dH_{\alpha,\beta}-\epsilon dO_{\alpha,\beta}\Bigr)
+\langle\tilde{p}_\alpha|
+\nonumber\\
+&&+\hat{P}\hat{h}_0(\hat{1}-\hat{P})
+\hat{G}^{(o)}(\epsilon)(\hat{1}-\hat{P})\hat{h}_0\hat{P}\biggr)|\phi_i\rangle 
+\end{eqnarray}
+
+%=====================================================================
+\subsubsection{Separate sub-spaces}
+%=====================================================================
+Now we consider the coupling between the two sub-spaces as the small
+quantity. In zero'th order we obtain a first result, namely
+\begin{eqnarray}
+0&=&\biggl[
+\hat{P}(\hat{h}_0-\epsilon)\hat{P}+\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle
+\Bigl(dH_{\alpha,\beta}-\epsilon dO_{\alpha,\beta}\Bigr)
+\langle\tilde{p}_\alpha|\biggr]|\phi_i\rangle
+\end{eqnarray}
+and the second as
+\begin{eqnarray}
+0&=&(\hat{1}-\hat{P})(\hat{h}_0-\epsilon)(\hat{1}-\hat{P})
+|\phi_o\rangle
+\end{eqnarray}
+
+%=====================================================================
+\subsubsection{Solutions of the inner Hamiltonian}
+%=====================================================================
+The solutions of the inner Hamiltonian can be written without
+approximation as superposition of projector functions. This transforms
+the Schr\"odinger equation into a simple matrix equation.
+\begin{eqnarray}
+0&=&\sum_\beta\langle\tilde{p}_\alpha|\biggl[
+\hat{P}(\hat{h}_0-\epsilon_n)\hat{P}+\sum_{\gamma,\delta}|\tilde{p}_\gamma\rangle
+\Bigl(dH_{\gamma,\delta}-\epsilon_n dO_{\gamma,\delta}\Bigr)
+\langle\tilde{p}_\delta|\biggr]|\tilde{p}_\beta\rangle c_{\beta,n}
+\nonumber\\
+&=&\sum_\beta
+\biggl[\biggl(\langle\tilde{p}_\alpha|\hat{h}_0|\tilde{p}_\beta\rangle
++\sum_{\gamma,\delta}
+\langle\tilde{p}_\alpha|\tilde{p}_\gamma\rangle
+dH_{\gamma,\delta}
+\langle\tilde{p}_\delta|\tilde{p}_\beta\rangle\biggr)
+-\biggl(\langle\tilde{p}_\alpha|\tilde{p}_\beta\rangle
++\sum_{\gamma,\delta}
+\langle\tilde{p}_\alpha|\tilde{p}_\gamma\rangle
+dO_{\gamma,\delta}
+\langle\tilde{p}_\delta|\tilde{p}_\beta\rangle
+\biggr)\epsilon_n
+\biggr] c_{\beta,n}
+\nonumber\\
+\end{eqnarray}
+
+%=====================================================================
+\subsubsection{Solutions of the outer Hamiltonian}
+%=====================================================================
+In order to obtain the outer solutions, we first determine
+\begin{eqnarray}
+(\hat{h}_0-\epsilon)|\phi_{hom}\rangle&=&0
+\nonumber\\
+(\hat{h}_0-\epsilon)|u_\alpha\rangle&=&|\tilde{p}_\alpha\rangle
+\end{eqnarray}
+When calculating $|u_\alpha\rangle$ it is important to mix in the
+homogenous solutions in order to annihilate the exponentially
+increasing tail contribution.
+
+From the above, we build the solution $|\phi_o\rangle$ as superposition
+\begin{eqnarray}
+|\phi_o\rangle&=&|\phi_{hom}\rangle+\sum_\alpha |u_\alpha\rangle c_\alpha
+\end{eqnarray}
+which yields
+\begin{eqnarray}
+|\phi_o\rangle&=&\Bigl[1-\sum_{\alpha,\beta}|u_\alpha\rangle
+\Bigl(\langle\tilde{p}|u\rangle\Bigr)^{-1}_{\alpha,\beta}
+\langle\tilde{p}_\beta|\Bigr]|\phi_{\hom}\rangle
+\end{eqnarray}
+The matrix
+$\langle\tilde{p}|u\rangle
+=\langle{u}|\hat{h}_0-\epsilon|u\rangle$ is hermitean.
+
+In appendix~\ref{app:schrortho} a method to solve the corresponding
+radial Schr\"odinger equation is described. Note however that finding
+bound states for the constrained equation is difficult because there
+is no nodal theorem.
+
+It can be shown that the energy levels of the outer Hamiltonian lie
+above the ground state of the Hamiltonian $\hat{h}_0$. This is because
+the problem can also be expressed as a constrained minimum
+principle. (see appendix~\ref{app:schrortho})
+
+
+
+%=====================================================================
+\subsubsection{Catching ghost states}
+%=====================================================================
+As the coupling between the inner and outer subspaces is switched on
+there is a level repulsion, which leads to the final states.
+
+Thus the lowest state of the coupled system lies below the minima of
+the states of the two sub-systems. Hence, if one of the states of the
+separate systems lies below the lowest atomic energy level, there
+is a ghost state. 
+
+Following the argument of Gonze\cite{gonze91_prb44_8503}, one can now
+scale the Hamiltonian for the inner Hamiltonian by a scale factor
+$\lambda$, while keeping the one for the outer Hamiltonian
+constant. Given that the outer Hamiltonian has a spectrum that is
+bound from below and from above, the spectrum for the two subspaces
+are completely separate for $\lambda\rightarrow\pm\infty$.  For
+$\lambda=1$ we obtain the system of interest. For intermediate values
+there are avoided crossings with the states of the outer Hamiltonian. 
+
+
+
+
+%=====================================================================
 \chapter{Setup construction and Setup parameters}
 %=====================================================================
 %=====================================================================
@@ -4361,6 +4748,258 @@ Usually, we do not specify the parameter VAL0 for the potential. This
 however causes problems for transition metals, where we obtain ghost
 states.
 
+%====================================================================
+\chapter{Radial differential equations}
+%====================================================================
+%====================================================================
+\section{Radial PAW Schr\"odinger equation}
+%====================================================================
+The atomic solution of the PAW method is determined by the following
+equation
+\begin{equation}
+\Bigl\lbrack
+\frac{\vec{p}^2}{2m}+\tilde{v}-\epsilon
++\ket{\tilde{p}_i}(dH_{ij} - \epsilon dO_{ij}) \bra{\tilde{p}_j}
+\Bigr\rbrack
+\ket{\tilde{\phi}(\epsilon)} = 0,
+\label{eq:pawradeq}
+\end{equation}
+where
+$dH_{ij}=\langle\phi_i|\frac{p^2}{2m}+ v|\phi_j\rangle
+- \langle\tilde{\phi}_i|\frac{p^2}{2m} + \tilde{v}|\tilde{\phi}_j\rangle$
+and $dO_{ij}=\langle\phi_i|\phi_j\rangle-
+\langle\tilde{\phi}_i|\tilde{\phi}_j\rangle$.
+
+The method for its solution is a generalization of the one described
+by Gonze et al.\cite{gonze91_prb44_8503}.
+
+We make an Ansatz for $\ket{\tilde{\phi}}$:
+\begin{equation}
+\ket{\tilde{\phi}}=\ket{u}+\ket{v_i}c_i
+\label{eq:pawradeqansatz}
+\end{equation}
+with
+\begin{eqnarray}
+\Bigl\lbrack
+\frac{\vec{p}^2}{2m}+\tilde{v}-\epsilon
+\Bigr\rbrack \ket{u} &=& 0
+\\
+\Bigl\lbrack
+\frac{\vec{p}^2}{2m}+\tilde{v}-\epsilon
+\Bigr\rbrack \ket{v_i}& =& \ket{p_i}
+\end{eqnarray}
+
+Inserting this Ansatz \eq{eq:pawradeqansatz} into the radial
+Schr\"odinger equation \eq{eq:pawradeq},we obtain
+\begin{equation}
+c_i + (dH_{ij} - \epsilon dO_{ij}) \langle\tilde{p}_j|u\rangle
++(dH_{ij} - \epsilon dO_{ij}) \langle\tilde{p}_j|v_k\rangle c_k=0
+\end{equation}
+from which we obtain $c_i$ by simple matrix operations. -- Here we use
+an obvious matrix notation --.
+\begin{equation}
+c=-\Bigl\lbrack 1+(dH-\epsilon dO)\langle\tilde{p}|v\rangle\Bigr\rbrack^{-1}
+(dH-\epsilon dO) \langle\tilde{p}|u\rangle
+\end{equation}
+The resulting coefficients are inserted into the Ansatz given above to
+obtain the final solution
+\begin{eqnarray}
+\ket{\tilde{\phi}}=\ket{u}-\sum_{i,j}\ket{v_i}
+\Bigl\lbrack 1+(dH-\epsilon dO)\langle\tilde{p}|v\rangle\Bigr\rbrack^{-1}_{i,k}
+(dH-\epsilon dO)_{k,j} \langle\tilde{p}_j|u\rangle
+\end{eqnarray}
+
+The implementation is in subroutine \verb|atomlib$pawder|.
+
+%====================================================================
+\section{Schr\"odinger equation in a orthogonal subspace}
+\label{app:schrortho}
+%====================================================================
+In order to analyze ghost states we need to solve an equation of the
+form
+\begin{eqnarray}
+(1-\hat{P})\left(\frac{\vec{p}^2}{2m}+\tilde{v}-\epsilon\right)(1-\hat{P})
+|\bar{\phi}\rangle=0
+\end{eqnarray}
+where $\hat{P}=\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle
+\Bigl(\langle\tilde{p}|\tilde{p}\rangle\Bigl)^{-1}_{\alpha,\beta}
+\langle\tilde{p}_\beta|$.  The solution is highly ambiguous becase any
+addition of a projector function to a solution will provide another
+solution. In order to make the result unique we solve directly for
+$|\phi\rangle=(\hat{1}-\hat{P})|\bar{\phi}\rangle$.
+
+This yields
+\begin{eqnarray}
+(1-\hat{P})\left(\frac{\vec{p}^2}{2m}+\tilde{v}-\epsilon\right)|\phi\rangle=0
+\qquad\text{with}\qquad\hat{P}|\phi\rangle=0
+\end{eqnarray}
+
+This problem has the form
+\begin{eqnarray}
+\left(\frac{\vec{p}^2}{2m}+\tilde{v}-\epsilon\right)|\phi\rangle
+=\sum_\alpha |\tilde{p}_\alpha\rangle k_\alpha
+\label{eq:orthodefeq1}
+\end{eqnarray}
+with coefficients $k_\alpha$ determined such that
+\begin{eqnarray}
+\langle\tilde{p}_\beta|\phi\rangle=0
+\label{eq:orthodefeq2}
+\end{eqnarray}
+
+We make the same Ansatz for $\ket{\tilde{\phi}}$ that we used for the
+PAW equation, namely
+\begin{equation}
+\ket{\tilde{\phi}}=\ket{u}+\ket{v_i}c_i
+\label{eq:orthogonalradeqansatz}
+\end{equation}
+with
+\begin{eqnarray}
+\Bigl\lbrack
+\frac{\vec{p}^2}{2m}+\tilde{v}-\epsilon
+\Bigr\rbrack \ket{u} &=& 0
+\\
+\Bigl\lbrack
+\frac{\vec{p}^2}{2m}+\tilde{v}-\epsilon
+\Bigr\rbrack |v_\alpha\rangle& =& |p_i\rangle
+\end{eqnarray}
+
+
+For a fixed set of parameters $k_\alpha$ the solution is
+\begin{eqnarray}
+|\phi\rangle=|u\rangle k_0+\sum_\alpha |v_\alpha\rangle k_\alpha
+\end{eqnarray}
+
+The orthogonality condition requires
+\begin{eqnarray}
+0&=&\langle\tilde{p}_\beta|\phi\rangle
+=\langle\tilde{p}_\beta|u\rangle k_0
++\sum_\alpha \langle\tilde{p}_\beta|v_\alpha\rangle k_\alpha
+\\
+k_\alpha&=&-\sum_\beta 
+\Bigl(\langle\tilde{p}|v\rangle\Bigr)^{-1}_{\alpha,\beta}
+\langle\tilde{p}_\beta|u\rangle k_0
+\end{eqnarray}
+
+Thus the final result is
+\begin{eqnarray}
+|\phi\rangle=\biggl[|u\rangle-\sum_{\alpha,\beta} |v_\alpha\rangle
+\Bigl(\langle\tilde{p}|v\rangle\Bigr)^{-1}_{\alpha,\beta}
+\langle\tilde{p}_\beta|u\rangle\biggr] k_0
+\end{eqnarray}
+It contains an additional scale factor $k_0$ which can be used to
+satisfy the normalization.
+
+There is one caveat: if the matrix $\langle\tilde{p}|v\rangle$ has a
+singular value, the equation system can no more be solved in that
+form.  The correct solution in this case is determine entirely by the
+singular eigenvector
+\begin{eqnarray}
+|\phi\rangle=\sum_{\alpha} |v_\alpha\rangle y_\alpha
+\qquad\text{when}\qquad
+\sum_\beta \langle\tilde{p}_\alpha|v_\beta\rangle y_\beta=0
+\end{eqnarray}
+
+
+From \eq{eq:orthodefeq1} and \eq{eq:orthodefeq2} we obtain
+\begin{eqnarray}
+\frac{\langle\phi|\frac{\vec{p}^2}{2m}+\tilde{v}|\phi\rangle}
+{\langle\phi|\phi\rangle}
+=\epsilon
+\end{eqnarray}
+Because $\phi$ is a constrained by the orthogonality with the
+projector functions, $\epsilon$ lies above the ground state of the
+unconstrainted Hamiltonian.
+
+%====================================================================
+\section{Schr\"odinger equation in a orthogonal subspace (bound states)}
+\label{app:schrorthobound}
+%====================================================================
+
+We start with an ansatz
+\begin{eqnarray}
+|\phi_i\rangle=|\phi^{(0)}_i\rangle-\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle
+S_{\alpha,\beta}\langle\tilde{p}_\beta|\phi^{(0)}_i\rangle
+\end{eqnarray}
+where 
+\begin{eqnarray}
+\Bigl(\hat{h}-\epsilon_i^{(0)}\Bigr)|\phi^{(0)}_i\rangle&=&0
+\\
+S_{\alpha,\beta}&=&\langle\tilde{p}_\alpha|\tilde{p}_\beta\rangle
+\end{eqnarray}
+
+Then we represent the Hamiltonian in the form
+\begin{eqnarray}
+\hat{h}&=&
+\sum_i|\phi_i^{(0)}\rangle\epsilon_i^{(0)}\langle\phi_i^{(0)}|
++\epsilon_x\Bigl(1-\sum_i|\phi_i^{(0)}\rangle\epsilon_i^{(0)}\langle\phi_i^{(0)}|\Bigr)
+\nonumber\\
+&=&\epsilon_x+\sum_i|\phi_i^{(0)}\rangle(\epsilon_i^{(0)}-\epsilon_x)
+\langle\phi_i^{(0)}|
+\\
+\hat{o}&=&
+\sum_i|\phi_i^{(0)}\rangle\langle\phi_i^{(0)}|
++\Bigl(1-\sum_i|\phi_i^{(0)}\rangle\langle\phi_i^{(0)}|\Bigr)
+=\hat{1}
+\end{eqnarray}
+The parameter $\epsilon_x$ has been introduced, because states that
+are orthogonal to the basisset do not feel the Hamiltonian at
+all. $\epsilon_x$ should be a value above the spectrum of the
+basisfunctions chosen. It ensures that states orthogonal to the
+basisset experience a certain penalty, which is similar to the effect
+of the true Hamiltonian.
+
+
+Now we evaluate the matrix elements for the orthogonalized matrix
+\begin{eqnarray}
+\langle\phi_i|\phi_j\rangle&=&
+\langle\phi_i^{(0)}|\phi_j^{(0)}\rangle
+-\langle\phi_i^{(0)}|\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle
+S_{\alpha,\beta}\langle\tilde{p}_\beta|\phi_j^{(0)}\rangle
+-\langle\phi_i^{(0)}|\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle S_{\alpha,\beta}\langle\tilde{p}_\beta|\phi_j^{(0)}\rangle
+\nonumber\\
+&&+
+\langle\phi_i^{(0)}|\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle S_{\alpha,\beta}\langle\tilde{p}_\beta\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle S_{\alpha,\beta}\langle\tilde{p}_\beta|\phi_j^{(0)}\rangle
+\nonumber\\
+&=&
+\langle\phi_i^{(0)}|\phi_j^{(0)}\rangle
+-\sum_{\alpha,\beta}\langle\phi_i^{(0)}|\tilde{p}_\alpha\rangle
+S_{\alpha,\beta}\langle\tilde{p}_\beta|\phi_j^{(0)}\rangle
+\nonumber\\
+&=&
+\delta_{i,j}-Q_{i,j}
+\end{eqnarray}
+where
+\begin{eqnarray}
+Q_{i,j}&\defas&\sum_{\alpha,\beta}\langle\phi_i^{(0)}|\tilde{p}_\alpha\rangle
+S_{\alpha,\beta}\langle\tilde{p}_\beta|\phi_j^{(0)}\rangle
+\end{eqnarray}
+%
+Next we turn to the Hamilton matrix
+\begin{eqnarray}
+\langle\phi_i|\hat{h}|\phi_j\rangle
+&=&
+\langle\phi_i^{(0)}|\hat{h}|\phi_j^{(0)}\rangle
+-\langle\phi_i^{(0)}|\hat{h}\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle
+S_{\alpha,\beta}\langle\tilde{p}_\beta|\phi_j^{(0)}\rangle
+-\langle\phi_i^{(0)}|\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle S_{\alpha,\beta}\langle\tilde{p}_\beta|\hat{h}|\phi_j^{(0)}\rangle
+\nonumber\\
+&&+
+\langle\phi_i^{(0)}|\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle S_{\alpha,\beta}\langle\tilde{p}_\beta|\hat{h}\sum_{\alpha,\beta}|\tilde{p}_\alpha\rangle S_{\alpha,\beta}\langle\tilde{p}_\beta|\phi_j^{(0)}\rangle
+\nonumber\\
+&=&\epsilon_x\langle\phi_i|\phi_j\rangle
++(\epsilon_i^{(0)}-\epsilon_x)\delta_{i,j}
+-(\epsilon_i^{(0)}-\epsilon_x)Q_{i,j}
+-Q_{i,j}(\epsilon_j^{(0)}-\epsilon_x)
++\sum_k Q_{i,k}(\epsilon_k^{(0)}-\epsilon_x)Q_{k,j}
+\nonumber\\
+&=&
+\epsilon_i^{(0)}\delta_{i,j}
+-\epsilon_i^{(0)}Q_{i,j}
+-Q_{i,j}\epsilon_j^{(0)}
++\sum_k Q_{i,k}\epsilon_k^{(0)}Q_{k,j}
++\Bigl(Q_{i,j}-\sum_k Q_{i,k}Q_{k,j}\Bigr)
+\epsilon_x
+\end{eqnarray}
 
 \printindex
 \bibliographystyle{unsrtnat}
