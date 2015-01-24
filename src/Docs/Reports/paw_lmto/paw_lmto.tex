@@ -864,6 +864,45 @@ expansion of the orbitals at the central site. Thus both the head and
 the tail functions centered on the central site are extended by a
 superposition of exponential tails.
 
+%====================================================================
+\section{How to choose the parameters}
+%====================================================================
+\begin{verbatim}
+!CONTROL!DFT!NTBO 
+   MODUS='HYBRID' OFFSITE=F  K2=-0.25 SCALERCUT=2. !END
+!END!END!END
+!STRUCTURE!SPECIES!NTBO    
+   NOFL=1 1 1 1 CV=T LHFWEIGHT=0.15
+   TAILLAMBDA=4.0 2.0 RAUG/RCOV=0.9 RTAIL/RCOV=1.2
+!END!END!END
+\end{verbatim}
+
+%====================================================================
+\subsection{Augmentation radius must be large for semi-core states}
+%====================================================================
+\textbf{Observation:} We had the problem that the total charge for
+core states of Ca has been much larger than one.
+
+
+\textbf{Explanation:} This was apparently due to a augmentation radius
+that was chosen too small. The tail, represented by Hankel and Bessel
+functions decayed much slower than the real core state, so that the
+norm of the corresponding state was overestimated dramatically.
+
+The augmentation radius specifies the matching radius of the Bessel
+and Hankel functions to the nodeless partial waves.\footnote{It is not
+  related to the matching radius of all-electron, nodeless and pseudo
+  partial waves, which defines the augmentation. The parameter here
+  defines the shape of the natural tight-binding orbital.} The kinetic
+energy of the Hankel and Bessel function is set by the parameter
+\verb|k2|. Ideally it would approximate the kinetic energy of the
+partial waves at the augmentation radius.
+
+\textbf{Remedy:} the augmentation radius must be chosen sufficiently
+large so that semi-core states are well represented by their partial
+wave alone, while the tail represented by Hankel and Bessel functions
+is neglegible.\footnote{Special thanks to Robert Schade.}
+
 
 %====================================================================
 \chapter{Contributions to the Hamiltonian}
