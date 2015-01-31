@@ -870,6 +870,243 @@ $\langle\pi_a|\hat{G}|\pi_b\rangle$. The final result will be
 invariant if all sums are traced out.
 
 %====================================================================
+\subsection{Lattice Green's functions in a finite, non-orthonormal basisst}
+%====================================================================
+The Green's function results as inverse of a hamiltonian. The Green's
+function we need should only act in a sub-Hilbert space of correlated
+orbitals. Therefore we introduce a projection operator
+\begin{eqnarray}
+\hat{\mathcal{P}}_\chi=\sum_{a,b}|\chi_a\rangle S^{-1}_{a,b}\langle\chi_b|
+\qquad\text{with}\qquad \sum_c S^{-1}_{a,c}\langle\chi_c|\chi_b\rangle=\delta_{a,b}
+\end{eqnarray}
+onto the correlated orbitals. The projection operator is idempotent,
+i.e. $\hat{\mathcal{P}}_\chi^2=\hat{\mathcal{P}}_\chi$
+
+The Green's function is that operator that acts in the Hilbert space
+of the correlated orbitals, and that inverts the hamiltonian projected
+onto that hilbert space. Thus the following equation defines the greens function.
+\begin{eqnarray}
+\hat{G}\hat{\mathcal{P}}_\chi
+\biggl[(i\hbar\omega_\nu+\mu)\hat{1}-\hat{h}-\sum_{c,d}|\pi_c\rangle\Sigma_{c,d}(i\omega_\nu)\langle\pi_d|\biggr]
+\hat{\mathcal{P}}_\chi=\hat{\mathcal{P}}_\chi
+\end{eqnarray}
+
+\begin{eqnarray}
+\underbrace{|\chi\rangle \mat{G}\langle\chi|}_{\hat{G}}
+\underbrace{|\chi\rangle \mat{S}^{-1}\langle\chi|}_{\hat{\mathcal{P}}_\chi}
+\biggl[(i\hbar\omega_\nu+\mu)\hat{1}-\hat{h}-\sum_{c,d}|\pi_c\rangle\Sigma_{c,d}(i\omega_\nu)\langle\pi_d|\biggr]
+\underbrace{|\chi\rangle \mat{S}^{-1}\langle\chi|}_{\hat{\mathcal{P}}_\chi}
+=\underbrace{|\chi\rangle \mat{S}^{-1}\langle\chi|}_{\hat{\mathcal{P}}_\chi}
+\nonumber\\
+\mat{G}\langle\chi|
+\biggl[(i\hbar\omega_\nu+\mu)\hat{1}-\hat{h}-\sum_{c,d}|\pi_c\rangle\Sigma_{c,d}(i\omega_\nu)\langle\pi_d|\biggr]
+|\chi\rangle =\mat{1}
+\nonumber\\
+\mat{G}
+\biggl[(i\hbar\omega_\nu+\mu)\mat{S}-\langle\chi|\hat{h}|\chi\rangle-\mat{\Sigma}(i\omega_\nu)\biggr]
+=\mat{1}
+\nonumber\\
+\mat{G}
+\biggl[(i\hbar\omega_\nu+\mu)\mat{S}-\sum_{n=1}^\infty
+\langle\chi|\psi_n\rangle \epsilon_n\langle\psi_n|\chi\rangle-\mat{\Sigma}(i\omega_\nu)\biggr]
+=\mat{1}
+\nonumber\\
+\mat{G}
+\biggl[(i\hbar\omega_\nu+\mu)\mat{S}-\epsilon_x\mat{S}-\sum_{n=1}^\infty
+\langle\chi|\psi_n\rangle (\epsilon_n-\epsilon_x)\langle\psi_n|\chi\rangle-\mat{\Sigma}(i\omega_\nu)\biggr]
+=\mat{1}
+\end{eqnarray}
+Thus we obtain
+\begin{eqnarray}
+\mat{G}&=&
+\biggl[(i\hbar\omega_\nu+\mu)\mat{S}-\epsilon_x\mat{S}-\sum_{n=1}^\infty
+\langle\chi|\psi_n\rangle (\epsilon_n-\epsilon_x)\langle\psi_n|\chi\rangle-\mat{\Sigma}(i\omega_\nu)\biggr]^{-1}
+\end{eqnarray}
+
+Now we modify the Hamiltonian by changeing the spectrum for the higher
+bands
+\begin{eqnarray}
+\hat{h}\rightarrow\sum_{n=1}^{N_x}|\psi_n\rangle \epsilon_n\langle\psi_n|
++\sum_{n=N_x+1}^\infty|\psi_n\rangle \epsilon_x\langle\psi_n|
+\end{eqnarray}
+This approximation allows one to limit the sum over states to a finite sum.
+\begin{eqnarray}
+\mat{G}&=&
+\biggl[(i\hbar\omega_\nu+\mu-\epsilon_x)\mat{S}-\sum_{n=1}^{N_x}
+\langle\chi|\psi_n\rangle (\epsilon_n-\epsilon_x)\langle\psi_n|\chi\rangle-\mat{\Sigma}(i\omega_\nu)\biggr]^{-1}
+\end{eqnarray}
+
+
+After limiting the sum over the states that can be well represented by
+the correlated orbitals, we use the approximation
+$|\psi_n\rangle=\sum_a|\chi_a\rangle\langle\pi_a|\psi_n\rangle$, which
+yields
+\begin{eqnarray}
+\mat{G}&=&
+\biggl[(i\hbar\omega_\nu+\mu-\epsilon_x)\mat{S}-\sum_{n=1}^{N_x}
+\mat{S}\langle\pi|\psi_n\rangle (\epsilon_n-\epsilon_x)\langle\psi_n|\pi\rangle\mat{S}-\mat{\Sigma}(i\omega_\nu)\biggr]^{-1}
+\end{eqnarray}
+
+This matrix corresponds to
+\begin{eqnarray}
+\mat{G}&=&
+\biggl[(i\hbar\omega_\nu+\mu)\mat{S}-\mat{\bar{h}}+\mat{\Gamma}
+-\mat{\Sigma}(i\omega_\nu)\biggr]^{-1}
+\end{eqnarray}
+which allows one to make the identification (for full selfconsistency)
+\begin{eqnarray}
+\epsilon_x
+\biggl[\mat{S}
+-\sum_{n=1}^{N_x}
+\mat{S}\langle\pi|\psi_n\rangle\langle\psi_n|\pi\rangle\mat{S}\biggr]
+-
+\underbrace{\sum_{n=1}^{N_x}
+\mat{S}\langle\pi|\psi_n\rangle\epsilon_n\langle\psi_n|\pi\rangle\mat{S}
+}_{\rightarrow \frac{\hat{\vec{p}}^2}{2m}+v_{ext}+v_H+v_{xc}}
+=-\mat{\bar{h}}+\mat{\Gamma}
+\nonumber\\
+\Rightarrow\qquad
+\mat{\bar{h}}
+=
+\underbrace{\sum_{n=1}^{N_x}
+\mat{S}\langle\pi|\psi_n\rangle\epsilon_n\langle\psi_n|\pi\rangle\mat{S}
+}_{\rightarrow \frac{\hat{\vec{p}}^2}{2m}+v_{ext}+v_H+v_{xc}}
+-\epsilon_x
+\biggl[\mat{S}
+-\sum_{n=1}^{N_x}
+\mat{S}\langle\pi|\psi_n\rangle\langle\psi_n|\pi\rangle\mat{S}\biggr]
++\mat{\Gamma}
+\end{eqnarray}
+
+%====================================================================
+\subsubsection{Projections}
+%====================================================================
+In the last step of the previous section we did the step
+\begin{eqnarray}
+\sum_{n=1}^{N_x}
+\langle\chi|\psi_n\rangle\langle\psi_n|\chi\rangle
+\approx\sum_{n=1}^{N_x}
+\mat{S}\langle\pi|\psi_n\rangle\langle\psi_n|\pi\rangle\mat{S}
+\end{eqnarray}
+which is only approximative.
+
+An allowed step is
+\begin{eqnarray}
+\langle\chi|\psi_n\rangle\langle\psi_n|\chi\rangle
+&=&
+\langle\chi|\chi\rangle\langle\pi|\hat{\mathcal{P}}_{\chi}|\psi_n\rangle
+\langle\psi_n|\hat{\mathcal{P}}_{\chi}|\pi\rangle\langle\chi|\chi\rangle
+=
+\mat{S}\langle\pi|\hat{\mathcal{P}}_{\chi}|\psi_n\rangle
+\langle\psi_n|\hat{\mathcal{P}}_{\chi}|\pi\rangle\mat{S}
+\nonumber\\
+&\neq&
+\mat{S}\langle\pi|\psi_n\rangle
+\langle\psi_n|\pi\rangle\mat{S}
+\end{eqnarray}
+
+\textcolor{red}{This is only a sketch...}
+
+Consider the  set of  wave functions obtained  by projection  onto the
+correlated orbitals.
+\begin{eqnarray}
+\hat{\mathcal{P}}_{\chi}|\psi_n\rangle
+\end{eqnarray}
+
+We obtain  a strict identity
+\begin{eqnarray}
+\hat{\mathcal{P}}_{\chi}|\psi_n\rangle
+=\sum_\alpha|\chi_\alpha\rangle\langle\pi_\alpha|
+\hat{\mathcal{P}}_{\chi}|\psi_n\rangle
+\end{eqnarray}
+
+However, the wave functions $\hat{\mathcal{P}}_{\chi}|\psi_n\rangle$ are
+  no more orthonormal, and $\langle\pi_\alpha|
+  \hat{\mathcal{P}}_{\chi}|\psi_n\rangle\neq \langle\pi_\alpha|
+    \hat{\mathcal{P}}_{\chi}|\psi_n\rangle$.
+
+%====================================================================
+\subsubsection{Calculate $\bar{h}$ from the density matrix}
+%====================================================================
+The constraint is
+\begin{eqnarray}
+\sum_\nu\e{i\hbar\omega_\nu\beta0^+}G_{a,b}(i\omega_\nu)=\rho_{a,b} (=\sum_n\langle\pi_a|\psi_n\rangle f_n\langle\psi_n|\pi_b\rangle)
+\end{eqnarray}
+
+
+Thus we look fort a hamiltonian $\bar{h}$ whose non-interacting Greens
+function satisfies the constraint
+\begin{eqnarray}
+\mat{\rho}
+&=&\sum_\nu\e{i\hbar\omega_\nu\beta0^+}
+\biggl[(i\hbar\omega_\nu+\mu)\mat{S}-\mat{\bar{h}}\biggr]^{-1}
+\end{eqnarray}
+
+\begin{eqnarray}
+\Rightarrow\qquad
+\sqrt{\mat{S}}\mat{\rho}\sqrt{\mat{S}}
+&=&\sum_\nu\e{i\hbar\omega_\nu\beta0^+}
+\biggl[(i\hbar\omega_\nu+\mu)\mat{1}
+-(\mat{S})^{-\frac{1}{2}}\mat{\bar{h}}(\mat{S})^{-\frac{1}{2}}\biggr]^{-1}
+\end{eqnarray}
+
+In the next step we diagonalize $\sqrt{\mat{S}}\mat{\rho}\sqrt{\mat{S}}$
+\begin{eqnarray}
+\sqrt{\mat{S}}\mat{\rho}\sqrt{\mat{S}}\mat{U}=\mat{U}\mat{\bar{f}}
+\end{eqnarray}
+which yields effective occupations $\bar{f}$. The eigenvalue equation
+is equivalent with the generalized eigenvalue problem
+\begin{eqnarray}
+\mat{\rho}\Bigl(\sqrt{\mat{S}}\mat{U}\Bigr)=\mat{S}^{-1}\Bigl(\sqrt{\mat{S}}\mat{U}\Bigr)\mat{\bar{f}}
+\end{eqnarray}
+Now we calculate $\mat{\bar{\epsilon}}$ so that
+\begin{eqnarray}
+\mat{\bar{f}}
+&=&\biggl[1+\e{\beta(\mat{\bar{\epsilon}}-\mu\mat{1}})\biggr]^{-1}
+\qquad\Leftrightarrow\qquad
+\mat{\bar{\epsilon}}=\mu\mat{1}
++\frac{1}{\beta}\ln\left(\frac{\mat{1}-\mat{\bar{f}}}{\mat{\bar{f}}}\right)
+\end{eqnarray}
+Then we can represent $\mat{\bar{f}}$ by the Matsubara sum
+\begin{eqnarray}
+\bar{f}=\sum_\nu\e{i\hbar\omega_\nu\beta0^+}
+\biggl[(i\hbar\omega_\nu+\mu)\mat{1}-\mat{\bar{\epsilon}}\biggr]^{-1}
+\end{eqnarray}
+
+Thus we obtain
+\begin{eqnarray}
+\mat{\rho}=\mat{S}^{-\frac{1}{2}}\mat{U}\mat{\bar{f}}\mat{U}^\dagger\mat{S}^{-\frac{1}{2}}
+=\sum_\nu\e{i\hbar\omega_\nu\beta0^+}
+\mat{S}^{-\frac{1}{2}}\mat{U}\biggl[(i\hbar\omega_\nu+\mu)\mat{1}
+-\mat{\bar{\epsilon}}\biggr]^{-1}\mat{U}^\dagger\mat{S}^{-\frac{1}{2}}
+\end{eqnarray}
+
+This yields
+\begin{eqnarray}
+\mat{\bar{G}}
+&=&\mat{S}^{-\frac{1}{2}}\mat{U}\biggl[(i\hbar\omega_\nu+\mu)\mat{1}
+-\mat{\bar{\epsilon}}\biggr]^{-1}\mat{U}^\dagger\mat{S}^{-\frac{1}{2}}
+\nonumber\\
+&=&\biggl[(i\hbar\omega_\nu+\mu)\mat{S}
+-\underbrace{\sqrt{\mat{S}}\mat{U}}_{\mat{V}}\mat{\bar{\epsilon}}\mat{U}^\dagger\sqrt{\mat{S}}\biggr]^{-1}
+=\biggl[(i\hbar\omega_\nu+\mu)\mat{S}
+-\underbrace{\mat{V}\mat{\bar{\epsilon}}\mat{V}^\dagger}_{\mat{\bar{h}}}\biggr]^{-1}
+\end{eqnarray}
+
+Comparison yields
+\begin{eqnarray}
+\bar{h}=\mat{V}\biggl[\mu\mat{1}+\frac{1}{\beta}
+\ln\left(\frac{\mat{1}-\mat{\bar{f}}}{\mat{\bar{f}}}\right)\biggr]
+\mat{V}^\dagger
+  \end{eqnarray}
+where
+\begin{eqnarray}
+\mat{\rho}\mat{V}=\mat{S}^{-1}\mat{V}\mat{\bar{f}}
+\qquad\text{with}\qquad
+\mat{V}^\dagger\mat{S}^{-1}\mat{V}=\mat{1}
+\end{eqnarray}
+
+%====================================================================
 \subsection{Incompleteness}
 %====================================================================
 One difficulty stems from the fact that the natural orbitals, the
