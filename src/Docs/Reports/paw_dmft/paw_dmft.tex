@@ -209,13 +209,15 @@ enters always in the form of the integral
 \frac{1}{\beta}\sum_\nu\mat{G}(i\omega_\nu)\e{i\hbar\omega\beta0^+}
 \end{eqnarray}
 
-This notion allows us to split the interaction contribution
-$Q^{\hat{W}}$ into different parts as
+According to appendix~\ref{sec:sdlitcorrelation} on
+p.~~\pageref{sec:sdlitcorrelation}, this notion allows us to split the
+interaction contribution $Q^{\hat{W}}$ into different parts as
 \begin{eqnarray}
 Q^{\hat{W}}[\mat{\rho}]
 \approx Q^{DFT,\hat{W}}[\mat{\rho}]-Q^{DFT,\hat{W}_1}[\mat{\rho}]
 +Q^{HF,\hat{W}_1}[\mat{\rho}]-Q^{HF,\hat{W}_2}[\mat{\rho}]
 +Q^{\hat{W}_2}[\mat{\rho}]
+\label{eq:splitq}
 \end{eqnarray}
 of which only the last term has a frequency-dependent self energy.
 
@@ -311,8 +313,9 @@ We distinguish two different corrections:
     term} $Q^{DFT,\hat{W}_1}_\beta$:
   \begin{eqnarray}
   Q^{DFT,\hat{W}}[\hat{\rho}]=
-  \frac{1}{2}\int d^3r\int d^3r'
+  \underbrace{\frac{1}{2}\int d^3r\int d^3r'
   \frac{e^2n(\vec{r})n(\vec{r'})}{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+}_{\frac{1}{2}\sum_{a,b,c,d}U_{a,b,d,c}\rho_{d,a}\rho_{c,b}}
   +\underbrace{E_{xc}[n]+T_s[n]
   -\Tr[\frac{\hat{\vec{p}}^2}{2m_e}\hat{\rho}]}_{U_{xc}}\;,
   \end{eqnarray}
@@ -327,7 +330,8 @@ We distinguish two different corrections:
   previous paper\cite{bloechl11_prb84_205101}.
 
   Both, the Hartree-Fock term and the DFT double-counting term contain
-  the same Hartree energy, which cancels exactly. 
+  the same Hartree energy, which cancels exactly. Therefore the
+  Hartree terms are not evaluated.
 %
 \item a \textbf{dynamic-correlation
   correction}\index{dynamic-correlation correction}
@@ -347,82 +351,6 @@ We distinguish two different corrections:
 
   This term is further elaborated in section~\ref{sec:dyncorelcorr}
 \end{enumerate}
-
-
-%==========================================================
-\subsubsection{Stationary conditions for wave functions and occupations}
-%==========================================================
-Let us now explore the stationary conditions in \eq{eq:hp}: We use the
-representation of the wave functions $|\psi_n\rangle=\sum_a
-|\chi_a\rangle\langle\pi_a|\psi_n\rangle$ in terms of local orbitals
-$|\chi_a\rangle$.
-\begin{eqnarray}
-\biggl[\frac{\hat{\vec{p}}^2}{2m_e}+v_{ext}+v_{Hartree}+v_{xc}
-&
-+&\sum_{a,b}|\pi_a\rangle\biggl(
-\frac{\delta Q^{\hat{W}_1}_{HF,\beta}}{\delta\rho_{a,b}}
--\frac{\delta Q^{\hat{W}_1}_{DFT,\beta}}{\delta\rho_{a,b}}
-+\frac{\delta Q^{\hat{W}_2}_{dyn,\beta}}{\delta\rho_{a,b}}
-\biggr)\langle\pi_b|
-\biggr]|\psi_n\rangle
-\nonumber\\
-&=&\sum_{m}|\psi_m\rangle\Lambda_{m,n}\frac{1}{f_n}
-\end{eqnarray}
-\begin{eqnarray}
-\langle\psi_n|
-\biggl[
-\frac{\hat{\vec{p}}^2}{2m_e}+v_{ext}+v_{Hartree}+v_{xc}
-&+&\sum_{a,b}|\pi_a\rangle\biggl(
-\frac{\delta Q^{\hat{W}_1}_{HF,\beta}}{\delta\rho_{a,b}}
--\frac{\delta Q^{\hat{W}_1}_{DFT,\beta}}{\delta\rho_{a,b}}
-+\frac{\delta Q^{\hat{W}_2}_{dyn,\beta}}{\delta\rho_{a,b}}
-\biggr)\langle\pi_b|
-\biggr]|\psi_n\rangle
-\nonumber\\
-&-&\mu+\frac{1}{\beta}\ln\left[\frac{f_n}{1-f_n}\right]=0
-\end{eqnarray}
-
-These equations specify the optimum density matrix as
-\begin{myshadowminipage}{Equilibrium density matrix}
-\begin{eqnarray}
-\hat{\rho}&=&\left[\hat{1}+\e{\beta(\hat{h}_{eff}-\mu)}\right]^{-1}
-\label{eq:rhoopt}
-\end{eqnarray}
-with the effective Hamiltonian
-\begin{eqnarray}
-\hat{h}_{eff}=\frac{\hat{\vec{p}}^2}{2m_e}+v_{ext}+v_{Hartree}+v_{xc}
-&+&\sum_{a,b}|\pi_a\rangle\biggl(
-\frac{\delta Q^{\hat{W}_1}_{HF,\beta}}{\delta\rho_{a,b}}
--\frac{\delta Q^{\hat{W}_1}_{DFT,\beta}}{\delta\rho_{a,b}}
-+\frac{\delta Q^{\hat{W}_2}_{dyn,\beta}}{\delta\rho_{a,b}}
-\biggr)\langle\pi_b|
-\nonumber\\
-\end{eqnarray}
-Note, that, in equilibrium, $\hat{h}_{eff}=\hat{\bar{h}}$. The latter
-defined in \eq{eq:defhbar}.
-\end{myshadowminipage}
-\eq{eq:rhoopt} can be veryfied from the stationary conditions by going
-into a basis of eigenstates of $\hat{h}_{eff}$.
-
-
-The Hamiltonian $\hat{h}_{eff}$ has, like $\bar{h}$, no spectral
-information. It simply reflects the occupations. If an orbital obtains
-partial fluctuations due to quantum fluctuations\footnote{With quantum
-  fluctuations we mean for example electron-hole pairs, which screen
-  the bare interaction. Electron-hole pairs lead fractional
-  occupations beyond the effect of thermal fluctuations.},
-$\hat{h}_{eff}$ places this state near the Fermi level, where the
-Fermi distribution give it the desired occupation.
-
-The spectral information is contained in the Hamiltonian
-\begin{eqnarray}
-\hat{h}_{bare}=\frac{\hat{\vec{p}}^2}{2m_e}+v_{ext}+v_{Hartree}+v_{xc}
-\end{eqnarray}
-which reflects the Kohn-Sham energy levels. When the Green's function
-is calculated we will see that this Hamiltonian, respectively
-$\mat{h}-\mat{\Gamma}$ acts as ``non-interacting'' Hamiltonian to
-which the self energy (including double counting) is added to give the
-quasi-particle spectrum.
 
 
 
@@ -533,7 +461,7 @@ density matrix, which produces a given density matrix as
 with $\bar{\mat{h}}$ defined in \eq{eq:defhbar} as a functional of the
 density matrix.
 
-During the derivation we use the rule for derivatives of an inverse of
+During the derivation, we use the rule for derivatives of an inverse of
 a matrix\footnote{\begin{eqnarray} 
 \mat{A}\mat{A}^{-1}=\mat{1}
 \qquad\Rightarrow\qquad
@@ -545,8 +473,7 @@ d\mat{A}^{-1}\Bigr)=-\mat{A}^{-1}\Bigl(d\mat{A}\Bigr)\mat{A}^{-1}
 }
 $d(\bar{\mat{G}}^{-1})=+\bar{\mat{G}}d\bar{\mat{h}}\bar{\mat{G}}$.
 
-We form the first variation with respect to the density matrix,
-keeping $\mat{\Gamma}$, $\mat{\Sigma}_{dyn}$ and $\mat{G}$ fixed.
+We form the first variation with respect to the density matrix.
 \begin{eqnarray}
 d\mathcal{Q}_{\beta}^{dyn,\hat{W}_2}
 &=&
@@ -626,7 +553,13 @@ d\mathcal{Q}_{\beta}^{dyn,\hat{W}_2}
 \Bigl[\mat{1}-\bar{\mat{G}}
 \Bigl(\mat{\Sigma}_{dyn}-\mat{\Gamma}\Bigr)\Bigr]^{-1}
 \bar{\mat{G}}
-\biggr]}_{=0}d\bar{\mat{h}}
+\biggr]}_{
+=\bar{-\mat{G}}
++\left[\mat{1}-\bar{\mat{G}}(\mat{\Sigma}_{dyn}-\mat{\Gamma})\right]
+\Bigl[\mat{1}-\bar{\mat{G}}
+\Bigl(\mat{\Sigma}_{dyn}-\mat{\Gamma}\Bigr)\Bigr]^{-1}
+=0}
+d\bar{\mat{h}}
 \nonumber\\
 &&
 -d\bar{\mat{G}}\mat{\Gamma}
@@ -665,7 +598,8 @@ d\mathcal{Q}_{\beta}^{dyn,\hat{W}_2}
 
 Thus the stationary conditions are
 \begin{itemize}
-\item the definition of the dynamic self energy
+\item the definition of the dynamic self energy 
+from $\partial\mathcal{Q}_{\beta}^{dyn,\hat{W}_2}/\partial\mat{G}$
 \begin{eqnarray}
 \mat{\Sigma}_{dyn}(i\omega_\nu)
 =\frac{\beta\delta\Phi^{LW}_\beta}{\delta\mat{G}(i\omega_\nu)}
@@ -673,24 +607,31 @@ Thus the stationary conditions are
 \end{eqnarray}
 %
 \item Dyson's equation defining the Green's function
+from $\partial\mathcal{Q}_{\beta}^{dyn,\hat{W}_2}/\partial\mat{\Sigma}$
 \begin{eqnarray}
-\mat{G}(i\omega_\nu)=\Bigl[\mat{1}-\bar{\mat{G}}(i\omega_\nu)
+\mat{G}(i\omega_\nu)&=&\Bigl[\mat{1}-\bar{\mat{G}}(i\omega_\nu)
 \Bigl(\mat{\Sigma}_{dyn}(i\omega_\nu)-\mat{\Gamma}\Bigr)\Bigr]^{-1}
+\bar{\mat{G}}(i\omega_\nu)
+\nonumber\\
+&=&\Bigl[(i\hbar\omega_\nu+\mu)\mat{1}-\Bigl(\mat{\bar{h}}-\mat{\Gamma}\Bigr)
+-\mat{\Sigma}_{dyn}(i\omega_\nu)\Bigr]^{-1}
 \bar{\mat{G}}(i\omega_\nu)
 \end{eqnarray}
 %
 \item and the density-matrix constraint
+from $\partial\mathcal{Q}_{\beta}^{dyn,\hat{W}_2}/\partial\mat{\Gamma}$
 \begin{eqnarray}
 \frac{1}{\beta}\sum_\nu\Tr\biggl\lbrace
-\Bigl[\mat{1}-\bar{\mat{G}}
+\underbrace{\Bigl[\mat{1}-\bar{\mat{G}}
 \Bigl(\mat{\Sigma}_{dyn}-\mat{\Gamma}\Bigr)\Bigr]^{-1}
-\bar{\mat{G}}
+\bar{\mat{G}}}_{\mat{G}}
 -\bar{\mat{G}}
-\biggr\rbrace
+\biggr\rbrace=0
 \end{eqnarray}
 \end{itemize}
-If the stationary conditions are obeyed, the derivative with respect
-to the density matrix is simply the matrix $\mat{\Gamma}$.
+If the stationary conditions with respect to Green's function, self
+energy and $\mat{\Gamma}$ are obeyed, the derivative with respect to the
+density matrix is simply the matrix $\mat{\Gamma}$.
 \begin{myshadowminipage}{Density-matrix derivative of the dynamic correlation correction}
 \begin{eqnarray}
 \frac{\delta\mat{Q}^{dyn,\hat{W}_2}_\beta[\mat{\rho}]}{\delta\mat{\rho}}
@@ -710,6 +651,85 @@ correlations is, because both, $\mat{\Sigma}$ and $\mat{\Sigma}^{HF}$
 mentioned here refer to the second interaction using $\hat{W}_2$. The
 Terms related to $\hat{W}_1$ are contained in the density matrix and
 $\bar{\mat{h}}$.
+%==========================================================
+\subsubsection{Stationary conditions for wave functions and occupations}
+%==========================================================
+Let us now explore the stationary conditions in \eq{eq:hp}: We use the
+representation of the wave functions $|\psi_n\rangle=\sum_a
+|\chi_a\rangle\langle\pi_a|\psi_n\rangle$ in terms of local orbitals
+$|\chi_a\rangle$.
+\begin{eqnarray}
+\biggl[\frac{\hat{\vec{p}}^2}{2m_e}+v_{ext}+v_{Hartree}+v_{xc}
+&
++&\sum_{a,b}|\pi_a\rangle\biggl(
+\frac{\delta Q^{\hat{W}_1}_{HF,\beta}}{\delta\rho_{a,b}}
+-\frac{\delta Q^{\hat{W}_1}_{DFT,\beta}}{\delta\rho_{a,b}}
++\frac{\delta Q^{\hat{W}_2}_{dyn,\beta}}{\delta\rho_{a,b}}
+\biggr)\langle\pi_b|
+\biggr]|\psi_n\rangle
+\nonumber\\
+&=&\sum_{m}|\psi_m\rangle\Lambda_{m,n}\frac{1}{f_n}
+\end{eqnarray}
+\begin{eqnarray}
+\langle\psi_n|
+\biggl[
+\frac{\hat{\vec{p}}^2}{2m_e}+v_{ext}+v_{Hartree}+v_{xc}
+&+&\sum_{a,b}|\pi_a\rangle\biggl(
+\frac{\delta Q^{\hat{W}_1}_{HF,\beta}}{\delta\rho_{a,b}}
+-\frac{\delta Q^{\hat{W}_1}_{DFT,\beta}}{\delta\rho_{a,b}}
++\frac{\delta Q^{\hat{W}_2}_{dyn,\beta}}{\delta\rho_{a,b}}
+\biggr)\langle\pi_b|
+\biggr]|\psi_n\rangle
+\nonumber\\
+&-&\mu+\frac{1}{\beta}\ln\left[\frac{f_n}{1-f_n}\right]=0
+\end{eqnarray}
+
+These equations specify the optimum density matrix as
+\begin{myshadowminipage}{Equilibrium density matrix}
+\begin{eqnarray}
+\hat{\rho}&=&\left[\hat{1}+\e{\beta(\hat{h}_{eff}-\mu)}\right]^{-1}
+\label{eq:rhoopt}
+\end{eqnarray}
+with the effective Hamiltonian
+\begin{eqnarray}
+\hat{h}_{eff}=\frac{\hat{\vec{p}}^2}{2m_e}+v_{ext}+v_{Hartree}+v_{xc}
+&+&\sum_{a,b}|\pi_a\rangle\biggl(
+\underbrace{\frac{\delta Q^{\hat{W}_1}_{HF,\beta}}{\delta\rho_{a,b}}
+-\frac{\delta Q^{\hat{W}_1}_{DFT,\beta}}{\delta\rho_{a,b}}
+}_{\Delta\Sigma_{\text{static}}}
++\underbrace{\frac{\delta Q^{\hat{W}_2}_{dyn,\beta}}{\delta\rho_{a,b}}
+}_{\Gamma_{b,a}}
+\biggr)\langle\pi_b|
+\nonumber\\
+\label{eq:heffeq}
+\end{eqnarray}
+Note, that, in equilibrium, $\hat{h}_{eff}=\hat{\bar{h}}$. The latter
+defined in \eq{eq:defhbar}.
+\end{myshadowminipage}
+\eq{eq:rhoopt} can be veryfied from the stationary conditions by going
+into a basis of eigenstates of $\hat{h}_{eff}$.
+
+
+The Hamiltonian $\hat{h}_{eff}$ has, like $\bar{h}$, no spectral
+information. It simply reflects the occupations. If an orbital obtains
+partial occupations due to quantum fluctuations\footnote{With quantum
+  fluctuations we mean for example electron-hole pairs, which screen
+  the bare interaction. Electron-hole pairs lead fractional
+  occupations beyond the effect of thermal fluctuations.},
+$\hat{h}_{eff}$ places this state near the Fermi level, where the
+Fermi distribution give it the desired occupation.
+
+The spectral information is contained in the Hamiltonian
+\begin{eqnarray}
+\hat{h}_{bare}=\frac{\hat{\vec{p}}^2}{2m_e}+v_{ext}+v_{Hartree}+v_{xc}
+\end{eqnarray}
+which reflects the Kohn-Sham energy levels. When the Green's function
+is calculated we will see that this Hamiltonian, respectively
+$\mat{\bar{h}}-\mat{\Gamma}$ acts as ``non-interacting'' Hamiltonian to
+which the self energy (including double counting) is added to give the
+quasi-particle spectrum.
+
+
 
 %
 %====================================================================
@@ -748,7 +768,7 @@ However, there is no orthogonality between the orbitals and the
 remainder, that is $\langle\chi_\alpha|\delta\phi_n\rangle\neq0$.
 
 In order to estimate the importance of the remainder, consider the
-following thought experiment. Perform calculation with the
+following thought experiment: Perform a calculation with the
 self-consistent potential and introduce the constraints
 $\langle\pi_\alpha|\bar{\psi}_n\rangle=0$ for all $\alpha$. The
 constraints will push the wave functions up in energy. These wave
@@ -757,13 +777,10 @@ $|\delta\psi_n\rangle=\sum_m|\bar{\psi}_m\rangle c_{m,n}$. If there
 are many constraints and there are no larger gaps between the atoms,
 the constrained wave functions $|\bar{\psi}_m\rangle$ will have high
 energies and therefore we can assume that they do not contribute much
-to the wave functions. As conclusion from our though experiment comes
+to the wave functions. As conclusion from our thought experiment comes
 the notion that we can assume the remainder to be unimportant, if
 there are many projectors and if they do not leave any large gaps in
 space.
-
-
-
 
 %====================================================================
 \subsection{Energy correction}
@@ -810,6 +827,14 @@ In the following we introduce a new symbol, namely
 \langle\chi_b|\frac{\delta Q_\beta^{\hat{W}}}{\delta\hat{\rho}}
 |\chi_a\rangle
 \end{eqnarray}
+
+%====================================================================
+\subsection{Overlap matrix}
+%====================================================================
+The overlap matrix is
+\begin{eqnarray}
+S_{a,b}=\langle\chi_a|\chi_b\rangle
+\end{eqnarray}.
 
 %====================================================================
 \subsection{U-tensor}
@@ -869,168 +894,16 @@ it can directly be used with the Green's function
 $\langle\pi_a|\hat{G}|\pi_b\rangle$. The final result will be
 invariant if all sums are traced out.
 
-%====================================================================
-\subsection{Lattice Green's functions in a finite, non-orthonormal basisst}
-%====================================================================
-The Green's function results as inverse of a hamiltonian. The Green's
-function we need should only act in a sub-Hilbert space of correlated
-orbitals. Therefore we introduce a projection operator
-\begin{eqnarray}
-\hat{\mathcal{P}}_\chi=\sum_{a,b}|\chi_a\rangle S^{-1}_{a,b}\langle\chi_b|
-\qquad\text{with}\qquad \sum_c S^{-1}_{a,c}\langle\chi_c|\chi_b\rangle=\delta_{a,b}
-\end{eqnarray}
-onto the correlated orbitals. The projection operator is idempotent,
-i.e. $\hat{\mathcal{P}}_\chi^2=\hat{\mathcal{P}}_\chi$
-
-The Green's function is that operator that acts in the Hilbert space
-of the correlated orbitals, and that inverts the hamiltonian projected
-onto that hilbert space. Thus the following equation defines the greens function.
-\begin{eqnarray}
-\hat{G}\hat{\mathcal{P}}_\chi
-\biggl[(i\hbar\omega_\nu+\mu)\hat{1}-\hat{h}-\sum_{c,d}|\pi_c\rangle\Sigma_{c,d}(i\omega_\nu)\langle\pi_d|\biggr]
-\hat{\mathcal{P}}_\chi=\hat{\mathcal{P}}_\chi
-\end{eqnarray}
-
-\begin{eqnarray}
-\underbrace{|\chi\rangle \mat{G}\langle\chi|}_{\hat{G}}
-\underbrace{|\chi\rangle \mat{S}^{-1}\langle\chi|}_{\hat{\mathcal{P}}_\chi}
-\biggl[(i\hbar\omega_\nu+\mu)\hat{1}-\hat{h}-\sum_{c,d}|\pi_c\rangle\Sigma_{c,d}(i\omega_\nu)\langle\pi_d|\biggr]
-\underbrace{|\chi\rangle \mat{S}^{-1}\langle\chi|}_{\hat{\mathcal{P}}_\chi}
-=\underbrace{|\chi\rangle \mat{S}^{-1}\langle\chi|}_{\hat{\mathcal{P}}_\chi}
-\nonumber\\
-\mat{G}\langle\chi|
-\biggl[(i\hbar\omega_\nu+\mu)\hat{1}-\hat{h}-\sum_{c,d}|\pi_c\rangle\Sigma_{c,d}(i\omega_\nu)\langle\pi_d|\biggr]
-|\chi\rangle =\mat{1}
-\nonumber\\
-\mat{G}
-\biggl[(i\hbar\omega_\nu+\mu)\mat{S}-\langle\chi|\hat{h}|\chi\rangle-\mat{\Sigma}(i\omega_\nu)\biggr]
-=\mat{1}
-\nonumber\\
-\mat{G}
-\biggl[(i\hbar\omega_\nu+\mu)\mat{S}-\sum_{n=1}^\infty
-\langle\chi|\psi_n\rangle \epsilon_n\langle\psi_n|\chi\rangle-\mat{\Sigma}(i\omega_\nu)\biggr]
-=\mat{1}
-\nonumber\\
-\mat{G}
-\biggl[(i\hbar\omega_\nu+\mu)\mat{S}-\epsilon_x\mat{S}-\sum_{n=1}^\infty
-\langle\chi|\psi_n\rangle (\epsilon_n-\epsilon_x)\langle\psi_n|\chi\rangle-\mat{\Sigma}(i\omega_\nu)\biggr]
-=\mat{1}
-\end{eqnarray}
-Thus we obtain
-\begin{eqnarray}
-\mat{G}&=&
-\biggl[(i\hbar\omega_\nu+\mu)\mat{S}-\epsilon_x\mat{S}-\sum_{n=1}^\infty
-\langle\chi|\psi_n\rangle (\epsilon_n-\epsilon_x)\langle\psi_n|\chi\rangle-\mat{\Sigma}(i\omega_\nu)\biggr]^{-1}
-\end{eqnarray}
-
-Now we modify the Hamiltonian by changeing the spectrum for the higher
-bands
-\begin{eqnarray}
-\hat{h}\rightarrow\sum_{n=1}^{N_x}|\psi_n\rangle \epsilon_n\langle\psi_n|
-+\sum_{n=N_x+1}^\infty|\psi_n\rangle \epsilon_x\langle\psi_n|
-\end{eqnarray}
-This approximation allows one to limit the sum over states to a finite sum.
-\begin{eqnarray}
-\mat{G}&=&
-\biggl[(i\hbar\omega_\nu+\mu-\epsilon_x)\mat{S}-\sum_{n=1}^{N_x}
-\langle\chi|\psi_n\rangle (\epsilon_n-\epsilon_x)\langle\psi_n|\chi\rangle-\mat{\Sigma}(i\omega_\nu)\biggr]^{-1}
-\end{eqnarray}
-
-
-After limiting the sum over the states that can be well represented by
-the correlated orbitals, we use the approximation
-$|\psi_n\rangle=\sum_a|\chi_a\rangle\langle\pi_a|\psi_n\rangle$, which
-yields
-\begin{eqnarray}
-\mat{G}&=&
-\biggl[(i\hbar\omega_\nu+\mu-\epsilon_x)\mat{S}-\sum_{n=1}^{N_x}
-\mat{S}\langle\pi|\psi_n\rangle (\epsilon_n-\epsilon_x)\langle\psi_n|\pi\rangle\mat{S}-\mat{\Sigma}(i\omega_\nu)\biggr]^{-1}
-\end{eqnarray}
-
-This matrix corresponds to
-\begin{eqnarray}
-\mat{G}&=&
-\biggl[(i\hbar\omega_\nu+\mu)\mat{S}-\mat{\bar{h}}+\mat{\Gamma}
--\mat{\Sigma}(i\omega_\nu)\biggr]^{-1}
-\end{eqnarray}
-which allows one to make the identification (for full selfconsistency)
-\begin{eqnarray}
-\epsilon_x
-\biggl[\mat{S}
--\sum_{n=1}^{N_x}
-\mat{S}\langle\pi|\psi_n\rangle\langle\psi_n|\pi\rangle\mat{S}\biggr]
--
-\underbrace{\sum_{n=1}^{N_x}
-\mat{S}\langle\pi|\psi_n\rangle\epsilon_n\langle\psi_n|\pi\rangle\mat{S}
-}_{\rightarrow \frac{\hat{\vec{p}}^2}{2m}+v_{ext}+v_H+v_{xc}}
-=-\mat{\bar{h}}+\mat{\Gamma}
-\nonumber\\
-\Rightarrow\qquad
-\mat{\bar{h}}
-=
-\underbrace{\sum_{n=1}^{N_x}
-\mat{S}\langle\pi|\psi_n\rangle\epsilon_n\langle\psi_n|\pi\rangle\mat{S}
-}_{\rightarrow \frac{\hat{\vec{p}}^2}{2m}+v_{ext}+v_H+v_{xc}}
--\epsilon_x
-\biggl[\mat{S}
--\sum_{n=1}^{N_x}
-\mat{S}\langle\pi|\psi_n\rangle\langle\psi_n|\pi\rangle\mat{S}\biggr]
-+\mat{\Gamma}
-\end{eqnarray}
 
 %====================================================================
-\subsubsection{Projections}
+\subsection{Calculate $\bar{h}$ from the density matrix}
 %====================================================================
-In the last step of the previous section we did the step
+The density matrix constraint has the form
 \begin{eqnarray}
-\sum_{n=1}^{N_x}
-\langle\chi|\psi_n\rangle\langle\psi_n|\chi\rangle
-\approx\sum_{n=1}^{N_x}
-\mat{S}\langle\pi|\psi_n\rangle\langle\psi_n|\pi\rangle\mat{S}
-\end{eqnarray}
-which is only approximative.
-
-An allowed step is
-\begin{eqnarray}
-\langle\chi|\psi_n\rangle\langle\psi_n|\chi\rangle
-&=&
-\langle\chi|\chi\rangle\langle\pi|\hat{\mathcal{P}}_{\chi}|\psi_n\rangle
-\langle\psi_n|\hat{\mathcal{P}}_{\chi}|\pi\rangle\langle\chi|\chi\rangle
-=
-\mat{S}\langle\pi|\hat{\mathcal{P}}_{\chi}|\psi_n\rangle
-\langle\psi_n|\hat{\mathcal{P}}_{\chi}|\pi\rangle\mat{S}
-\nonumber\\
-&\neq&
-\mat{S}\langle\pi|\psi_n\rangle
-\langle\psi_n|\pi\rangle\mat{S}
-\end{eqnarray}
-
-\textcolor{red}{This is only a sketch...}
-
-Consider the  set of  wave functions obtained  by projection  onto the
-correlated orbitals.
-\begin{eqnarray}
-\hat{\mathcal{P}}_{\chi}|\psi_n\rangle
-\end{eqnarray}
-
-We obtain  a strict identity
-\begin{eqnarray}
-\hat{\mathcal{P}}_{\chi}|\psi_n\rangle
-=\sum_\alpha|\chi_\alpha\rangle\langle\pi_\alpha|
-\hat{\mathcal{P}}_{\chi}|\psi_n\rangle
-\end{eqnarray}
-
-However, the wave functions $\hat{\mathcal{P}}_{\chi}|\psi_n\rangle$ are
-  no more orthonormal, and $\langle\pi_\alpha|
-  \hat{\mathcal{P}}_{\chi}|\psi_n\rangle\neq \langle\pi_\alpha|
-    \hat{\mathcal{P}}_{\chi}|\psi_n\rangle$.
-
-%====================================================================
-\subsubsection{Calculate $\bar{h}$ from the density matrix}
-%====================================================================
-The constraint is
-\begin{eqnarray}
-\sum_\nu\e{i\hbar\omega_\nu\beta0^+}G_{a,b}(i\omega_\nu)=\rho_{a,b} (=\sum_n\langle\pi_a|\psi_n\rangle f_n\langle\psi_n|\pi_b\rangle)
+\sum_\nu\e{i\hbar\omega_\nu\beta0^+}G_{a,b}(i\omega_\nu)
+=\rho_{a,b} 
+\quad\biggl(=\sum_n\langle\pi_a|\psi_n\rangle f_n\langle\psi_n|\pi_b\rangle
+\biggr)
 \end{eqnarray}
 
 
@@ -1073,6 +946,20 @@ Then we can represent $\mat{\bar{f}}$ by the Matsubara sum
 \biggl[(i\hbar\omega_\nu+\mu)\mat{1}-\mat{\bar{\epsilon}}\biggr]^{-1}
 \end{eqnarray}
 
+In practice we face here a severe \textbf{N-representability
+  problem}\index{N-representability problem}, namely that the
+occupations $\bar{f}_a$ do not necessarily lie within zero and one.
+For values outside the interval $]0,1[$, the logarithm can no more be
+    evaluated.\footnote{More accurately, the mapping $f\rightarrow
+      \bar{\epsilon}$ is no more unique.} Therefore we select a minim
+    and a maximum energy relative to the Fermi level, and force the
+    energies into this interval. This affects those states that lie
+    far from the Fermi level, and thus are weakly correlated.
+
+\textbf{This is a well-defined mapping of the initial density matrix
+  onto one that is strictly N-representable.} Thus all derivatives
+with respect to the original density matrix can be evaluated.
+
 Thus we obtain
 \begin{eqnarray}
 \mat{\rho}=\mat{S}^{-\frac{1}{2}}\mat{U}\mat{\bar{f}}\mat{U}^\dagger\mat{S}^{-\frac{1}{2}}
@@ -1094,6 +981,7 @@ This yields
 \end{eqnarray}
 
 Comparison yields
+\begin{myshadowminipage}{Hamiltonian for density matrix constraint}
 \begin{eqnarray}
 \bar{h}=\mat{V}\biggl[\mu\mat{1}+\frac{1}{\beta}
 \ln\left(\frac{\mat{1}-\mat{\bar{f}}}{\mat{\bar{f}}}\right)\biggr]
@@ -1105,42 +993,43 @@ where
 \qquad\text{with}\qquad
 \mat{V}^\dagger\mat{S}^{-1}\mat{V}=\mat{1}
 \end{eqnarray}
+\end{myshadowminipage}
 
-%====================================================================
-\subsection{Incompleteness}
-%====================================================================
-One difficulty stems from the fact that the natural orbitals, the
-local orbitals and the projector functions span different spaces.
+%% %====================================================================
+%% \subsection{Incompleteness}
+%% %====================================================================
+%% One difficulty stems from the fact that the natural orbitals, the
+%% local orbitals and the projector functions span different spaces.
 
-We choose a solution by introducing a new type of algebra, that is
-designed to give certain sum rules exactly. 
-In this algebra we consider the states
-\begin{eqnarray}
-|\kappa_n\rangle\defas
-\sum_{a}|\chi_a\rangle\langle\pi_a|\psi_n\rangle
-\end{eqnarray}
-as complete orthonormal basisset.
+%% We choose a solution by introducing a new type of algebra, that is
+%% designed to give certain sum rules exactly. 
+%% In this algebra we consider the states
+%% \begin{eqnarray}
+%% |\kappa_n\rangle\defas
+%% \sum_{a}|\chi_a\rangle\langle\pi_a|\psi_n\rangle
+%% \end{eqnarray}
+%% as complete orthonormal basisset.
 
-Thus, 
-\begin{eqnarray}
-\delta_{m,n}=\langle\kappa_m|\kappa_n\rangle
-=\sum_{a,b}\langle\psi_m|\pi_a\rangle\langle\chi_a|
-\chi_b\rangle\langle\pi_b|\psi_n\rangle
-\end{eqnarray}
-and
-\begin{eqnarray}
-\hat{1}=\sum_{a,b,n}|\chi_a\rangle\langle\pi_a|\psi_n\rangle
-\langle\psi_n|\pi_b\rangle\langle\chi_b|
-\end{eqnarray}
+%% Thus, 
+%% \begin{eqnarray}
+%% \delta_{m,n}=\langle\kappa_m|\kappa_n\rangle
+%% =\sum_{a,b}\langle\psi_m|\pi_a\rangle\langle\chi_a|
+%% \chi_b\rangle\langle\pi_b|\psi_n\rangle
+%% \end{eqnarray}
+%% and
+%% \begin{eqnarray}
+%% \hat{1}=\sum_{a,b,n}|\chi_a\rangle\langle\pi_a|\psi_n\rangle
+%% \langle\psi_n|\pi_b\rangle\langle\chi_b|
+%% \end{eqnarray}
 
-I introduce
-\begin{eqnarray}
-S^{-1}_{a,b}\defas \sum_{n}\langle\pi_a|\psi_n\rangle\langle\psi_n|\pi_b\rangle
-\label{eq:defoverlapmatrix}
-\end{eqnarray}
-and redefine the overlap $\langle\chi_a|\chi_b\rangle$ as the inverse
-of $\mat{S}$. We could consider this as a redefinition of the scalar
-product between the states $|\kappa_n\rangle$.
+%% I introduce
+%% \begin{eqnarray}
+%% S^{-1}_{a,b}\defas \sum_{n}\langle\pi_a|\psi_n\rangle\langle\psi_n|\pi_b\rangle
+%% \label{eq:defoverlapmatrix}
+%% \end{eqnarray}
+%% and redefine the overlap $\langle\chi_a|\chi_b\rangle$ as the inverse
+%% of $\mat{S}$. We could consider this as a redefinition of the scalar
+%% product between the states $|\kappa_n\rangle$.
 
 %====================================================================
 \subsubsection{Derivatives}
@@ -1681,8 +1570,9 @@ Q^{\hat{W}_2}_{dyn,\beta}[\mat{\rho}]
 $\mat{G}_R$ is obtained from $\mat{G}_{\vec{k}}$ via
 \eq{eq:deflocalgreen} and $\mat{\Sigma}_{dyn}$ is obtained from the
 local contributions $\mat{\Sigma}_{dyn,R}$ via \eq{eq:sigmafromlocal}.
-The overlap matrix $\mat{S}_{\vec{k}}$ is obtained from
-\eq{eq:defoverlapmatrix}.
+If the initial density matrix is not N-representable, a transformation
+will turn it into a strictly N-respresentable form. This mapping will
+be considered consistently when evaluating the derivatives.
 
 $N_k$ is the number of k-points on the grid for the Brillouin-zone
 integration.
@@ -1719,6 +1609,52 @@ The result is correct for $N_k\rightarrow\infty$ and for
 $\omega_x\rightarrow\infty$.
 \end{myshadowminipage}
 
+%====================================================================
+\section{Spectral information}
+%====================================================================
+The Greens function and the self-energy produces only information that
+is relevant for the total energy. Energy levels that lie sufficiently
+far from the Fermi level that they are either completely filled or
+completely empty, do not contribute to correlations, because quantum
+fluctuations would make their occupations fractional. (compare
+CAS-SCF)
+
+This implies that the spectral information obtained from the the
+Luttinger Ward functional is only valid in a limited energy region. 
+Spectral information from the ``inactive'' region is ill-determined.
+There are many spectra, that would result in the same total energy.
+This implies that we may choose any set of energy levels for the
+inactive region and that one possible choice is to simply use the
+Kohn-Sham spectra. 
+
+The expression \eq{eq:heffeq} makes an even stronger connection that
+the ``inactive'' region should be represented by the Kohn-Sham
+spectrum. This is however partly misleading, because the derivatives
+of the density matrix functional are not relevant for integer
+occupations. Lagrange multipliers which lower the energies of fully
+occupied states and those that rise the energy for empty states are
+equally tolerable.
+
+\textbf{A potential conclusion seems to be that the true spectrum may
+  be wider spread out than the Kohn-Sham spectrum, which seems to be
+  in line with the observations from the Band gap problem.}
+
+
+In order to obtain the final Green's function, we need to diagonalize
+the Koh-Sham Hamiltonian 
+\begin{eqnarray}
+\mat{G}(i\omega_\nu)&=&\biggl[
+(i\hbar\omega_\nu+\mu)\mat{S}
+-\mat{S}\langle\pi|\psi_m\rangle\langle\psi_m|\hat{h}|\psi_n\rangle
+\langle\psi_n|\pi\rangle\mat{S}-\mat{\Sigma}(i\omega_\nu)\biggr]^{-1}
+\end{eqnarray}
+where
+\begin{eqnarray}
+\hat{h}=\frac{\hat{\vec{p}^2}}{2m_e}+\hat{v}_{ext}+\hat{v}_{H}+\hat{v}_{xc}
+-\sum_{a,b}|\pi_a\rangle Gamma_{a,b}\langle\pi_b|
+\end{eqnarray}
+
+\textcolor{red}{$\Gamma$ is nort included properly!}
 
 %====================================================================
 \section{Description of Subroutines}
@@ -3095,33 +3031,6 @@ $\frac{1}{2}$.
 %====================================================================
 \chapter{The Green function}
 %====================================================================
-We construct the \textbf{lattice Green's function} defined as
-\begin{eqnarray}
-\hat{G}^{lat}(i\omega_\nu)&=&
-\biggl[(i\hbar\omega_\nu+\mu)\hat{1}
--\hat{h}-\Delta\hat{\Sigma}(i\omega_\nu)\biggr]^{-1}
-\nonumber\\
-&\approx&\sum_{n,n'}|\psi_n\rangle
-\underbrace{
-\biggl[\langle\psi_{n'}|(i\hbar\omega_\nu+\mu)\hat{1}-\hat{h}
--\Delta\hat{\Sigma}(i\omega_\nu)|\psi_n\rangle\biggr]_{n,n'}^{-1}
-}_{G^{lat}_{n,n'}}
-\langle\psi_{n'}|
-\label{eq:latgreenfunc}
-\end{eqnarray}
-This expression is approximate, if the set of band states is not
-complete. In practice, corrections are required.
-
-In the representation of the band states, the lattice Green's function
-has the form
-\begin{eqnarray}
-G^{lat}_{n,n'}(i\omega_\nu)&=&
-\biggl[\langle\psi_{n'}|(i\hbar\omega_\nu+\mu)\hat{1}-\hat{h}
--\Delta\hat{\Sigma}(i\omega_\nu)|\psi_n\rangle\biggr]_{n,n'}^{-1}
-\label{eq:latgreenfuncmat}
-\end{eqnarray}
-Note, that the matrix to be inverted is not necessarily hermitean!
-
 %====================================================================
 \section{Generic properties}
 %====================================================================
@@ -3239,6 +3148,187 @@ obtained as derivative with respect to $\mu$.
 
 This relation is however only valid for non-interacting electrons,
 because a self energy may depend itself on the chemical potential.
+
+%====================================================================
+\section{Greens functions between band states and local orbitals}
+%====================================================================
+%====================================================================
+\subsection{Lattice Greens functions and limited set of band states}
+%====================================================================
+We construct the \textbf{lattice Green's function} defined as
+\begin{eqnarray}
+\hat{G}^{lat}(i\omega_\nu)&=&
+\biggl[(i\hbar\omega_\nu+\mu)\hat{1}
+-\hat{h}-\Delta\hat{\Sigma}(i\omega_\nu)\biggr]^{-1}
+\nonumber\\
+&=&\sum_{n,n'}^\infty|\psi_n\rangle
+\underbrace{
+\biggl[\langle\psi_{n'}|(i\hbar\omega_\nu+\mu)\hat{1}-\hat{h}
+-\Delta\hat{\Sigma}(i\omega_\nu)|\psi_n\rangle\biggr]_{n,n'}^{-1}
+}_{G^{lat}_{n,n'}}
+\langle\psi_{n'}|
+\nonumber\\
+&\approx&\sum_{n,n'}^{N_x}|\psi_n\rangle
+\underbrace{
+\biggl[\langle\psi_{n'}|(i\hbar\omega_\nu+\mu)\hat{1}-\hat{h}
+-\Delta\hat{\Sigma}(i\omega_\nu)|\psi_n\rangle\biggr]_{n,n'}^{-1}
+}_{G^{lat}_{n,n'}}
+\langle\psi_{n'}|
+\label{eq:latgreenfunc}
+\end{eqnarray}
+This expression is approximate, if the set of band states is not
+complete. In practice, corrections are required.
+
+In the representation of the band states, the lattice Green's function
+has the form
+\begin{eqnarray}
+G^{lat}_{n,n'}(i\omega_\nu)&=&
+\biggl[\langle\psi_{n'}|(i\hbar\omega_\nu+\mu)\hat{1}-\hat{h}
+-\Delta\hat{\Sigma}(i\omega_\nu)|\psi_n\rangle\biggr]_{n,n'}^{-1}
+\label{eq:latgreenfuncmat}
+\end{eqnarray}
+Note, that the matrix to be inverted is not necessarily hermitean!
+
+
+%====================================================================
+\subsection{Green's function on the Hilbert space of correlated orbitals}
+%====================================================================
+Here, we define the Green's function as inverse of a Hamiltonian,
+which is projected onto a sub-Hilbert space of correlated
+orbitals. 
+
+We introduce the projection operator onto the correlated orbitals.
+\begin{eqnarray}
+\hat{\mathcal{P}}_\chi=\sum_{a,b}|\chi_a\rangle S^{-1}_{a,b}\langle\chi_b|
+\qquad\text{with}\qquad \sum_c S^{-1}_{a,c}\langle\chi_c|\chi_b\rangle=\delta_{a,b}
+\end{eqnarray}
+onto the correlated orbitals. The projection operator is idempotent,
+i.e. $\hat{\mathcal{P}}_\chi^2=\hat{\mathcal{P}}_\chi$
+
+The Green's function is that operator that acts in the Hilbert space
+of the correlated orbitals, and that inverts the Hamiltonian projected
+onto that Hilbert space. Thus the following equation defines the
+Greens function.
+\begin{eqnarray}
+\hat{G}\hat{\mathcal{P}}_\chi
+\biggl[(i\hbar\omega_\nu+\mu)\hat{1}-\hat{h}-\sum_{c,d}|\pi_c\rangle\Sigma_{c,d}(i\omega_\nu)\langle\pi_d|\biggr]
+\hat{\mathcal{P}}_\chi=\hat{\mathcal{P}}_\chi
+\end{eqnarray}
+
+We extract the matrix elements of the Green's function
+$\hat{G}=|\chi\rangle\mat{G}\langle\chi|$.
+\begin{eqnarray}
+\underbrace{|\chi\rangle \mat{G}\langle\chi|}_{\hat{G}}
+\underbrace{|\chi\rangle \mat{S}^{-1}\langle\chi|}_{\hat{\mathcal{P}}_\chi}
+\biggl[(i\hbar\omega_\nu+\mu)\hat{1}-\hat{h}-\sum_{c,d}|\pi_c\rangle\Sigma_{c,d}(i\omega_\nu)\langle\pi_d|\biggr]
+\underbrace{|\chi\rangle \mat{S}^{-1}\langle\chi|}_{\hat{\mathcal{P}}_\chi}
+=\underbrace{|\chi\rangle \mat{S}^{-1}\langle\chi|}_{\hat{\mathcal{P}}_\chi}
+\nonumber\\
+\mat{G}\langle\chi|
+\biggl[(i\hbar\omega_\nu+\mu)\hat{1}-\hat{h}-\sum_{c,d}|\pi_c\rangle\Sigma_{c,d}(i\omega_\nu)\langle\pi_d|\biggr]
+|\chi\rangle =\mat{1}
+\nonumber\\
+\mat{G}
+\biggl[(i\hbar\omega_\nu+\mu)\mat{S}-\langle\chi|\hat{h}|\chi\rangle-\mat{\Sigma}(i\omega_\nu)\biggr]
+=\mat{1}
+\nonumber\\
+\end{eqnarray}
+which yields with $\hat{h}=\sum_n|\psi_n\rangle\epsilon_n\langle\chi_n|$
+\begin{eqnarray}
+\mat{G}&=&
+\biggl[(i\hbar\omega_\nu+\mu)\mat{S}
+-\sum_{n=1}^\infty
+\langle\chi|\psi_n\rangle \epsilon_n\langle\psi_n|\chi\rangle-\mat{\Sigma}(i\omega_\nu)\biggr]^{-1}
+\end{eqnarray}
+
+This expression involves still an infinite sum over band states, which
+are not all available in practice. In order to remedy this deficiency
+without introducing major errors, we modify the spectrum of of the
+Hamiltonian in an energy region above the partially occupied states.
+This approximation can be controlled by increasing the number $N_x$ of
+states that are explicitely included in the sum. Specifically, we
+change all eigenvalues with a band index higher than $N_x$ of the
+Hamiltonian to $\epsilon_x$.
+
+This transforms the Hamiltonian into its approximate form
+\begin{eqnarray}
+\hat{h}\rightarrow\sum_{n=1}^{N_x}|\psi_n\rangle \epsilon_n\langle\psi_n|
++\sum_{n=N_x+1}^\infty|\psi_n\rangle \epsilon_x\langle\psi_n|
+\end{eqnarray}
+The approximation allows one to limit the sum over states to a finite sum.
+\begin{eqnarray}
+\mat{G}&=&
+\biggl[(i\hbar\omega_\nu+\mu-\epsilon_x)\mat{S}-\sum_{n=1}^{N_x}
+\langle\chi|\psi_n\rangle (\epsilon_n-\epsilon_x)\langle\psi_n|\chi\rangle-\mat{\Sigma}(i\omega_\nu)\biggr]^{-1}
+\end{eqnarray}
+
+
+After limiting the sum over the states that can be well represented by
+the correlated orbitals, we use the approximation
+$|\psi_n\rangle=\sum_a|\chi_a\rangle\langle\pi_a|\psi_n\rangle$, which
+yields
+\begin{eqnarray}
+\langle\chi|\psi\rangle
+=\langle\chi|\chi\rangle\langle\pi|\hat{\mathcal{P}}_\chi|\psi\rangle
+=\mat{S}\langle\pi|\hat{\mathcal{P}}_\chi|\psi\rangle
+\approx 
+\mat{S}\langle\pi|\psi\rangle
+\end{eqnarray}
+The results depends on how well the band states are representable by
+the correlated orbitals. Thus, it is important to limit the sum over
+band states to those that are well represented by tight-binding
+orbitals. Furthermore one should always include a as complete as
+possible set of correlated orbiatals, rather that just limiting
+oneself to particular atoms. A potential test of this approximation is
+to evaluate the effect on the orthonormality of the band states in the
+form 
+\begin{eqnarray}
+\delta_{n,m}=\langle\psi_n|\psi_m\rangle
+\approx\sum_{a,b}
+\langle\psi_n|\pi_a\rangle\langle\chi_a|\chi_b\rangle\langle\pi_b|\psi_m\rangle
+=\sum_{a,b}
+\langle\psi_n|\pi_a\rangle S_{a,b} \langle\pi_b|\psi_m\rangle
+\end{eqnarray}
+  
+With this approximation we obtain
+\begin{myshadowminipage}{Greens function projected}
+\begin{eqnarray}
+\mat{G}&=&
+\biggl[(i\hbar\omega_\nu+\mu-\epsilon_x)\mat{S}-\sum_{n=1}^{N_x}
+\mat{S}\langle\pi|\psi_n\rangle (\epsilon_n-\epsilon_x)\langle\psi_n|\pi\rangle\mat{S}-\mat{\Sigma}(i\omega_\nu)\biggr]^{-1}
+\end{eqnarray}
+\end{myshadowminipage}
+
+This matrix corresponds to
+\begin{eqnarray}
+\mat{G}&=&
+\biggl[(i\hbar\omega_\nu+\mu)\mat{S}-\mat{\bar{h}}+\mat{\Gamma}
+-\mat{\Sigma}(i\omega_\nu)\biggr]^{-1}
+\end{eqnarray}
+which allows one to make the identification (for full selfconsistency)
+\begin{eqnarray}
+\epsilon_x
+\biggl[\mat{S}
+-\sum_{n=1}^{N_x}
+\mat{S}\langle\pi|\psi_n\rangle\langle\psi_n|\pi\rangle\mat{S}\biggr]
+-
+\underbrace{\sum_{n=1}^{N_x}
+\mat{S}\langle\pi|\psi_n\rangle\epsilon_n\langle\psi_n|\pi\rangle\mat{S}
+}_{\rightarrow \frac{\hat{\vec{p}}^2}{2m}+v_{ext}+v_H+v_{xc}}
+=-\mat{\bar{h}}+\mat{\Gamma}
+\nonumber\\
+\Rightarrow\qquad
+\mat{\bar{h}}
+=
+\underbrace{\sum_{n=1}^{N_x}
+\mat{S}\langle\pi|\psi_n\rangle\epsilon_n\langle\psi_n|\pi\rangle\mat{S}
+}_{\rightarrow \frac{\hat{\vec{p}}^2}{2m}+v_{ext}+v_H+v_{xc}}
+-\epsilon_x
+\biggl[\mat{S}
+-\sum_{n=1}^{N_x}
+\mat{S}\langle\pi|\psi_n\rangle\langle\psi_n|\pi\rangle\mat{S}\biggr]
++\mat{\Gamma}
+\end{eqnarray}
 
 
 %====================================================================
@@ -4131,7 +4221,10 @@ U_{a,c}\biggr)
 %==============================================================================
 We will divide the correlation contribution $Q^{\hat{W}}_\beta$ in
 \eq{eq:dmfQgreen} on p.~\pageref{eq:dmfQgreen} into two separate
-terms. It seems that division is only possible if only one of the
+terms. This principle will allow us to divide $Q[\mat{\rho}]$
+according to \eq{eq:splitq} on p.~\pageref{eq:splitq}.
+
+It seems that division is only possible if only one of the
 terms has a frequency-dependent self energy.
 
 For this purpose, we express the Luttinger-Ward functional as a sum
@@ -4148,7 +4241,9 @@ Q^{\hat{W}}_\beta[\mat{\rho}]
 &&-\frac{1}{\beta}\sum_\nu\Tr\Bigl\lbrace
 \ln\Bigl[
 \mat{1}-
+\underbrace{
 \Bigl(i\hbar\omega_\nu+\mu)\mat{1}-\bar{\mat{h}}\Bigr)^{-1}
+}_{\mat{\bar{G}}}
 \Bigl(\mat{h}'+\mat{\Sigma}(i\omega_\nu)-\bar{\mat{h}}\Bigr)
 \Bigr]
 \nonumber\\&&
@@ -4156,7 +4251,9 @@ Q^{\hat{W}}_\beta[\mat{\rho}]
 -
 \Bigl[
 \mat{G}(i\omega_\nu)
--\Bigl(i\hbar\omega_\nu+\mu)\mat{1}-\bar{\mat{h}}\Bigr)^{-1}
+-\underbrace{
+\Bigl(i\hbar\omega_\nu+\mu)\mat{1}-\bar{\mat{h}}\Bigr)^{-1}
+}_{\mat{\bar{G}}}
 \Bigr]
 \Bigl(\mat{h}'-\bar{\mat{h}}\Bigr)\Bigr\rbrace
 \biggr\rbrace
@@ -4164,9 +4261,17 @@ Q^{\hat{W}}_\beta[\mat{\rho}]
 \label{eq:dmfQgreenbeforedivision}
 \end{eqnarray}
 
+As usual, $\mat{\bar{h}}$ is an explicit functional of the density
+matrix $\mat{\rho}$ as defined in \eq{eq:defhbar} and $\mat{\bar{G}}$
+is the non-interacting Green's function with the hamiltonian
+$\mat{bar{h}}$.
+
+
 The stationary conditions are
 \begin{eqnarray}
-0&=&-\frac{\beta\delta\Phi^{LW,1}}{\delta\mat{G}(i\omega_\nu)}
+0&=&
+\frac{\partial\mathcal{Q}^{\hat{W}}_\beta}{\partial\mat{G}}
+=-\frac{\beta\delta\Phi^{LW,1}}{\delta\mat{G}(i\omega_\nu)}
 -\frac{\beta\delta\Phi^{LW,2}}{\delta\mat{G}(i\omega_\nu)}
 +\Bigl(\mat{h}'+\mat{\Sigma}(i\omega_\nu)-\bar{\mat{h}}\Bigr)
 -\Bigl(\mat{h}'-\bar{\mat{h}}\Bigr)
@@ -4176,7 +4281,10 @@ The stationary conditions are
 =\frac{\beta\delta\Phi^{LW,1}}{\delta\mat{G}(i\omega_\nu)}
 +\frac{\beta\delta\Phi^{LW,2}}{\delta\mat{G}(i\omega_\nu)}
 \nonumber\\
-0&=&\biggl[\mat{1}-\bar{\mat{G}}(i\omega_\nu)
+0&=&
+\frac{\partial\mathcal{Q}^{\hat{W}}_\beta}{\partial\mat{\Sigma}}
+=
+\biggl[\mat{1}-\bar{\mat{G}}(i\omega_\nu)
 \Bigl(\mat{h}'+\mat{\Sigma}(i\omega_\nu)-\bar{\mat{h}}\Bigr)\biggr]^{-1}
 \Bigl(-\bar{\mat{G}}(i\omega_\nu)\Bigr)+\mat{G}(i\omega_\nu)
 \label{eq:splitqvarsigma}
@@ -4188,7 +4296,9 @@ The stationary conditions are
 \bar{\mat{G}}(i\omega_\nu)
 \nonumber\\
 0&=&
--\frac{1}{\beta}\sum_\nu\biggl\lbrace
+\frac{\partial\mathcal{Q}^{\hat{W}}_\beta}{\partial\mat{h'}}
+\nonumber\\
+&=&-\frac{1}{\beta}\sum_\nu\biggl\lbrace
 \underbrace{\biggl[\mat{1}-\bar{\mat{G}}(i\omega_\nu)
 \Bigl(\mat{h}'+\mat{\Sigma}(i\omega_\nu)-\bar{\mat{h}}\Bigr)\biggr]^{-1}
 \Bigl(-\bar{\mat{G}}(i\omega_\nu)\Bigr)+\mat{G}(i\omega_\nu)}
@@ -4210,8 +4320,8 @@ frequencies. In this case the Luttinger-Ward functional depends on the
 Green'sfunction only via the integral $\mat{\rho}=
 \frac{1}{\beta}\sum_\nu
 \mat{G}(i\omega_\nu)\e{i\hbar\omega_\nu\beta0^+}$. This is the case
-for the Hartree-Fock approximation and it is the case for the Density
-functional theory.
+for the Hartree-Fock approximation and it is the case for the
+density-functional theory.
 
 In the following, we assume that $\Phi^{LW,1}_\beta$ has this form,
 i.e. that it depends on the Green's function only via the density
@@ -4268,7 +4378,7 @@ We see that
 leads to the same Green's function as in the former case. That is,
 both forms, i.e. \eq{eq:dmfQgreenbeforedivision} and
 \eq{eq:dmfQgreenafterdivision}, have the same stationary state.  At
-the stationary state both forms have furthermore the same value.
+the stationary state, both forms have furthermore the same value.
 
 %================================================================
 \subsubsection{No Matsubara sum with a stationary self energy}
