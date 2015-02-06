@@ -1650,8 +1650,8 @@ the Koh-Sham Hamiltonian
 \end{eqnarray}
 where
 \begin{eqnarray}
-\hat{h}=\frac{\hat{\vec{p}^2}}{2m_e}+\hat{v}_{ext}+\hat{v}_{H}+\hat{v}_{xc}
--\sum_{a,b}|\pi_a\rangle Gamma_{a,b}\langle\pi_b|
+\hat{h}=\frac{\hat{\vec{p}}^2}{2m_e}+\hat{v}_{ext}+\hat{v}_{H}+\hat{v}_{xc}
+-\sum_{a,b}|\pi_a\rangle \Gamma_{a,b}\langle\pi_b|
 \end{eqnarray}
 
 \textcolor{red}{$\Gamma$ is nort included properly!}
@@ -2564,11 +2564,15 @@ The following two equations are solved iteratively\footnote{Instead of
 (i\omega_\nu+\mu)\mat{S}(\vec{k})-\bar{\mat{h}}(\vec{k})\Bigr]^{-1}
 }_{\bar{\mat{G}}(\vec{k})}\biggr)
 \nonumber\\
-\mat{\Gamma}(\vec{k})&=&\mat{\Gamma}(\vec{k})-\frac{4}{\beta}\mat{S}(\vec{k})
+\mat{\Gamma}(\vec{k})&=&
+\mat{\Gamma}(\vec{k})-
+\Bigl[\frac{4}{\beta}\mat{S}(\vec{k})
 \delta{\rho}(\vec{k})
-\mat{S}(\vec{k})
+\mat{S}(\vec{k})\Bigr]^\top
 \end{eqnarray}
-until $\delta\mat{\rho}$ vanishes.
+until $\delta\mat{\rho}$ vanishes.\footnote{The transposition in the
+  expression for $\mat{\Gamma}$ is needed, because
+  $dQ=\Tr(\mat{\Gamma}d\mat{\rho})$.}
 \end{myshadowminipage}
 This equation is a Newton scheme with the Green's function in the
 slope estimate replaced by the non-interacting Green's function with
@@ -4999,6 +5003,71 @@ S^{-1}_{a,b}
 \biggr\rbrace
 \end{eqnarray}
 \end{itemize}
+
+%====================================================================
+\newpage
+\section{Enforce constraints by minimizing deviation from the density matrix}
+%====================================================================
+
+\begin{eqnarray}
+F=\sqrt{\sum_{a,b} \Delta\rho_{a,b}\Delta\rho_{b,a}}
+\end{eqnarray}
+
+\begin{eqnarray}
+dF&=&\frac{1}{2F}\sum_{a,b} 
+\biggl[\frac{\partial\Delta\rho_{a,b}}{\partial\Gamma_{\gamma,\delta}}
+       \Delta\rho_{b,a}
++\Delta\rho_{a,b}\frac{\partial\Delta\rho_{b,a}}{\partial\Gamma_{\gamma,\delta}}
+       \biggr]d\Gamma_{\gamma,\delta}
+\nonumber\\
+&=&\frac{1}{2F}2\sum_{\gamma,\delta}\sum_{a,b} 
+\biggl[\frac{\partial\Delta\rho_{a,b}}{\partial\Gamma_{\gamma,\delta}}
+ \Delta\rho_{b,a}
+       \biggr]d\Gamma_{\gamma,\delta}
+\end{eqnarray}
+
+Now we make use of the definition of $\Delta\mat{\rho}$
+\begin{eqnarray}
+\Delta\mat{\rho}
+&=&k_BT\sum_\nu\e{i\hbar\omega\beta0^+}
+\biggl[
+\underbrace{\Bigl((i\hbar\omega_\nu+\mu)\mat{S}-\mat{\bar{h}}
++\mat{\Gamma}-\mat{\Sigma}(i\omega_\nu)\Bigr)^{-1}}_{\mat{G}(i\omega_\nu)}
+-\underbrace{\Bigl((i\hbar\omega_\nu+\mu)\mat{S}-\mat{\bar{h}}
+\Bigr)^{-1}}_{\mat{\bar{{G}}(i\omega_\nu)}}\biggr]
+\nonumber\\
+d(\Delta\mat{\rho})
+&=&
+k_BT\sum_\nu\e{i\hbar\omega\beta0^+}
+\biggl[-\mat{G}d\mat{\Gamma}\mat{G}\biggr]
+=-
+k_BT\sum_\nu\mat{G}(i\omega_\nu)d\mat{\Gamma}
+\mat{G}(i\omega_\nu)
+\end{eqnarray}
+
+\begin{eqnarray}
+dF
+&=&\frac{1}{F}\sum_{a,b,\gamma,\delta} 
+\biggl[-k_BT
+\sum_\nu G_{a,\gamma}(i\omega_\nu)d\Gamma_{\gamma,\delta}
+G_{\delta,b}(i\omega_\nu)
+ \Delta\rho_{b,a}  \biggr]
+\nonumber\\
+&=&\sum_{\gamma,\delta} \biggl[-\frac{1}{F}\sum_{a,b} 
+\biggl[k_BT\sum_\nu
+G_{\delta,b}(i\omega_\nu) \Delta\rho_{b,a}
+G_{a,\gamma}(i\omega_\nu)\bigr]
+       \biggr]d\mat{\Gamma}_{\gamma,\delta}
+\end{eqnarray}
+
+
+The ``optimum'' search direction is the one with the largest (negative)
+projection on the gradient.
+\begin{eqnarray}
+d\mat{\Gamma}^{opt}=+\left[\frac{1}{F}k_BT\sum_\nu
+\mat{G}(i\omega_\nu) \Delta\mat{\rho}\;\mat{G}(i\omega_\nu)\right]^\dagger
+\end{eqnarray}
+
 
 %====================================================================
 \chapter{Usage}
