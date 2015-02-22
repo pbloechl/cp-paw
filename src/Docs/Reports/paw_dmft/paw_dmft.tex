@@ -2761,10 +2761,12 @@ $\mat{V}\mat{V}^\dagger\neq\mat{1}$.
 \chapter{Tests and Numerical problems}
 %====================================================================
 \begin{itemize}
+%
 \item for insulators the Fermi-level is not well defined. It tends to
   fluctuate insite the band gap.
+%
 \item in order to limit the number of times the solver has to be
-  called explicitely, one my linearize then Luttinger-Ward functional
+  called explicitely, one may linearize the Luttinger-Ward functional
 \begin{eqnarray}
 \Phi^{LW}[\mat{G}]\approx \Phi^{LW}[\mat{G}_0]
 +\frac{1}{\beta}\sum_\nu\sum_{a,b}\biggl[
@@ -2774,11 +2776,22 @@ $\mat{V}\mat{V}^\dagger\neq\mat{1}$.
 \Bigl(\mat{G}_{a.b}(i\omega_\nu)-\mat{G}_{0,a,b}(i\omega_\nu)\Bigr)
 \biggr]
 \end{eqnarray}
-$\mat{G}_0$ is the last green's function for which the Luttinger ward
-fgunctional and the self energy has been calculated explicitely. The
+$\mat{G}_0$ is the last Greens function for which the Luttinger ward
+functional and the self energy has been calculated explicitely. The
 approximate form can be used until convergence of the outer loop is
 reached. Then the Luttinger Ward functional is updated and the cycle
 is repeated.
+%
+\item semi-core states may be a problem, because their occupation is
+  near integer so that large changes in $\Gamma$ are required to
+  adjust the occupation.
+%
+\item It may be helpful to diagonalize $\bar{h}-\mat{Gamma}$ in
+  dmft\_constraints in order to make the connection between occupation
+  and eigenlevels more direct.
+%
+\item there are unknown factors of 0.25 and 2, once in the derivatives
+  of drho$^2$ and once integrating $\Gamma$ into the waves object.
 
 \end{itemize}
 
@@ -4268,7 +4281,7 @@ Q^{\hat{W}}_\beta[\mat{\rho}]
 As usual, $\mat{\bar{h}}$ is an explicit functional of the density
 matrix $\mat{\rho}$ as defined in \eq{eq:defhbar} and $\mat{\bar{G}}$
 is the non-interacting Green's function with the hamiltonian
-$\mat{bar{h}}$.
+$\mat{\bar{h}}$.
 
 
 The stationary conditions are
