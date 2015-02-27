@@ -213,7 +213,38 @@ More explicitely,
 \xi^{(- z)}=\left(\begin{array}{c}0\\1\end{array}\right)
 \end{eqnarray}
 
+For the sake of completeness let me work out the spin eigenstates for
+an arbitrary axis $\vec{e}$, where $\vec{e}$ is a normalized vector in
+3-d space.
+\begin{eqnarray}
+\vec{e}\vec{\mat{S}}
+=\frac{\hbar}{2}\mat{\sigma}_{\vec{e}}
+=\frac{\hbar}{2}\sum_{i=1}^3 e_i\mat{\sigma}_i
+=\frac{\hbar}{2}
+\left(\begin{array}{cc}e_z &e_x-ie_y\\e_x+ie_y&-e_z\end{array}\right)
+\end{eqnarray}
 
+The eigenvalues are $\pm\frac{\hbar}{2}$ and the two-dimensional
+eigenvectors, denoted by $c^{\pm}$, obey
+\begin{eqnarray}
+\left(\begin{array}{cc}e_z\mp1 &e_x-ie_y\\e_x+ie_y&-e_z\mp1\end{array}\right)
+\left(\begin{array}{c}c^\pm_\uparrow\\c^\pm_\downarrow\end{array}\right)&=&0
+\nonumber\\
+\Rightarrow\qquad
+\left(\begin{array}{c}c^+_\uparrow\\c^+_\downarrow\end{array}\right)
+&=&\left(\begin{array}{c}e_z+1\\e_x+ie_y\end{array}\right)
+\frac{1}{\sqrt{2(1+e_z)}}
+\nonumber\\
+\left(\begin{array}{c}c^-_\uparrow\\c^-_\downarrow\end{array}\right)
+&=&\left(\begin{array}{c}e_x-ie_y\\ -(e_z+1)\end{array}\right)
+\frac{1}{\sqrt{2(1+e_z)}}
+\end{eqnarray}
+To avoid constructing zero vectors, I extracted the first eigenstate
+from the second line of the eigenvalue equation and the second
+eigenvector from the first line.
+
+The second eigenvector for the general direction deviates from the
+ones given for the $x,y,z$ direction by a phase factor.
 
 
 %====================================================================
