@@ -97,18 +97,20 @@ Here, $|\psi_n\rangle$ are one-particle wave functions. They play the
 role of \textbf{natural orbitals}\index{natural orbitals}, the
 eigenstates of the \textbf{one-particle density
   matrix}\index{one-particle density matrix}\index{density matrix}
-$\mat{\rho}$. $f_n$ are the occupations, the eigenvalues of the
-one-particle density matrix. The orthonormality of the natural
-orbitals is enforced with the method of Lagrange multipliers. The
-Lagrange multipliers are $\Lambda$. The chemical potential is $\mu$
-and $\beta=1/(k_BT)$. The full Hamiltonian consists of a
-non-interacting part $\hat{h}=\frac{\hat{p}^2}{2m_0}+\hat{v}_{ext}$
-and an electron-electron interaction $\hat{W}$. 
+$\mat{\rho}$. $f_n$ are the \textbf{occupations}\index{occupation},
+the eigenvalues of the one-particle density matrix. The orthonormality
+of the natural orbitals is enforced with the method of Lagrange
+multipliers. The Lagrange multipliers are $\Lambda$. The chemical
+potential is $\mu$ and $\beta=1/(k_BT)$. The full Hamiltonian consists
+of a non-interacting part
+$\hat{h}=\frac{\hat{p}^2}{2m_0}+\hat{v}_{ext}$ and an
+electron-electron interaction $\hat{W}$.
 
-With $\stat_x Y$, we denote the stationary condition, which requires
-that the partial derivatives of $Y$ with respect to the variable $x$ is
-obeyed. It explicitely does not require the stationary point to be an
-extremum.
+With $\stat_x Y$, we denote the \textbf{stationary
+  condition}\index{stationary condition}, which requires that the
+partial derivative of $Y$ with respect to the variable $x$
+vanishes. It explicitely does not require the stationary point to be
+an extremum.
 
 $\mat{G}(i\omega)$ is the Green's function and
 $\mat{\Sigma}(i\omega_\nu)$ is the self energy.  The Matsubara sum
@@ -141,12 +143,10 @@ related to the one-particle density matrix via (see Eq.~BPP24)
 In practice, we perform calculations at fixed particle
 number. Therefore, we calculate the \textbf{Helmholtz
   potential}\index{Helmholtz potential} by adding the term with the
-particle number\footnote{$N_{\beta,\mu}=\sum_n f_n$ is the particle
-  number of the equilibrium ensemble defined by a temperature and the
-  chemical potential.} $N_{\beta,\mu}$ to the grand potential.
+particle number $N$ to the grand potential.
 \begin{eqnarray}
 A_{\beta,N}[\hat{h}+\hat{W}]
-&=&\stat_\mu\Bigl\lbrace\Omega_{\beta,\mu}+\mu N_{\beta,\mu}\Bigr\rbrace
+&=&\stat_\mu\Bigl\lbrace\Omega_{\beta,\mu}+\mu N\Bigr\rbrace
 \nonumber\\
 &=&\min_{|\psi_n\rangle,f_n\in[0,1]}\stat_{\mu,\Lambda}
 \biggl\lbrace\sum_n f_n\langle\psi_n|\hat{h}|\psi_n\rangle
@@ -199,12 +199,16 @@ Q^{\hat{W}}_\beta[\mat{\rho}]
 \section{Separate out static correlations: Towards DFT+}
 %====================================================================
 In appendix~\ref{sec:sdlitcorrelation} it is shown that the
-correlation contribution $Q^{\hat{W}}_\beta$ can be divided into
-one part having a frequency-dependent self energy and several
-contributions having a frequency-independent self energy. The
-Luttinger-Ward functional with frequency-independent self energy can
-be expressed by the density matrix alone, that is, the Green's function
-enters always in the form of the integral
+correlation contribution $Q^{\hat{W}}_\beta$ can be divided into one
+part having a frequency-dependent \textbf{self
+  energy}\index{self-energy} and several contributions having a
+frequency-independent self energy. When we talk about a self energy in
+the context of the density-matrix functional theory, we refer to the
+construction of the density matrix functional from an optimization of
+Green's functions.\cite{bloechl13_prb88_25139} The Luttinger-Ward
+functional with frequency-independent self energy can be expressed by
+the density matrix alone, that is, the Green's function enters always
+in the form of the integral
 \begin{eqnarray}
 \frac{1}{\beta}\sum_\nu\mat{G}(i\omega_\nu)\e{i\hbar\omega\beta0^+}
 \end{eqnarray}
@@ -351,9 +355,6 @@ We distinguish two different corrections:
 
   This term is further elaborated in section~\ref{sec:dyncorelcorr}
 \end{enumerate}
-
-
-
 
 %====================================================================
 \section{Dynamic-correlation correction}
@@ -907,7 +908,7 @@ The density matrix constraint has the form
 \end{eqnarray}
 
 
-Thus we look fort a hamiltonian $\bar{h}$ whose non-interacting Greens
+Thus we look for a hamiltonian $\bar{h}$ whose non-interacting Greens
 function satisfies the constraint
 \begin{eqnarray}
 \mat{\rho}
@@ -949,12 +950,15 @@ Then we can represent $\mat{\bar{f}}$ by the Matsubara sum
 In practice we face here a severe \textbf{N-representability
   problem}\index{N-representability problem}, namely that the
 occupations $\bar{f}_a$ do not necessarily lie within zero and one.
-For values outside the interval $]0,1[$, the logarithm can no more be
+For values outside the interval $]0,1[$ the logarithm can no more be
     evaluated.\footnote{More accurately, the mapping $f\rightarrow
-      \bar{\epsilon}$ is no more unique.} Therefore we select a minim
-    and a maximum energy relative to the Fermi level, and force the
-    energies into this interval. This affects those states that lie
-    far from the Fermi level, and thus are weakly correlated.
+      \bar{\epsilon}$ is no more unique.} Therefore, we select a
+    minimum and a maximum energy relative to the Fermi level and force
+    the energies into this interval. Details of the implemented
+    mapping are described in section~\ref{sec:routinedmfthrho} on
+    page~\pageref{sec:routinedmfthrho}.  This mapping affects those
+    states that lie far from the Fermi level and thus are weakly
+    correlated. Therefore, I expect the resulting error to be small.
 
 \textbf{This is a well-defined mapping of the initial density matrix
   onto one that is strictly N-representable.} Thus all derivatives
@@ -2430,7 +2434,7 @@ $f'_n$ differ from the original natural orbitals.
   representation of the natural orbitals $|\psi'_n\rangle$.
 
   The conversion of occupations into energies is done in the routine
-  \verb|DMFT_EOFF|.
+  \verb|DMFT_EOFF|, described in section~\ref{sec:dmfteoff}.
   \begin{eqnarray}
   \epsilon=\mu+k_B
   \begin{cases}
@@ -2441,6 +2445,40 @@ $f'_n$ differ from the original natural orbitals.
   \end{eqnarray}
   where $a$ and $b$ are determined such that the mapping is
   differentiable. The value of $f_0$ is currently set to $10^{-6}$.
+
+  The energies obtained from \verb|DMFT_EOFF| are still spread over a
+  too large energy interval. Therefore, we limit the energies to the
+  interval $[\mu-zk_BT,\mu+zk_BT]$, where $z$ is a fixed
+  parameter. $z$ should be chosen so that the occupations calculated
+  with the Fermi distribution from $\bar{\mat{h}}$ are not affected
+  too much.
+
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+$z$ & $min(f); max(1-f)$ \\
+\hline
+$4.6$ & $10^{-2}$\\
+$6.9$ & $10^{-3}$\\
+$9.2$ & $10^{-4}$\\
+$11.5$ & $10^{-5}$\\
+$14.8$ & $10^{-6}$\\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.5\linewidth]{Figs/Grapher/Eoff/eoff.eps}
+\end{center}
+\caption{\label{fig:eoff}Inverted Fermi function (green full line) and
+  linear extensions (dashed) map occupations onto energies in
+  DMFT\_EOFF. Here the extensions are at $f_0=0.1$ and $f_0=0.9$.}
+\end{figure}
+
+
+  
+
 
 %
 \item next we transform this Hamiltonian back into the basis of local
@@ -2463,6 +2501,57 @@ $f'_n$ differ from the original natural orbitals.
        \mat{V}\mat{\epsilon}\mat{V}^\dagger
    \end{eqnarray}
 \end{enumerate}
+
+%====================================================================
+\subsubsection{DMFT\_EOFF}
+\label{sec:dmfteoff}
+%====================================================================
+The routine \verb|DMFT\_EOFF| constructs the energy relative to the
+Fermi level $x=\epsilon-\mu$ for a given occupation $f$. It modifies
+the Fermi distribution in order to avoid infinities near $f=0$ and
+$f=1$. Furthermore the modified mapping produces energies even for
+occupations outside the interval $[0,1]$. The modification is to
+extend the fermi functions linearly outside the interval
+$[f_{min},1-f_{min}]$, where $f_{min}$ is a fixed parameter.
+
+Let us first determine the inverted function of the Fermi distribution
+and calculate its energies.
+\begin{eqnarray}
+f(x)&=&\left(1+\e{\beta x}\right)^{-1}
+\quad\Rightarrow f+f\e{\beta x}=1
+\quad\Rightarrow \e{\beta x}=\frac{1-f}{f}
+\\
+\Rightarrow\quad
+x(f)&=&k_BT\ln\left(\frac{1-f}{f}\right)
+\\
+\Rightarrow\quad
+\frac{dx}{df}&=&k_BT\frac{f}{1-f}\left[\frac{-1}{f}-\frac{1-f}{f^2}\right]
+=k_BT\frac{f}{1-f}\left[\frac{-1}{f}-\frac{1-f}{f^2}\right]
+\nonumber\\
+&=&-k_BT\frac{1}{f(1-f)}
+\end{eqnarray}
+
+\begin{itemize}
+\item for $f\in[f_{min},1-f_{min}]$ we evaluate
+\begin{eqnarray}
+  x(f)&=&k_BT\ln\left(\frac{1-f}{f}\right)
+\end{eqnarray}
+%
+\item for $f$ outside the interval $f\in[f_{min},1-f_{min}]$, we choose
+\begin{eqnarray}
+f_0=\begin{cases}
+f_{min}&\text{for $f\le f_{min}$}\\
+1-f_{min}&\text{for $f\ge 1-f_{min}$}\\
+\end{cases}
+\end{eqnarray}
+and determine 
+\begin{eqnarray}
+x(f)=x(f_0)+\left.\frac{dx}{df}\right|_{f_0}(f-f_0)
+\end{eqnarray}
+\end{itemize}
+This construction produces a unique mapping from the occupations to
+the energies $\epsilon=\mu+x$, even for occupations outside $[0,1]$.
+
 
 %====================================================================
 \subsection{DMFT\_CONSTRAINTS}
@@ -5419,6 +5508,395 @@ i\hbar\omega_\nu\mat{1}
 \biggr]^{-1}_{\alpha,\beta}
 \;.
 \end{eqnarray}
+
+%==============================================================================
+\chapter{Conjugate-gradient method}
+%==============================================================================
+The conjugate-gradient method is used to determine the
+constraints. 
+
+
+%==============================================================================
+\subsection{Wirtinger Calculus}
+%==============================================================================
+Here, we re-derive it for a real function of a complex vector, because
+this is not usually written down explicitely.  We make use of the
+\textbf{Wirtinger calculus}\index{Wirtinger calculus} in that we
+express the variation of a real function $F$ of a complex argument $z=a+ib$
+in the form
+\begin{eqnarray}
+dF(a,b)&=&\frac{dF}{da}da+\frac{dF}{db}db
+\nonumber\\
+&=&\frac{1}{2}\Bigl(\frac{dF}{da}-i\frac{dF}{db}\Bigr)\Bigl(da+ib\Bigr)
++\frac{1}{2}\Bigl(\frac{dF}{da}+i\frac{dF}{db}\Bigr)\Bigl(da-ib\Bigr)
+\nonumber\\
+&=&\frac{dF}{dz}dz+ \frac{dF}{dz^*}dz^*=dF(z,z^*)
+\end{eqnarray}
+which defines the \textbf{Wirtinger derivatives}\index{Wirtinger derivatives}
+\begin{eqnarray}
+\frac{dF}{dz}&=&\frac{1}{2}\Bigl(\frac{dF}{da}-i\frac{dF}{db}\Bigr)
+\nonumber\\
+\frac{dF}{dz^*}&=&\frac{1}{2}\Bigl(\frac{dF}{da}+i\frac{dF}{db}\Bigr)
+\end{eqnarray}
+
+
+We define the force in the Wirtinger calculus as
+\begin{eqnarray}
+f=-\frac{dF}{dz}
+\end{eqnarray}
+so that
+\begin{eqnarray}
+dF=-f^*dz-dz^*f
+\end{eqnarray}
+
+
+%==============================================================================
+\subsection{Definition of the problem}
+%==============================================================================
+The goal is to determine the minimum of a real quadratic function
+$F(\vec{x})$ of a complex vector $\vec{x}$
+\begin{eqnarray}
+F(\vec{x})=\vec{x}^*\mat{A}\vec{x}-\vec{b}^*\vec{x}-\vec{x}^*\vec{b}
+\end{eqnarray}
+where $\mat{A}$ is a positive definite, hermitean matrix.
+
+The condition for a minimum is
+\begin{eqnarray}
+dF(\vec{x},\vec{x}^*)
+=d\vec{x}^*\Bigl(\mat{A}\vec{x}-\vec{b}\Bigr)
++\Bigl(\vec{x}^*\mat{A}-\vec{b}^*\Bigr)d\vec{x}\stackrel{!}{=}0
+\nonumber\\
+\Rightarrow\quad
+\mat{A}\vec{x}-\vec{b}=0\qquad\text{and}\qquad \vec{x}^*\mat{A}-\vec{b}^*=0
+\end{eqnarray}
+Because the function $F$ is real, the two equations obtained from the
+variation of $\vec{x}$ and $\vec{x}^*$ are not indepependent, but both
+equations are complex conjugate of each other.
+
+
+%==============================================================================
+\subsection{Minimization on a hyperplane}
+%==============================================================================
+Given is a $k$-dimensional hyperplane
+$\mathcal{D}_k=span\{\vec{d}_1,\ldots,\vec{d}_k\}$, which is spanned
+by a set of search directions $\vec{d}_i$. The search directions shall
+furthermore be conjugate to each other, i.e.
+\begin{eqnarray}
+\vec{d}_i^*\mat{A}\vec{d}_j=0\qquad\text{for $i\neq j$}
+\label{eq:cgconjugacy}
+\end{eqnarray}
+
+All points on the hyperplane can be expressed by
+\begin{eqnarray}
+\vec{x}(\alpha_1,\ldots,\vec{\alpha}_k)=\sum_{i=1}^k\vec{d}_i\alpha_i
+\label{eq:cgxofpalpha}
+\end{eqnarray}
+
+The function $F$ can be mapped onto the hyperplane, yielding $F_k$
+\begin{eqnarray}
+F_k(\vec{\alpha},\vec{\alpha}^*)
+=\sum_{i,j} \alpha_i^* \vec{d}^*_i\mat{A}\vec{d}_j\alpha_j
+-\sum_j \vec{b}^*\vec{d}_i\alpha_j
+-\sum_i \alpha_i^*\vec{d}^*_i\vec{b}
+\end{eqnarray}
+
+The minimum condition of $F_k$ on the hyperplane is
+\begin{eqnarray}
+dF_k
+&=&\sum_id\alpha_i^*\biggl(\sum_{j}\vec{d}^*_i\mat{A}\vec{d}_j\alpha_j
+-\vec{d}^*_i\vec{b}\biggr)
++\sum_{j} 
+\biggl(\sum_{i} \alpha_i^* \vec{d}^*_i\mat{A}\vec{d}_j
+-\vec{b}^*\vec{d}_j\biggr)d\alpha_j
+\nonumber\\
+&\eqrel{eq:cgconjugacy}{=}&
+\sum_id\alpha_i^*\biggl(\vec{d}^*_i\mat{A}\vec{d}_i\alpha_i
+-\vec{d}^*_i\vec{b}\biggr)
++\sum_{i} 
+\biggl( \alpha_i^* \vec{d}^*_i\mat{A}\vec{d}_i
+-\vec{b}^*\vec{d}_i\biggr)d\alpha_i
+\nonumber\\
+dF_k\stackrel{!}{=}0&\Rightarrow&
+\alpha_i=\frac{\vec{d}^*_i\vec{b}}{\vec{d}^*_i\mat{A}\vec{d}_i}
+\label{eq:cgalhaofab}
+\end{eqnarray}
+
+Thus, we obtain the minimum in the hyperplane as 
+\begin{eqnarray}
+\vec{x}_k&
+\stackrel{Eq.~\ref{eq:cgxofpalpha},\ref{eq:cgalhaofab}}{=}
+&\sum_{i=1}^k\vec{d}_i
+\frac{\vec{d}^*_i\vec{b}}{\vec{d}^*_i\mat{A}\vec{d}_i}
+\end{eqnarray}
+
+We can also determine the minima in hyperplanes with successivly  
+higher dimensions in the form
+\begin{eqnarray}
+\vec{x}_k&=&
+\vec{x}_{k-1}+\vec{d}_k\alpha_k
+=\vec{x}_{k-1}+\vec{d}_k
+\frac{\vec{d}^*_k\vec{b}}{\vec{d}^*_k\mat{A}\vec{d}_k}
+\end{eqnarray}
+
+In practice we do not wish to use $\vec{b}$ and $\mat{A}$, but only
+the values of $F$ and its derivatives at specific points. For this
+purpose, I exploit that the force
+$\vec{f}=-\vec{\nabla}_{\vec{x}^*}F$, also called the
+\textbf{residuum}\index{residuum}, is orthogonal to the previous
+search direction.
+\begin{eqnarray}
+\vec{f}_k=-\left.\vec{\nabla}_{\vec{x}^*}\right|_{\vec{x}_k,\vec{x}_k^*} F
+=\vec{b}-\mat{A}\vec{x}_k
+\label{eq:cgforceofab}
+\end{eqnarray}
+
+Because
+\begin{eqnarray}
+dF_k=
+-\sum_i d\alpha_i^* \vec{d}_i^* \vec{f}_k
+-\sum_i \vec{f}_k^* \vec{d}_id\alpha_i
+\end{eqnarray}
+any component of $\vec{f}_k$ on $\vec{d}_i^*$, i.e. any finite value
+of $\vec{d}^*_i\vec{f}_k$, would allow one to lower the value of $F_k$
+by changing $\alpha_k$. This, however, would contradict the assumption
+that $\vec{x}_k$ is the minimum of $\vec{F}_k$.
+
+Therefore, we conclude that the force is orthogonal to all ``previous''
+search directions
+\begin{eqnarray}
+\vec{d}_i^*\vec{f}_k=\vec{f}_k^*\vec{d}_i=0\quad\text{for $i\le k$}
+\label{eq:cgorthogonalityforceandsearch}
+\end{eqnarray}
+
+In particular, we can determine $\vec{x}_k$ and $\alpha_k$ from 
+\begin{eqnarray}
+\vec{x}_k&=&\vec{x}_{k-1}+\vec{d}_k\alpha_k
+\label{eq:cgxkwithalphaka}
+\\
+\vec{f}_k^*\vec{d}_k&=&0\leadsto\alpha_k
+\label{eq:cgxkwithalphakb}
+\end{eqnarray}
+
+%==============================================================================
+\subsection{Determine next search direction}
+%==============================================================================
+The next search direction shall include the last force.  Furthermore,
+it must obey the conjugacy condition to all previous search
+directions. This can be accomplished by mixing in the previous search
+directions
+\begin{eqnarray}
+\vec{d}_{k+1}=\vec{f}_k+\sum_{j=1}^{k}\vec{d}_j\beta_j
+\label{eq:cgnewsearch0}
+\end{eqnarray}
+where the coefficients $\beta_j$ are determined so that
+\begin{eqnarray}
+\vec{d}^*_i\mat{A}\vec{d}_{k+1}=0\quad\text{for $i\le k$}
+\end{eqnarray}
+
+\begin{eqnarray}
+\vec{d}^*_i\mat{A}\vec{d}_{k+1}&\eqrel{eq:cgnewsearch0}{=}&
+\vec{d}^*_i\mat{A}\vec{f}_k
++\sum_{j=1}^{k}\vec{d}^*_i\mat{A}\vec{d}_j\beta_j 
+\eqrel{eq:cgconjugacy}{=}
+\vec{d}^*_i\mat{A}\vec{f}_k
++\vec{d}^*_i\mat{A}\vec{d}_i\beta_i\stackrel{!}{=}0
+\nonumber\\
+\Rightarrow\qquad
+\beta_i&=&-\frac{\vec{d}^*_i\mat{A}\vec{f}_k}{\vec{d}^*_i\mat{A}\vec{d}_i}
+\label{eq:cgbetaofab}
+\end{eqnarray}
+
+\begin{eqnarray}
+\vec{d}_{k+1}
+\stackrel{Eq.~\ref{eq:cgnewsearch0},\ref{eq:cgbetaofab}}{=}
+\vec{f}_k-\sum_{j=1}^{k}\vec{d}_j
+\frac{\vec{d}^*_j\mat{A}\vec{f}_k}{\vec{d}^*_j\mat{A}\vec{d}_j}
+\label{eq:cgnewsearch1}
+\end{eqnarray}
+
+It is our goal to express the new search direction without direct
+reference to the matrix $\mat{A}$. Therefore, we represent
+$\vec{d}^*_j\mat{A}$ by two subsequent forces.
+\begin{eqnarray}
+\vec{f}_j-\vec{f}_{j-1}&\eqrel{eq:cgforceofab}{=}&
+\vec{b}-\mat{A}\vec{x}_j-\vec{b}+\mat{A}\vec{x}_{j-1}
+=-\mat{A}(\vec{x}_j-\vec{x}_{j-1})
+\eqrel{eq:cgxkwithalphaka}{=}
+-\mat{A}\vec{d}_j\alpha_j
+\end{eqnarray}
+
+
+\begin{eqnarray}
+\vec{d}_{k+1}\eqrel{eq:cgnewsearch1}{=}\vec{f}_k
+-\sum_{j=1}^{k}\vec{d}_j
+\frac{\Bigl(\vec{f}_j^*-\vec{f}_{j-1}^*\Bigr)\vec{f}_k}
+{\Bigl(\vec{f}_j^*-\vec{f}_{j-1}^*\Bigr)\vec{d}_j}
+\label{eq:cgnewsearch2}
+\end{eqnarray}
+
+Next, I show that the forces $\vec{f}_k$ are orthogonal to each other,
+i.e. $\vec{f}_i^*\vec{f}_j=0$, which will simplify
+\eq{eq:cgnewsearch2} by limiting the sum to the last term.
+
+Because the search directions are built up, via
+\eq{eq:cgnewsearch0}, from the forces, the forces and search
+directions span the same hyperplane.
+\begin{eqnarray}
+\text{span}\{\vec{d}_1,\ldots,\vec{d}_k\}=
+\text{span}\{\vec{f}_0,\ldots,\vec{f}_{k-1}\}
+\end{eqnarray}
+Because $\vec{f}_k$ is orthogonal to the search directions
+$\vec{d}_1,\ldots,\vec{d}_k$, it is also orthogonal to the forces
+$\vec{f}_0,\ldots,\vec{f}_{k-1}$. Hence, the forces are orthogonal to
+each other.
+\begin{eqnarray}
+\vec{f}_i^*\vec{f}_j=0\quad\text{for $i\neq j$}
+\label{eq:cgorthogonalityforces}
+\end{eqnarray}
+
+With the orthogonality conditions \eq{eq:cgorthogonalityforces}, we
+can limit the expression for the new search direction to the last term
+\begin{eqnarray}
+\vec{d}_{k+1}\eqrel{eq:cgnewsearch2}{=}\vec{f}_k
+-\vec{d}_k
+\frac{\Bigl(\vec{f}_k^*-\vec{f}_{k-1}^*\Bigr)\vec{f}_k}
+{\Bigl(\vec{f}_k^*-\vec{f}_{k-1}^*\Bigr)\vec{d}_k}
+\label{eq:cgnewsearchHS}
+\end{eqnarray}
+This is the final expression of
+\textbf{Heestenes and Stiefel}\index{Heestenes-Stiefel}.
+
+Using the orthogonality conditions we can also determine variants of
+the above equation.  We can go a step further and use
+\begin{eqnarray}
+\vec{d}_k\eqrel{eq:cgnewsearchHS}{=}\vec{f}_{k-1}+\vec{d}_{k-1}\beta
+\label{eq:cgnewsearch3a}
+\end{eqnarray}
+to transform
+\begin{eqnarray}
+\Bigl(\vec{f}_k^*-\vec{f}_{k-1}^*\Bigr)\vec{d}_k
+\stackrel{\vec{f}_k^*\vec{d}_k=0}{=}
+-\vec{f}_{k-1}^*\vec{d}_k
+\eqrel{eq:cgnewsearch3a}{=}
+-\vec{f}_{k-1}^*\Bigl(\vec{f}_{k-1}+\vec{d}_{k-1}\beta\Bigr)
+\stackrel{\vec{f}_{k-1}^*\vec{d}_{k-1}=0}{=}
+-\vec{f}_{k-1}^*\vec{f}_{k-1}
+\label{eq:cgfromfdtoff}
+\end{eqnarray}
+
+With this expression we arrive at the formula of \textbf{Polak and Ribiere}
+\index{Polak-Ribiere}.
+\begin{eqnarray}
+\vec{d}_{k+1}
+\stackrel{Eqs.~\ref{eq:cgnewsearchHS},\ref{eq:cgfromfdtoff}}{=}
+\vec{f}_k
++\vec{d}_k
+\frac{\Bigl(\vec{f}_k^*-\vec{f}_{k-1}^*\Bigr)\vec{f}_k}
+{\vec{f}_{k-1}^*\vec{f}_{k-1}}
+\label{eq:cgnewsearchPR}
+\end{eqnarray}
+The sequence of Polak and Ribiere shall be restarted, when the 
+$\Bigl(\vec{f}_k^*-\vec{f}_{k-1}^*\Bigr)\vec{f}_k<0$
+
+Using the orthogonality of the forces again, we arrive at the expression of
+\textbf{Fletcher and Reeves}\index{Fletcher-Reeves}.
+\begin{eqnarray}
+\vec{d}_{k+1}\eqrel{eq:cgnewsearchPR}{=}\vec{f}_k
++\vec{d}_k
+\frac{\vec{f}_k^*\vec{f}_k}
+{\vec{f}_{k-1}^*\vec{f}_{k-1}}
+\label{eq:cgnewsearchFR}
+\end{eqnarray}
+
+All three expressions are equivalent, if the problem is purely
+parabolic. If the problem is nonlinear they provide different
+convergence.
+
+\textbf{Most importantly, the sequence must be restarted, whenever the
+  denominator vanishes! The sequence can be restarted by removing the
+  admixture of the previous search direction, i.e. by setting
+  $\beta=0$.}
+
+
+%==============================================================================
+\subsection{Nonlinear Conjugate Gradient Method}
+%==============================================================================
+The nonlinear conjugate gradient method is the same method, just
+applied to a general real function $F(\vec{x})$ instead of a quadratic
+function.
+For a general function, the orthogonality of the forces is no more
+strictly valid. 
+
+The equation of Heestenes-Stiefel and the one of Pollak Ribiere are
+strictly identical, because they only require the orthogonality
+$\vec{f}_j^*\vec{d}_j$ between search directions and forces in the
+same iteration. This is imposed also in the general case.
+
+The equation of Fletcher and Reeves differs from the ones of
+Heestenes-Stiefel and Polak-Ribiere, because they assume also that
+$\vec{f}_{k-1}\vec{f}_k$, which is not obeyed in the nonlinear case.
+
+
+
+
+%==============================================================================
+\subsection{Recipe}
+%==============================================================================
+\begin{myshadowminipage}{Conjugate gradient scheme}
+\begin{enumerate}
+\item Start-up: The conjugate gradient iteration is started from an
+  arbitrary point, $\vec{x}_0$. At this point the force $\vec{f}_0$ is
+  evaluated. The force also defines the first search direction
+\begin{eqnarray}
+\vec{d}_1=\vec{f}_0
+\end{eqnarray}
+%
+\item Line search for next point $\vec{x}_k$.
+\begin{eqnarray}
+\vec{x}_k&=&\vec{x}_{k-1}+\vec{d}_k\alpha_k
+\label{eq:cgfinalxkwithalphaka}
+\\
+\vec{f}_k^*\vec{d}_k&=&0\leadsto\alpha_k
+\label{eq:cgfinalxkwithalphakb}
+\end{eqnarray}
+%
+\item determine new search direction $\vec{d}_{k+1}$
+\begin{eqnarray}
+\vec{d}_{k+1}\eqrel{eq:cgnewsearch1}{=}\vec{f}_k+\vec{d}_k\beta_k
+\end{eqnarray}
+with one of the expressions
+\begin{itemize}
+\item Fletcher-Reeves
+\begin{eqnarray}
+\beta_k\eqrel{eq:cgnewsearchFR}{=}
++\frac{\vec{f}_k^*\vec{f}_k}
+{\vec{f}_{k-1}^*\vec{f}_{k-1}}
+\label{eq:cgfinalnewsearchFR}
+\end{eqnarray}
+\item Polak-Ribiere
+\begin{eqnarray}
+\beta_k\eqrel{eq:cgnewsearchPR}{=}
+\max\left(0,
++\frac{\Bigl(\vec{f}_k^*-\vec{f}_{k-1}^*\Bigr)\vec{f}_k}
+{\vec{f}_{k-1}^*\vec{f}_{k-1}}\right)
+\label{eq:cgfinalnewsearchPR}
+\end{eqnarray}
+The condition that $\beta>0$ has been mentioned by
+Shewchuk\cite{shewchuk94_url}.
+
+
+\item Heestenes-Stiefel
+\begin{eqnarray}
+\beta_k\eqrel{eq:cgnewsearchHS}{=}
+-\frac{\Bigl(\vec{f}_k^*-\vec{f}_{k-1}^*\Bigr)\vec{f}_k}
+{\Bigl(\vec{f}_k^*-\vec{f}_{k-1}^*\Bigr)\vec{d}_k}
+\label{eq:cgfinalnewsearchHS}
+\end{eqnarray}
+\end{itemize}
+Restart the CG iteration (set $\beta_k=0$) if the denominator
+vanishes, or if $\beta_k>0$.
+\end{enumerate}
+\end{myshadowminipage}
 
 
 \printindex
