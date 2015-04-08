@@ -386,7 +386,8 @@ Q^{\hat{W}_2}_{dyn,\beta}[\mat{\rho}]
 \Bigl(\mat{h}'_{dyn}+\mat{\Sigma}_{dyn}(i\omega_\nu)-\bar{\mat{h}}\Bigr)
 \Bigr]
 \nonumber\\&&
-+(\mat{h}'_{dyn}+\mat{\Sigma}_{dyn}(i\omega_\nu)-\bar{\mat{h}})\mat{G}(i\omega_\nu)
++(\mat{h}'_{dyn}+\mat{\Sigma}_{dyn}(i\omega_\nu)
+-\bar{\mat{h}})\mat{G}(i\omega_\nu)
 -
 \Bigl[
 \mat{G}(i\omega_\nu)
@@ -631,9 +632,10 @@ from $\partial\mathcal{Q}_{\beta}^{dyn,\hat{W}_2}/\partial\mat{\Gamma}$
 \end{eqnarray}
 \end{itemize}
 If the stationary conditions with respect to Green's function, self
-energy and $\mat{\Gamma}$ are obeyed, the derivative with respect to the
-density matrix is simply the matrix $\mat{\Gamma}$.
-\begin{myshadowminipage}{Density-matrix derivative of the dynamic correlation correction}
+energy and $\mat{\Gamma}$ are obeyed, the derivative with respect to
+the density matrix is simply the matrix $\mat{\Gamma}$.
+\begin{myshadowminipage}{Density-matrix derivative of the 
+dynamic correlation correction}
 \begin{eqnarray}
 \frac{\delta\mat{Q}^{dyn,\hat{W}_2}_\beta[\mat{\rho}]}{\delta\mat{\rho}}
 &=&\mat{\Gamma}
@@ -2697,6 +2699,283 @@ _{-\beta/4}
   there be convergence problems, it may be improved by using the
   static Green's function $\mat{G}_\rho$ instead.}
 
+%====================================================================
+\subsubsection{Minimize constraint violation with the conjugate gradient method}
+%====================================================================
+Enforcing the density matrix constraint has turned out to be very
+difficult. Therefore I switched to minimizing the constraint violation
+rather than enforcing it. 
+
+A measure for the constraint violation is
+\begin{eqnarray}
+Y=\Tr\left[(\mat{\rho}-\mat{\bar{\rho}})
+\mat{S}(\mat{\rho}-\mat{\bar{\rho}})\mat{S}\right]
+\label{eq:paw_constraints_violation}
+\end{eqnarray}
+
+The presence of the overlap matrix is motivated as follows:
+Consider orthonormal local orbitals $|\phi_n\rangle$
+\begin{eqnarray}
+|\phi_n\rangle=\sum_\alpha|\chi_\alpha\rangle A_{\alpha,n}
+\end{eqnarray}
+with $\langle\phi_m|\phi_n\rangle=\delta_{m,n}$.
+
+The overlap is
+\begin{eqnarray}
+\langle\phi_m|\phi_n\rangle&=&\delta_{m,n}
+=A^\dagger_{m,\alpha}\langle\chi_\alpha|\chi_\beta\rangle A_{\beta,n}
+=A^\dagger_{m,\alpha}S_{\alpha,\beta} A_{\beta,n}
+\nonumber\\
+\Rightarrow\qquad
+\mat{1}&=&\mat{A}^\dagger\mat{S}\mat{A}
+\qquad\Rightarrow\qquad
+\mat{A}^{\dagger,-1}\mat{A}^{-1}=\mat{S}
+\end{eqnarray}
+
+Now we define the constraint violation in terms of these orthonormal
+orbitals
+\begin{eqnarray}
+\hat{\rho}
+&=&\sum_{m,n}|\phi_m\rangle\rho^{(\phi)}_{m,n}\langle\phi_n|
+=\sum_{m,n}|\chi_\alpha\rangle A_{\alpha,m}\rho^{(\phi)}_{m,n} A^\dagger_{n,\beta}\langle\chi_\beta|
+=\sum_{m,n}|\chi_\alpha\rangle \rho^{(\chi)}_{\alpha,\beta} \langle\chi_\beta|
+\nonumber\\
+\Rightarrow
+\rho^{(\chi)}_{\alpha,\beta}&=&A_{\alpha,m}\rho^{(\phi)}_{m,n} A^\dagger_{n,\beta}
+\nonumber\\
+Y&=&\sum_{m,n}|\Delta\rho_{m,n}|^2
+=\Tr\left[\Delta\mat{\rho}^{(\phi)}\Delta\mat{\rho}^{(\phi)}\right]
+=\Tr\left[\mat{A}^{-1}\Delta\mat{\rho}^{(\chi)}\mat{A}^{\dagger,-1}\mat{A}^{-1}
+\Delta\mat{\rho}^{(\chi)}\mat{A}^{\dagger,-1}\right]
+\nonumber\\
+&=&\Tr\left[\Delta\mat{\rho}^{(\chi)}\mat{A}^{\dagger,-1}\mat{A}^{-1}
+\Delta\mat{\rho}^{(\chi)}\mat{A}^{\dagger,-1}\mat{A}^{-1}\right]
+\nonumber\\
+&=&\Tr\left[\Delta\mat{\rho}^{(\chi)}\mat{S}\Delta\mat{\rho}^{(\chi)}\mat{S}\right]
+\end{eqnarray}
+This explains the origin of \eq{eq:paw_constraints_violation}.
+
+The deviation density matrix in $|\chi\rangle$ representation from the target is
+\begin{eqnarray}
+\mat{\rho}-\mat{\bar{\rho}}
+&=&k_BT\sum_\nu
+\left(
+\biggl[(i\hbar\omega_\nu+\mu)\mat{S}-\mat{\bar{h}}-\mat{\Sigma}+\mat{\Gamma}\biggr]^{-1}
+-
+\biggl[(i\hbar\omega_\nu+\mu)\mat{S}-\mat{\bar{h}}\biggr]^{-1}
+\right)
+\end{eqnarray}
+
+Its variation with respect to $\Gamma$ is
+\begin{eqnarray}
+d(\mat{\rho}-\mat{\bar{\rho}})=d\mat{\rho}
+&=&-k_BT\sum_\nu\mat{G}(i\omega_\nu)d\Gamma\mat{G}(i\omega_\nu)
+\end{eqnarray}
+Therefore the variation of the constraint violation is\footnote{I use 
+$d\mat{A}^{-1}=-\mat{A}^{-1}d\mat{A}\mat{A}^{-1}$}
+\begin{eqnarray}
+dY&=&
+2\Tr\left[\left(\mat{\rho}-\mat{\bar{\rho}}\right)\mat{S}
+d\mat{\rho}\mat{S}\right]
+\nonumber\\
+&=&-2k_BT\sum_\nu
+\Tr\left[\left(\mat{\rho}-\mat{\bar{\rho}}\right)\mat{S}
+\mat{G}(i\omega_\nu)d\Gamma\mat{G}(i\omega_\nu)\mat{S}\right]
+\nonumber\\
+&=&
+\Tr\biggl[
+\left(-2k_BT\sum_\nu
+\mat{G}(i\omega_\nu)\mat{S}\left(\mat{\rho}-\mat{\bar{\rho}}\right)\mat{S}
+\mat{G}(i\omega_\nu)\right)d\Gamma\biggr]
+\end{eqnarray}
+
+
+\textbf{Higher derivatives along a search direction}
+
+Using a local minimization, I encountered local minima of the
+$Y(\Gamma)$, which have a finite value. This implies that the
+constraints are not obeyed. There are indications that, in this case,
+we are trapped in the incorrect minimum.
+
+In order to escape from such a local minimum, I try to set up a
+polynomial expansion into a search direction, in order to identify
+another minimum.
+
+\begin{eqnarray}
+\Delta\mat{\rho}&=&\frac{1}{\beta}\sum_\nu \left(
+\mat{G}(i\hbar\omega)
+-\mat{\bar{G}}(i\hbar\omega)\right)
+\nonumber\\
+d\mat{\rho}&=&d\Delta\mat{\rho}=-\frac{1}{\beta}\sum_\nu 
+\mat{G}(i\hbar\omega)d\mat{\Gamma}\mat{G}(i\hbar\omega)
+\nonumber\\
+d^2\mat{\rho}&=&-2\frac{1}{\beta}\sum_\nu 
+\mat{G}(i\hbar\omega)d\mat{\Gamma}\mat{G}(i\hbar\omega)
+d\mat{\Gamma}\mat{G}(i\hbar\omega)
+\nonumber\\
+d^3\mat{\rho}&=&-6\frac{1}{\beta}\sum_\nu 
+\mat{G}(i\hbar\omega)d\mat{\Gamma}\mat{G}(i\hbar\omega)
+d\mat{\Gamma}\mat{G}(i\hbar\omega)d\mat{\Gamma}\mat{G}(i\hbar\omega)
+\nonumber\\
+d^n\mat{\rho}&=&(-1)^nn!\frac{1}{\beta}\sum_\nu 
+\Bigl(\mat{G}(i\hbar\omega)d\mat{\Gamma}\Bigr)^n\mat{G}(i\hbar\omega)
+\end{eqnarray}
+
+\begin{eqnarray}
+Y&=&\Tr\Bigl[\Delta\mat{\rho}\mat{S}\Delta\mat{\rho}\mat{S}\Bigr]
+\nonumber\\
+dY&=&2\Tr\Bigl[\mat{S}\Delta\mat{\rho}\mat{S}d\mat{\rho}\Bigr]
+\nonumber\\
+d^2Y&=&
+2\Tr\Bigl[\mat{S}\Delta\mat{\rho}\mat{S}d^2\mat{\rho}\Bigr]
++2\Tr\Bigl[\mat{S}d\mat{\rho}\mat{S}d\mat{\rho}\Bigr]
+\nonumber\\
+d^3Y&=&
+\Bigl(2\Tr\Bigl[\mat{S}\Delta\mat{\rho}\mat{S}d^3\mat{\rho}\Bigr]
++2\Tr\Bigl[\mat{S}d\mat{\rho}\mat{S}d^2\mat{\rho}\Bigr]\Bigr)
++\Bigl(2\Tr\Bigl[\mat{S}d\mat{\rho}\mat{S}d^2\mat{\rho}\Bigr]
++2\Tr\Bigl[\mat{S}d^2\mat{\rho}\mat{S}d\mat{\rho}\Bigr]\Bigr)
+\nonumber\\
+&=&
+\Bigl(2\Tr\Bigl[\mat{S}\Delta\mat{\rho}\mat{S}d^3\mat{\rho}\Bigr]
++2\Tr\Bigl[\mat{S}d\mat{\rho}\mat{S}d^2\mat{\rho}\Bigr]\Bigr)
++\Bigl(2\Tr\Bigl[\mat{S}d\mat{\rho}\mat{S}d^2\mat{\rho}]
++2\Tr\Bigl[\mat{S}d^2\mat{\rho}\mat{S}d\mat{\rho}\Bigr]\Bigr)
+\end{eqnarray}
+
+There is a system that can be used. There are always two terms in each
+summand, that can be derived. If the first term is the $m$-th
+derivative and the second term is the $n$-th derivative, I denote it
+as $(m,n)$. The higher derivatives and their prefactors are build up
+similar to the binomial formula. In contrast to the binomial formula,
+however, the order of the derivatives is irrelevant, because the term
+$(m,n)$ is identical to $(n,m)$, because the trace allows cyclic
+permutations.
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+(0,0) & (0,0)\\
+(1,0)+(0,1) & 2(0,1)\\
+(2,0)+2(1,1)+(0,2) &2(0,2)+2(1,1)\\
+(3,0)+3(2,1)+3(1,2)+(0,3) &2(0,3)+6(1,2)\\
+\hline
+\end{tabular}
+\end{center}
+
+With $d^0\mat{\rho}:=\Delta\mat{\rho}$ and
+the binomial coefficient $\binom{n}{j}=n!/[j!(n-j)!]$, we obtain
+\begin{eqnarray}
+d^nY
+&=&\sum_{j=0}^n \binom{n}{j} 
+\Tr\Bigl[\mat{S}d^{n-j}\mat{\rho}\mat{S}d^j\mat{\rho}\Bigr]
+\nonumber\\
+&=&\sum_{j=0}^{n/2} \left[\binom{n}{j} +\binom{n}{n-j}\right] 
+\Tr\Bigl[\mat{S}d^{n-j}\mat{\rho}\mat{S}d^j\mat{\rho}\Bigr]
+\nonumber\\
+&=&\sum_{j=0}^{n/2} 2\binom{n}{j}
+\Tr\Bigl[\mat{S}d^{n-j}\mat{\rho}\mat{S}d^j\mat{\rho}\Bigr]
+\end{eqnarray}
+
+Let me combine this with the expression for the derivatives of
+$\Delta\mat{\rho}$
+\begin{eqnarray}
+\frac{1}{n!}d^nY
+&=&\sum_{j=0}^{n/2} \frac{2}{j!(n-j)!}
+\Tr\Bigl[\mat{S}d^{n-j}\mat{\rho}\mat{S}d^j\mat{\rho}\Bigr]
+\nonumber\\
+&=&\sum_{j=0}^{n/2} \frac{2}{j!(n-j)!}
+\Tr\Bigl[\mat{S}
+\biggl\lbrace
+(-1)^{n-j}(n-j)!\frac{1}{\beta}\sum_\nu 
+\Bigl(\mat{G}(i\hbar\omega_\nu)d\mat{\Gamma}\Bigr)^{n-j}\mat{G}(i\hbar\omega_\nu)
+\biggr\rbrace
+\nonumber\\
+&&\times\mat{S}
+\biggl\lbrace
+(-1)^j j!\frac{1}{\beta}\sum_{\nu'} 
+\Bigl(\mat{G}(i\hbar\omega_{\nu'})d\mat{\Gamma}\Bigr)^j\mat{G}(i\hbar\omega_{\nu'})
+\biggr\rbrace
+\Bigr]
+\nonumber\\
+&=&2(-1)^n\sum_{j=0}^{n/2} 
+\Tr\Bigl[
+\biggl\lbrace
+\frac{1}{\beta}\sum_\nu 
+\Bigl(\mat{G}(i\hbar\omega_\nu)d\mat{\Gamma}\Bigr)^{n-j}
+\mat{G}(i\hbar\omega_\nu)\mat{S}
+\biggr\rbrace
+\nonumber\\
+&&\times
+\biggl\lbrace
+\frac{1}{\beta}\sum_{\nu'} 
+\Bigl(\mat{G}(i\hbar\omega_{\nu'})d\mat{\Gamma}\Bigr)^j
+\mat{G}(i\hbar\omega_{\nu'})\mat{S}
+\biggr\rbrace
+\Bigr]
+\nonumber\\
+\end{eqnarray}
+
+
+There are two possible strategies. If it is possible to keep $n_x$
+density matrices in memory the best strategy is the first. If memory
+is limited the second strategy is more efficient, but computationally
+more expensive.
+\begin{itemize}
+\item Strategy 1.  We evaluate the Taylor expansion coefficients of
+  $\Delta\rho$ to order $n_x$
+\begin{eqnarray}
+\mat{A}_0&\defas&\Delta\mat{\rho}\mat{S}
+\nonumber\\
+\mat{A}_n&\defas&\frac{1}{n!}d^n\mat{\rho}\mat{S}
+=
+\biggl((-1)^n\frac{1}{\beta}\sum_\nu 
+\Bigl(\mat{G}(i\hbar\omega)d\mat{\Gamma}\Bigr)^n\mat{G}(i\hbar\omega)\biggr)
+\mat{S}
+\end{eqnarray}
+With these coefficients we obtain
+\begin{eqnarray}
+\Delta\mat{\rho}(\mat{\Gamma}+d\mat{\Gamma}s)\mat{S}
+&=&\sum_{j=0}^{n_x}\mat{A}_js^j
+\end{eqnarray}
+
+Then we evaluate the Taylor expansion coeffcients of $Y$
+\begin{eqnarray}
+\frac{1}{n!}d^nY&=&\sum_{j=0}^{n_x}
+\Tr\biggl[\mat{A}_j\mat{A}_{n-j}\biggr]
+\end{eqnarray}
+from which we obtain
+\begin{eqnarray}
+Y(\mat{\Gamma}+d\mat{\Gamma}s)\mat{S}
+&=&\biggl(\sum_{n=0}^{n_x}\frac{1}{n!}d^nY\biggr) s^n
+\end{eqnarray}
+
+%
+\item Strategy 2 is probably to evaluate
+\begin{eqnarray}
+\Delta\mat{\rho}(\mat{\Gamma}+d\mat{\Gamma})
+&=&\sum_n^{n_x}\frac{1}{n!}d^n\mat{\rho}
+\nonumber\\
+&=&
+\sum_n^{n_x}(-1)^n\frac{1}{\beta}\sum_\nu 
+\Bigl(\mat{G}(i\hbar\omega)d\mat{\Gamma}\Bigr)^n\mat{G}(i\hbar\omega)
+\nonumber\\
+&=&
+\frac{1}{\beta}\sum_\nu \biggl[\sum_n^{n_x}(-1)^n
+\Bigl(\mat{G}(i\hbar\omega)d\mat{\Gamma}\Bigr)^n\biggr]
+\mat{G}(i\hbar\omega)
+\end{eqnarray}
+for a set of $n_x$ discrete values of $d\Gamma$. Then we form
+\begin{eqnarray}
+Y(\mat{\Gamma}+d\mat{\Gamma})
+=\Tr\biggl[\biggl(\Delta\mat{\rho}(\mat{\Gamma}
++d\mat{\Gamma})\mat{S}\biggr)^2\biggr]
+\end{eqnarray}
+which are the values of the Taylor expansion of $Y$ up to order
+$n_x$.  Thus the polynomial coefficients of $Y$ can be calculated
+from a polynomial interpolation up to order $n_x$ through the $n_x$
+points.
+\end{itemize}
+
 
 
 
@@ -2888,6 +3167,56 @@ is repeated.
 %====================================================================
 %\section{Helper routines}
 %====================================================================
+%====================================================================
+\chapter{Test calculations}
+%====================================================================
+%====================================================================
+\section{Hubbard model}
+%====================================================================
+
+\textbf{The data are preliminary! The prefactor of the Luttinger Ward
+  functional seems to be off by a factor 2. The k-point set is only
+  $4\times4\times4$.}
+
+
+I am doing calculations for a simple cubic hydrogen crystal with a
+lattice constant of 2.5~\AA. This separates the lowest s-band from the
+2s2p-band.
+
+The DFT result has a band ranging from -8.549~eV to -1.279~eV, which
+corresponds to a band width -f 7.27~eV.  The bare U-tensor is 30.7~eV,
+which would correspond to $U/d\approx 4.2$. $\alpha$ ist der faktor,
+mit dem der U-tensor skaliert wird.
+\begin{tabular}{|l|c|c|c|c|c|c|}
+\hline
+$\alpha$ & 0.0 & 0.1 & 0.2 & 0.3 & 0.4 & 0.5 \\
+U[eV] & 0 & 3. & 6.1 & 9.2 & 12.3 &  15.35\\
+U/d & 0.0 & 0.4 & 0.8 & 1.3 & 1.7 & 2.1\\
+\hline
+$E_{tot}[H]$ & -0.4999703 &-0.4963927 &  -0.49280 &  -0.4893019 & -0.4858875 &-0.4825509\\
+\hline
+\end{tabular}
+
+%% 0.0 -0.4999703
+%% 0.1 -0.4963927 
+%% 0.2 -0.49280
+%% 0.3 -0.4893019
+%% 0.4 -0.4858875
+%% 0.5 -0.4825509
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=0.3\linewidth]{Figs/hubimg.eps} % PreliminarY
+\end{center}
+\caption{\label{fig:hubimg} Imaginary part of the 3-d Hubbard model
+  for different value of U at 300~K.  U increases from Bottom to
+  top. The value of $\Im[G]$ at the origin is the density of states at
+  the Fermi level. It is clearly visible that the teh system goes from
+  a metal to an insulator with increasing $U$.}
+\end{figure}
+
+
+
 
 \appendix
 %====================================================================
@@ -2907,7 +3236,7 @@ The \textbf{Matsubara frequencies}\index{Matsubara
 A \textbf{Matsubara sum}\index{Matsubara sum}
  has the general form
 \begin{eqnarray*}
-\frac{1}{\beta}\sum_{\nu\in z} g(i\omega_\nu)
+\frac{1}{\beta}\sum_{\nu=-\infty}^\infty\e{i\hbar\omega_\nu\beta0^+} g(i\omega_\nu)
 \end{eqnarray*}
 where $g(i\omega_\nu)$ is a analytic function.
 
@@ -2961,7 +3290,7 @@ n&=&2\nu+1
 Thus we obtain that the poles of the Matsubara weighting function lie
 at the Matsubara frequencies.
 \begin{eqnarray}
-z_\nu=i(2\nu+1)\frac{\pi}{\hbar\beta}=i\omega_\nu
+z_\nu=i\frac{(2\nu+1)\pi}{\hbar\beta}=i\omega_\nu
 \end{eqnarray}
 
 Next we need to show that the weighting function at the poles behaves
@@ -3022,18 +3351,34 @@ these expressions the Matsubara frequencies are\footnote{They differ
 \omega_\nu=(2\nu+1)\pi/(\hbar\beta)
 \end{eqnarray}
 
-
+We start out from the expression for the logarithm with a single pole
+at $\epsilon$. The other Matsubara sums are constructed by forming the
+derivatives with respect to $\epsilon$.
 \begin{eqnarray}
--k_BT\sum_\nu\ln[-i\hbar\omega_\nu+\epsilon]\e{i\omega_\nu0^+}
-&=&-k_BT\ln[1+e^{-\beta \epsilon}]
+-\frac{1}{\beta}\sum_\nu\ln[-i\hbar\omega_\nu+\epsilon]\e{i\hbar\omega_\nu\beta0^+}
+&=&-\frac{1}{\beta}\ln[1+e^{-\beta \epsilon}]
 \\
-k_BT\sum_\nu \frac{1}{(i\hbar\omega_\nu-\epsilon)}\e{i\omega_\nu 0^+}
+\frac{1}{\beta}\sum_\nu \frac{1}{(i\hbar\omega_\nu-\epsilon)}\e{i\hbar\omega_\nu\beta0^+}
 &=&(1+\e{\beta \epsilon})^{-1}
 \\
-k_BT\sum_\nu \frac{1}{(i\hbar\omega_\nu-\epsilon)^n}
-&=&\frac{1}{(k_BT)^{n-1}(n-1)!}
-\left.\partial_\epsilon^{n-1}\right|_{x=\beta\epsilon}(1+\e{x})^{-1}
+\frac{1}{\beta}\sum_\nu \frac{1}{(i\hbar\omega_\nu-\epsilon)^n}\e{i\hbar\omega_\nu\beta0^+}
+&=&\frac{\beta^{n-1}}{(n-1)!}
+\left.\partial_x^{n-1}\right|_{x=\beta\epsilon}(1+\e{x})^{-1}
+\label{eq:matgsubarasinglepole}
 \end{eqnarray}
+
+This equation can be specialized to $\epsilon=0$ to obtain the
+matsubara sums of the terms in the Laurent expansion
+\begin{eqnarray}
+\frac{1}{\beta}\sum_\nu \frac{1}{(i\hbar\omega_\nu)^n}\e{i\hbar\omega_\nu\beta0^+}
+&=&\frac{\beta^{n-1}}{(n-1)!}
+\left.\partial_x^{n-1}\right|_{x=0}(1+\e{x})^{-1}
+\label{eq:matgsubarasumlaurent}
+\end{eqnarray}
+ The values for the for the derivatives required in {eq:matgsubarasumlaurent} are given in 
+ table~\ref{tab:matsubarasumlaurent}.
+
+\begin{table}[h!bt]
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
 \hline
@@ -3096,6 +3441,10 @@ $\partial^{j-1}_x(1+\e{x})^{-1}$
 \hline
 \end{tabular}
 \end{center}
+\caption{\label{tab:matsubarasumlaurent} Derivatives required in
+  \eq{eq:matgsubarasumlaurent} for the Matsubara sum of the first
+  20 terms in the Laurent expansion.}
+\end{table}
 
 \begin{figure}[h!]
 \begin{center}
@@ -3112,10 +3461,10 @@ $k_BT\sum_\nu \frac{1}{(i\hbar\omega_\nu-\epsilon)^2}$ as
 
 
 %====================================================================
-\subsection{Matsubara sums on finite grids}
+\subsection{Matsubara sums on finite grids and regularization}
 %====================================================================
 The finite Matsubara sums result in a Fermi function that does not
-reach zero or one. In particular, in the limit of e level, that lies
+reach zero or one. In particular, in the limit of a level, that lies
 far from the chemical potential, the finite Matsubara sum falls off to
 $\frac{1}{2}$.
 
@@ -3132,6 +3481,208 @@ $\frac{1}{2}$.
   performed with $2^n$ grid points with $n=0,\ldots,12$ for $k_BT=1.$}
 \end{figure}
 
+For that purpose on evaluates the first few terms of a Laurent
+expansion of the function
+\begin{eqnarray}
+F(\omega_\nu)&=&\sum_{j=1}^\infty \frac{C_j}{(i\hbar\omega_\nu)^j} 
+\nonumber\\
+\frac{1}{\beta}\sum_\nu\e{i\hbar\omega_\nu\beta0^+} F(\omega_\nu)
+&\eqrel{eq:matgsubarasumlaurent}{=}&
+\sum_{n=1}^\infty C_n
+\frac{1}{(k_BT)^{n-1}(n-1)!}
+\left.\partial_\epsilon^{n-1}\right|_{x=0}(1+\e{x})^{-1}
+\end{eqnarray}
+, which can be integrated exactly with the help of the coeffcients in
+table~\ref{tab:matsubarasumlaurent}.
+
+The required correction is calculated by subtracting the finite sum
+from the infinite matsubara sum
+\begin{eqnarray}
+K_n&=&\frac{1}{\beta}\sum_{\nu=-\infty}^{\infty} \frac{1}{(i\hbar\omega_\nu)^n} 
+-\frac{1}{\beta}\sum_{\nu=-n_x}^{n_x} \frac{1}{(i\hbar\omega_\nu)^n} 
+\nonumber\\
+&=&\frac{1}{(k_BT)^{n-1}(n-1)!}
+\left.\partial_\epsilon^{n-1}\right|_{x=0}(1+\e{x})^{-1}
+-\frac{1}{\beta}\sum_{\nu=-n_x}^{n_x} \frac{1}{(i\hbar\omega_\nu)^n} 
+\end{eqnarray}
+These terms are evaluated beforehand. The regularized Matsubara sums
+can then be evaluated with the Laurent expansion terms
+\begin{eqnarray}
+\frac{1}{\beta}\sum_{\nu=-n_x}^{n_x} \frac{1}{(i\hbar\omega_\nu)^n} F(\omega_\nu)
++\sum_{n=1} C_n K_n
+\end{eqnarray}
+where $C_n$ are the Laurent expansion coefficients of $F$.
+
+
+
+
+%====================================================================
+\subsubsection{Avoid the spurious extrema of the fermi function by 
+restricting the energy spectrum.}
+%====================================================================
+
+Let us evaluate the error due to a finite Matsubara sum for a single
+pole expression
+\begin{eqnarray}
+\frac{1}{\beta}\sum_{|\nu|>\nu_x}
+\frac{\e{i\hbar\omega_\nu\beta0^+}}{\left[i\hbar\omega_\nu-\epsilon\right]^n}
+&\approx&
+\frac{1}{\beta}\int_{|\omega|>\frac{2\nu_x\pi}{\hbar\beta}}
+\frac{d\omega}{2\pi/(\hbar\beta)}\;
+\frac{\e{i\hbar\omega\beta0^+}}{[i\hbar\omega-\epsilon]^n}
+\nonumber\\
+&=&
+\frac{1}{\beta}\int_{|\omega|>\frac{2\pi\nu_x}{\hbar\beta}}
+\frac{d\omega}{2\pi/(\hbar\beta)}\;
+\frac{\e{i\hbar\omega\beta0^+}[-i\hbar\omega-\epsilon]^n
+}{[(\hbar\omega)^2+\epsilon^2]^n}
+\nonumber\\
+&=&
+\frac{1}{\beta}\int_{|\omega|>\frac{2\pi\nu_x}{\hbar\beta}}
+\frac{d\omega}{2\pi/(\hbar\beta)}\;
+\frac{\e{i\hbar\omega\beta0^+}\Re[-i\hbar\omega-\epsilon]^n
+}{[(\hbar\omega)^2+\epsilon^2]^n}
+\nonumber\\
+&=&
+2\frac{1}{\beta}\int_{\frac{2\pi\nu_x}{\hbar\beta}}^\infty
+\frac{d\omega}{2\pi/(\hbar\beta)}\;
+\frac{\e{i\hbar\omega\beta0^+}\Re[-i\hbar\omega-\epsilon]^n
+}{[(\hbar\omega)^2+\epsilon^2]^n}
+\nonumber\\
+&=&
+\frac{1}{\pi}\int_{\frac{2\pi\nu_x}{\hbar\beta}}^\infty
+d(\hbar\omega\beta)\;
+\frac{\e{i\hbar\omega\beta0^+}\Re[-i\hbar\omega\beta-\beta\epsilon]^n
+}{[(\hbar\omega\beta)^2+\beta\epsilon^2]^n}
+\nonumber\\
+&=&
+\frac{1}{\pi}\int_{2\pi\nu_x}^\infty dx\;
+\frac{\e{ix0^+}\Re[-ix-\beta\epsilon]^n
+}{[x^2+(\beta\epsilon)^2]^n}
+\end{eqnarray}
+$\Delta\omega=2\pi/(\hbar\beta)$ is the step width of the Matsubara
+frequencies in the sum. Only the even terms in $i\hbar\omega$
+contribute to the integral, because the integration region is
+symmetric with respect to reflection at $\omega=0$. Therefore, only the
+real part contrbutes.
+
+Now we solve the specific problem for\footnote{From Bronstein, I take the integral
+\begin{eqnarray}
+\int dx\;\frac{dx}{a^2+x^2}=\frac{1}{a}\atan\left(\frac{x}{a}\right)
+\end{eqnarray}
+} $n=1$
+\begin{eqnarray}
+\frac{1}{\beta}\sum_{|\nu|>\nu_x}
+\frac{\e{i\hbar\omega_\nu\beta0^+}}{\left[i\hbar\omega_\nu-\epsilon\right]^n}
+&\approx&
+\Re[-\beta\epsilon]
+\frac{1}{\pi}\int_{2\pi\nu_x}^\infty dx\;
+\frac{\e{ix0^+}}{[x^2+(\beta\epsilon)^2]^n}
+\nonumber\\
+&=&\Re[-\beta\epsilon]\frac{1}{\pi}
+\left[\frac{1}{\beta\epsilon}\atan\left(\frac{x}{\beta\epsilon}\right)\right]
+_{2\pi\nu_x}^\infty 
+\nonumber\\
+&=&
+-\frac{1}{2}
++\frac{1}{\pi}\atan\left(\frac{2\pi\nu_x}{\beta\epsilon}\right)
+\end{eqnarray}
+
+
+The result is shown in Fig.~\ref{fig:matsubaracorr}. 
+The error disappears only very slowly, namely with $1/\nu_x$.
+\begin{figure}[!hb]
+\begin{center}
+\includegraphics[width=0.4\linewidth]{Figs/matsubaracorr.eps}
+\includegraphics[width=0.4\linewidth]{Figs/matsubaracorrofe.eps}
+\end{center}
+\caption{\label{fig:matsubaracorr}
+Left: $-\frac{1}{2}
++\frac{1}{\pi}\atan\left(2\pi x\right)$ 
+and right $-\frac{1}{2}
++\frac{1}{\pi}\atan\left(\frac{2\pi}{x}\right)$ 
+as function of $x$.
+}
+\end{figure}
+
+
+determine the minimum
+\begin{eqnarray}
+y&=&
+\frac{1}{2}-\frac{1}{\pi}\atan\left(\frac{2\pi n_x}{\beta\epsilon}\right)
++\frac{1}{1+\e{\beta\epsilon}}
+\nonumber\\
+&\stackrel{\beta\epsilon<<2\pi\nu_x}{=}&
+\frac{1}{2}-\left[\frac{1}{2}-\frac{\beta\epsilon}{2\pi^2\nu_x}\right]
++\frac{1}{1+\e{\beta\epsilon}}
+=
+\frac{\beta\epsilon}{2\pi^2\nu_x}+\frac{1}{1+\e{\beta\epsilon}}
+\nonumber\\
+\frac{dy}{d\epsilon}y&\approx&
+\frac{\beta}{2\pi^2\nu_x}-\frac{\beta\e{\beta\epsilon}}{(1+\e{\beta\epsilon})^2}
+=\frac{\beta}{2\pi^2\nu_x}-\frac{\beta}{\cosh^2(\frac{\beta\epsilon}{2})}
+\stackrel{!}{=}0
+\nonumber\\
+\epsilon_0&=&
+\frac{1}{\beta}\textrm{arccosh}\left(\sqrt{2\pi^2\nu_x}\right)
+=\frac{1}{\beta}\ln\left(
+\sqrt{2\pi^2\nu_x}+\sqrt{2\pi^2\nu_x-1}\right)
+\nonumber\\
+&\approx&
+\frac{1}{\beta}\ln\left(2\sqrt{2\pi^2\nu_x}\right)
+=\frac{1}{2\beta}\ln\left(8\pi^2\nu_x\right)
+\end{eqnarray}
+
+The result is shown in Fig.~\ref{fig:fermifinitematsubaraextremum}. Te
+result indicates that we need to limit the energy spectrum to about
+$\mu\pm 4k_BT$, if several hundred matsubara frequencies are taken nto
+account.
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=0.5\linewidth]{Figs/fermifinitematsubaraextremum.eps}
+\end{center}
+\caption{\label{fig:fermifinitematsubaraextremum} The function
+  $\beta\epsilon_0(\nu_x)=\frac{1}{2}\ln\left(8\pi^2\nu_x\right)$
+  which is the extremum of the Fermi function represented by a finite
+  Matsubara sum. A good estimate is $\beta\epsilon_0=5$. The value of
+  the minimum is approximately $0.001$.}
+\end{figure}
+
+%====================================================================
+\subsubsection{Alternative regularizatuon scheme}
+%====================================================================
+For the density matrix it is problematic that the number of particles
+is no more a monotoneous function of the energy levels. This
+practically prohibits to enforce the constraints. One way out is to
+add the linear correction term derived above
+\begin{eqnarray}
+\rho(\epsilon)=-\frac{\beta\epsilon}{2\pi^2\nu_x}+\frac{1}{2}+
+\frac{1}{\beta}\sum_{\nu=-\nu_x}^{\nu_x}
+\frac{1}{i\hbar\omega_\nu-\epsilon}
+\end{eqnarray}
+
+\begin{center}
+\includegraphics[width=0.5\linewidth]{Figs/rhocorrectedmatsubara.eps}
+\end{center}
+
+This expression can be generalized to a Green's function in an orthonormal basis
+\begin{eqnarray}
+\mat{\rho}=-\frac{\beta}{2\pi^2\nu_x}
+\left(\mat{\bar{h}}-\mu\mat{1}+\mat{\Sigma}(\infty)-\mat{\Gamma}\right)
++\frac{1}{2}\mat{1}
++\frac{1}{\beta}\sum_{\nu=-\nu_x}^{\nu_x}
+\frac{1}{(i\hbar\omega_\nu+\mu)\mat{1}-\mat{\bar{h}}-\mat{\Sigma}(i\omega_\nu)+\mat{\Gamma}}
+\end{eqnarray}
+In non-orthonormal basis it has the form
+\begin{eqnarray}
+\mat{\rho}=-\frac{\beta}{2\pi^2\nu_x}
+\mat{S}^{-1}\left(\mat{\bar{h}}-\mu\mat{S}+\mat{\Sigma}(\infty)-\mat{\Gamma}\right)\mat{S}^{-1}
++\frac{1}{2}\mat{S}^{-1}
++\frac{1}{\beta}\sum_{\nu=-\nu_x}^{\nu_x}
+\frac{1}{(i\hbar\omega_\nu+\mu)\mat{S}-\mat{\bar{h}}-\mat{\Sigma}(i\omega_\nu)+\mat{\Gamma}}
+\end{eqnarray}
+
+Tis term looks pretty much like the next term of the regularization.
 
 
 %====================================================================
@@ -3224,36 +3775,62 @@ where $D$ is the density of states. $f_\mu(\epsilon)$ is the Fermi function.
 Thus $dN/d\mu$ provides us with a broadened density of states.
 
 Now we generalize the relation obtained for independent Fermions to
-interacting Fermions. The number of states function $N_{a,b}(\mu)$ can
-be obtained from the Green's function
+interacting Fermions. The number of electrons is
 \begin{eqnarray}
-N_{a,b}(\mu)
-&=&\frac{1}{\beta}\sum_\nu G_{a,b}(i\omega_\nu,\mu)\e{i\omega_\nu0^+}
-=\frac{1}{\beta}\sum_\nu 
-\biggl[
-\Bigl(\mat{G}(i\omega_\nu,\mu_0)
-\Bigr)^{-1}+(\mu-\mu_0)\biggr]^{-1}_{a,b}\e{i\omega_\nu0^+}
+N(\beta,\mu)=\Tr[\mat{\rho}_{\beta,\mu}\mat{S}]
+=\frac{1}{\beta}\sum_\nu\e{i\hbar\omega_\nu\beta0^+}
+\Tr\left[\mat{G}_{\beta,\mu}(i\omega_\nu)\mat{S}\right]
 \end{eqnarray}
 
-The smoothened density of states $\tilde{D}_{a,b}(\mu)$ is then
-obtained as derivative with respect to $\mu$.
+The density of states is then obtained as derivative
 \begin{eqnarray}
-\tilde{D}_{a,b}(\mu)&\defas&\frac{\partial N_{a,b}}{\partial\mu}
+\tilde{D}(\mu)&=&\frac{dN}{d\mu}=
+\frac{1}{\beta}\sum_\nu\e{i\hbar\omega_\nu\beta0^+}
+\Tr\left[
+\underbrace{
+\left(-\mat{G}_{\beta,\mu}(i\omega_\nu)\mat{S}
+\mat{G}_{\beta,\mu}(i\omega_\nu)\right)}_{\partial_\mu \mat{G}}
+\mat{S}\right]
+\nonumber\\
+&=&\frac{1}{\beta}\sum_\nu\e{i\hbar\omega_\nu\beta0^+}
+\Tr\left[-
+\left(\mat{G}_{\beta,\mu}(i\omega_\nu)\mat{S}\right)^2\right]
+\end{eqnarray}
+
+
+Regularization
+\begin{eqnarray}
+-\Bigl(\mat{G}\mat{S}\Bigr)^2
+&=&
+-\biggl(\Bigl[(i\hbar\omega_\nu+\mu)\mat{S}-\bar{h}-\mat{\Sigma}+\mat{\Gamma}\Bigr]^{-1}
+\mat{S}\biggr)^2
 \nonumber\\
 &=&
--\frac{1}{\beta}\sum_\nu 
-\sum_c
-\biggl[
-\Bigl(\mat{G}(i\omega_\nu,\mu_0)
-\Bigr)^{-1}+(\mu-\mu_0)\mat{1}\biggr]^{-1}_{a,c}
-\biggl[
-\Bigl(\mat{G}(i\omega_\nu,\mu_0)
-\Bigr)^{-1}+(\mu-\mu_0)\mat{1}\biggr]^{-1}_{c,b}
+-\frac{1}{(i\hbar\omega_\nu)^2}
+\biggl(1-\frac{1}{i\hbar\omega_\nu}\mat{S}^{-1}
+\Bigl[\bar{h}-\mu\mat{S}+\mat{\mathcal{S}}^{(0)}
++\frac{1}{i\hbar\omega_\nu}\mat{\mathcal{S}}^{(1)}+\ldots-\mat{\Gamma}\Bigr]
+\biggr)^{-2}
 \nonumber\\
+&=&
+\frac{1}{(i\hbar\omega_\nu)^3}\biggl(-\Tr[1]\biggr)
+\nonumber\\
+&&+\frac{1}{(i\hbar\omega_\nu)^3}
+\biggl(-2\Tr\biggl[\mat{S}^{-1}\Bigl(\bar{h}-\mu\mat{S}+\mat{\mathcal{S}}^{(0)}
+-\mat{\Gamma}\Bigr)\biggr]\biggr)
+\nonumber\\
+&&
++\frac{1}{(i\hbar\omega_\nu)^4}
+\left(-3\Tr\biggl[
+\mat{S}^{-1}\Bigl(\bar{h}-\mu\mat{S}+\mat{\mathcal{S}}^{(0)}-\mat{\Gamma}\Bigr)
+\mat{S}^{-1}\Bigl(\bar{h}-\mu\mat{S}+\mat{\mathcal{S}}^{(0)}-\mat{\Gamma}\Bigr)
+\biggr]
+-2\Tr\biggr[
+\mat{S}^{-1}\mat{\mathcal{S}}^{(1)}\biggr]\right)
+\nonumber\\
+&&+\ldots
 \end{eqnarray}
-
-This relation is however only valid for non-interacting electrons,
-because a self energy may depend itself on the chemical potential.
+We used $(1-x)^{-2}=\sum_{n=0}^\infty (n+1)x^n=1+2x+3x^2+\ldots$.
 
 %====================================================================
 \section{Greens functions between band states and local orbitals}
@@ -5656,10 +6233,10 @@ dF_k=
 -\sum_i d\alpha_i^* \vec{d}_i^* \vec{f}_k
 -\sum_i \vec{f}_k^* \vec{d}_id\alpha_i
 \end{eqnarray}
-any component of $\vec{f}_k$ on $\vec{d}_i^*$, i.e. any finite value
-of $\vec{d}^*_i\vec{f}_k$, would allow one to lower the value of $F_k$
-by changing $\alpha_k$. This, however, would contradict the assumption
-that $\vec{x}_k$ is the minimum of $\vec{F}_k$.
+any finite projection of $\vec{f}_k$ on $\vec{d}_i^*$, i.e. any
+finite value of $\vec{d}^*_i\vec{f}_k$, would allow one to lower the
+value of $F_k$ by changing $\alpha_k$. This, however, would contradict
+the assumption that $\vec{x}_k$ is the minimum of $\vec{F}_k$.
 
 Therefore, we conclude that the force is orthogonal to all ``previous''
 search directions
