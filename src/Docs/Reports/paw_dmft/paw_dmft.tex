@@ -3187,6 +3187,7 @@ The DFT result has a band ranging from -8.549~eV to -1.279~eV, which
 corresponds to a band width -f 7.27~eV.  The bare U-tensor is 30.7~eV,
 which would correspond to $U/d\approx 4.2$. $\alpha$ ist der faktor,
 mit dem der U-tensor skaliert wird.
+\begin{center}
 \begin{tabular}{|l|c|c|c|c|c|c|}
 \hline
 $\alpha$ & 0.0 & 0.1 & 0.2 & 0.3 & 0.4 & 0.5 \\
@@ -3196,13 +3197,13 @@ U/d & 0.0 & 0.4 & 0.8 & 1.3 & 1.7 & 2.1\\
 $E_{tot}[H]$ & -0.4999703 &-0.4963927 &  -0.49280 &  -0.4893019 & -0.4858875 &-0.4825509\\
 \hline
 \end{tabular}
-
 %% 0.0 -0.4999703
 %% 0.1 -0.4963927 
 %% 0.2 -0.49280
 %% 0.3 -0.4893019
 %% 0.4 -0.4858875
 %% 0.5 -0.4825509
+\end{center}
 
 \begin{figure}[h!]
 \begin{center}
@@ -6087,7 +6088,10 @@ i\hbar\omega_\nu\mat{1}
 \end{eqnarray}
 
 %==============================================================================
-\chapter{Conjugate-gradient method}
+\chapter{Optimization}
+%==============================================================================
+%==============================================================================
+\section{Conjugate-gradient method}
 %==============================================================================
 The conjugate-gradient method is used to determine the
 constraints. 
@@ -6474,6 +6478,223 @@ Restart the CG iteration (set $\beta_k=0$) if the denominator
 vanishes, or if $\beta_k>0$.
 \end{enumerate}
 \end{myshadowminipage}
+
+%
+%==============================================================================
+\section{Limited memory Broyden-Fletcher-Goldfarb-Shanno (l-BFGS)}
+%==============================================================================
+The l-BFGS scheme builds up the inverse Hession from a limited number
+of previous iterations. I implemented the version described by
+Nocedal\cite{nocedal80_mathcomp35_773}. The l-BFGS method is one
+quasi-Newton scheme, that is, it searches for the minimum of a
+function $V(\vec{x})$.  The forces $\vec{f}(\vec{x})$ shall have an
+approximately linear relation positions.
+\begin{eqnarray}
+\vec{f}(\vec{x})\approx-\mat{A}(\vec{x})
+\end{eqnarray}
+
+The algorithm maintains a history of the $m$ previous steps
+\begin{eqnarray}
+\vec{y}_k&=&\vec{f}_{k+1}-\vec{f}_k
+\nonumber\\
+\vec{s}_k&=&\vec{s}_{k+1}-\vec{s}_k
+\end{eqnarray}
+where $k$ is the iteration count.
+
+The next step is produced as follows
+\begin{enumerate}
+\item update history 
+\item In a first loop, all contributions that may be described by the
+  updated hession are calculated and removed from the
+  force\footnote{With $\otimes$ we denote the outer or dyadic
+    product of two vectors.}.
+\begin{eqnarray}
+\vec{q}&=&\prod_{j=1}^{m} 
+\left(\mat{1}-\frac{\vec{y}_{k-j}\otimes\vec{s}_{k-j}}{|\vec{y}_{k-j}|^2}\right)\vec{f}_k
+\nonumber\\
+\rho_j&=&\frac{1}{|\vec{y}_{k-j}|^2}
+\nonumber\\
+\alpha_j&=&\frac{1}{\rho_j}
+\prod_{j'=1}^{j} \vec{s}_j
+\left(\mat{1}-\frac{\vec{y}_{k-j}\otimes\vec{s}_{k-j}}{|\vec{y}_{k-j}|^2}\right)\vec{f}_k
+\end{eqnarray}
+
+\item the reduced force vector is scaled by a mixing factor providing
+  a first guess of the next position.
+\begin{eqnarray}
+\vec{p}_0&=&-\alpha\vec{q}
+\\
+\vec{p}_j&=&\left(\mat{1}-\frac{\vec{s}_{k-j}\otimes\vec{y}_{k-j}}{|\vec{y}_{k-j}|^2}\right)\vec{p}_{j-1}
++\vec{s}_{k-j}\alpha_j
+\\
+\vec{x}_{k+1}&=&\vec{x}_k-\vec{p}_m
+\end{eqnarray}
+\textbf{The equations need to be checked!!! The code below is correct.}
+\end{enumerate}
+
+%==============================================================================
+\subsection{Example code}
+%==============================================================================
+Below is a generic example code for a real-valued function $V(\vec{x})$.
+{\tiny
+\begin{verbatim}
+      program main
+      implicit none
+      integer(4),parameter :: n=2          ! dimension of search space
+      integer(4),parameter :: nmemx=3      ! max. history depth
+      integer(4),parameter :: niter=100    ! x(number of lbfgs iterations)
+      integer(4),parameter :: niterline=100! x(number of line search steps)
+      real(8)              :: amix=0.1d0   ! mixing factor
+      real(8)              :: x0(n)        ! current position
+      real(8)              :: xm(n)        ! previsous position
+      real(8)              :: xp(n)        ! next position
+      real(8)              :: f0(n)        ! current force
+      real(8)              :: fm(n)        ! previous force
+      real(8)              :: val          ! function value
+      real(8)              :: yk(n,nmemx)  ! history force-differences
+      real(8)              :: sk(n,nmemx)  ! history position-differences
+      integer(4)           :: nmem         ! actual memory depth
+      real(8)              :: xm1(n)       ! previous position in line search
+      real(8)              :: fm1(n)       ! previous force in line search
+      integer(4)           :: iter         ! iteration count lbfgs loop
+      integer(4)           :: iterline     ! iteration count line search
+!     **************************************************************************
+      nmem=0                        ! start up with zero memory depth
+!
+!     ==========================================================================
+!     == perform one step to set up the first line search                     ==
+!     ==========================================================================
+      xm=0.d0
+      fm=0.d0
+      xm=(/4.d0,2.d0/)
+      call doetot(n,xm,val,fm)
+      print*,'xm ',xm,' val=',val,' fm ',fm
+!
+!     ==========================================================================
+!     == lbfgs loop                                                           ==
+!     ==========================================================================
+      x0=xm+fm  ! fm defines the direction of first line search
+      do iter=1,niter
+!
+!       == determine next position (x0) by line search =========================
+        xm1=xm
+        fm1=fm
+        do iterline=1,niterline
+          call doetot(n,x0,val,f0)
+          if(dot_product(x0-xm,f0).lt.1.d-8) exit          
+          xp=x0-(x0-xm1)*dot_product(x0-xm1,f0)/dot_product(x0-xm1,f0-fm1)
+          xm1=x0
+          fm1=f0
+          x0=xp
+        enddo
+        print*,'x0 ',x0,' val=',val,' f0 ',f0
+!
+!       == define new search direction (xp-x0) =================================
+        call lbfgs(n,nmemx,nmem,amix,yk,sk,x0,xm,f0,fm,xp)
+!
+!       == switch ==============================================================
+        xm=x0
+        fm=f0
+        x0=xp
+      enddo
+      return
+      end
+!
+!
+!     ...1.........2.........3.........4.........5.........6.........7.........8
+      subroutine lbfgs(n,nmemx,nmem,amix,yk,sk,x0,xm,f0,fm,xp)
+!     **************************************************************************
+!     ** limited-memory broyden-fletscher-goldfarb-shanno  (l-bfgs) algorithm **
+!     ** for optimizing nearly quadratic functions
+!     ** 
+!     ** see p 779 of updating quasi-newton matrices iwth limited storage,    **
+!     ** jorge nocedal, mathematics of computation, 35. p773 (1980)           **
+!     **                                                                      **
+!     ** initialize nmem=0 before the first call or to restart history.       **
+!     ** during optimization leave nmem,yk,sk untouched. they are updated     **
+!     ** inside this routine.                                                 **
+!     ** following the routine,                                               **
+!     **  (1) shift positions and forces, i.e. xm=x0,fm=x0,x0=xp              **
+!     **  (2) perform a line search along x(s)=x0+(x0-xm)*s                   **
+!     **      until f(s)*(x0-xm)=0                                            **
+!     **                                                                      **
+!     **************************************peter bloechl goslar 2015***********
+      implicit none
+      integer(4),intent(in)    :: n           ! dimension od the search space
+      integer(4),intent(in)    :: nmemx       ! max #(steps stored in history)
+      integer(4),intent(inout) :: nmem        ! #(steps stored in history)
+      real(8)   ,intent(inout) :: yk(n,nmemx) ! history: force differences
+      real(8)   ,intent(inout) :: sk(n,nmemx) ! history: position differences
+      real(8)   ,intent(in)    :: amix        ! mixing factor
+      real(8)   ,intent(in)    :: x0(n)       ! actual position
+      real(8)   ,intent(in)    :: xm(n)       ! previous position
+      real(8)   ,intent(in)    :: f0(n)       ! actual force
+      real(8)   ,intent(in)    :: fm(n)       ! previous force
+      real(8)   ,intent(out)   :: xp(n)       ! next position
+      real(8)                  :: alpha(nmemx)
+      real(8)                  :: beta(nmemx)
+      real(8)                  :: rho(nmemx)
+      real(8)                  :: q(n)
+      integer(4)               :: i
+!     **************************************************************************
+!
+!     ==========================================================================
+!     ==  update history                                                      ==
+!     ==========================================================================
+      q(:)=x0(:)-xm(:)
+      if(dot_product(q,q).gt.1.d-10) then
+        nmem=min(nmemx,nmem+1)
+        nmem=min(n,nmem)
+        do i=nmem-1,1,-1
+          sk(:,i+1)=sk(:,i)
+          yk(:,i+1)=yk(:,i)
+        enddo
+        sk(:,1)=x0(:)-xm(:)
+        yk(:,1)=f0(:)-fm(:)
+      end if
+!
+!     ==========================================================================
+!     ==  predict next position                                               ==
+!     ==========================================================================
+      q(:)=f0(:)
+      do i=1,nmem
+        rho(i)=1.d0/dot_product(yk(:,i),sk(:,i))
+        alpha(i)=rho(i)*dot_product(sk(:,i),q)
+        q(:)=q(:)-yk(:,i)*alpha(i)
+      enddo
+      q=-amix*q
+      do i=nmem,1,-1
+        beta(i)=rho(i)*dot_product(yk(:,i),q)
+        q(:)=q(:)+sk(:,i)*(alpha(i)-beta(i))
+      enddo
+      xp(:)=x0(:)-q(:)
+      return
+      end
+!
+!     ...1.........2.........3.........4.........5.........6.........7.........8
+      subroutine doetot(n,x,val,f)
+!     **************************************************************************
+!     ** calculate value val of function to be minimized and the force f      **
+!     **************************************************************************
+      implicit none
+      integer(4),intent(in)    :: n     !dimension of the search space
+      real(8)   ,intent(in)    :: x(n)  ! position vector
+      real(8)   ,intent(out)   :: val   ! function value
+      real(8)   ,intent(out)   :: f(n)  ! force
+      real(8)                  :: c(n,n),b(n)
+!     **************************************************************************
+      c(:,:)=0.d0
+      c(1,1)=1.d0
+      c(2,2)=2.d0
+      b=(/5.d0,3.d0/)
+      val=0.5d0*dot_product(x,matmul(c,x))-dot_product(b,x)
+      val=val+1.d-2*x(1)**4
+      f=-matmul(c,x)+b
+      f=f-4.d0*1.d-2*x(1)**3
+      return
+      end
+\end{verbatim}
+}
 
 
 \printindex

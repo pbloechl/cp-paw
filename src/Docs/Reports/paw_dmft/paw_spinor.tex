@@ -301,8 +301,8 @@ and for the backward transformation
 \label{eq:defdensitymatrixbackexplicit}
 \end{eqnarray}
 
-In practice we distinguish the three cases, namely non spin-polarized,
-collinear spin-polarized, and non-collinear.
+In practice we distinguish the three cases, namely the non spin-polarized,
+the collinear spin-polarized, and the non-collinear case.
 
 
 The same in matrix form 
@@ -643,6 +643,60 @@ Now we derive the opposite direction:
 &\eqrel{eq:defdensitymatrixwithspindeptotandcart}{=}&
 \Bigl(\rho_{b,a,\sigma',\sigma}\Bigr)^*
 \end{eqnarray}
+
+
+%====================================================================
+\subsection{Vector model}
+%====================================================================
+In the non-collinear model the vectors have two components, of which
+the first corresponds to the spin-up and the second to the spin-down
+component.
+
+In the collinear model, the vectors are treated with one spin
+component only. However, there is a parameter ``ispin'', which
+determines whether this component is to be interpreted as the spin-up
+(ispin=1) or (ispin=2) the spin-down component.
+
+%====================================================================
+\subsection{Matrix-vector multiplication}
+%====================================================================
+This operation is implemented in the routine
+\verb|spinor$matvecmul|\index{matvecmul}.
+
+In the non-collinear model, the matrix vector multiplication has the form
+\begin{eqnarray} 
+\vec{c}_\sigma=\sum_{\sigma'}\mat{A}_{\sigma,\sigma'}\vec{b}_{\sigma'}
+\end{eqnarray}
+
+Using \eq{eq:defdensitymatrixbackexplicit}, this is reformulated as
+\begin{eqnarray}
+\vec{c}_\uparrow&=&
+\frac{1}{2}\left(\mat{A}^{(0)}+\mat{A}^{(z)}\right)\vec{b}_\uparrow
++\frac{1}{2}\left(\mat{A}^{(x)}-i\mat{A}^{(y)}\right)\vec{b}_\downarrow
+\nonumber\\
+\vec{c}_\downarrow&=&
+\frac{1}{2}\left(\mat{A}^{(x)}+i\mat{A}^{(y)}\right)\vec{b}_\uparrow
++\frac{1}{2}\left(\mat{A}^{(0)}-\mat{A}^{(z)}\right)\vec{b}_\downarrow
+\end{eqnarray}
+
+This can be rearranged in the form\footnote{ $\sigma=1$ for
+  $\sigma=\uparrow$ and $\sigma=-1$ for $\sigma=\downarrow$. The index
+  $-\sigma$ corresponds to the opposite spin direction than the one
+  described by index $\sigma$.}
+\begin{eqnarray}
+\vec{c}_\sigma&=&
+\frac{1}{2}\mat{A}^{(0)}\vec{b}_\sigma
++\frac{\sigma}{2}\mat{A}^{(z)}\vec{b}_\sigma
++\frac{1}{2}\left(\mat{A}^{(x)}-i\sigma\mat{A}^{(y)}\right)\vec{b}_{-\sigma}
+\end{eqnarray}
+which allows to start with the non-spin-polarized model, then add the
+terms for the collinear spin-polarized model and finally to add the
+terms from the non-collinear model.
+
+
+
+
+
 
 
 %====================================================================
