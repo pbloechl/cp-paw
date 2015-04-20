@@ -3154,13 +3154,26 @@ is repeated.
   near integer so that large changes in $\Gamma$ are required to
   adjust the occupation.
 %
-\item It may be helpful to diagonalize $\bar{h}-\mat{Gamma}$ in
+\item It may be helpful to diagonalize $\bar{h}-\mat{\Gamma}$ in
   dmft\_constraints in order to make the connection between occupation
   and eigenlevels more direct.
 %
 \item there are unknown factors of 0.25 and 2, once in the derivatives
   of drho$^2$ and once integrating $\Gamma$ into the waves object.
-
+%
+\item when optimizing $\Gamma$ it is important to shift energy levels
+  by more than $k_{B}T$. The absolute square of the constraint violation
+  which is very flat with very narrow minimum. This minimum is where
+  the energy level shifts through the fermi level. The width of the
+  minimum is about $k_BT$. A step size that is too large, may miss the
+  minimum and jump from one flat side to the other side which is flat
+  again. The problem is probably related to work in energies rather
+  than occupations.
+%
+\item We artificially change the density matrix so that all
+  occupations are sufficiently fractional. This limits the spectrum of
+  $\mat{\bar{h}}$ to a range of width equal to few times $k_BT$ around
+  the Fermi level. Currently I am using $4k_BT$.
 \end{itemize}
 
 

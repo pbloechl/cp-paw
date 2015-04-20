@@ -258,13 +258,13 @@ representation and the total-spin-vector representation for matrices
 \begin{myshadowminipage}{Transformation of matrices between 
 $(\uparrow,\downarrow)$ and $(t,x,y,z)$ representation}
 \begin{eqnarray}
-\underbrace{\rho_{\alpha,\beta,\sigma,\sigma'}=\frac{1}{2}
-\sum_{j=0}^3\bar{\rho}^{(j)}_{\alpha,\beta}\sigma^{(j)}_{\sigma,\sigma'}
+\underbrace{A_{\alpha,\beta,\sigma,\sigma'}=\frac{1}{2}
+\sum_{j=0}^3\bar{\mathcal{A}}^{(j)}_{\alpha,\beta}\sigma^{(j)}_{\sigma,\sigma'}
 }_{\text{back transform}}
 \qquad\stackrel{Eqs.~\ref{eq:pauliorthonormality},\ref{eq:paulidyadicsum}}
 {\Longleftrightarrow}\qquad
-\underbrace{\bar{\rho}^{(j)}_{\alpha,\beta}\defas\sum_{\sigma,\sigma'} 
-\rho_{\alpha,\beta,\sigma,\sigma'}\Bigr(\sigma^{(j)}_{\sigma,\sigma'}\Bigr)^*
+\underbrace{\mathcal{A}^{(j)}_{\alpha,\beta}\defas\sum_{\sigma,\sigma'} 
+A_{\alpha,\beta,\sigma,\sigma'}\Bigr(\sigma^{(j)}_{\sigma,\sigma'}\Bigr)^*
 }_{\text{forward transform}}
 \label{eq:defdensitymatrixwithspindeptotandcart}
 \end{eqnarray}
@@ -279,25 +279,25 @@ We transform a matrix using
 to \eq{eq:defdensitymatrixwithspindeptotandcart}, which yields for the
 forward transformation
 \begin{eqnarray}
-\rho^{(0)}_{a,b}&=&\rho_{a,b,\uparrow,\uparrow}+\rho_{a,b,\downarrow,\downarrow}
+\mathcal{A}^{(0)}_{a,b}&=&A_{a,b,\uparrow,\uparrow}+A_{a,b,\downarrow,\downarrow}
 \nonumber\\
-\rho^{(x)}_{a,b}&=&\rho_{a,b,\downarrow,\uparrow}+\rho_{a,b,\uparrow,\downarrow}
+\mathcal{A}^{(x)}_{a,b}&=&A_{a,b,\downarrow,\uparrow}+A_{a,b,\uparrow,\downarrow}
 \nonumber\\
-\rho^{(y)}_{a,b}&=&-i
-\Bigl(\rho_{a,b,\downarrow,\uparrow}-\rho_{a,b,\uparrow,\downarrow}\Bigr)
+\mathcal{A}^{(y)}_{a,b}&=&-i
+\Bigl(A_{a,b,\downarrow,\uparrow}-A_{a,b,\uparrow,\downarrow}\Bigr)
 \nonumber\\
-\rho^{(z)}_{a,b}&=&\rho_{a,b,\uparrow,\uparrow}-\rho_{a,b,\downarrow,\downarrow}
+\mathcal{A}^{(z)}_{a,b}&=&A_{a,b,\uparrow,\uparrow}-A_{a,b,\downarrow,\downarrow}
 \label{eq:defdensitymatrixforwardexplicit}
 \end{eqnarray}
 and for the backward transformation
 \begin{eqnarray}
-\rho_{a,b,\uparrow,\uparrow}&=&\frac{1}{2}\Bigl(\rho^{(0)}_{a,b}+\rho^{(z)}_{a,b}\Bigr)
+A_{a,b,\uparrow,\uparrow}&=&\frac{1}{2}\Bigl(\mathcal{A}^{(0)}_{a,b}+\mathcal{A}^{(z)}_{a,b}\Bigr)
 \nonumber\\
-\rho_{a,b,\downarrow,\uparrow}&=&\frac{1}{2}\Bigl(\rho^{(x)}_{a,b}+i\rho^{(y)}_{a,b}\Bigr)
+A_{a,b,\downarrow,\uparrow}&=&\frac{1}{2}\Bigl(\mathcal{A}^{(x)}_{a,b}+i\mathcal{A}^{(y)}_{a,b}\Bigr)
 \nonumber\\
-\rho_{a,b,\uparrow,\downarrow}&=&\frac{1}{2}\Bigl(\rho^{(x)}_{a,b}-i\rho^{(y)}_{a,b}\Bigr)
+A_{a,b,\uparrow,\downarrow}&=&\frac{1}{2}\Bigl(\mathcal{A}^{(x)}_{a,b}-i\mathcal{A}^{(y)}_{a,b}\Bigr)
 \nonumber\\
-\rho_{a,b,\downarrow,\downarrow}&=&\frac{1}{2}\Bigl(\rho^{(0)}_{a,b}-\rho^{(z)}_{a,b}\Bigr)
+A_{a,b,\downarrow,\downarrow}&=&\frac{1}{2}\Bigl(\mathcal{A}^{(0)}_{a,b}-\mathcal{A}^{(z)}_{a,b}\Bigr)
 \label{eq:defdensitymatrixbackexplicit}
 \end{eqnarray}
 
@@ -308,30 +308,36 @@ the collinear spin-polarized, and the non-collinear case.
 The same in matrix form 
 \begin{eqnarray}
 \left(\begin{array}{c}
-\rho_{ab}^{(0)}\\\rho_{ab}^{(x)}\\\rho_{ab}^{(y)}\\\rho_{ab}^{(z)}
+\mathcal{A}_{ab}^{(0)}\\\mathcal{A}_{ab}^{(x)}\\\mathcal{A}_{ab}^{(y)}\\\mathcal{A}_{ab}^{(z)}
 \end{array}\right)
 &=&
 \left(\begin{array}{cccc}
 1&0&0&1\\0&1&1&0\\0&i&-i&0\\1&0&0&-1
 \end{array}\right)
 \left(\begin{array}{c}
-\rho_{ab,\uparrow,\uparrow}\\\rho_{ab,\downarrow,\uparrow}\\\rho_{ab,\downarrow,\uparrow}\\\rho_{ab,\downarrow,\downarrow}\end{array}\right)
+A_{ab,\uparrow,\uparrow}\\
+A_{ab,\downarrow,\uparrow}\\
+A_{ab,\downarrow,\uparrow}\\
+A_{ab,\downarrow,\downarrow}\end{array}\right)
 \nonumber\\
 \left(\begin{array}{c}
-\rho_{ab,\uparrow,\uparrow}\\\rho_{ab,\downarrow,\uparrow}\\\rho_{ab,\downarrow,\uparrow}\\\rho_{ab,\downarrow,\downarrow}\end{array}\right)
+A_{ab,\uparrow,\uparrow}\\
+A_{ab,\downarrow,\uparrow}\\
+A_{ab,\downarrow,\uparrow}\\
+A_{ab,\downarrow,\downarrow}\end{array}\right)
 &=&
 \frac{1}{2}\left(\begin{array}{cccc}
 1&0&0&1\\0&1&i&0\\0&1&-i&0\\1&0&0&-1
 \end{array}\right)
 \left(\begin{array}{c}
-\rho_{ab}^{(0)}\\\rho_{ab}^{(x)}\\\rho_{ab}^{(y)}\\\rho_{ab}^{(z)}
+\mathcal{A}_{ab}^{(0)}\\\mathcal{A}_{ab}^{(x)}\\\mathcal{A}_{ab}^{(y)}\\\mathcal{A}_{ab}^{(z)}
 \end{array}\right)
 \end{eqnarray}
 
 
 
 %===============================================================
-\subsubsection{Motivation}
+\section{Motivation}
 %===============================================================
 The convention to apply the factor $1/2$ on the back transformation of
 \eq{eq:defdensitymatrixwithspindeptotandcart} is motivated as follows:
@@ -368,11 +374,19 @@ where the orbitals $|\bar{\chi}_\alpha\rangle$ are pure spatial
 orbitals without a spin contribution.
 \end{myshadowminipage}
 
+%====================================================================
+\section{Operations in the spinor representation}
+%====================================================================
+The operations in a spinor representation are defined such that they
+are identical to the ones in the up-down representation.
 
 
 %====================================================================
 \subsection{Identity in a spinor representation}
 %====================================================================
+The identity matrix is implemented in \verb|SPINOR$UNITY|.
+
+
 The identity matrix in up-down representation\footnote{Here each
   matrix element is itself considered a matrix in the space of spatial
   orbitals.} is
@@ -399,6 +413,9 @@ After conversion into the spinor representation we obtain
 %====================================================================
 \subsection{Hermitean conjugate  in a spinor representation}
 %====================================================================
+The hermitean conjugation of a matrix is implemented in
+\verb|SPINOR$CONJUGATE|.
+
 The hermitean conjugate of a matrix $\mat{\rho}$ in up-down
 representation is
 \begin{eqnarray}
@@ -430,8 +447,71 @@ After conversion into the spinor representation we obtain
 \end{eqnarray}
 
 %====================================================================
+\subsubsection{Hermitean Matrices}
+%====================================================================
+\textbf{This may be a repetition. Should be cleaned up.}
+
+
+A matrix that is hermitean in spin-up-down representation, that is
+\begin{eqnarray}
+\rho_{a,b,\sigma,\sigma'}=\rho^*_{b,a,\sigma',\sigma}
+\Leftrightarrow
+\rho^{(j)}_{a,b}=\left(\rho^{(j)}_{b,a}\right)^*
+\end{eqnarray}
+has hermitean matrices in total-spin representation, and vice versa
+
+
+
+This is derived in the following. First we show that 
+\begin{eqnarray}
+\rho^{(j)}_{a,b}=\left(\rho^{(j)}_{b,a}\right)^*
+\label{eq:hermiteanspinorcomponents}
+\end{eqnarray}
+can be obtained from the hermitean property in spin space, namely
+\begin{eqnarray}
+\rho_{a,b,\sigma,\sigma'}=\rho^*_{b,a,\sigma',\sigma}
+\label{eq:spinspinhermitean}
+\end{eqnarray}
+
+This is shown as follows
+\begin{eqnarray}
+\rho^{(j)}_{a,b}
+&\eqrel{eq:defdensitymatrixwithspindeptotandcart}{=}&
+\sum_{\sigma\sigma'}\rho_{a,b,\sigma,\sigma'}
+\left(\sigma^{(j)}_{\sigma,\sigma'}\right)^*
+\eqrel{eq:spinspinhermitean}{=}
+\sum_{\sigma\sigma'}\rho^*_{b,a,\sigma',\sigma}
+\left(\sigma^{(j)}_{\sigma,\sigma'}\right)^*
+\stackrel{\mat{\sigma}^{(j)}=\mat{\sigma}^{(j),\dagger}}{=}
+\sum_{\sigma\sigma'}\rho^*_{b,a,\sigma',\sigma}
+\left(\sigma^{(j)}_{\sigma',\sigma}\right)
+\nonumber\\
+&\eqrel{eq:defdensitymatrixwithspindeptotandcart}{=}&
+\left(\rho^{(j)}_{b,a}\right)^*
+\end{eqnarray}
+
+Now we derive the opposite direction:
+\begin{eqnarray}
+\rho_{a,b,\sigma,\sigma'}
+&\eqrel{eq:defdensitymatrixwithspindeptotandcart}{=}&
+\frac{1}{2}\sum_{j=0}^3\rho^{(j)}_{a,b}\sigma^{(j)}_{\sigma,\sigma'}
+\eqrel{eq:hermiteanspinorcomponents}{=}
+\frac{1}{2}\sum_{j=0}^3\Bigl(\rho^{(j)}_{b,a}\Bigr)^*\sigma^{(j)}_{\sigma,\sigma'}
+\stackrel{\mat{\sigma}^{(j)}=\mat{\sigma}^{(j),\dagger}}{=}
+\Bigl(\frac{1}{2}\sum_{j=0}^3\rho^{(j)}_{b,a}\sigma^{(j)}_{\sigma',\sigma}\Bigr)^*
+\nonumber\\
+&\eqrel{eq:defdensitymatrixwithspindeptotandcart}{=}&
+\Bigl(\rho_{b,a,\sigma',\sigma}\Bigr)^*
+\end{eqnarray}
+
+
+%====================================================================
 \subsection{Multiplication of matrices in a spinor representation}
 %====================================================================
+The  matrix multiplication  is implemented in
+\verb|SPINOR$MATMUL|.
+
+
 Consider two matrices in spinor representation
 \begin{eqnarray*}
 f_{a,b,\sigma,\sigma'}=\frac{1}{2}\sum_{j=0}^3
@@ -481,6 +561,7 @@ $\square$, we obtain
 \begin{eqnarray}
 \Bigl(\mat{f}\square\mat{g}\Bigr)^{(0)}_{a,b}
 &=&\frac{1}{2}\sum_{j=0}^3\Bigl(\mat{f}^{(j)}\mat{g}^{(j)}\Bigr)_{a,b}
+\label{eq:spinormultiplicationa}
 \\
 \Bigl(\mat{f}\square\mat{g}\Bigr)^{(k)}_{a,b}
 &=&\frac{1}{2}
@@ -489,6 +570,8 @@ $\square$, we obtain
 +\frac{i}{2}\sum_{i,j=1}^3\epsilon_{i,j,k}
 \Bigl(\mat{f}^{(i)}\mat{g}^{(j)}\Bigr)_{a,b}
 \qquad\text{for $j>0$}
+\nonumber\\
+\label{eq:spinormultiplicationb}
 \end{eqnarray}
 
 This expression requires 16 matrix multiplication in the
@@ -498,6 +581,10 @@ $\uparrow.,\downarrow$ representation.
 %====================================================================
 \subsection{Inversion of a matrix in a spinor representation}
 %====================================================================
+The  matrix inversion  is implemented in
+\verb|SPINOR$INVERT|.
+
+
 The inversion is done by first bringing the matrix into the
 $\uparrow,\downarrow$ representation
 using \eq{eq:defdensitymatrixwithspindeptotandcart}.
@@ -590,60 +677,46 @@ This implies that a matrix inversion takes about 1.5 times the
 computational effort of a matrix multiplication.
 
 %====================================================================
-\subsection{Hermitean Matrices}
+\subsection{Trace}
 %====================================================================
-A matrix that is hermitean in spin-up-down representation, that is
+The trace is implemented in \verb|SPINOR$TRACE|
 \begin{eqnarray}
-\rho_{a,b,\sigma,\sigma'}=\rho^*_{b,a,\sigma',\sigma}
-\Leftrightarrow
-\rho^{(j)}_{a,b}=\left(\rho^{(j)}_{b,a}\right)^*
-\end{eqnarray}
-has hermitean matrices in total-spin representation, and vice versa
-
-
-
-This is derived in the following. First we show that 
-\begin{eqnarray}
-\rho^{(j)}_{a,b}=\left(\rho^{(j)}_{b,a}\right)^*
-\label{eq:hermiteanspinorcomponents}
-\end{eqnarray}
-can be obtained from the hermitean property in spin space, namely
-\begin{eqnarray}
-\rho_{a,b,\sigma,\sigma'}=\rho^*_{b,a,\sigma',\sigma}
-\label{eq:spinspinhermitean}
+\Tr[\mat{A}]=\Tr\Bigl[\mat{\mathcal{A}}^{(0)}\Bigr]
+\label{eq:spinortrace}
 \end{eqnarray}
 
-This is shown as follows
+Proof:
 \begin{eqnarray}
-\rho^{(j)}_{a,b}
-&\eqrel{eq:defdensitymatrixwithspindeptotandcart}{=}&
-\sum_{\sigma\sigma'}\rho_{a,b,\sigma,\sigma'}
-\left(\sigma^{(j)}_{\sigma,\sigma'}\right)^*
-\eqrel{eq:spinspinhermitean}{=}
-\sum_{\sigma\sigma'}\rho^*_{b,a,\sigma',\sigma}
-\left(\sigma^{(j)}_{\sigma,\sigma'}\right)^*
-\stackrel{\mat{\sigma}^{(j)}=\mat{\sigma}^{(j),\dagger}}{=}
-\sum_{\sigma\sigma'}\rho^*_{b,a,\sigma',\sigma}
-\left(\sigma^{(j)}_{\sigma',\sigma}\right)
+\Tr[\mat{A}]
+&=&\Tr\Bigl[ \mat{A}_{\uparrow\uparrow}+\mat{A}_{\downarrow\downarrow}\Bigr]
 \nonumber\\
-&\eqrel{eq:defdensitymatrixwithspindeptotandcart}{=}&
-\left(\rho^{(j)}_{b,a}\right)^*
-\end{eqnarray}
-
-Now we derive the opposite direction:
-\begin{eqnarray}
-\rho_{a,b,\sigma,\sigma'}
-&\eqrel{eq:defdensitymatrixwithspindeptotandcart}{=}&
-\frac{1}{2}\sum_{j=0}^3\rho^{(j)}_{a,b}\sigma^{(j)}_{\sigma,\sigma'}
-\eqrel{eq:hermiteanspinorcomponents}{=}
-\frac{1}{2}\sum_{j=0}^3\Bigl(\rho^{(j)}_{b,a}\Bigr)^*\sigma^{(j)}_{\sigma,\sigma'}
-\stackrel{\mat{\sigma}^{(j)}=\mat{\sigma}^{(j),\dagger}}{=}
-\Bigl(\frac{1}{2}\sum_{j=0}^3\rho^{(j)}_{b,a}\sigma^{(j)}_{\sigma',\sigma}\Bigr)^*
+&=&\Tr\Bigl[
+\frac{1}{2}\Bigl(\mat{\mathcal{A}}^{(0)}+\mat{\mathcal{A}}^{(z)}\Bigr)
++\frac{1}{2}\Bigl(\mat{\mathcal{A}}^{(0)}-\mat{\mathcal{A}}^{(z)}\Bigr)
+\Bigr]
 \nonumber\\
-&\eqrel{eq:defdensitymatrixwithspindeptotandcart}{=}&
-\Bigl(\rho_{b,a,\sigma',\sigma}\Bigr)^*
+&=&\Tr\Bigl[\mat{\mathcal{A}}^{(0)}\Bigr]
 \end{eqnarray}
 
+%====================================================================
+\subsection{Trace or the product of two matrices}
+%====================================================================
+The trace of the product of two matrices is implemented in
+\verb|SPINOR$TRACEAB|.
+
+
+The trace of a product of two matrices is used frequently and is much
+simpler to evaluate directly rather than by first performing the
+product and then the trace.
+\begin{eqnarray}
+\Tr[\mat{A}\mat{B}]=
+\frac{1}{2}\sum_{j=0}^3
+\Tr\Bigl[\mat{\mathcal{A}}^{(j)}\mat{\mathcal{B}}^{(j)}\Bigr]
+\end{eqnarray}
+
+Proof: We use the expression \eq{eq:spinortrace} for the trace and
+then insert the result \label{eq:spinormultiplicationa}
+from the multiplication.
 
 %====================================================================
 \subsection{Vector model}
