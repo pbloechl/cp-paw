@@ -1,0 +1,591 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Molecule tests &mdash; GPAW</title>
+    <link rel="stylesheet" href="../_static/gpaw.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '../',
+          VERSION:     '',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/mathconf.js"></script>
+    <link rel="shortcut icon" href="../_static/gpaw_favicon.ico"/>
+    <link rel="contents" title="Global table of contents" href="../contents.html" />
+    <link rel="index" title="Global index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="GPAW" href="../index.html" />
+    <link rel="up" title="Atomic PAW Setups" href="setups.html" />
+    <link rel="next" title="Bulk tests" href="bulk_tests.html" />
+    <link rel="prev" title="Delta Codes DFT" href="dcdft.html" />
+  </head>
+  <body>
+    <div class="related">
+            <!-- <h3>[[ builder == 'web' and 'Keyword' or 'Quick' ]] search</h3> -->
+            <div class="toprightsearch">
+            <form class="search" action="../search.html" method="get">
+              <input type="text" name="q" size="18" /> <input type="submit" value="Search" />
+              <input type="hidden" name="check_keywords" value="yes" />
+              <input type="hidden" name="area" value="default" />
+            </form>
+            </div>
+
+      <!-- <h3>Navigation</h3> -->
+      <ul>
+        <li><a href="../index.html"><img class="logo" src="../_static/logo-gpaw.png" alt="GPAW logo"/></a></li>
+
+        <!-- <li>  &raquo; <a href="../download.html">Download</a> &raquo;</li> -->
+        <!-- <li>  &raquo; <a href="setups.html">Setups</a> &raquo;</li> -->
+        <!-- <li>  &raquo; <a href="../tutorials/tutorials.html">Tutorials</a> &raquo;</li> -->
+        <!-- <li>  &raquo; <a href="../documentation/documentation.html">Documentation</a> &raquo;</li> -->
+        <!-- <li>  &raquo; <a href="../performance.html">Performance</a> &raquo;</li> -->
+        <!-- <li>  &raquo; <a href="../faq.html">FAQ</a> &raquo;</li> -->
+        <li>  &raquo; <a href="../contents.html">Contents</a> &raquo;</li>
+        <!-- <li>  &raquo; <a href="../genindex.html">Index</a> &raquo;</li> -->
+          <li><a href="setups.html" accesskey="U">Atomic PAW Setups</a> &raquo;</li>
+        
+
+      </ul>
+    </div>
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="molecule-tests">
+<span id="id1"></span><h1>Molecule tests<a class="headerlink" href="#molecule-tests" title="Permalink to this headline">¶</a></h1>
+<p><strong>Warning</strong>: this page is outdated.
+For performance of GPAW for molecular systems refer to <a class="reference internal" href="g2_1.html#g2-1"><em>G2-1 database</em></a>.</p>
+<p>Atomization energies and bond lengths for a set of small molecules
+have been calculated with the PBE functional.  All calculations are
+done with a grid spacing of 0.16 Å, zero-boundary conditions and
+approximately 6 Å of vacuum surrounding the molecules.  Compensation
+charges are expanded with correct multipole moments up to
+<span class="math">\(\ell_{max}=2\)</span>.  Open-shell atoms are treated as non-spherical with
+integer occupation numbers, and zero-point energy is not included in
+the atomization energies. The numbers are compared to very accurate,
+state-of-the-art, PBE calculations <a class="footnote-reference" href="#id3" id="id2">[1]</a>.  The script that does the
+calculations is <a class="reference external" href="http://svn.fysik.dtu.dk/projects/gpaw/trunk/gpaw/testing/molecule_test.py">molecule_test.py</a>.</p>
+<div class="section" id="bond-lengths">
+<h2>Bond lengths<a class="headerlink" href="#bond-lengths" title="Permalink to this headline">¶</a></h2>
+<div class="figure">
+<img alt="../_images/bondlengths.png" src="../_images/bondlengths.png" />
+</div>
+<p>Bondlengths in Å:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">dimer</th>
+<th class="head">GPAW</th>
+<th class="head">reference</th>
+<th class="head">error</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><span class="math">\(\rm{BeH}\)</span></td>
+<td>1.357</td>
+<td>1.354</td>
+<td>+0.003</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{ClO}\)</span></td>
+<td>1.584</td>
+<td>1.576</td>
+<td>+0.008</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{CO}\)</span></td>
+<td>1.141</td>
+<td>1.136</td>
+<td>+0.005</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{CN}\)</span></td>
+<td>1.172</td>
+<td>1.173</td>
+<td>-0.001</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{FCl}\)</span></td>
+<td>1.652</td>
+<td>1.648</td>
+<td>+0.004</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{LiH}\)</span></td>
+<td>1.611</td>
+<td>1.604</td>
+<td>+0.007</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{F}_2\)</span></td>
+<td>1.414</td>
+<td>1.414</td>
+<td>+0.000</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{LiF}\)</span></td>
+<td>1.607</td>
+<td>1.583</td>
+<td>+0.024</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{Na}_2\)</span></td>
+<td>3.077</td>
+<td>3.087</td>
+<td>-0.010</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{CH}\)</span></td>
+<td>1.135</td>
+<td>1.136</td>
+<td>-0.001</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{HCl}\)</span></td>
+<td>1.289</td>
+<td>1.287</td>
+<td>+0.002</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{Li}_2\)</span></td>
+<td>2.728</td>
+<td>2.728</td>
+<td>+0.000</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{N}_2\)</span></td>
+<td>1.101</td>
+<td>1.103</td>
+<td>-0.002</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{O}_2\)</span></td>
+<td>1.234</td>
+<td>1.218</td>
+<td>+0.016</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{Cl}_2\)</span></td>
+<td>2.007</td>
+<td>1.999</td>
+<td>+0.008</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="atomization-energies">
+<h2>Atomization energies<a class="headerlink" href="#atomization-energies" title="Permalink to this headline">¶</a></h2>
+<p>Atomization energies in eV:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">molecule</th>
+<th class="head">GPAW</th>
+<th class="head">reference</th>
+<th class="head">error</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><span class="math">\(\rm{BeH}\)</span></td>
+<td>2.399</td>
+<td>2.407</td>
+<td>-0.008</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{C}_2\rm{H}_2\)</span></td>
+<td>18.046</td>
+<td>17.974</td>
+<td>+0.072</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{C}_2\rm{H}_4\)</span></td>
+<td>24.837</td>
+<td>24.761</td>
+<td>+0.076</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{C}_2\rm{H}_6\)</span></td>
+<td>31.129</td>
+<td>31.049</td>
+<td>+0.080</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{CH}\)</span></td>
+<td>3.675</td>
+<td>3.673</td>
+<td>+0.002</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{CH}_2\ (^1\rm{A}_1)\)</span></td>
+<td>7.767</td>
+<td>7.754</td>
+<td>+0.013</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{CH}_2\ (^3\rm{B}_1)\)</span></td>
+<td>8.441</td>
+<td>8.430</td>
+<td>+0.011</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{CH}_3\)</span></td>
+<td>13.458</td>
+<td>13.430</td>
+<td>+0.028</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{CH}_3\rm{Cl}\)</span></td>
+<td>17.356</td>
+<td>17.320</td>
+<td>+0.036</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{H}_3\rm{COH}\)</span></td>
+<td>22.552</td>
+<td>22.519</td>
+<td>+0.033</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{H}_3\rm{CSH}\)</span></td>
+<td>20.745</td>
+<td>20.719</td>
+<td>+0.026</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{CH}_4\)</span></td>
+<td>18.233</td>
+<td>18.196</td>
+<td>+0.037</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{CN}\)</span></td>
+<td>8.535</td>
+<td>8.564</td>
+<td>-0.029</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{CO}\)</span></td>
+<td>11.617</td>
+<td>11.648</td>
+<td>-0.031</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{CO}_2\)</span></td>
+<td>18.002</td>
+<td>18.013</td>
+<td>-0.011</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{SC}\)</span></td>
+<td>7.790</td>
+<td>7.784</td>
+<td>+0.006</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{Cl}_2\)</span></td>
+<td>2.841</td>
+<td>2.853</td>
+<td>-0.012</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{FCl}\)</span></td>
+<td>3.134</td>
+<td>3.135</td>
+<td>-0.001</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{ClO}\)</span></td>
+<td>3.515</td>
+<td>3.539</td>
+<td>-0.024</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{F}_2\)</span></td>
+<td>2.312</td>
+<td>2.281</td>
+<td>+0.031</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{H}_2\rm{CO}\)</span></td>
+<td>16.734</td>
+<td>16.717</td>
+<td>+0.017</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{H}_2\rm{O}\)</span></td>
+<td>10.119</td>
+<td>10.134</td>
+<td>-0.015</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{HOOH}\)</span></td>
+<td>12.204</td>
+<td>12.211</td>
+<td>-0.007</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{HCN}\)</span></td>
+<td>14.190</td>
+<td>14.150</td>
+<td>+0.040</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{HCO}\)</span></td>
+<td>12.790</td>
+<td>12.788</td>
+<td>+0.002</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{HCl}\)</span></td>
+<td>4.606</td>
+<td>4.610</td>
+<td>-0.004</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{HF}\)</span></td>
+<td>6.156</td>
+<td>6.136</td>
+<td>+0.020</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{HOCl}\)</span></td>
+<td>7.590</td>
+<td>7.597</td>
+<td>-0.007</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{Li}_2\)</span></td>
+<td>0.865</td>
+<td>0.863</td>
+<td>+0.002</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{LiF}\)</span></td>
+<td>5.981</td>
+<td>6.002</td>
+<td>-0.021</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{LiH}\)</span></td>
+<td>2.331</td>
+<td>2.320</td>
+<td>+0.011</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{N}_2\)</span></td>
+<td>10.572</td>
+<td>10.568</td>
+<td>+0.004</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{H}_2\rm{NNH}_2\)</span></td>
+<td>19.713</td>
+<td>19.631</td>
+<td>+0.082</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{NH}\)</span></td>
+<td>3.836</td>
+<td>3.842</td>
+<td>-0.006</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{NH}_2\)</span></td>
+<td>8.186</td>
+<td>8.183</td>
+<td>+0.003</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{NH}_3\)</span></td>
+<td>13.124</td>
+<td>13.083</td>
+<td>+0.041</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{NO}\)</span></td>
+<td>7.417</td>
+<td>7.459</td>
+<td>-0.042</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{Na}_2\)</span></td>
+<td>0.766</td>
+<td>0.768</td>
+<td>-0.002</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{NaCl}\)</span></td>
+<td>4.101</td>
+<td>4.059</td>
+<td>+0.042</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{O}_2\)</span></td>
+<td>6.158</td>
+<td>6.214</td>
+<td>-0.056</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{OH}\)</span></td>
+<td>4.749</td>
+<td>4.757</td>
+<td>-0.008</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{P}_2\)</span></td>
+<td>5.232</td>
+<td>5.269</td>
+<td>-0.037</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{PH}_2\)</span></td>
+<td>6.674</td>
+<td>6.700</td>
+<td>-0.026</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{PH}_3\)</span></td>
+<td>10.329</td>
+<td>10.364</td>
+<td>-0.035</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{S}_2\)</span></td>
+<td>4.980</td>
+<td>5.004</td>
+<td>-0.024</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{SH}_2\)</span></td>
+<td>7.875</td>
+<td>7.892</td>
+<td>-0.017</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{SO}\)</span></td>
+<td>6.085</td>
+<td>6.136</td>
+<td>-0.051</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{SO}_2\)</span></td>
+<td>12.057</td>
+<td>12.190</td>
+<td>-0.133</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{Si}_2\)</span></td>
+<td>3.507</td>
+<td>3.526</td>
+<td>-0.019</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{Si}_2\rm{H}_6\)</span></td>
+<td>22.458</td>
+<td>22.528</td>
+<td>-0.070</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{SiH}_2\ (^1\rm{A}_1)\)</span></td>
+<td>6.388</td>
+<td>6.414</td>
+<td>-0.026</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{SiH}_2\ (^3\rm{B}_1)\)</span></td>
+<td>5.670</td>
+<td>5.694</td>
+<td>-0.024</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{SiH}_3\)</span></td>
+<td>9.601</td>
+<td>9.636</td>
+<td>-0.035</td>
+</tr>
+<tr class="row-odd"><td><span class="math">\(\rm{SiH}_4\)</span></td>
+<td>13.542</td>
+<td>13.586</td>
+<td>-0.044</td>
+</tr>
+<tr class="row-even"><td><span class="math">\(\rm{SiO}\)</span></td>
+<td>8.428</td>
+<td>8.482</td>
+<td>-0.054</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<table class="docutils footnote" frame="void" id="id3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td>&#8220;The Perdew-Burke-Ernzerhof exchange-correlation functional
+applied to the G2-1 test set using a plane-wave basis set&#8221;,
+J. Paier, R. Hirschl, M. Marsman and G. Kresse,
+J. Chem. Phys. 122, 234102 (2005)</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[2]</td><td>&#8220;Molecular and Solid State Tests of Density Functional
+Approximations: LSD, GGAs, and Meta-GGAs&#8221;, S. Kurth,
+J. P. Perdew and P. Blaha, Int. J. Quant. Chem. 75, 889-909
+(1999)</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id5" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id7">[3]</a></td><td>&#8220;Comment on &#8216;Generalized Gradient Approximation Made Simple&#8217;&#8221;,
+Y. Zhang and W. Yang, Phys. Rev. Lett.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id6" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[4]</td><td>Reply to <a class="footnote-reference" href="#id5" id="id7">[3]</a>, J. P. Perdew, K. Burke and M. Ernzerhof</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+
+          <h3>GPAW</h3>
+          <ul class="this-page-menu">
+            <li><a href="../documentation/documentation.html">Documentation</a></li>
+            <li><a href="../documentation/manual.html">Manual</a></li>
+            <li><a href="../install/installationguide.html">Installation</a></li>
+            <li><a href="setups.html">PAW datasets</a></li>
+            <li><a href="../tutorials/tutorials.html">Tutorials</a></li>
+            <li><a href="../exercises/exercises.html">Exercises</a></li>
+            <li><a href="../faq.html">FAQ</a></li>
+            <li><a href="../devel/releasenotes.html">Release Notes</a></li>
+            <li><a href="../mailinglists.html">Mailing lists</a></li>
+            <li><a href="../documentation/literature.html#citations-of-the-gpaw-method-papers">Publications</a></li>
+            <li><a href="../genindex.html">Index</a></li>
+          </ul>
+          <h3>Development</h3>
+          <ul class="this-page-menu">
+            <li><a href="../devel/devel.html">Development</a></li>
+            <li><a href="../devel/projects/projects.html">Projects</a></li>
+            <li><a href="http://wiki.fysik.dtu.dk/gpaw/epydoc/gpaw-module.html">
+              Epydoc</a></li>
+            <li><a href="https://trac.fysik.dtu.dk/projects/gpaw/browser/trunk/">Source Code (svn)</a></li>
+            <li><a href="https://trac.fysik.dtu.dk/projects/gpaw/report/1">Bug Tracker</a></li>
+          </ul>
+          <ul>
+            <li><a href="https://wiki.fysik.dtu.dk/ase/">ASE Web Page</a></li>
+          </ul>
+<!--      <h3>Workshop 2013</h3>
+          <ul class="this-page-menu">
+            <li><a href="../devel/workshop.html">Program</a></li>
+          </ul>
+-->
+          <h3>Summer School 2014</h3>
+          <ul class="this-page-menu">
+            <li><a href="../exercises/summerschool14.html">Instructions</a></li>
+            <li><a href="../exercises/exercises.html">Exercises</a></li>
+            <li><a href="../exercises/faeq.html">Exercises-FAQ</a></li>
+            <li><a href="http://www.cc.dtu.dk/">DTU Computing Center</a></li>
+          </ul>
+            <h3>This page</h3>
+            <ul>
+<li><a class="reference internal" href="#">Molecule tests</a><ul>
+<li><a class="reference internal" href="#bond-lengths">Bond lengths</a></li>
+<li><a class="reference internal" href="#atomization-energies">Atomization energies</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+          <!-- Where does one find this "prev" variable?
+          
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="dcdft.html"
+            title="previous chapter">Delta Codes DFT</a></p>
+            -->
+            <ul class="this-page-menu">
+              <li><a href="../_sources/setups/molecule_tests.txt">Page Source</a></li> <!-- label changed from "Show source" to avoid confusion with the source code svn link -->
+            </ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+<!--
+Remove footer.  Sphinx will actually parse anything with curly braces even if
+it is inside a comment.  The footer can be added by removing this comment
+and replacing [] by corresponding curly brackets
+[%- block relbar2 %][[ relbar() ]][% endblock %]
+-->
+    <div class="footer">
+      &copy; Copyright CAMd et al..
+      Last updated on Fri, 09 Oct 2015 22:32:41.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

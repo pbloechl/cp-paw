@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# This is a small helper script that allows to make global changes in all 
+# files in a directory
+# 
+TMPFILE=$(mktemp tmp.XXXXXX)  # define tempfile
+for X in *.strc_sample ; do
+  ## introduce here the sed change command
+#  sed -e s:"RCL/RCOV=.75 .75 .75 .75":"RCL/RCOV=.5 .5 .5 .5":  $X > ${TMPFILE}
+#  sed -e s:"VAL0=":"VAL0_X=":  $X > ${TMPFILE}
+  sed -e s:"LUNIT=1.8897269":"LUNIT[AA]=":  $X > ${TMPFILE}
+  ## check change command
+  RC=$?
+  if [[ $RC != 0 ]] ; then 
+    echo "error in $0: sed command failed on file $X"
+    exit 1
+  fi
+  cp ${TMPFILE} ${X}
+done
+rm ${TMPFILE}
+exit 0

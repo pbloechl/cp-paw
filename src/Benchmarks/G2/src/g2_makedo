@@ -6,6 +6,9 @@
 #        USAGE:  g2_makedo
 #
 #      OPTIONS: 
+#          -h    print this help message
+#          -0:   dry-run (still created g2_do_sample)
+#          -v:   verbose
 #
 #  DESCRIPTION: 
 #
@@ -17,7 +20,22 @@
 #
 #  2) it updates all structure input files in the directory "Cases"
 #   using the structure input files in the directory "Samples" and the
-#   species information from "bin/Species"
+#   species information from "src/Species"
+#
+#  3) it must be executed as src/g2_makedo inside the main directory
+#    of the database because it identifies the database with the
+#    current directory
+#
+#  REQUIREMENTS: 
+#
+#     -- an excecutable paw_fast.x must be in the PATH variable. It
+#        specifies the directory with the PAW binaries
+#     -- src/Strcfiles
+#     -- src/Speciesfiles
+#     -- paw_resolve
+#
+#     the shell script g2_do_sample requires
+#           -- paw_waittillempty
 #
 #  Example:
 #
@@ -27,39 +45,147 @@
 #      CREATED: 17. Aug 2014
 #
 ################################################################################
-export V=yes
+#-------------------------------------------------------------------------------
+# help message
+#-------------------------------------------------------------------------------
+export USAGE="Usage of $0 \n"
+USAGE="$USAGE \n"
+USAGE="$USAGE \tg2_makedo options\n"
+USAGE="$USAGE \n"
+USAGE="$USAGE Purpose:\n"
+USAGE="$USAGE \t initial setup of the G2 database\n"
+USAGE="$USAGE \n"
+USAGE="$USAGE Options:\n"
+USAGE="$USAGE \t -h \t print this help message \n"
+USAGE="$USAGE \t -0: dry-run\n"
+USAGE="$USAGE \t\t   creates file g2_do_sample, but does not create directories\n"
+USAGE="$USAGE \t -v: verbose\n"
+USAGE="$USAGE \n"
+USAGE="$USAGE Example:\n"
+USAGE="$USAGE \t src/g2_makedo \n"
+USAGE="$USAGE \n"
+#-------------------------------------------------------------------------------
+#  individual data
+#-------------------------------------------------------------------------------
+# name of the bin directory holding the executable ppaw_fast.x or paw_fast.x
+# name do not allow any trailing blanks in PAWXDIR!
 THISDIR=$(pwd)
-if [[ $V = yes ]] ; then echo THISDIR=$THISDIR ; fi
+export PAWXDIR=$(which paw_fast.x); PAWXDIR=${PAWXDIR%paw_fast.x}
+export DRYRUN=no
+export VERBOSE=no
+#
+#-------------------------------------------------------------------------------
+#  implement dry-run
+#-------------------------------------------------------------------------------
+function execute(){
+    # || is "or" in [[...]], && is "and" in [[..]] 
+    if [[ "${VERBOSE}" = "yes" ]] ; then
+      echo "${@}"
+    fi
+    if [[ "${DRYRUN}" = "no" ]] ; then
+      eval "$@"
+    fi
+}
+#-------------------------------------------------------------------------------
+#  resolve argument list
+#-------------------------------------------------------------------------------
+OPTSTRING=":hv0"
+OPTIND=0
+while getopts "${OPTSTRING}" OPT  ; do
+  case $OPT in
+    0)   #nothing:
+      DRYRUN=yes
+#      set -n
+      ;;
+    v)   #verbose
+      VERBOSE=yes
+#      set -v
+#      set -x
+      ;;
+    h)   # help
+      echo -e $USAGE
+      exit 0
+      ;;
+    \?)   # unknown option (placed into OPTARG, if OPTSTRING starts with :)
+      echo "error in $0" >&2
+      echo "invalid option -$OPTARG" >&2
+      echo "retrieve argument list with:" >&2
+      echo "$0 -h" >&2
+      exit 1
+      ;;
+    :)    # no argument passed to option requiring one
+      echo "error in $0" >&2
+      echo "option -$OPTARG requires an additional argument" >&2
+      exit 1
+      ;;  
+  esac
+done
+if [[ "${VERBOSE}" == "yes" ]] ; then
+  echo verbose=$VERBOSE
+  echo dryrun=$DRYRUN
+  echo OPTSTRING=$OPTSTRING
+  echo args="$1"
+fi
+#-----------------------------------------------------------------------------------
+#
+#-----------------------------------------------------------------------------------
 G1DIR=$THISDIR
+if [[ ${VERBOSE} = yes ]] ; then echo THISDIR=$THISDIR ; fi
+if [[ ${VERBOSE} = yes ]] ; then echo PAWXDIR=$PAWXDIR ; fi
 #
-SAMPLEDIR=$G1DIR/src/Strcfiles # directory holding the structure files
-STPDIR=$G1DIR/src/Speciesfiles # directory with species information
-CASESDIR=$G1DIR/Cases
-DOSCRIPT=$G1DIR/g2_do_sample
-#
-if [[ ! -d $STPDIR ]]; then 
-   echo "error in $0: STPDIR does not exist"
-   exit 1 
-fi
+#== define directory holding the structure files
+SAMPLEDIR=$G1DIR/src/Strcfiles
+if [[ ${VERBOSE} = yes ]] ; then echo SAMPLEDIR=$SAMPLEDIR ; fi
 if [[ ! -d $SAMPLEDIR ]]; then 
-   echo "error in $0: SAMPLEDIR does not exist"
+   echo "error in $0: SAMPLEDIR=$SAMPLEDIR does not exist"
+   exit 1 
+fi
+#== define directory with species information
+STPDIR=$G1DIR/src/Speciesfiles
+if [[ ${VERBOSE} = yes ]] ; then echo STPDIR=$STPDIR ; fi
+if [[ ! -d $STPDIR ]]; then 
+   echo "error in $0: STPDIR=$STPDIR does not exist"
    exit 1 
 fi
 #
+CASESDIR=$G1DIR/Cases
+if [[ ${VERBOSE} = yes ]] ; then echo CASESDIR=$CASESDIR ; fi
+if [[ ! -d $CASESDIR ]]; then 
+   execute "mkdir $CASESDIR"
+fi
+#
 #######################################################################
-#  prepare calcall_sample
+#  prepare g2_do_sample
 #######################################################################
-echo '#!/bin/bash'                                 >$DOSCRIPT
+DOSCRIPT=$G1DIR/g2_do_sample
+if [[ ${VERBOSE} = yes ]] ; then echo DOSCRIPT=$DOSCRIPT ; fi
+if [[ ${VERBOSE} = yes ]] ; then echo "writing DOSCRIPT ..." ; fi
+echo '#!/bin/bash'                                >$DOSCRIPT
 echo '# this file is created automatically by g2_makedo'    >>$DOSCRIPT
+echo '#'                                          >>$DOSCRIPT
+echo '# adjust the value of NNODES to the number' >>$DOSCRIPT
+echo '# of paw_related jobs that may run simultaneously' >>$DOSCRIPT
+echo '#'                                          >>$DOSCRIPT
+echo '# uncomment or remove lines adding'         >>$DOSCRIPT
+echo '# undesired substances to LIST'             >>$DOSCRIPT
+echo '#'                                          >>$DOSCRIPT
+echo "export NNODES=3"                            >>$DOSCRIPT
 echo "export G1DIR=$G1DIR"                        >>$DOSCRIPT
+echo '#'                                          >>$DOSCRIPT
 echo 'function calcone {'                         >>$DOSCRIPT
 echo 'ROOT=${G1DIR}/$1'                           >>$DOSCRIPT
-echo 'rm ${ROOT}.out'                             >>$DOSCRIPT
-echo 'rm ${ROOT}.err'                             >>$DOSCRIPT
-echo 'rm ${ROOT}_ballstick.dx'                    >>$DOSCRIPT
-echo 'rm ${ROOT}_constr.report'                   >>$DOSCRIPT
-echo 'rm ${ROOT}_r.tra'                           >>$DOSCRIPT
-echo 'rm ${ROOT}.pdos'                            >>$DOSCRIPT
+echo 'if [[ -f ${ROOT}.out ]]; then'              >>$DOSCRIPT
+echo '      rm ${ROOT}.out; fi'                   >>$DOSCRIPT
+echo 'if [[ -f ${ROOT}.err ]]; then'              >>$DOSCRIPT
+echo '      rm ${ROOT}.err ; fi'                  >>$DOSCRIPT
+echo 'if [[ -f ${ROOT}_ballstick.dx ]]; then'     >>$DOSCRIPT
+echo '      rm ${ROOT}_ballstick.dx ; fi'         >>$DOSCRIPT
+echo 'if [[ -f ${ROOT}_constr.report ]]; then'    >>$DOSCRIPT
+echo '      rm ${ROOT}_constr.report ; fi'        >>$DOSCRIPT
+echo 'if [[ -f ${ROOT}_r.tra ]]; then'            >>$DOSCRIPT
+echo '      rm ${ROOT}_r.tra; fi'                 >>$DOSCRIPT
+echo 'if [[ -f ${ROOT}.pdos ]]; then'             >>$DOSCRIPT
+echo '      rm ${ROOT}.pdos; fi'                  >>$DOSCRIPT
 echo 'cp ${G1DIR}/sample.cntl ${ROOT}.cntl'       >>$DOSCRIPT
 echo 'cp ${ROOT}.rstrt ${ROOT}.rstrt_save1'       >>$DOSCRIPT
 echo 'echo doing $1'                              >>$DOSCRIPT
@@ -67,21 +193,24 @@ echo 'paw_fast.x ${ROOT}.cntl 1>${ROOT}.err 2>&1' >>$DOSCRIPT
 echo '#doppaw ${ROOT}.cntl 1>${ROOT}.err 2>&1'    >>$DOSCRIPT
 echo  'echo $1 done'                              >>$DOSCRIPT
 echo '}'                                          >>$DOSCRIPT
+echo '#'                                          >>$DOSCRIPT
+#
 ################################################################
 # Scan Samples directory and update all structure files in the 
 #    Cases directory
 # Produce a shell script calcall_sample to be executed
 ################################################################
 echo "LIST=\"\""                                 >>$DOSCRIPT
-if [[ ! -d $CASESDIR ]] ; then mkdir $CASESDIR ; fi
 for FILE in $SAMPLEDIR/*.strc_sample ; do
-  if [[ $V = yes ]] ; then echo FILE=$FILE ; fi
+  if [[ ${VERBOSE} = yes ]] ; then echo FILE=$FILE ; fi
 
   NAME=${FILE%.strc_sample} # strip extension
   NAME=${NAME##*/}     #  remove all preceeding directories
   DIR=$CASESDIR/$NAME
-  if [[ ! -d $DIR ]] ; then mkdir $DIR; fi
-  paw_resolve -r"LATTICE=0.0 8.5 8.5 8.5 0.0 8.5 8.5 8.5 0.0" \
+  if [[ ! -d $DIR ]] ; then 
+    execute "mkdir $DIR"
+  fi
+  execute "paw_resolve -r\"LATTICE=0.0 8.5 8.5 8.5 0.0 8.5 8.5 8.5 0.0\" \
               -fHYDROGEN=$STPDIR/h.species \
               -fLITHIUM=$STPDIR/li.species \
               -fBERYLLIUM=$STPDIR/be.species \
@@ -97,16 +226,21 @@ for FILE in $SAMPLEDIR/*.strc_sample ; do
               -fSULFUR=$STPDIR/s.species \
               -fCHLORINE=$STPDIR/cl.species \
               -fBROMIUM=$STPDIR/br.species \
-               $FILE > $DIR/${NAME}.strc
+               $FILE > $DIR/${NAME}.strc"
   #   create sample control file
     ROOT=${DIR}/$NAME
     ROOT=${ROOT#$G1DIR/} 
     echo "LIST=\"\$LIST ${ROOT}\"" >>$DOSCRIPT
 done
-echo "for X in \$LIST; do"         >>$DOSCRIPT
-echo " paw_waittillempty -n 3" >>$DOSCRIPT #submit no more than 3 jobs at a time
-echo " calcone \$X &"              >>$DOSCRIPT
-echo "done"                        >>$DOSCRIPT 
-echo 'exit 0'                      >>$DOSCRIPT
-chmod +x $DOSCRIPT
+echo "for X in \$LIST; do" >>$DOSCRIPT
+echo "  paw_waittillempty -n \${NNODES}" >>$DOSCRIPT #submit no more than 3 jobs at a time
+echo "  calcone \$X &"        >>$DOSCRIPT
+echo "done"                >>$DOSCRIPT 
+echo 'exit 0'              >>$DOSCRIPT
+execute "chmod +x $DOSCRIPT"
 exit 0
+
+
+
+
+

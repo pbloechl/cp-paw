@@ -1,16 +1,35 @@
 !     ...1.........2.........3.........4.........5.........6.........7.........8
       PROGRAM MAIN
+!     **************************************************************************
+!     **  reads a file readpaw.in from standard input, which contains a list  **
+!     **     of (1) name of the substance (2) energy of the substance         **
+!     **                                                                      **
+!     **  writes a file g2results.dat                                         **
+!     **     (1) molecule number
+!     **     (2) energy in ev of scuseria minus cp-paw                        **
+!     **     (3) energy in ev of paierVASP/PBE minus cp-paw                   **
+!     **     (4) energy in ev of paierGAUSS/PBE minus cp-paw                  **
+!     **     (5) energy in ev of BECKE/PW91 minus cp-paw                      **
+!     **                                                                      **
+!     **  writes a file readpaw.out to standard out                           **
+!     **                                                                      **
+!     **  caution:                                                            **
+!     **    set tspherical                                                    **
+!     **                                                                      **
+!     **************************************************************************
       IMPLICIT NONE
       INTEGER(4),PARAMETER :: NFILO=6
       INTEGER(4),PARAMETER :: NFILdat=100
       character(32),parameter ::fildat='g2results.dat'
+      REAL(8),PARAMETER    :: EV=1.D0/27.21138505D0
+      LOGICAL(4),PARAMETER :: TSPHERICAL=.false.
+      LOGICAL(4),PARAMETER :: Tnotfound=.true.
       INTEGER(4),PARAMETER :: NDATAX=200
       INTEGER(4)           :: NDATA
       LOGICAL(4)           :: TCHK,tchk1
-      REAL(8),PARAMETER    :: EV=1.D0/27.211D0
       CHARACTER(26)        :: MOLID(NDATAX)
       REAL(8)              :: E(NDATAX)
-      REAL(8)              :: VAL,val0,val1,val2,val3,val4,valref
+      REAL(8)              :: VAL,val0,val1,val2,val3,val4,valref,val5,val6
       INTEGER(4),PARAMETER :: LEN=10
       INTEGER(4)           :: NUM(LEN)
       CHARACTER(2)         :: ATOM(LEN)
@@ -22,7 +41,6 @@
       INTEGER(4)           :: IASCII,ISVAR
       REAL(8)              :: SVAR
       CHARACTER(32)        :: STRING
-      LOGICAL(4),PARAMETER :: TSPHERICAL=.false.
 !     **************************************************************************
 !
 !     ==========================================================================
@@ -44,7 +62,7 @@
       ENDDO
 1000  CONTINUE
       WRITE(NFILO,FMT='(I5," MOLECULES AND ATOMS READ")')NDATA
-      WRITE(NFILO,FMT='(A,t28,a,t55,a)')MOLID(1:NDATA)
+      WRITE(NFILO,FMT='(A,T28,A,T55,A)')MOLID(1:NDATA)
 !
 !     ==========================================================================
 !     ==   SELECT SPHERICAL OR NONSPHERICAL ATOMS                             ==
@@ -193,7 +211,7 @@
            WRITE(*,FMT='(i4,t6,A,T36,3F15.6)')i,TRIM(MOLID(I)) &
      &                                        ,-E(I)/EV,VAL/EV,(-E(I)-VAL)/EV
         ELSE
-           WRITE(*,FMT='(i4,t6,A,t30," NOT FOUND")')i,TRIM(MOLID(I))
+          if(tnotfound)WRITE(nfilo,FMT='(i4,t6,A,t30," NOT FOUND")')i,TRIM(MOLID(I))
         END IF
       ENDDO
 !
@@ -214,7 +232,7 @@
            WRITE(nfilo,FMT='(i4,t6,A,T36,3F15.6)')i,TRIM(MOLID(I)) &
     &                                  ,-E(I)/EV,VAL/EV,(-E(I)-VAL)/EV
         ELSE
-           WRITE(nfilo,FMT='(i4,t6,A,T30,"NOT FOUND")')i,TRIM(MOLID(I))
+         if(tnotfound)WRITE(nfilo,FMT='(i4,t6,A,T30,"NOT FOUND")')i,TRIM(MOLID(I))
         END IF
       ENDDO
 !
@@ -236,7 +254,7 @@
            WRITE(nfilo,FMT='(i4,t6,A,t33,4F12.3)')i,MOLID(I) &
      &                      ,-E(I)/EV,(E(I)+VAL)/EV,(E(I)+VAL1)/EV,(VAL1-VAL)/EV
        ELSE
-          WRITE(*,FMT='(i4,t6,A,t30," NOT FOUND")')i,TRIM(MOLID(I))
+         if(tnotfound)WRITE(nfilo,FMT='(i4,t6,A,t30," NOT FOUND")')i,TRIM(MOLID(I))
         END IF
       ENDDO
 !
@@ -248,7 +266,7 @@
      &                           '  COMPARE ATOMIZATION ENERGIES TO DATABASES  '
       WRITE(NFILO,FMT='(80("="),T20,A)')'  BECKE '
       WRITE(NFILO,FMT='(80("="),T20,A)')
-      WRITE(*,FMT='(A,T30,3A15)') &
+      WRITE(NFILO,FMT='(A,T30,3A15)') &
      &                'MOLECULE',' CPPAW[EV]','BECKE/BP91[EV]','BECKE-CPPAW[EV]'
       DO I=1,NDATA
         CALL BECKE__GET(MOLID(I),'BPW91',VAL,TCHK)
@@ -258,18 +276,25 @@
       WRITE(NFILO,FMT='(80("="),T20,A)')
       WRITE(NFILO,FMT='(80("="),T20,A)')'  DONE  '
       WRITE(NFILO,FMT='(80("="),T20,A)')
+
 !
 !     ==========================================================================
 !     ==  write data to file for graphic output                               ==
 !     ==========================================================================
       open(nfildat,file=fildat)
+      WRITE(NFILDAT,FMT='("# ATOMIZATION ENERGIES IN EV RELATIVE TO CP-PAW")')
+      WRITE(NFILDAT,FMT='("# 1) PBE-VASP(PAIER) - MINE")')
+      WRITE(NFILDAT,FMT='("# 2) PBE-GAUSS(PAIER)- MINE")')
+      WRITE(NFILDAT,FMT='("# 3) PBE-GPAW - MINE")')
+      WRITE(NFILDAT,FMT='("# 4) PBE-SCUSERIA - MINE")')
+      WRITE(NFILDAT,FMT='("# 5) PW91-BECKE - MINE")')
+      WRITE(NFILDAT,FMT='("# 6) EXPERIMENT - MINE")')
       DO I=1,NDATA
+        VALREF=-E(I)
 !       == DEFINE REFERENCE ENERGY
-!        CALL SCUSERIA__GET(MOLID(I),'EXP',VALREF,TCHK)
-!        IF(.NOT.TCHK) CYCLE
-VALREF=-E(I)
-!       == NOW CALCULATE DEVIATION FROM REFERENCE ENERGY
-        VAL0=-VALREF-E(I)   ! CPPAW-EXP
+        CALL SCUSERIA__GET(MOLID(I),'EXP',VAL,TCHK)
+        IF(.NOT.TCHK) CYCLE
+        VAL6=VAL-valref   ! experiment - mine
 !
         CALL SCUSERIA__GET(MOLID(I),'PBE',VAL,TCHK)
         VAL1=0.D0
@@ -287,8 +312,16 @@ if(.not.tchk) cycle
         CALL BECKE__GET(MOLID(I),'BPW91',VAL,TCHK)
         VAL4=0.D0
         IF(TCHK)VAL4=VAL-VALREF  ! BECKEBPW91-EXP
-!        WRITE(NFILDAT,*)I,VAL0/EV,VAL1/EV,VAL2/EV,VAL3/EV,VAL4/EV
-        WRITE(NFILDAT,*)I,VAL1/EV,VAL2/EV,VAL3/EV
+!
+        CALL GPAW__GET(MOLID(I),'GPAW',VAL,TCHK)
+        VAL5=0.D0
+        IF(TCHK)VAL5=VAL-VALREF  ! BECKEBPW91-EXP
+        WRITE(NFILDAT,fmt='(i5,10f20.5)')I,VAL2/EV &  !pbe-vasp - mine
+     &                                    ,VAL3/EV &  !pbe-gauss - mine
+     &                                    ,VAL5/EV &  !pbe-gpaw -mine
+     &                                    ,VAL1/EV &  !pbe-scuseria - mine
+     &                                    ,VAL4/EV &   !pw91-becke - mine  
+     &                                    ,VAL6/EV    !experiment - mine  
       ENDDO
       STOP
       END
@@ -297,7 +330,7 @@ if(.not.tchk) cycle
 MODULE BECKE_MODULE
 IMPLICIT NONE
 LOGICAL(4)            :: TINI=.FALSE.
-INTEGER(4),PARAMETER  :: NDATA=56
+INTEGER(4),PARAMETER  :: NDATA=57
 CHARACTER(20)         :: ID(NDATA)
 REAL(8)               :: DATA(5,NDATA)
 END MODULE BECKE_MODULE
@@ -383,6 +416,14 @@ END MODULE BECKE_MODULE
  I=I+1; ID(I)='CH3SH    '; DATA(:,I)=(/445.1D0,508.5D0,441.5D0,443.9D0,00.00D0/) 
  I=I+1; ID(I)='HOCL     '; DATA(:,I)=(/156.3D0,203.2D0,155.6D0,162.8D0,00.00D0/) 
  I=I+1; ID(I)='SO2      '; DATA(:,I)=(/254.0D0,332.8D0,250.3D0,269.0D0, 0.00D0/)
+      IF(I.NE.NDATA) THEN
+        PRINT*,'===============ERROR=============='
+        PRINT*,'TARGET LENGTH OF THE LIST DIFFERS FROM ACTUAL LENGTH'
+        PRINT*,'LIST: PAIER; PAW VERSUS GAUSSIAN'
+        PRINT*,'TARGET LENGTH: (NDATA) :',NDATA
+        PRINT*,'ACTUAL LENGTH: (I)     :',I
+        STOP 'IN becke_INI'
+      END IF
       DATA(1:4,:)=DATA(1:4,:)*KCALBYMOL
       DATA(5,:)=DATA(5,:)*MILLIHARTREE
 !     == CORRECT FOR ZERO POINT VIBRATIONS
@@ -431,10 +472,10 @@ END MODULE BECKE_MODULE
       RETURN
       END
 !
-!********************************************************************************
-!********************************************************************************
-!********************************************************************************
-!................................................................................
+!*******************************************************************************
+!*******************************************************************************
+!*******************************************************************************
+!...............................................................................
 MODULE PAIER_MODULE
 IMPLICIT NONE
 LOGICAL(4)            :: TINI=.FALSE.
@@ -1082,3 +1123,294 @@ END MODULE ATOMIZE_MODULE
       PRINT*,'ID NOT RECOGNIZED: ',ID_
       STOP 'IN ATOMIZE__GET'
       END
+!
+!........1.........2.........3.........4.........5.........6.........7.........8
+MODULE gpaw_MODULE
+!*******************************************************************************
+!***                                                                         ***
+!***                                                                         ***
+!***                                                                         ***
+!*******************************************************************************
+INTEGER(4),PARAMETER :: NDATA=55
+CHARACTER(32)        :: ID(NDATA)   ! molecule id
+CHARACTER(32)        :: name(NDATA) ! latex string with the formula
+real(8)              :: egpaw(NDATA)
+real(8)              :: evasp(NDATA)
+LOGICAL(4)           :: TINI=.FALSE.
+END MODULE GPAW_MODULE
+!
+!     ...1.........2.........3.........4.........5.........6.........7.........8
+      SUBROUTINE gpaw_INI()
+!     **************************************************************************
+!     **  COMPOSITION FOR EACH OF THE MOLECULES IN THE SET                    **
+!     ** 
+!     ** Atomization with functional PBE energies                             **
+!     ** retrieved from                                                       **
+!     ** https://wiki.fysik.dtu.dk/gpaw/setups/molecule_tests.html            **
+!     ** on Oct.10, 2015                                                      **
+!     **                                                                      **
+!     ** VASP= J. Paier, R. Hirschl, M. Marsman and G. Kresse,                **
+!     ** J. Chem. Phys. 122, 234102 (2005)                                    **
+!     **************************************************************************
+      USE gpaw_MODULE
+      IMPLICIT NONE
+      REAL(8),PARAMETER    :: EV=1.D0/27.21138505D0
+!     **************************************************************************
+      IF(TINI) RETURN
+      TINI=.TRUE.
+      name (  1)='\rm{BeH}'
+      id   (  1)='BEH'
+      egpaw(  1)=   2.39900d0*ev
+      evasp(  1)=   2.40700d0*ev
+      name (  2)='\rm{C}_2\rm{H}_2'
+      id   (  2)='C2'
+      egpaw(  2)=  18.04600d0*ev
+      evasp(  2)=  17.97400d0*ev
+      name (  3)='\rm{C}_2\rm{H}_4'
+      id   (  3)='C2'
+      egpaw(  3)=  24.83700d0*ev
+      evasp(  3)=  24.76100d0*ev
+      name (  4)='\rm{C}_2\rm{H}_6'
+      id   (  4)='C2'
+      egpaw(  4)=  31.12900d0*ev
+      evasp(  4)=  31.04900d0*ev
+      name (  5)='\rm{CH}'
+      id   (  5)='CH'
+      egpaw(  5)=   3.67500d0*ev
+      evasp(  5)=   3.67300d0*ev
+      name (  6)='\rm{CH}_2(^1\rm{A}_1)'
+      id   (  6)='CH2_'
+      egpaw(  6)=   7.76700d0*ev
+      evasp(  6)=   7.75400d0*ev
+      name (  7)='\rm{CH}_2(^3\rm{B}_1)'
+      id   (  7)='CH2_'
+      egpaw(  7)=   8.44100d0*ev
+      evasp(  7)=   8.43000d0*ev
+      name (  8)='\rm{CH}_3'
+      id   (  8)='CH3'
+      egpaw(  8)=  13.45800d0*ev
+      evasp(  8)=  13.43000d0*ev
+      name (  9)='\rm{CH}_3\rm{Cl}'
+      id   (  9)='CH3'
+      egpaw(  9)=  17.35600d0*ev
+      evasp(  9)=  17.32000d0*ev
+      name ( 10)='\rm{H}_3\rm{COH}'
+      id   ( 10)='H3'
+      egpaw( 10)=  22.55200d0*ev
+      evasp( 10)=  22.51900d0*ev
+      name ( 11)='\rm{H}_3\rm{CSH}'
+      id   ( 11)='H3'
+      egpaw( 11)=  20.74500d0*ev
+      evasp( 11)=  20.71900d0*ev
+      name ( 12)='\rm{CH}_4'
+      id   ( 12)='CH4'
+      egpaw( 12)=  18.23300d0*ev
+      evasp( 12)=  18.19600d0*ev
+      name ( 13)='\rm{CN}'
+      id   ( 13)='CN'
+      egpaw( 13)=   8.53500d0*ev
+      evasp( 13)=   8.56400d0*ev
+      name ( 14)='\rm{CO}'
+      id   ( 14)='CO'
+      egpaw( 14)=  11.61700d0*ev
+      evasp( 14)=  11.64800d0*ev
+      name ( 15)='\rm{CO}_2'
+      id   ( 15)='CO2'
+      egpaw( 15)=  18.00200d0*ev
+      evasp( 15)=  18.01300d0*ev
+      name ( 16)='\rm{SC}'
+      id   ( 16)='SC'
+      egpaw( 16)=   7.79000d0*ev
+      evasp( 16)=   7.78400d0*ev
+      name ( 17)='\rm{Cl}_2'
+      id   ( 17)='CL2'
+      egpaw( 17)=   2.84100d0*ev
+      evasp( 17)=   2.85300d0*ev
+      name ( 18)='\rm{FCl}'
+      id   ( 18)='FCL'
+      egpaw( 18)=   3.13400d0*ev
+      evasp( 18)=   3.13500d0*ev
+      name ( 19)='\rm{ClO}'
+      id   ( 19)='CLO'
+      egpaw( 19)=   3.51500d0*ev
+      evasp( 19)=   3.53900d0*ev
+      name ( 20)='\rm{F}_2'
+      id   ( 20)='F2'
+      egpaw( 20)=   2.31200d0*ev
+      evasp( 20)=   2.28100d0*ev
+      name ( 21)='\rm{H}_2\rm{CO}'
+      id   ( 21)='H2'
+      egpaw( 21)=  16.73400d0*ev
+      evasp( 21)=  16.71700d0*ev
+      name ( 22)='\rm{H}_2\rm{O}'
+      id   ( 22)='H2'
+      egpaw( 22)=  10.11900d0*ev
+      evasp( 22)=  10.13400d0*ev
+      name ( 23)='\rm{HOOH}'
+      id   ( 23)='H2O2'
+      egpaw( 23)=  12.20400d0*ev
+      evasp( 23)=  12.21100d0*ev
+      name ( 24)='\rm{HCN}'
+      id   ( 24)='HCN'
+      egpaw( 24)=  14.19000d0*ev
+      evasp( 24)=  14.15000d0*ev
+      name ( 25)='\rm{HCO}'
+      id   ( 25)='HCO'
+      egpaw( 25)=  12.79000d0*ev
+      evasp( 25)=  12.78800d0*ev
+      name ( 26)='\rm{HCl}'
+      id   ( 26)='HCL'
+      egpaw( 26)=   4.60600d0*ev
+      evasp( 26)=   4.61000d0*ev
+      name ( 27)='\rm{HF}'
+      id   ( 27)='HF'
+      egpaw( 27)=   6.15600d0*ev
+      evasp( 27)=   6.13600d0*ev
+      name ( 28)='\rm{HOCl}'
+      id   ( 28)='HOCL'
+      egpaw( 28)=   7.59000d0*ev
+      evasp( 28)=   7.59700d0*ev
+      name ( 29)='\rm{Li}_2'
+      id   ( 29)='LI2'
+      egpaw( 29)=   0.86500d0*ev
+      evasp( 29)=   0.86300d0*ev
+      name ( 30)='\rm{LiF}'
+      id   ( 30)='LIF'
+      egpaw( 30)=   5.98100d0*ev
+      evasp( 30)=   6.00200d0*ev
+      name ( 31)='\rm{LiH}'
+      id   ( 31)='LIH'
+      egpaw( 31)=   2.33100d0*ev
+      evasp( 31)=   2.32000d0*ev
+      name ( 32)='\rm{N}_2'
+      id   ( 32)='N2'
+      egpaw( 32)=  10.57200d0*ev
+      evasp( 32)=  10.56800d0*ev
+      name ( 33)='\rm{H}_2\rm{NNH}_2'
+      id   ( 33)='H2'
+      egpaw( 33)=  19.71300d0*ev
+      evasp( 33)=  19.63100d0*ev
+      name ( 34)='\rm{NH}'
+      id   ( 34)='NH'
+      egpaw( 34)=   3.83600d0*ev
+      evasp( 34)=   3.84200d0*ev
+      name ( 35)='\rm{NH}_2'
+      id   ( 35)='NH2'
+      egpaw( 35)=   8.18600d0*ev
+      evasp( 35)=   8.18300d0*ev
+      name ( 36)='\rm{NH}_3'
+      id   ( 36)='NH3'
+      egpaw( 36)=  13.12400d0*ev
+      evasp( 36)=  13.08300d0*ev
+      name ( 37)='\rm{NO}'
+      id   ( 37)='NO'
+      egpaw( 37)=   7.41700d0*ev
+      evasp( 37)=   7.45900d0*ev
+      name ( 38)='\rm{Na}_2'
+      id   ( 38)='NA2'
+      egpaw( 38)=   0.76600d0*ev
+      evasp( 38)=   0.76800d0*ev
+      name ( 39)='\rm{NaCl}'
+      id   ( 39)='NACL'
+      egpaw( 39)=   4.10100d0*ev
+      evasp( 39)=   4.05900d0*ev
+      name ( 40)='\rm{O}_2'
+      id   ( 40)='O2'
+      egpaw( 40)=   6.15800d0*ev
+      evasp( 40)=   6.21400d0*ev
+      name ( 41)='\rm{OH}'
+      id   ( 41)='OH'
+      egpaw( 41)=   4.74900d0*ev
+      evasp( 41)=   4.75700d0*ev
+      name ( 42)='\rm{P}_2'
+      id   ( 42)='P2'
+      egpaw( 42)=   5.23200d0*ev
+      evasp( 42)=   5.26900d0*ev
+      name ( 43)='\rm{PH}_2'
+      id   ( 43)='PH2'
+      egpaw( 43)=   6.67400d0*ev
+      evasp( 43)=   6.70000d0*ev
+      name ( 44)='\rm{PH}_3'
+      id   ( 44)='PH3'
+      egpaw( 44)=  10.32900d0*ev
+      evasp( 44)=  10.36400d0*ev
+      name ( 45)='\rm{S}_2'
+      id   ( 45)='S2'
+      egpaw( 45)=   4.98000d0*ev
+      evasp( 45)=   5.00400d0*ev
+      name ( 46)='\rm{SH}_2'
+      id   ( 46)='SH2'
+      egpaw( 46)=   7.87500d0*ev
+      evasp( 46)=   7.89200d0*ev
+      name ( 47)='\rm{SO}'
+      id   ( 47)='SO'
+      egpaw( 47)=   6.08500d0*ev
+      evasp( 47)=   6.13600d0*ev
+      name ( 48)='\rm{SO}_2'
+      id   ( 48)='SO2'
+      egpaw( 48)=  12.05700d0*ev
+      evasp( 48)=  12.19000d0*ev
+      name ( 49)='\rm{Si}_2'
+      id   ( 49)='SI2'
+      egpaw( 49)=   3.50700d0*ev
+      evasp( 49)=   3.52600d0*ev
+      name ( 50)='\rm{Si}_2\rm{H}_6'
+      id   ( 50)='SI2'
+      egpaw( 50)=  22.45800d0*ev
+      evasp( 50)=  22.52800d0*ev
+      name ( 51)='\rm{SiH}_2(^1\rm{A}_1)'
+      id   ( 51)='SIH2'
+      egpaw( 51)=   6.38800d0*ev
+      evasp( 51)=   6.41400d0*ev
+      name ( 52)='\rm{SiH}_2(^3\rm{B}_1)'
+      id   ( 52)='SIH2'
+      egpaw( 52)=   5.67000d0*ev
+      evasp( 52)=   5.69400d0*ev
+      name ( 53)='\rm{SiH}_3'
+      id   ( 53)='SIH3'
+      egpaw( 53)=   9.60100d0*ev
+      evasp( 53)=   9.63600d0*ev
+      name ( 54)='\rm{SiH}_4'
+      id   ( 54)='SIH4'
+      egpaw( 54)=  13.54200d0*ev
+      evasp( 54)=  13.58600d0*ev
+      name ( 55)='\rm{SiO}'
+      id   ( 55)='SIO'
+      egpaw( 55)=   8.42800d0*ev
+      evasp( 55)=   8.48200d0*ev
+      RETURN
+      END 
+!     
+!     ..........................................................................
+      SUBROUTINE gpaw__GET(MOLID,DFTID,VAL,TCHK)
+      USE gpaw_MODULE
+      IMPLICIT NONE
+      CHARACTER(*),INTENT(IN) :: MOLID
+      CHARACTER(*),INTENT(IN) :: DFTID
+      REAL(8)     ,INTENT(OUT):: VAL
+      LOGICAL(4)  ,INTENT(OUT):: TCHK
+      INTEGER(4)              :: I
+!     *********************************************************************
+      CALL GPAW_INI
+      VAL=0.D0
+      DO I=1,NDATA
+        TCHK=(TRIM(ID(I)).EQ.TRIM(MOLID))
+        IF(TCHK) THEN
+          IF(DFTID.EQ.'VASP') THEN
+            VAL=EVASP(I)
+            RETURN
+          ELSE IF(DFTID.EQ.'GPAW') THEN
+            VAL=EGPAW(i)
+            RETURN
+          ELSE
+            PRINT*,'===== ERROR======='
+            PRINT*,'DFTID NOT RECOGNIZED'
+            PRINT*,'DFTID:',DFTID
+            PRINT*,'MOLID:',MOLID
+            STOP 'GPAW__GET'
+          END IF
+        END IF
+      ENDDO
+      VAL=0.D0
+      RETURN
+      END SUBROUTINE GPAW__GET

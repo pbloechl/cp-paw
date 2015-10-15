@@ -1,0 +1,23 @@
+readme
+molecule_test.html
+gpawdata.in
+readgpawdata.f90
+dataout.f90 (derived from the above)
+dataout.dat  (derived from the above)
+
+The file molecule_tests.html has been retrieved from
+https://wiki.fysik.dtu.dk/gpaw/setups/molecule_tests.html
+Sat, Oct.10, 2015, 11:06
+
+The molecule_test.html has been edited to produce the file gpawdata.in
+
+readgpawdata.f90 is compiled with "gfortran readgpawdata.f90". The
+executable a.out reads gpawdata.in and produces 
+  (1) a file dataout.dat, a refined table with the molid's used 
+      in the bin/g2_analyze.f90
+  (2) a file dataout.f90, which is a stump for including the data 
+      into a fortran code
+
+Reconstruct dataout.* with "gfortran readgpawdata.f90; a.out"
+
+

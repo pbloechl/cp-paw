@@ -6,37 +6,39 @@
 #  An entry is prepared for all molecules listed in Samples 
 #  fro which a protocoll exists in the corresponding subdirectory 
 #  of the directory Cases
+#
+#
+#   REQUIREMENTS:
+#     paw_get,gfortran
+#     src/g2_analyze.f90
+#     src/Strcfiles/...
+#     src/Speciesfiles/....
+
 #=================================================================
 THISDIR=$(pwd)
 G1DIR=$THISDIR
-SAMPLEDIR=$G1DIR/src/Strcfiles # directory holding the structure files
-STPDIR=$G1DIR/src/Speciesfiles # define directory with species information
-CASESDIR=$G1DIR/Cases
-BINDIR=$G1DIR/bin
 #
-####################################################################
-####################################################################
+#== define directory holding the structure files
+SAMPLEDIR=$G1DIR/src/Strcfiles
 if [[ ! -d $SAMPLEDIR ]]; then 
    echo "error in $0: SAMPLEDIR does not exist"
    exit 1 
 fi
+#== define directory with species information
+STPDIR=$G1DIR/src/Speciesfiles
 if [[ ! -d $STPDIR ]]; then 
    echo "error in $0: STPDIR does not exist"
    exit 1 
 fi
+CASESDIR=$G1DIR/Cases
 #
 #####################################################################
 ##       compile g2_analyse.f90
 #####################################################################
-if [[ ! -d $BINDIR ]]; then mkdir $BINDIR ; fi
-if [[ ${G1DIR}/src/g2_analyse.f90 -nt ${BINDIR}/g2_analyse.x ]] ; then
-  cd $BINDIR
-  echo "compiling g2_analyse.f90 ..."
-  gfortran -g -o g2_analyse.x ${G1DIR}/src/g2_analyse.f90
-  RC=$?
-  if [[ $RC != 0 ]] ; then echo "error in $0: compilation failed"; exit 1 ; fi
-  cd $THISDIR
-fi
+echo "compiling g2_analyse.f90 ..."
+gfortran -g -o g2_analyse.x ${G1DIR}/src/g2_analyse.f90
+RC=$?
+if [[ $RC != 0 ]] ; then echo "error in $0: compilation failed"; exit 1 ; fi
 #
 #####################################################################
 ## update readpaw.in
@@ -45,16 +47,16 @@ echo "building readpaw.in ..."
 if [[ -f readpaw.in ]] ; then rm readpaw.in ; fi
 for FILE in ${SAMPLEDIR}/*.strc_sample ; do
   NAME=${FILE%.strc_sample} # strip extension
-  NAME=${NAME##*/}          # strip preceeding directories
+  NAME=${NAME##*/}     #  remove all preceeding directories
   DIR=$CASESDIR/$NAME
-  if [[  ! -s $DIR ]] ; then
-    echo "system $NAME does not exist"
-  fi
+  #
   X=$(paw_get -n -w etot ${DIR}/$NAME)
-  if [[ ! $X  = error* ]] ; then
+  RC=$?
+  if [[ "$RC" = "0" ]] ; then
+#    echo writing $NAME $X
     echo "  '$NAME' $X " >>${G1DIR}/readpaw.in
   else
-    echo "system $NAME produced an error"
+    echo skipping $NAME
   fi
 done
 #
@@ -62,6 +64,6 @@ done
 ##  run analysis
 #####################################################################
 echo "building readpaw.out ..."
-${BINDIR}/g2_analyse.x <readpaw.in >readpaw.out
+g2_analyse.x <readpaw.in >readpaw.out
 echo " ...done"
 exit 0

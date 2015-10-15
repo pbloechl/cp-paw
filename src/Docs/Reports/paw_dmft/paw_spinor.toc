@@ -1,0 +1,31 @@
+\contentsline {chapter}{\numberline {1}Todo}{2}{chapter.1}
+\contentsline {section}{\numberline {1.1}Time-inversion symmetry}{2}{section.1.1}
+\contentsline {chapter}{\numberline {2}SPINOR object}{3}{chapter.2}
+\contentsline {section}{\numberline {2.1}Spin orbitals}{3}{section.2.1}
+\contentsline {section}{\numberline {2.2}Pauli matrices and observables}{3}{section.2.2}
+\contentsline {subsubsection}{Eigenvectors of Pauli matrices}{4}{section*.2}
+\contentsline {section}{\numberline {2.3}Representation of a matrices in terms of Pauli matrices}{5}{section.2.3}
+\contentsline {subsubsection}{Definition}{5}{section*.3}
+\contentsline {subsubsection}{Conversion of a matrix from $\delimiter "3222378 ,\delimiter "3223379 $ into $t,x,y,z$ representation and vice versa}{5}{section*.4}
+\contentsline {section}{\numberline {2.4}Motivation}{6}{section.2.4}
+\contentsline {section}{\numberline {2.5}Operations in the spinor representation}{6}{section.2.5}
+\contentsline {subsection}{\numberline {2.5.1}Identity in a spinor representation}{6}{subsection.2.5.1}
+\contentsline {subsection}{\numberline {2.5.2}Hermitean conjugate in a spinor representation}{7}{subsection.2.5.2}
+\contentsline {subsubsection}{Hermitean Matrices}{7}{section*.5}
+\contentsline {subsection}{\numberline {2.5.3}Multiplication of matrices in a spinor representation}{8}{subsection.2.5.3}
+\contentsline {subsection}{\numberline {2.5.4}Inversion of a matrix in a spinor representation}{8}{subsection.2.5.4}
+\contentsline {subsection}{\numberline {2.5.5}Trace}{10}{subsection.2.5.5}
+\contentsline {subsection}{\numberline {2.5.6}Trace or the product of two matrices}{10}{subsection.2.5.6}
+\contentsline {subsection}{\numberline {2.5.7}Vector model}{10}{subsection.2.5.7}
+\contentsline {subsection}{\numberline {2.5.8}Matrix-vector multiplication}{10}{subsection.2.5.8}
+\contentsline {section}{\numberline {2.6}Density matrices and spin orbitals with defined spin}{11}{section.2.6}
+\contentsline {section}{\numberline {2.7}Potentials and spin orbitals}{12}{section.2.7}
+\contentsline {subsubsection}{General definition of a potential for a complex matrix quantity}{12}{section*.6}
+\contentsline {subsubsection}{Spin potentials}{13}{section*.7}
+\contentsline {section}{\numberline {2.8}Description of Subroutines}{15}{section.2.8}
+\contentsline {subsubsection}{(t,x,y,z) representation}{16}{section*.8}
+\contentsline {subsubsection}{Expectation value by trace}{17}{section*.9}
+\contentsline {subsubsection}{Physical}{17}{section*.10}
+\contentsline {subsection}{\numberline {2.8.1}\texttt {SPINOR\$CONVERT}}{18}{subsection.2.8.1}
+\contentsline {chapter}{\numberline {A}Vector representation of Pauli matrices}{19}{appendix.A}
+\contentsline {subsubsection}{Product table of Pauli matrices}{20}{section*.11}

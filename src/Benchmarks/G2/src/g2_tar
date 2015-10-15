@@ -1,0 +1,41 @@
+#!/bin/bash
+################################################################################
+#
+#         FILE: g2_tar
+#
+#        USAGE:  src/g2_tar
+#
+#  DESCRIPTION: 
+#
+#  g2_tar makes a tar file bare_g2.tgz containing the essential files 
+#  of the g2 data base without results.
+#
+#
+#       AUTHOR: Peter Bloechl; peter.bloechl@tu-clausthal.de
+#      CREATED: 9. Oct. 2015
+#
+################################################################################
+LIST=""
+LIST="$LIST src/Speciesfiles/*.species"
+LIST="$LIST src/Strcfiles/*.strc_sample"
+LIST="$LIST src/g2_makedo"
+LIST="$LIST src/g2_analyse"
+LIST="$LIST src/g2_analyse.f90"
+LIST="$LIST src/sample.cntl_relax"
+LIST="$LIST src/sample.cntl_start"
+LIST="$LIST src/modify"
+LIST="$LIST src/g2_tar"
+LIST="$LIST src/g2_cleanup"
+LIST="$LIST doc/readme.tex"
+LIST="$LIST doc/readme.pdf"
+LIST="$LIST doc/Figs"
+LIST="$LIST doc/Bib"
+LIST="$LIST doc/Sources/Gpaw_g2/molecule_tests.html"
+LIST="$LIST doc/Sources/Gpaw_g2/gpawdata.in"
+LIST="$LIST doc/Sources/Gpaw_g2/readme"
+LIST="$LIST doc/Sources/Gpaw_g2/readgpawdata.f90"
+LIST="$LIST doc/Sources/Gpaw_g2/dataout.f90"
+LIST="$LIST doc/Sources/Gpaw_g2/dataout.dat"
+tar cfz bare_g2.tgz $LIST
+echo file bare_g2.tgz written in $(pwd)
+exit 0

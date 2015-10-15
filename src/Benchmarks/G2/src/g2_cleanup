@@ -1,0 +1,30 @@
+#!/bin/bash
+################################################################################
+#
+#         FILE: g2_clean
+#
+#        USAGE:  src/g2_clean
+#
+#  DESCRIPTION: 
+#
+#  g2_clean removes a number of files from the cases directory that
+#  are not required.
+#
+#
+#       AUTHOR: Peter Bloechl; peter.bloechl@tu-clausthal.de
+#      CREATED: 9. Oct. 2015
+#
+################################################################################
+LIST=".banddata .err .pdos _constr.report _r.tra .rstrt_save1" 
+for X in Cases/*; do
+  ROOT=$X/${X#Cases/}
+  for Y in $LIST ; do
+    NAME=$ROOT$Y
+    if [[ -e $NAME ]] ; then rm $NAME ; fi
+  done
+  STP=${ROOT}_stpforz*.myxml
+  for Y in $STP ; do
+    if [[ -e $Y ]] ; then rm $Y ; fi
+  done
+done
+exit 0

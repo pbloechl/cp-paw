@@ -1,5 +1,5 @@
 !STRUCTURE
- !GENERIC LUNIT=1.8897269 !END
+ !GENERIC LUNIT[AA]=1.0 !END
  !OCCUPATIONS NBAND=8  NSPIN=2 CHARGE[E]=0.0 SPIN[HBAR]=1.0
     !state b=2 s=1 f=1.d0 !end
     !state b=3 s=1 f=1.d0 !end

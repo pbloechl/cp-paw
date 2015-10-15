@@ -1,0 +1,21 @@
+\BOOKMARK [0][-]{chapter.1}{Todo}{}% 1
+\BOOKMARK [1][-]{section.1.1}{Time-inversion symmetry}{chapter.1}% 2
+\BOOKMARK [0][-]{chapter.2}{SPINOR object}{}% 3
+\BOOKMARK [1][-]{section.2.1}{Spin orbitals}{chapter.2}% 4
+\BOOKMARK [1][-]{section.2.2}{Pauli matrices and observables}{chapter.2}% 5
+\BOOKMARK [1][-]{section.2.3}{Representation of a matrices in terms of Pauli matrices}{chapter.2}% 6
+\BOOKMARK [1][-]{section.2.4}{Motivation}{chapter.2}% 7
+\BOOKMARK [1][-]{section.2.5}{Operations in the spinor representation}{chapter.2}% 8
+\BOOKMARK [2][-]{subsection.2.5.1}{Identity in a spinor representation}{section.2.5}% 9
+\BOOKMARK [2][-]{subsection.2.5.2}{Hermitean conjugate in a spinor representation}{section.2.5}% 10
+\BOOKMARK [2][-]{subsection.2.5.3}{Multiplication of matrices in a spinor representation}{section.2.5}% 11
+\BOOKMARK [2][-]{subsection.2.5.4}{Inversion of a matrix in a spinor representation}{section.2.5}% 12
+\BOOKMARK [2][-]{subsection.2.5.5}{Trace}{section.2.5}% 13
+\BOOKMARK [2][-]{subsection.2.5.6}{Trace or the product of two matrices}{section.2.5}% 14
+\BOOKMARK [2][-]{subsection.2.5.7}{Vector model}{section.2.5}% 15
+\BOOKMARK [2][-]{subsection.2.5.8}{Matrix-vector multiplication}{section.2.5}% 16
+\BOOKMARK [1][-]{section.2.6}{Density matrices and spin orbitals with defined spin}{chapter.2}% 17
+\BOOKMARK [1][-]{section.2.7}{Potentials and spin orbitals}{chapter.2}% 18
+\BOOKMARK [1][-]{section.2.8}{Description of Subroutines}{chapter.2}% 19
+\BOOKMARK [2][-]{subsection.2.8.1}{SPINOR\044CONVERT}{section.2.8}% 20
+\BOOKMARK [0][-]{appendix.A}{Vector representation of Pauli matrices}{}% 21
