@@ -3,10 +3,11 @@
 #
 #         FILE: g2_makedo
 #
-#        USAGE:  g2_makedo
+#        USAGE:  g2_makedo OPTIONS
 #
 #      OPTIONS: 
 #          -h    print this help message
+#          -j n  nr. of paw_jobs allowed to run simultaneously
 #          -0:   dry-run (still created g2_do_sample)
 #          -v:   verbose
 #
@@ -57,6 +58,7 @@ USAGE="$USAGE \t initial setup of the G2 database\n"
 USAGE="$USAGE \n"
 USAGE="$USAGE Options:\n"
 USAGE="$USAGE \t -h \t print this help message \n"
+USAGE="$USAGE \t -j nr. of paw_jobs allowed to run simultaneously\n"
 USAGE="$USAGE \t -0: dry-run\n"
 USAGE="$USAGE \t\t   creates file g2_do_sample, but does not create directories\n"
 USAGE="$USAGE \t -v: verbose\n"
@@ -73,6 +75,7 @@ THISDIR=$(pwd)
 export PAWXDIR=$(which paw_fast.x); PAWXDIR=${PAWXDIR%paw_fast.x}
 export DRYRUN=no
 export VERBOSE=no
+export NJOBS=3
 #
 #-------------------------------------------------------------------------------
 #  implement dry-run
@@ -84,15 +87,27 @@ function execute(){
     fi
     if [[ "${DRYRUN}" = "no" ]] ; then
       eval "$@"
+      RC=$?
+      if [[ $RC -ne 0 ]] ; then
+        echo "error in $0: command $@ failed" >&2
+        exit 1
+      fi
     fi
 }
 #-------------------------------------------------------------------------------
 #  resolve argument list
 #-------------------------------------------------------------------------------
-OPTSTRING=":hv0"
+OPTSTRING=":j:hv0"
 OPTIND=0
 while getopts "${OPTSTRING}" OPT  ; do
   case $OPT in
+    j)
+      NJOBS=$OPTARG
+      ;;
+    h)   # help
+      echo -e $USAGE
+      exit 0
+      ;;
     0)   #nothing:
       DRYRUN=yes
 #      set -n
@@ -101,10 +116,6 @@ while getopts "${OPTSTRING}" OPT  ; do
       VERBOSE=yes
 #      set -v
 #      set -x
-      ;;
-    h)   # help
-      echo -e $USAGE
-      exit 0
       ;;
     \?)   # unknown option (placed into OPTARG, if OPTSTRING starts with :)
       echo "error in $0" >&2
@@ -120,18 +131,27 @@ while getopts "${OPTSTRING}" OPT  ; do
       ;;  
   esac
 done
+shift $(($OPTIND - 1))
+if [[ -e $1 ]] ; then 
+  echo "error in $0: argument present. none expected" >&2 
+fi
+
 if [[ "${VERBOSE}" == "yes" ]] ; then
   echo verbose=$VERBOSE
   echo dryrun=$DRYRUN
   echo OPTSTRING=$OPTSTRING
   echo args="$1"
 fi
-#-----------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 #
-#-----------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 G1DIR=$THISDIR
 if [[ ${VERBOSE} = yes ]] ; then echo THISDIR=$THISDIR ; fi
 if [[ ${VERBOSE} = yes ]] ; then echo PAWXDIR=$PAWXDIR ; fi
+# 
+if [[ ! -d $G1DIR/bin ]]; then 
+   execute "mkdir $G1DIR/bin"
+fi
 #
 #== define directory holding the structure files
 SAMPLEDIR=$G1DIR/src/Strcfiles
@@ -141,18 +161,30 @@ if [[ ! -d $SAMPLEDIR ]]; then
    exit 1 
 fi
 #== define directory with species information
-STPDIR=$G1DIR/src/Speciesfiles
+STPDIR=$G1DIR/bin/Speciesfiles
 if [[ ${VERBOSE} = yes ]] ; then echo STPDIR=$STPDIR ; fi
 if [[ ! -d $STPDIR ]]; then 
-   echo "error in $0: STPDIR=$STPDIR does not exist"
-   exit 1 
+   execute "mkdir $STPDIR"
 fi
-#
+# 
 CASESDIR=$G1DIR/Cases
 if [[ ${VERBOSE} = yes ]] ; then echo CASESDIR=$CASESDIR ; fi
 if [[ ! -d $CASESDIR ]]; then 
    execute "mkdir $CASESDIR"
 fi
+SPECIESDIR=$G1DIR/bin/Speciesfiles
+if [[ ${VERBOSE} = yes ]] ; then echo SPECIESDIR=$SPECIESDIR ; fi
+if [[ ! -d $SPECIESDIR ]]; then 
+   execute "mkdir $SPECIESDIR"
+fi
+#
+#######################################################################
+#  extract src/specieslist into $SPECIESDIR/*.species
+#######################################################################
+execute "gfortran -o $G1DIR/bin/g2_splitspecieslist.x $G1DIR/src/g2_splitspecieslist.f90"
+execute "cd $SPECIESDIR"
+execute "$G1DIR/bin/g2_splitspecieslist.x <$G1DIR/src/specieslist "
+execute "cd $THISDIR"
 #
 #######################################################################
 #  prepare g2_do_sample
@@ -210,22 +242,23 @@ for FILE in $SAMPLEDIR/*.strc_sample ; do
   if [[ ! -d $DIR ]] ; then 
     execute "mkdir $DIR"
   fi
-  execute "paw_resolve -r\"LATTICE=0.0 8.5 8.5 8.5 0.0 8.5 8.5 8.5 0.0\" \
-              -fHYDROGEN=$STPDIR/h.species \
-              -fLITHIUM=$STPDIR/li.species \
-              -fBERYLLIUM=$STPDIR/be.species \
-              -fBORON=$STPDIR/b.species \
-              -fCARBON=$STPDIR/c.species \
-              -fNITROGEN=$STPDIR/n.species \
-              -fOXYGEN=$STPDIR/o.species \
-              -fFLOURINE=$STPDIR/f.species \
-              -fSODIUM=$STPDIR/na.species \
-              -fALUMINIUM=$STPDIR/al.species \
-              -fSILICON=$STPDIR/si.species \
-              -fPHOSPHORUS=$STPDIR/p.species \
-              -fSULFUR=$STPDIR/s.species \
-              -fCHLORINE=$STPDIR/cl.species \
-              -fBROMIUM=$STPDIR/br.species \
+  execute "paw_resolve \
+              -r\"LATTICE=0.0 8.5 8.5 8.5 0.0 8.5 8.5 8.5 0.0\" \
+              -fHYDROGEN=$STPDIR/H_.species \
+              -fLITHIUM=$STPDIR/LI.species \
+              -fBERYLLIUM=$STPDIR/BE.species \
+              -fBORON=$STPDIR/B_.species \
+              -fCARBON=$STPDIR/C_.species \
+              -fNITROGEN=$STPDIR/N_.species \
+              -fOXYGEN=$STPDIR/O_.species \
+              -fFLOURINE=$STPDIR/F_.species \
+              -fSODIUM=$STPDIR/NA.species \
+              -fALUMINIUM=$STPDIR/AL.species \
+              -fSILICON=$STPDIR/SI.species \
+              -fPHOSPHORUS=$STPDIR/P_.species \
+              -fSULFUR=$STPDIR/S_.species \
+              -fCHLORINE=$STPDIR/CL.species \
+              -fBROMIUM=$STPDIR/BR.species \
                $FILE > $DIR/${NAME}.strc"
   #   create sample control file
     ROOT=${DIR}/$NAME

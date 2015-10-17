@@ -16,13 +16,15 @@
 #
 ################################################################################
 LIST=""
-LIST="$LIST src/Speciesfiles/*.species"
+LIST="$LIST src/specieslist"
 LIST="$LIST src/Strcfiles/*.strc_sample"
 LIST="$LIST src/g2_makedo"
 LIST="$LIST src/g2_analyse"
 LIST="$LIST src/g2_analyse.f90"
-LIST="$LIST src/sample.cntl_relax"
-LIST="$LIST src/sample.cntl_start"
+LIST="$LIST src/g2_splitspecieslist.f90"
+LIST="$LIST src/sample.cntl_strt"
+LIST="$LIST src/sample.cntl_rlxe"
+LIST="$LIST src/sample.cntl_rlxr"
 LIST="$LIST src/modify"
 LIST="$LIST src/g2_tar"
 LIST="$LIST src/g2_cleanup"

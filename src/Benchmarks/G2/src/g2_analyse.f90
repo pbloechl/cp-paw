@@ -1,8 +1,67 @@
+!
+!........1.........2.........3.........4.........5.........6.........7.........8
+MODULE STRINGS_MODULE
+!*******************************************************************************
+!**                                                                           **
+!**  NAME: STRINGS                                                            **
+!**                                                                           **
+!**  PURPOSE: DEFINE CASING OPERATORS FOR STRING MANIPULATIONS                **
+!**                                                                           **
+!**  FUNCTIONS:                                                               **
+!**    '+'   UPPERCASE A STRING                                               **
+!**    '-'   LOWERCASE A STRING                                               **
+!**                                                                           **
+!*******************************************************************************
+PUBLIC
+INTERFACE OPERATOR (-)
+  MODULE PROCEDURE LOWER_CASE
+END INTERFACE
+INTERFACE OPERATOR (+) 
+  MODULE PROCEDURE UPPER_CASE
+END INTERFACE
+CONTAINS
+!       .1.........2.........3.........4.........5.........6.........7.........8
+        FUNCTION LOWER_CASE(OLD) RESULT(NEW)
+          IMPLICIT NONE
+          CHARACTER(*), INTENT(IN):: OLD
+          CHARACTER(LEN(OLD))     :: NEW
+          INTEGER(4)              :: I,ISVAR
+!         ***************************************************************
+          NEW=OLD
+          DO I=1,LEN(TRIM(OLD))
+            ISVAR=IACHAR(OLD(I:I))
+            IF(ISVAR.GE.65.AND.ISVAR.LE.90) NEW(I:I)=ACHAR(ISVAR+32)
+          ENDDO
+        return
+        END FUNCTION LOWER_CASE
+!       .1.........2.........3.........4.........5.........6.........7.........8
+        FUNCTION UPPER_CASE(OLD) RESULT(NEW)
+          IMPLICIT NONE
+          CHARACTER(*), INTENT(IN):: OLD
+          CHARACTER(LEN(OLD))     :: NEW
+          INTEGER(4)              :: I,ISVAR
+!         **********************************************************************
+          NEW=OLD 
+          DO I=1,LEN(TRIM(OLD))
+            ISVAR=IACHAR(OLD(I:I))
+            IF(ISVAR.GE.97.AND.ISVAR.LE.122) NEW(I:I)=ACHAR(ISVAR-32)
+          ENDDO
+        END FUNCTION UPPER_CASE
+end MODULE STRINGS_MODULE
 !     ...1.........2.........3.........4.........5.........6.........7.........8
       PROGRAM MAIN
 !     **************************************************************************
 !     **  reads a file readpaw.in from standard input, which contains a list  **
 !     **     of (1) name of the substance (2) energy of the substance         **
+!     **                                                                      **
+!     **   writes a set of files files with the atomization energies relative **
+!     **   to the actual paw calculation for plotting                         **
+!     **     g2devinev_expt.dat                                               **
+!     **     g2devinev_gpawpbe.dat                                            **
+!     **     g2devinev_vasppbe.dat                                            **
+!     **     g2devinev_gausspbe.dat                                           **
+!     **     g2devinev_scuseriapbe.dat                                        **
+!     **     g2devinev_beckebpw91.dat                                         **
 !     **                                                                      **
 !     **  writes a file g2results.dat                                         **
 !     **     (1) molecule number
@@ -17,9 +76,11 @@
 !     **    set tspherical                                                    **
 !     **                                                                      **
 !     **************************************************************************
+      use strings_module
       IMPLICIT NONE
       INTEGER(4),PARAMETER :: NFILO=6
       INTEGER(4),PARAMETER :: NFILdat=100
+      INTEGER(4),PARAMETER :: NFILdat1=101
       character(32),parameter ::fildat='g2results.dat'
       REAL(8),PARAMETER    :: EV=1.D0/27.21138505D0
       LOGICAL(4),PARAMETER :: TSPHERICAL=.false.
@@ -205,15 +266,20 @@
       WRITE(NFILO,FMT='(A,T30,3A15)')'MOLECULE ',' CPPAW[EV] ','EXP[EV] ' &
      &                                          ,' CPPAW-EXP[EV]'
       WRITE(NFILO,FMT='(80("-"))')
+!
+      OPEN(NFILDAT,FILE=-'G2DEVINEV_EXPT.DAT')
       DO I=1,NDATA
         CALL SCUSERIA__GET(MOLID(I),'EXP',VAL,TCHK)
         IF(TCHK) THEN
            WRITE(*,FMT='(i4,t6,A,T36,3F15.6)')i,TRIM(MOLID(I)) &
      &                                        ,-E(I)/EV,VAL/EV,(-E(I)-VAL)/EV
+           write(nfildat,*)i,(-E(I)-VAL)/EV
         ELSE
-          if(tnotfound)WRITE(nfilo,FMT='(i4,t6,A,t30," NOT FOUND")')i,TRIM(MOLID(I))
+          if(tnotfound)WRITE(nfilo,FMT='(i4,t6,A,t30," NOT FOUND")') &
+     &               i,TRIM(MOLID(I))
         END IF
       ENDDO
+      close(nfildat)
 !
 !     ==========================================================================
 !     ==  COMPARE DATA TO OTHER CALCULATIONS                                  ==
@@ -226,15 +292,18 @@
       WRITE(NFILO,FMT='(80("="),T20,A)')
       WRITE(nfilo,FMT='(A,t30,3A15)') &
      &                     'MOLECULE ',' CPPAW[EV] ','REF[EV] ',' CPPAW-REF[EV]'
+      OPEN(NFILDAT,FILE=-'G2DEVINEV_SCUSERIAPBE.DAT')
       DO I=1,NDATA
         CALL SCUSERIA__GET(MOLID(I),'PBE',VAL,TCHK)
         IF(TCHK) THEN
            WRITE(nfilo,FMT='(i4,t6,A,T36,3F15.6)')i,TRIM(MOLID(I)) &
     &                                  ,-E(I)/EV,VAL/EV,(-E(I)-VAL)/EV
+           write(nfildat,*)i,(-E(I)-VAL)/EV
         ELSE
          if(tnotfound)WRITE(nfilo,FMT='(i4,t6,A,T30,"NOT FOUND")')i,TRIM(MOLID(I))
         END IF
       ENDDO
+      close(nfildat)
 !
 !     ==========================================================================
 !     ==  COMPARE DATA TO Paier PBE                                           ==
@@ -246,6 +315,8 @@
       WRITE(*,FMT='(80("-"),t30,a)')' all energies in electron volt '
       WRITE(*,FMT='(A,t33,4A12)') &
      &              'MOLECULE',' CPPAW','VASP-CPPAW',' GAUSS-CPPAW','GAUSS-vasp'
+      OPEN(NFILDAT,FILE=-'G2DEVINEV_VASPPBE.DAT')
+      OPEN(NFILDAT1,FILE=-'G2DEVINEV_GAUSSPBE.DAT')
       DO I=1,NDATA
         CALL PAIER__GET(MOLID(I),'PBE_VASP',VAL,TCHK)
         CALL PAIER__GET(MOLID(I),'PBE_GAUSS',VAL1,TCHK1)
@@ -253,10 +324,14 @@
         IF(TCHK) THEN
            WRITE(nfilo,FMT='(i4,t6,A,t33,4F12.3)')i,MOLID(I) &
      &                      ,-E(I)/EV,(E(I)+VAL)/EV,(E(I)+VAL1)/EV,(VAL1-VAL)/EV
+           write(nfildat,*)i,(-E(I)-VAL)/EV
+           write(nfildat1,*)i,(-E(I)-VAL1)/EV
        ELSE
          if(tnotfound)WRITE(nfilo,FMT='(i4,t6,A,t30," NOT FOUND")')i,TRIM(MOLID(I))
         END IF
       ENDDO
+      close(nfildat)
+      close(nfildat1)
 !
 !     ==========================================================================
 !     ==  COMPARE DATA TO becke                                               ==
@@ -268,15 +343,43 @@
       WRITE(NFILO,FMT='(80("="),T20,A)')
       WRITE(NFILO,FMT='(A,T30,3A15)') &
      &                'MOLECULE',' CPPAW[EV]','BECKE/BP91[EV]','BECKE-CPPAW[EV]'
+      OPEN(NFILDAT,FILE=-'G2DEVINEV_beckeBPW91.DAT')
       DO I=1,NDATA
         CALL BECKE__GET(MOLID(I),'BPW91',VAL,TCHK)
-        IF(TCHK)WRITE(*,FMT='(i4,t6,A,t36,4F15.3)')i,MOLID(I) &
+        IF(TCHK)then
+          WRITE(*,FMT='(i4,t6,A,t36,4F15.3)')i,MOLID(I) &
      &                                          ,-E(I)/EV,VAL/EV,(-E(I)-VAL)/EV
+          write(nfildat,*)i,(-E(I)-VAL)/EV
+        endif
       ENDDO
       WRITE(NFILO,FMT='(80("="),T20,A)')
       WRITE(NFILO,FMT='(80("="),T20,A)')'  DONE  '
       WRITE(NFILO,FMT='(80("="),T20,A)')
-
+      close(nfildat)
+!
+!     ==========================================================================
+!     ==  COMPARE DATA TO gpaw                                               ==
+!     ==========================================================================
+      WRITE(NFILO,FMT='(80("="),T20,A)')
+      WRITE(NFILO,FMT='(80("="),T20,A)') &
+     &                           '  COMPARE ATOMIZATION ENERGIES TO DATABASES  '
+      WRITE(NFILO,FMT='(80("="),T20,A)')'  gpaw '
+      WRITE(NFILO,FMT='(80("="),T20,A)')
+      WRITE(NFILO,FMT='(A,T30,3A15)') &
+     &                'MOLECULE',' CPPAW[EV]','gpaw/pbe[EV]','gpaw-CPPAW[EV]'
+      OPEN(NFILDAT,FILE=-'G2DEVINEV_gpawpbe.DAT')
+      DO I=1,NDATA
+        CALL GPAW__GET(MOLID(I),'GPAW',VAL,TCHK)
+        IF(TCHK)THEN
+          WRITE(*,FMT='(I4,T6,A,T36,4F15.3)')I,MOLID(I) &
+     &                                          ,-E(I)/EV,VAL/EV,(-E(I)-VAL)/EV
+          WRITE(NFILDAT,*)I,(-E(I)-VAL)/EV
+        ENDIF
+      ENDDO
+      WRITE(NFILO,FMT='(80("="),T20,A)')
+      WRITE(NFILO,FMT='(80("="),T20,A)')'  DONE  '
+      WRITE(NFILO,FMT='(80("="),T20,A)')
+      close(nfildat)
 !
 !     ==========================================================================
 !     ==  write data to file for graphic output                               ==
@@ -1163,15 +1266,15 @@ END MODULE GPAW_MODULE
       egpaw(  1)=   2.39900d0*ev
       evasp(  1)=   2.40700d0*ev
       name (  2)='\rm{C}_2\rm{H}_2'
-      id   (  2)='C2'
+      id   (  2)='C2H2'
       egpaw(  2)=  18.04600d0*ev
       evasp(  2)=  17.97400d0*ev
       name (  3)='\rm{C}_2\rm{H}_4'
-      id   (  3)='C2'
+      id   (  3)='C2H4'
       egpaw(  3)=  24.83700d0*ev
       evasp(  3)=  24.76100d0*ev
       name (  4)='\rm{C}_2\rm{H}_6'
-      id   (  4)='C2'
+      id   (  4)='C2H6'
       egpaw(  4)=  31.12900d0*ev
       evasp(  4)=  31.04900d0*ev
       name (  5)='\rm{CH}'
@@ -1179,11 +1282,11 @@ END MODULE GPAW_MODULE
       egpaw(  5)=   3.67500d0*ev
       evasp(  5)=   3.67300d0*ev
       name (  6)='\rm{CH}_2(^1\rm{A}_1)'
-      id   (  6)='CH2_'
+      id   (  6)='CH2_1A1'
       egpaw(  6)=   7.76700d0*ev
       evasp(  6)=   7.75400d0*ev
       name (  7)='\rm{CH}_2(^3\rm{B}_1)'
-      id   (  7)='CH2_'
+      id   (  7)='CH2_3B1'
       egpaw(  7)=   8.44100d0*ev
       evasp(  7)=   8.43000d0*ev
       name (  8)='\rm{CH}_3'
@@ -1191,15 +1294,15 @@ END MODULE GPAW_MODULE
       egpaw(  8)=  13.45800d0*ev
       evasp(  8)=  13.43000d0*ev
       name (  9)='\rm{CH}_3\rm{Cl}'
-      id   (  9)='CH3'
+      id   (  9)='CH3CL'
       egpaw(  9)=  17.35600d0*ev
       evasp(  9)=  17.32000d0*ev
       name ( 10)='\rm{H}_3\rm{COH}'
-      id   ( 10)='H3'
+      id   ( 10)='CH3OH'
       egpaw( 10)=  22.55200d0*ev
       evasp( 10)=  22.51900d0*ev
       name ( 11)='\rm{H}_3\rm{CSH}'
-      id   ( 11)='H3'
+      id   ( 11)='CH3SH'
       egpaw( 11)=  20.74500d0*ev
       evasp( 11)=  20.71900d0*ev
       name ( 12)='\rm{CH}_4'
@@ -1239,11 +1342,11 @@ END MODULE GPAW_MODULE
       egpaw( 20)=   2.31200d0*ev
       evasp( 20)=   2.28100d0*ev
       name ( 21)='\rm{H}_2\rm{CO}'
-      id   ( 21)='H2'
+      id   ( 21)='H2CO'
       egpaw( 21)=  16.73400d0*ev
       evasp( 21)=  16.71700d0*ev
       name ( 22)='\rm{H}_2\rm{O}'
-      id   ( 22)='H2'
+      id   ( 22)='H2O'
       egpaw( 22)=  10.11900d0*ev
       evasp( 22)=  10.13400d0*ev
       name ( 23)='\rm{HOOH}'
@@ -1287,7 +1390,7 @@ END MODULE GPAW_MODULE
       egpaw( 32)=  10.57200d0*ev
       evasp( 32)=  10.56800d0*ev
       name ( 33)='\rm{H}_2\rm{NNH}_2'
-      id   ( 33)='H2'
+      id   ( 33)='N2H4'
       egpaw( 33)=  19.71300d0*ev
       evasp( 33)=  19.63100d0*ev
       name ( 34)='\rm{NH}'
@@ -1355,15 +1458,15 @@ END MODULE GPAW_MODULE
       egpaw( 49)=   3.50700d0*ev
       evasp( 49)=   3.52600d0*ev
       name ( 50)='\rm{Si}_2\rm{H}_6'
-      id   ( 50)='SI2'
+      id   ( 50)='SI2H6'
       egpaw( 50)=  22.45800d0*ev
       evasp( 50)=  22.52800d0*ev
       name ( 51)='\rm{SiH}_2(^1\rm{A}_1)'
-      id   ( 51)='SIH2'
+      id   ( 51)='SIH2_1A1'
       egpaw( 51)=   6.38800d0*ev
       evasp( 51)=   6.41400d0*ev
       name ( 52)='\rm{SiH}_2(^3\rm{B}_1)'
-      id   ( 52)='SIH2'
+      id   ( 52)='SIH2_3B1'
       egpaw( 52)=   5.67000d0*ev
       evasp( 52)=   5.69400d0*ev
       name ( 53)='\rm{SiH}_3'

@@ -49,10 +49,11 @@ src/Strcfiles
 src/Speciesfiles      
 src/g2_makedo         
 src/g2_analyse         
-src/analyse.f90       
+src/g2_analyse.f90       
 src/sample.cntl_relax 
 src/sample.cntl_start
 src/g2_tar
+src/splitspecieslist.f90       
 src/modify
 doc/readme.tex
 \end{verbatim}
@@ -67,7 +68,7 @@ doc/readme.tex
   information will be incorporated into the structure files of all
   calculations.
 %
-\item \textbf{Speciesfiles/*.species}: contains the setup information
+\item \textbf{specieslist}: contains the setup information
   for all elements, which will be included into the structure files.
 %
 \item \textbf{src/g2\_makedo:} Basic installation and update script:
@@ -84,8 +85,11 @@ doc/readme.tex
 \item \textbf{src/g2\_analyse} shell script to compile and execute
 \verb|src/g2_analyse|. It reads readpaw.in and produces readpaw.out.
 %
-\item \textbf{src/analyse.f90} fortran code, extracts atomization
+\item \textbf{src/g2\_analyse.f90} fortran code, extracts atomization
   energies and comparison with benchmark tests
+%
+\item \textbf{src/splitspecies.f90} fortran code, used by
+  \verb|src/g2_makedo| to expand the specieslist into separate files.
 %
 \item \textbf{src/modify} is a small helper script which is not
   required. It may be useful for an administrator to construct scripts
@@ -109,8 +113,9 @@ doc/readme.tex
   \begin{itemize} 
     \item execute \verb|ls|. You should obtain ``\verb|src doc|. 
     \item execute \verb|ls src|. You should obtain ``Strcfiles,
-      Speciesfiles, g2\_makedo, sample.cntl\_start,
-      sample.cntl\_relax, g2\_analyse, g2\_analyse.f90, modify, g2\_cleanup''
+      specieslist, g2\_makedo, sample.cntl\_start,
+      sample.cntl\_relax, g2\_analyse, g2\_analyse.f90, splitspecies, 
+      modify, g2\_cleanup g2\_tar''
    \end{itemize}
 %
 \item compile this documentation file readme.pdf as follows:
@@ -207,6 +212,62 @@ $\pi$ states right at the energy minimum
 \newpage
 \section*{Results}
 %=========================================================================
+
+%=========================================================================
+\subsection*{Benchmark Oct.17, 2015}
+%=========================================================================
+Look up the paw\_setups report for a systematic study of constructing a
+set of species.
+
+\begin{itemize}
+\item O-cutoff: $r_{c,\ell}=0.75\;r_{cov}$. Oxygen is the most
+  critical element with one of the slowest plane wave convergence. It
+  is the smallest first row element (following Ne and F) which in
+  addition forms strong bonds. Furthermore it is a ubiquitous
+  element. With this cutoff the O$_2$ bondlength deviates by less than
+  1~\%. The result can be improved with a cutoff of
+  $r_{c,\ell}=0.75\;r_{cov}$ at the cost of a slower plane wave
+  convergence.
+%
+\item H-cutoff: $r_{c,\ell}=1.2\;r_{cov}$. Hydrogen is a frequent
+  element. It does not have any core states so that the partial waves
+  turn into all-electron wave functions if the cutoff is reduced.
+%
+\item C-cutoff: $r_{c,\ell}=0.75\;r_{cov}$. Compounds with oxygen, CO
+  and CO$_2$ gave results that vary a lot with $r_{c,\ell}$. At the
+  chosen value the energies go through a minimum so that the results
+  are maximally independent of the cutoff.
+%
+\item N-cutoff: $r_{c,\ell}=0.75\;r_{cov}$. Nitrogen forms very strong
+  bonds and is intermediate of oxygen and carbon. Therefore it is
+  treated similarly.
+%
+\item Other first-row elements with p-electrons
+  $r_{c,\ell}=0.75\;r_{cov}$.  We choose the other first-row elements
+  with p-electrons similar to C,N and O.
+%
+\item first-row elements with s-electrons $r_{c,\ell}=0.85\;r_{cov}$.
+  Lithium and beryllium obtain a somwhat larger radius. (No special reason)
+%
+\item second-row elements with p-electrons $r_{c,\ell}=0.9\;r_{cov}$.
+\end{itemize}
+
+\includegraphics[width=\linewidth]{Figs/151017_Benchmark/151017_benchmark}
+
+Problems:
+\begin{itemize}
+\item The Na setup is defunct
+\item the Br setup is defunct
+\item 86(Cl$_2$), 89 (ClO) and (98) FCl deviate more than 0.1~eV
+  beyond the VASP, GAUSS and GPAW calculations. This indicates that the
+  Cl setup is not very good.
+\item the atomic structure has not been relaxed in the test.
+\item the deviations are more on the negative. This could be a sign
+  that the results improve with a larger plane wave cutoff, or after
+  relaxing the atomic positions
+\end{itemize}
+
+
 %=========================================================================
 \subsection*{Benchmark Oct.10, 2015}
 %=========================================================================
