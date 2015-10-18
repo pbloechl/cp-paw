@@ -1,8 +1,0 @@
-#!/bin/bash
-for X in *; do
-  Y=${X%%.strc}
-  if [[ $X = $Y.strc ]]; then
-    echo Y=$Y
-    sed -es/,/./g  -es/-0.00000/\ 0.00000/g $Y.strc > $Y.strc_tmp
-  fi
-done

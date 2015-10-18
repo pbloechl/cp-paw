@@ -1,9 +1,0 @@
-   !SPECIES NAME='HE' NPRO=1  LRHOX=2
-     !AUGMENT  ID='HE_NDLSS_V0' Z=   2.00000 ZV= 2.
-              TYPE='NDLSS' RBOX/RCOV=  0.907 RCSM/RCOV=  0.189
-              RCL/RCOV=  0.756  0.756  0.756  0.756  0.756
-       !GRID DMIN=   0.100E-05 DMAX=     0.100 RMAX=    20.000 !END
-       !POT  POW=  3.000 RC/RCOV=  0.531 !END
-       !CORE POW=  3.000 RC/RCOV=  0.531 !END
-     !END
-   !END

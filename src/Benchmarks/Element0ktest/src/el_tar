@@ -1,0 +1,39 @@
+#!/bin/bash
+################################################################################
+#
+#         FILE: el_tar
+#
+#        USAGE:  src/el_tar
+#
+#  DESCRIPTION: 
+#
+#  el_tar makes a tar file bare_el.tgz containing the essential files 
+#  of the el data base without results.
+#
+#
+#       AUTHOR: Peter Bloechl; peter.bloechl@tu-clausthal.de
+#      CREATED: 9. Oct. 2015
+#
+################################################################################
+LIST=""
+LIST="$LIST src/el_doall"
+LIST="$LIST src/specieslist"
+LIST="$LIST src/Strcfiles/*.strc_sample"
+LIST="$LIST src/el_makedo"
+LIST="$LIST src/el_analyse"
+LIST="$LIST src/el_analyse.f90"
+LIST="$LIST src/el_splitspecieslist.f90"
+LIST="$LIST src/sample.cntl_strt"
+LIST="$LIST src/sample.cntl_rlxe"
+LIST="$LIST src/modify"
+LIST="$LIST src/el_tar"
+LIST="$LIST src/el_cleanup"
+LIST="$LIST src/el_dcntlfiles"
+LIST="$LIST doc/readme.tex"
+LIST="$LIST doc/readme.pdf"
+LIST="$LIST doc/Figs"
+LIST="$LIST doc/Bib"
+LIST="$LIST doc/Sources"
+tar cfz bare_el.tgz $LIST
+echo file bare_el.tgz written in $(pwd)
+exit 0

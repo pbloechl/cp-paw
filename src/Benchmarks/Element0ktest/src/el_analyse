@@ -1,0 +1,96 @@
+#!/bin/bash
+#===============================================================================
+#  creates the file readpaw.in containing a list of the 
+#  for all calculatesd systems in Cases
+#
+#  An entry is prepared for all molecules listed in Samples 
+#  fro which a protocoll exists in the corresponding subdirectory 
+#  of the directory Cases
+#
+#
+#   REQUIREMENTS:
+#     paw_get,gfortran
+#     src/g2_analyze.f90
+#     src/Strcfiles/...
+#     src/Speciesfiles/....
+
+#===============================================================================
+THISDIR=$(pwd)
+ELDIR=$THISDIR
+#
+#== define directory holding the structure files
+SAMPLEDIR=$ELDIR/src/Strcfiles
+if [[ ! -d $SAMPLEDIR ]]; then 
+   echo "error in $0: SAMPLEDIR does not exist"
+   exit 1 
+fi
+CASESDIR=$ELDIR/Cases
+if [[ ! -d $CASESDIR ]]; then 
+   echo "error in $0: CASRSDIRDIR does not exist"
+   exit 1 
+fi
+#
+#-------------------------------------------------------------------------------
+#  create two tmpfiles
+#-------------------------------------------------------------------------------
+# check if environment variable TMPDIR is set
+if [[ -z ${TMPDIR} ]] ; then TMPDIR=/tmp ; fi
+if [[ ! -d ${TMPDIR} ]] ; then
+  echo "error in $0: temp directory does not exist"
+  echo "TMPDIR=$TMPDIR"
+  exit 1
+fi
+TMPFILE2=$(mktemp ${TMPDIR}/el_tmpfile.XXXXXX)
+RC=$?
+if [[ $RC -ne 0 ]]; then
+  echo "error in $0: Can't create 2ndtemp file, exiting..."
+  exit 1
+fi
+#
+################################################################################
+## update readpaw.in
+################################################################################
+echo "building readpaw.in ..."
+if [[ -f readpaw.in ]] ; then rm readpaw.in ; fi
+for FILE in ${SAMPLEDIR}/*.strc_sample ; do
+  NAME=${FILE%.strc_sample} # strip extension
+  NAME=${NAME##*/}     #  remove all preceeding directories
+  DIR=$CASESDIR/$NAME
+  #
+  if [[ -d $DIR ]] ; then
+    > $DIR/etot.dat   # clean content of etot.dat
+    LIST=$DIR/${NAME}_*.*.prot
+    for X in $LIST ; do
+      if [[ ! -s ${X} ]] ; then continue ; fi
+      Y=${X%.prot}    # strip trailing ".prot"
+      Z=${Y#*${NAME}_}
+#      echo $Z $(paw_get -w etot -u H -n $Y) >> $DIR/etot.dat
+      echo $(paw_get -w volume -u a0^3 -n -- $Y) \
+           $(paw_get -w etot   -u H    -n -- $Y) >> $DIR/etot.dat
+    done
+    if [[ ! -s $DIR/etot.dat ]] ; then continue; fi
+    paw_murnaghan.x -v -lu 1. -eu 1.  < $DIR/etot.dat > $DIR/murn.out
+    X1=$(grep 'EQUILIBRIUM ENERGY E0 IN HARTREE' $DIR/murn.out)
+    X2=$(grep 'EQUILIBRIUM VOLUME V0 IN ABOHR^3' $DIR/murn.out)
+    X3=$(grep 'EQUILIBRIUM BULK MODULUS B0 IN A.U.' $DIR/murn.out)
+    X4=$(grep 'PRESSURE DERIVATIVE OF BULK MODULUS BPRIME' $DIR/murn.out)
+    X1=${X1#*HARTREE}
+    X2=${X2#*ABOHR^3}
+    X3=${X3#*A.U.}
+    X4=${X4#*BPRIME}
+    # energy, volume, bulk modulus and pressure derivative of bulk modulus 
+    #   in hartree atomic units
+    echo $NAME $X1 $X2 $X3 $X4 >>${ELDIR}/readpaw.in
+  else
+    echo skipping $NAME
+  fi
+done
+#
+################################################################################
+## analyse
+################################################################################
+echo 'compiling el_analyse.f90....'
+gfortran -o ${ELDIR}/bin/el_analyse.x ${ELDIR}/src/el_analyse.f90 
+echo '... compiling done'
+${ELDIR}/bin/el_analyse.x
+exit 0

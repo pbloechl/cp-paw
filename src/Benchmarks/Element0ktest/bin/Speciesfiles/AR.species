@@ -1,9 +1,0 @@
-   !SPECIES NAME='AR' NPRO=2 2 1  LRHOX=2
-     !AUGMENT  ID='AR_NDLSS_V0' Z=  18.00000 ZV= 8.
-              TYPE='NDLSS' RBOX/RCOV=  0.579 RCSM/RCOV=  0.121
-              RCL/RCOV=  0.483  0.483  0.483  0.483  0.483
-       !GRID DMIN=   0.100E-05 DMAX=     0.100 RMAX=    20.000 !END
-       !POT  POW=  3.000 RC/RCOV=  0.339 !END
-       !CORE POW=  3.000 RC/RCOV=  0.339 !END
-     !END
-   !END

@@ -1,9 +1,0 @@
-   !SPECIES NAME='RN' NPRO=1 1 1 1 LRHOX=2
-     !AUGMENT  ID='RN_NDLSS_V0' Z=  86.00000 ZV= 8.
-              TYPE='NDLSS' RBOX/RCOV=  0.691 RCSM/RCOV=  0.144
-              RCL/RCOV=  0.576  0.576  0.576  0.576  0.576
-       !GRID DMIN=   0.100E-05 DMAX=     0.100 RMAX=    20.000 !END
-       !POT  POW=  3.000 RC/RCOV=  0.404 !END
-       !CORE POW=  3.000 RC/RCOV=  0.404 !END
-     !END
-   !END

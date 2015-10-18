@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+#  prepare documentation
+#
+cd doc
+pdflatex readme
+bibtex   readme
+pdflatex readme
+#
+#  set up initial data
+#
+src/el_makedo
+cp el_do_sample el_do
+#
+#  do calculation
+#
+cp src/sample.cntl_strt sample.cntl
+el_do
+cp src/sample.cntl_rlxe sample.cntl
+el_do
+#
+#   analyze data
+#
+src/el_analyse

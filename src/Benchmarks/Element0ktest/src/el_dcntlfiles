@@ -1,0 +1,67 @@
+#!/bin/bash
+################################################################################
+#
+#  USAGE:
+#         src/el_dcntlfiles
+#
+#  constructs the dcntl and dpcntl files in all subdirectories of 
+#  the Cases directory. Creates Dos directories
+#
+################################################################################
+for X in Cases/* ; do
+   SY=${X#Cases/}  
+   SY=${SY%_sc}
+   if [[ -f $X/$SY.strc ]] ; then break ; fi
+   NATOM=$(grep "!ATOM" $X/$SY.strc | wc -l) 
+   #
+   #  construct dcntl file
+   #
+   DCNTLFILE=$X/$SY.dcntl
+   echo "!dcntl"                                        > $DCNTLFILE
+   echo "  !generic prefix='Dos/' !end"                >> $DCNTLFILE
+   echo "  !weight ID='total' type='total' !end"       >> $DCNTLFILE
+   echo "  !weight ID='s' "                            >> $DCNTLFILE
+   for I in 1 2 3 4 5 6 7 8 9 10 ; do
+      if [[ $I -gt $NATOM ]] ; then break ; fi
+      echo "    !atom name='${SY}${I}' TYPE='S' !END"  >> $DCNTLFILE
+   done      
+   echo "  !end "                                      >> $DCNTLFILE
+   echo "  !weight ID='p' "                            >> $DCNTLFILE
+   for I in 1 2 3 4 5 6 7 8 9 10 ; do
+      if [[ $I -gt $NATOM ]] ; then break ; fi
+      echo "    !atom name='${SY}${I}' TYPE='P' !END"  >> $DCNTLFILE
+   done      
+   echo "  !end "                                      >> $DCNTLFILE
+   echo "  !weight ID='d' "                            >> $DCNTLFILE
+   for I in 1 2 3 4 5 6 7 8 9 10 ; do
+      if [[ $I -gt $NATOM ]] ; then break ; fi
+      echo "    !atom name='${SY}${I}' TYPE='D' !END" >> $DCNTLFILE
+   done      
+   echo "  !end "                                     >> $DCNTLFILE
+   echo "!end "                                       >> $DCNTLFILE
+   echo "!eob "                                       >> $DCNTLFILE
+   echo " "                                           >> $DCNTLFILE
+   #
+   #  construct dpcntl file
+   #
+   DPCNTLFILE=$X/$SY.dpcntl
+   SCALE=$(echo "scale=5; 1. / $NATOM " | bc -l) 
+   echo "!dpcntl EMIN=5. EMAX=25. YMIN=0. YMAX=3."         > $DPCNTLFILE
+   echo "  !graph prefix='Dos/' scale=$SCALE "            >> $DPCNTLFILE
+   echo "    !set id='total' fillcolor='black'      !end" >> $DPCNTLFILE
+   echo "    !set id='s' fillcolor='yellow' stack=F !end" >> $DPCNTLFILE
+   echo "    !set id='p' fillcolor='blue'   stack=T !end" >> $DPCNTLFILE
+   echo "    !set id='d' fillcolor='red'    stack=T !end" >> $DPCNTLFILE
+   echo "  !end"                                          >> $DPCNTLFILE
+   echo "!end"                                            >> $DPCNTLFILE
+   echo "!eob"                                            >> $DPCNTLFILE
+   echo " "                                               >> $DPCNTLFILE
+   #
+   #  create DOS directory
+   #
+   if [[ ! -d $X/Dos ]] ; then mkdir $X/Dos ; fi
+   #
+   # more $DCNTLFILE
+   # more $DPCNTLFILE
+done
+exit 0

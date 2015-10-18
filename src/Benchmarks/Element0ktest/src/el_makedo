@@ -1,0 +1,268 @@
+#!/bin/bash
+################################################################################
+#
+#         FILE: el_makedo
+#
+#        USAGE:  el_makedo OPTIONS
+#
+#      OPTIONS: 
+#                -h help message
+#                -0 dry-run
+#                -v verbose
+#
+#  DESCRIPTION: 
+#
+#  el_makedo is part of the suite to test the CP-PAW code against the
+#  element data base for 0 K structure by Lejaeghere et al.
+#
+#  1) it constructs a shell script "el_do_sample", which executes all
+#  test calculations. Undesired test calculations can be removed
+#
+#  2) it updates all structure input files in the directory "Cases"
+#   using the structure input files in the directory "Samples" and the
+#   species information from "bin/Species"
+#
+#  Example:
+#
+#    el_makedo
+#
+#       AUTHOR: Peter Bloechl; peter.bloechl@tu-clausthal.de
+#      CREATED: 17. Aug 2014
+#
+################################################################################
+export USAGE="Usage of $0 \n"
+USAGE="$USAGE \n"
+USAGE="$USAGE \t el_makedo options\n"
+USAGE="$USAGE \n"
+USAGE="$USAGE Options:\n"
+USAGE="$USAGE \t -s selection of elements\n"
+USAGE="$USAGE \t\t list of uppercase element symbols, optionally followed by _sc\n"
+USAGE="$USAGE \t\t single letter symbols must be completed by an underscore\n"
+USAGE="$USAGE \t -t types (can be 'SC', 'NOSC' 'ALL')\n"
+USAGE="$USAGE \t -j nr. of paw_jobs allowed to run simultaneously\n"
+USAGE="$USAGE \t -h issue this help message\n"
+USAGE="$USAGE \t -v verbose\n"
+USAGE="$USAGE \t -0 dry run (not implemented yet)\n"
+USAGE="$USAGE must be called in the parent directory of src-directory\n"
+USAGE="$USAGE holding directories Strcfiles and the file specieslist\n"
+USAGE="$USAGE \n"
+export VERBOSE=no
+export NJOBS=3
+export DRYRUN=no
+export TYPES="NOSC SC" 
+export SELECTION=""
+#-------------------------------------------------------------------------------
+#  implement dry-run
+#-------------------------------------------------------------------------------
+function execute(){
+    if [[ ${VERBOSE} = yes ]] ; then
+      echo "${@}"
+    fi
+    if [[ ${DRYRUN} = no ]] ; then
+      eval "$@"
+      RC=$?
+      if [[ $RC -ne 0 ]] ; then
+        echo "error in $0: command $@ failed" >&2
+        exit 1
+      fi
+    fi
+}
+##########################################################################
+# scan options
+##########################################################################
+while getopts :s:t:j:hv0 OPT ; do
+  case $OPT in
+    s)
+      SELECTION=$OPTARG
+      ;;
+    t)
+      if [[ $OPTARG = "SC" ]] ; then
+        TYPES="SC"
+      elif [[ $OPTARG = "NOSC" ]] ; then
+        TYPES="NOSC"
+      elif [[ $OPTARG = "ALL" ]] ; then
+        TYPES="NOSC SC"
+      else
+        echo "error in $0: invalid type $OPTARG" >&2
+        echo "allowed values are SC, NOSC, ALL" >&2
+        exit 1
+      fi
+      ;;
+    j)
+      NJOBS=$OPTARG
+      ;;
+    h)
+      echo -e $USAGE
+      exit 1
+      ;;
+    v)
+      export VERBOSE=yes
+      ;;
+    0)
+      export DRYRUN=yes
+      ;;
+    \?)   # unknown option (placed into OPTARG, if OPTSTRING starts with :)
+      echo "error in $0" >&2
+      echo "invalid option -$OPTARG" >&2
+      echo "retrieve argument list with:" >&2
+      echo "$0 -h" >&2
+      exit 1
+      ;;
+    :)    # no argument passed to option requiring one
+      echo "error in $0" >&2
+      echo "option -$OPTARG requires an additional argument" >&2
+      exit 1
+      ;;
+  esac
+done
+shift $(($OPTIND - 1))
+if [[ -e $1 ]] ; then echo "error in $0: argument present. none expected" >&2; fi
+#
+#########################################################################
+# define directories and check if all are present
+#########################################################################
+THISDIR=$(pwd)
+if [[ $VERBOSE = yes ]] ; then echo THISDIR=$THISDIR ; fi
+ELDIR=$THISDIR
+#
+#== define directory holding the structure files
+STRCDIR=$ELDIR/src/Strcfiles
+if [[ ! -d $STRCDIR ]]; then 
+   echo "error in $0: STRCDIR does not exist" >&2; exit 1 
+fi
+#== define directory with species information
+SPECIESDIR=$ELDIR/bin/Speciesfiles
+if [[ ! -d $ELDIR/bin ]]; then 
+   execute "mkdir $ELDIR/bin"
+fi
+if [[ ! -d $SPECIESDIR ]]; then 
+   execute "mkdir $SPECIESDIR"
+fi
+#
+CASESDIR=$ELDIR/Cases
+DOSCRIPT=$ELDIR/el_do_sample
+if [[ $DRYRUN = yes ]] ; then DOSCRIPT=$(mktemp tmp.XXXXXX); fi
+#
+#######################################################################
+#  construct directory Speciesfiles
+#######################################################################
+execute "gfortran -o $ELDIR/bin/splitspecieslist.x $ELDIR/src/el_splitspecieslist.f90"
+execute "cd $SPECIESDIR"
+execute "$ELDIR/bin/splitspecieslist.x <$ELDIR/src/specieslist "
+execute "cd $THISDIR"
+#
+#######################################################################
+#  prepare calcall_sample
+#######################################################################
+echo '#!/bin/bash'                                 >$DOSCRIPT
+echo '# this file is created automatically by el_makedo'    >>$DOSCRIPT
+echo 'export OPTNS="" '                            >>$DOSCRIPT
+echo 'while getopts :uhv0 OPT ; do'                >>$DOSCRIPT
+echo '  case $OPT in'                              >>$DOSCRIPT
+echo '    h)'                                      >>$DOSCRIPT
+echo '      echo "options: u, h, v, 0"'            >>$DOSCRIPT
+echo '      exit 0'                                >>$DOSCRIPT
+echo '      ;;'                                    >>$DOSCRIPT
+echo '    u)'                                      >>$DOSCRIPT
+echo '      OPTNS="$OPTNS -u"'                     >>$DOSCRIPT
+echo '      ;;'                                    >>$DOSCRIPT
+echo '    v)'                                      >>$DOSCRIPT
+echo '      OPTNS="$OPTNS -v"'                     >>$DOSCRIPT
+echo '      ;;'                                    >>$DOSCRIPT
+echo '    0)'                                      >>$DOSCRIPT
+echo '      OPTNS="$OPTNS -0"'                     >>$DOSCRIPT
+echo '      ;;'                                    >>$DOSCRIPT
+echo '   \?)'                                     >>$DOSCRIPT
+echo '      echo "error in $0" >&2'               >>$DOSCRIPT
+echo '      echo "invalid option -$OPTARG" >&2'   >>$DOSCRIPT
+echo '      echo "retrieve argument list with:" >&2'>>$DOSCRIPT
+echo '      echo "$0 -h" >&2'                     >>$DOSCRIPT
+echo '      exit 1'                               >>$DOSCRIPT
+echo '      ;;'                                   >>$DOSCRIPT
+echo '  esac'                                     >>$DOSCRIPT
+echo 'done'                                       >>$DOSCRIPT
+echo "export ELDIR=$ELDIR"                        >>$DOSCRIPT
+echo 'function calcone {'                         >>$DOSCRIPT
+echo 'echo $0: doing $1'                          >>$DOSCRIPT
+echo 'ROOT=${ELDIR}/$1'                           >>$DOSCRIPT
+echo 'PDIR=${ROOT%/*}'                            >>$DOSCRIPT
+echo 'SY=${ROOT##*/}'                             >>$DOSCRIPT
+echo 'cp ${ELDIR}/sample.cntl ${ROOT}.cntl'       >>$DOSCRIPT
+echo 'BACK=$(pwd)'                                >>$DOSCRIPT
+echo 'cd ${PDIR}'                                 >>$DOSCRIPT
+echo 'paw_scanlat $OPTNS -j ' $NJOBS ' -p ${SY} -l \
+             "98.02 98.35 98.68 99.01 99.34 99.67 100.00 \
+             100.33 100.66 100.99 101.32 101.65 101.98" ' >>$DOSCRIPT
+echo 'cd ${BACK}'                                 >>$DOSCRIPT
+echo  'echo $0: $1 done'                          >>$DOSCRIPT
+echo '}'                                          >>$DOSCRIPT
+################################################################
+# Scan Samples directory and update all structure files in the 
+#    Cases directory
+# Produce a shell script calcall_sample to be executed
+################################################################
+echo "LIST=\"\""                                 >>$DOSCRIPT
+if [[ ! -d $CASESDIR ]] ; then execute "mkdir $CASESDIR";  fi
+for FILE in $STRCDIR/*.strc_sample ; do
+  NAME=${FILE%.strc_sample} # strip extension
+  NAME=${NAME##*/}          # remove all preceeding directories
+  sy=$( echo "$NAME" | tr -s '[:upper:]' '[:lower:]' )  #make lowercase
+  SY=$NAME
+  # loop over valence only and semicore setups
+  for TYPE in $TYPES ; do
+    if [[ $TYPE = NOSC ]] ; then
+      PDIR=$CASESDIR/${NAME}
+      SPECIESFILE=${SPECIESDIR}/${SY}.species
+      if [[ ! -e ${SPECIESFILE} ]] ; then
+        echo "error in $0: species file not present" >&2
+        exit 1
+      fi  
+    elif [[ $TYPE = SC ]] ; then
+      PDIR=$CASESDIR/${NAME}_sc
+      SPECIESFILE=${SPECIESDIR}/${SY}.species_sc
+      if [[ ! -e ${SPECIESFILE} ]] ; then 
+        if [[ -d $PDIR ]] ; then 
+          echo "warning from $0: project directory $PDIR exists," 
+          echo "but no species file ${SPECIESFILE}" 
+        fi
+        break
+      fi
+    else
+      echo "error in $0: Type=$TYPE not recognized" >&2
+      echo "allowed values are NOSC and SC" >&2
+      exit 1 
+    fi
+    #
+    # check selection
+    #####################################################################
+    if [[ $SELECTION ]]; then
+      export OK="no"
+      for X in $SELECTION ; do
+        if [[ $X = ${PDIR##*/} ]] ; then OK="yes" ; break; fi
+      done
+      if [[ $OK = "no" ]] ; then  break ; fi
+    fi
+    #  create project directory $PDIR if not present #################
+    if [[ ! -d $PDIR ]] ; then execute "mkdir $PDIR";  fi
+    #
+    COMMAND="paw_resolve -f $SY.species=${SPECIESFILE}"
+    COMMAND="$COMMAND ${STRCDIR}/${SY}.strc_sample |"
+    COMMAND="$COMMAND tr '[a-z]' '[A-Z]' |"
+    COMMAND="$COMMAND sed -e s/R=45./R=45./g"
+#    COMMAND="$COMMAND     -e s/ORBPOT_X/ORBPOT/g "
+    COMMAND="$COMMAND >${PDIR}/${SY}.strc"
+    execute "$COMMAND"
+#
+    ROOT=${PDIR}/$NAME
+    ROOT=${ROOT#${ELDIR}/} 
+    echo "LIST=\"\$LIST ${ROOT}\"" >>$DOSCRIPT
+    if [[ $VERBOSE = yes ]] ; then echo "... $NAME done"; fi
+  done
+done
+echo "for X in \$LIST; do" >>$DOSCRIPT
+echo "  calcone \$X "      >>$DOSCRIPT
+echo "done"                >>$DOSCRIPT 
+echo 'exit 0'              >>$DOSCRIPT
+chmod +x $DOSCRIPT
+if [[ $DRYRUN = yes ]] ; then rm $DOSCRIPT; fi
+exit 0
