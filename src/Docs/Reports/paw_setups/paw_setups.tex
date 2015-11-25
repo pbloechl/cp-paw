@@ -2705,29 +2705,36 @@ there are avoided crossings with the states of the outer Hamiltonian.
 \chapter{Setup construction and Setup parameters}
 %=====================================================================
 %=====================================================================
-\section{Special cases}
+\section{Oxygen}
 %=====================================================================
-%=====================================================================
-\subsection{Oxygen molecule}
-%=====================================================================
-The oxygen molecule is one of the most challenging systems. The reason
-is the following.
+The setup of oxygen is probably the biggest challenge:
 \begin{itemize}
 \item It is a small atom because it is on the very right of the
   periodic table. The large effective core charge results in a small
-  atomic radius. Furthermore it has many electrons that contribute to
-  the total energy. Finally, compared to the atoms such as fluorine
-  and neon it forms strong bonds.
-\item the bond distance is very short. It amounts to only 83~\% of the
-  sum of the covalent radii.
+  atomic radius. 
+\item Furthermore it has many electrons that contribute to
+  the total energy. 
+\item Finally, compared to the atoms such as fluorine and neon it
+  forms strong bonds. The bond distance of the oxygen molecule is very
+  short. It amounts to only 83~\% of the sum of the covalent radii.
 \end{itemize}
 For this reason, oxygen is probably the single one atom that
 determines the plane wave cutoff that needs to be used for general
 materials.  It is therefore important to determine the cutoff radii
-for the pseudization carefully. In Fig.~\ref{o2_eatinev_ndlssofrad} we
+for the pseudization carefully. 
+
+%=====================================================================
+\subsection{Oxygen molecule}
+%=====================================================================
+The oxygen molecule is the example for neutral oxygen and for a system
+with a strong covalent bond. The bond distance of the oxygen molecule
+is very short. It amounts to only 83~\% of the sum of the covalent
+radii.
+
+In Fig.~\ref{o2_eatinev_ndlssofrad} we
 show the atomization energy as function of cutoff radius. 
 
-\begin{figure}[h!]
+\begin{figure}[!h]
 \begin{center}
 \includegraphics[width=0.5\linewidth,clip=true]
 {Figs/O2_atomizationenergy/eofrc.eps}
@@ -2882,7 +2889,10 @@ recommended, albeit with a plane wave cutoff beyond 50~Ry.
 \subsection{Jellium oxide}
 %=====================================================================
 Jellium oxide is the prototypical oxide, namely one without
-cations. It is calculated in the NaCl structure.
+cations. In jellium oxide the oxygen ions form a fcc lattice. The
+oxygen ions have the $2-$ oxidation state. The charge is compensated
+by a positive charge background.
+
 {\tiny\begin{verbatim}
  !SPECIES   NAME='O_'  M=80. NPRO=1 1 1 LRHOX=4 RAD/RCOV=1.4
     !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.000
@@ -3246,6 +3256,68 @@ Fig.~\ref{fig:prpartialwaves}.
   all-electron partial waves are dashed, and the nodeless partial
   waves are dotted.}
 \end{figure}
+
+%=====================================================================
+\subsection{Gallium}
+%=====================================================================
+Gallium is special because it is a sp-metal like Al, but the
+d-electrons lie sufficiently high that they cannot be ignored. In
+particular in GaN the d-electrons are nearly degenerate to the
+s-electrons of nitrogen.  Therefore, we keep the 3d-electrons in the
+valence.  What singles Ga out is that the 3d-electrons are
+nodeless. This makes Ga the element with the most localized
+d-electrons, even worse than Cu.
+
+Including the 3sp
+electrons in the valence as well failed. 
+
+
+The band gap of GaN is extremely sensitive to the description of the
+d-electrons on Ga. On the other hand, the plane wave cutoff depends
+strongly on the radius for the d-electrons.
+The radial cutoff of the sp electrons compared to the d-electrons
+unimportant.
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+$r_c(sp)/r_{cov}$ & $r_c(d)/r_{cov}$ &  $E_g[\mathrm{eV}]$  & $E_g[\mathrm{eV}]$ 
+                     & $E_{tot}[\mathrm{eV}]$ & $E_{tot}[\mathrm{eV}]$ \\
+               &  & $E_{PW}=50~\mathrm{Ry}$  & $E_{PW}=100~\mathrm{Ry}$ 
+                     & $E_{PW}=50~\mathrm{Ry}$ & $E_{PW}=100~\mathrm{Ry}$\\
+\hline
+0.7 & 0.7 & 1.57469991 &            & -4855.68910231 & \\
+0.8 & 0.8 & 1.26439979 &            & -4854.18015697 & \\
+0.9 & 0.4 & 1.51029990 & 1.87359999 & -4730.76398427 & -4855.78467824 \\
+0.9 & 0.5 & 1.83369995 & 1.84349999 & -4852.71558461 & -4856.91803011 \\
+0.9 & 0.6 & 1.73699994 & 1.76069991 & -4855.64729261 & -4856.73374904 \\
+0.9 & 0.7 & 1.57369991 &            & -4855.68720027 & \\
+0.9 & 0.8 & 1.25629989 &            & -4854.16655963 & \\
+0.9 & 0.9 & 0.74629984 &            & -4851.43085520 & \\
+\hline
+\end{tabular}
+\end{center}
+
+
+We choose $r_c(s,p)=$0.8~$r_{cov}$ and $r_c(d)=$0.6~$r_{cov}$. This
+gives a band gap that seems to be within 0.1~eV of the converged
+result. The plane wave error of the total energy is about 1 eV between
+$E_{PW}$=50~Ry and $E_{PW}$=100~Ry. Relative errors are expected to be
+much smaller than absolute errors, because the convergence is
+dominated by the core-like d-electrons.
+
+\begin{verbatim}
+  !SPECIES NAME='GA'  NPRO=2 2 1  LRHOX=4 m=1000.
+    !AUGMENT  ID='GA_NDLSS_SC_V0' EL='GA' ZV=13.
+             TYPE='NDLSS' RBOX/RCOV=  1.200 RCSM/RCOV=  0.250
+             RCL/RCOV=  0.900  0.900  0.600  0.900  0.900
+      !GRID DMIN=   0.100E-05 DMAX=     0.100 RMAX=    20.000 !END
+      !POT  POW=  3.000 RC/RCOV=  0.702 !END
+      !CORE POW=  3.000 RC/RCOV=  0.702 !END
+    !END
+  !END
+\end{verbatim}
+The setup will have difficutiues to converge. It helps to set
+$MPSICG2=0.5$ for the first iterations.
 
 
 %=====================================================================
