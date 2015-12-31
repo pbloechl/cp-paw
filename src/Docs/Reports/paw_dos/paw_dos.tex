@@ -130,10 +130,13 @@ is the density-of-states matrix.
 %============================================================================
 \subsubsection{Complex orbitals}
 %============================================================================
-Sometimes it is convenient to use complex orbitals
+Sometimes it is convenient to use complex (in the sense of composite)
+orbitals
 \begin{eqnarray}
 |\Phi\rangle=\sum_{\alpha,\vec{t}}|\chi_{\alpha,\vec{t}}\rangle C_{\alpha,\vec{t}}
+\label{eq:defcomplexorbital}
 \end{eqnarray}
+
 Then we can calculate the corresponding density of states
 as
 \begin{eqnarray}
@@ -165,6 +168,427 @@ lattice translation vectors $\vec{t}$, and coefficients $C_{\alpha,\vec{t}}$.
 \subsubsection{Angular-momentum weights and COOP's}
 %============================================================================
 
+
+%====================================================================
+\section{Basic data structures}
+%====================================================================
+%====================================================================
+\subsection{Complex orbitals}
+%====================================================================
+The elemental orbital entity is the complex orbital as defined in
+\eq{eq:defcomplexorbital}.  The complex orbitals are maintained by the
+\verb|neworbital| object.
+
+Each orbital is identified by a name.  Each orbital is a of a sum of
+atom contributions.  The data structure holds a list of the atom
+contributions as entries.  Each entry consists of an atom index
+\verb|iat|, a lattice translation vector \verb|it| in relative
+coordinates and a complex orbital vector \verb|orb|.  The orbital
+vector holds the complex orbital coefficients
+$\langle\pi_{\alpha,t}|\Phi\rangle$ in real spherical harmonics as
+defined in the spherical object (\verb|paw_spherical.f90|).
+
+\begin{verbatim}
+module neworbital_module
+integer(4)         :: norb
+integer(4)         :: iorb
+type(orbital_type) :: NEWORBORBITAL(norbx)
+|  character(32)            :: name
+|  integer                  :: nentry
+|  type(orbital_entry_type) :: entry(100)
+   | integer(4)                :: iat
+   | integer(4)                :: it(3)
+   | integer(4)                :: lmnx
+   | complex(8),allocatable    :: orb(lmnx)
+   | integer(4),allocatable    :: ipro(lmnx)
+\end{verbatim}
+
+%====================================================================
+\subsection{Sets}
+%====================================================================
+A set contains an item which is to be plotted. 
+It can be 
+\begin{enumerate}
+\item a sum of density matrix elements. Each density matrix element is
+  defined by a complex ortbital.
+\item a sum of diagonal elements of the density matrix.
+  The diagonal elements can be specified by 
+  \begin{itemize}
+    \item a list of orbitals
+    \item a list of angular momenta identified by an atom index $R$
+      (\verb|IAT|) and an index $\ell$ (\verb|L|) identifying the main
+      angular momentum. With $R=-1$ all atoms are selected and with
+      $\ell=-1$ all angular momentda are identified.
+  \end{itemize}
+\end{enumerate}
+
+
+\begin{verbatim}
+MODULE NEWSET_MODULE
+INTEGER(4),PARAMETER :: NSETX=100
+INTEGER(4)           :: NSET=0
+INTEGER(4)           :: ISET=0
+TYPE(SET_TYPE)       :: NEWSET(NSETX) 
+|  CHARACTER(32)             :: ID
+|  INTEGER(4)                :: NCOOP=0
+|  CHARACTER(32),ALLOCATABLE :: COOP(:,:)  !(2,NCOOP)
+|  INTEGER(4)   ,ALLOCATABLE :: ICOOP(:,:) !(2,NCOOP)
+|  INTEGER(4)                :: NORB=0
+|  CHARACTER(32),ALLOCATABLE :: ORB(:) !(NORB)
+|  INTEGER(4)   ,ALLOCATABLE :: IORB(:) !(NORB)
+|  INTEGER(4)                :: NWGHT=0
+|  INTEGER(4)   ,ALLOCATABLE :: IAT(:) !(NWGHT)
+|  INTEGER(4)   ,ALLOCATABLE :: L(:)   !(NWGHT)
+|  CHARACTER(32)             :: SPECIAL=' '! SPECIAL TYPE LIKE TOTAL AND EMPTY
+|  CHARACTER(32)             :: LEGEND=' ' ! TEXT FOR ANNOTATION IN THE FIGURE
+|  CHARACTER(32)             :: SPINID=' '  ! ID FOR SPIN PROJECTION
+\end{verbatim}
+
+%====================================================================
+\subsection{Input data}
+%====================================================================
+
+\begin{verbatim}
+!dcntl
+  !weight id=  spin= type=  !end
+  !weight id=  spin= 
+    !atom name= type= !end
+    !orb ...!end
+  !end
+  !coop id= spin=
+    !orb1 !end
+    !orb2 !end
+  !end
+!end
+\end{verbatim}
+
+\begin{itemize}
+  \item \verb|!dcntl!weight:type=| can be 'total', 'all', 'empty'.
+%
+  \item \verb|!dcntl!weight:spin=|: Defines the spin projection axis.
+    Can be 'total', 'main', 'x', 'y', 'z' or a string containing three
+    integers defining the axis.  The default is the 'z'.
+  \begin{itemize}
+    \item 'total' implies that both spin directions are added to the
+      first spin direction and the second is left equal to zero.
+    \item 'main' projects on an axis pointing along the main spin
+      moment of the atom. For collinear calculation this option
+      provides the same result as the option  'z'.
+  \end{itemize}
+%
+  \item \verb|!dcntl!weight!atom:name=| atom name or 'ALL'
+%
+  \item \verb|!dcntl!weight!atom:type=| Can be 'all' or any combination
+    of s,p,d,f.
+   
+  \item \verb|!dcntl!coop:spin=|: Defines the spin projection.
+     '+z', '-z', '+x', '-x', '+y', '-y' or a string containing three
+    integers defining the axis.  
+\end{itemize}
+
+%====================================================================
+\subsubsection{Spins}
+%====================================================================
+\begin{eqnarray}
+D_{\alpha,\sigma,\beta,\sigma'}(\epsilon)
+=\sum_n \langle\alpha,\sigma|\psi_n\rangle \delta(\epsilon-\epsilon_n)
+\langle\psi_n|\beta,\sigma'\rangle
+\end{eqnarray}
+
+We exploit the Pauli matrices
+\begin{eqnarray}
+\mat{\sigma}^(1)=\mat{\sigma}_x
+=\left(\begin{array}{cc} 0&1\\1&0\end{array}\right)
+\quad\text{and}\quad
+\mat{\sigma}_2=\mat{\sigma}_y
+=\left(\begin{array}{cc} 0&-i\\i&0\end{array}\right)
+\quad\text{and}\quad
+\nonumber\\
+\mat{\sigma}_3=\mat{\sigma}_z
+=\left(\begin{array}{cc} 1&0\\0&-1\end{array}\right)
+\quad\text{and}\quad
+\mat{\sigma}_0=\mat{1}
+=\left(\begin{array}{cc} 1&0\\0&1\end{array}\right)
+\end{eqnarray}
+
+The Pauli matrices obey the product table
+\begin{eqnarray}
+\mat{\sigma}^{(i)}\mat{\sigma}^{(j)}&=&
+-\delta_{i,j}\mat{\sigma}^{(0)}
++\delta_{i,4}\mat{\sigma}^{(j)}
++\mat{\sigma}^{(i)}\delta_{j,0}
++\sum_{k=1}^3 \epsilon_{i,j,k}i\sigma_k
+\nonumber\\
+&=&
+\begin{cases}
+\delta_{i,j}\mat{\sigma}^{(0)}+i\sum_{k=1}^3\epsilon_{i,j,k}\mat{\sigma}^{(k)}
+&\text{for $i,j\in\{1,2,3\}$}\\
+\sigma_i &\text{for $j=0$}\\
+\sigma_j &\text{for $i=0$}
+\end{cases}
+\end{eqnarray}
+so that
+\begin{eqnarray}
+\frac{1}{2}\Tr\Bigl[\mat{\sigma}^{(i)}\mat{\sigma}^{(j)}\Bigr]=\delta_{i,j}
+\end{eqnarray}
+
+
+This allows one to rewrite the density matrix in the form
+\begin{eqnarray}
+D_{\alpha,\sigma,\beta,\sigma'}(\epsilon)
+&=&\sum_n \langle\alpha,\sigma|\psi_n\rangle \delta(\epsilon-\epsilon_n)
+\langle\psi_n|\beta,\sigma'\rangle
+\nonumber\\
+&=&\sum_{j=0}^4 D_{\alpha,\beta,j}\sigma_{\sigma,\sigma'}^{(j)}
+\end{eqnarray}
+with
+\begin{eqnarray}
+D_{\alpha,\beta,j}(\epsilon)
+=\frac{1}{2}\Tr\Bigl[\mat{D}_{\alpha,\beta}\mat{\sigma}^{(j)}\Bigr]
+=\frac{1}{2}\sum_{\sigma,\sigma'}D_{\alpha,\sigma',\beta,\sigma}(\epsilon)
+\sigma_{\sigma,\sigma'}^{(j)}
+\end{eqnarray}
+
+
+
+Next we want to represent the 
+\begin{eqnarray}
+\sum_{i=1}^3 e_i\mat{\sigma}^{(i)}
+=\left(\begin{array}{cc}
+e_3&e_1-ie_2\\e_1+ie_2&-e_3\end{array}\right)
+\end{eqnarray}
+The eigenvalues are $\pm 1$. Thus the eigenvalue equation has the form
+\begin{eqnarray}
+\Bigl(\sum_{i=1}^3 e_i\mat{\sigma}^{(i)}\mp\mat{\sigma}^{(0)}\Bigr)\vec{c}_\pm=0
+\nonumber\\
+%
+\left(\begin{array}{cc}
+e_3\mp 1&e_1-ie_2\\e_1+ie_2&-e_3\mp 1\end{array}\right)
+\left(\begin{array}{c}
+c_{\uparrow,\pm}\\c_{\downarrow,\pm}
+\end{array}\right)=0
+\nonumber\\
+%
+\left(\begin{array}{c}
+c_{\uparrow,\pm}\\c_{\downarrow,\pm}
+\end{array}\right)
+=\left(\begin{array}{c}
+e_3\pm 1 \\e_1+ie_2
+\end{array}\right)\frac{1}{\sqrt{e_3^2\pm2e_3+1+e_1^2+e_2^2}}
+=\left(\begin{array}{c}
+e_3\pm 1 \\e_1+ie_2
+\end{array}\right)
+\frac{1}{\sqrt{2\pm2e_3}}
+\end{eqnarray}
+
+
+Next we wish to determine the projection on the spin eigenstates for
+the selected direction $\vec{e}$. For the positive direction we obtain
+\begin{eqnarray}
+\langle +|\sum_{j=0}^4 a_j\mat{\sigma}^{(j)}|+\rangle
+&=&
+\left(\begin{array}{c}
+c_{\uparrow,+}^*\\c_{\downarrow,+}^*
+\end{array}\right)
+\left(\begin{array}{cc}
+a_0+a_z&a_x-ia_y\\
+a_x+ia_y & a_0-a_z
+\end{array}\right)
+\left(\begin{array}{c}
+c_{\uparrow,+}\\c_{\downarrow,+}
+\end{array}\right)
+\nonumber\\
+&=&
+\frac{1}{2+2e_z}
+\left(\begin{array}{c}
+e_z+1\\e_x-ie_y
+\end{array}\right)
+\left(\begin{array}{cc}
+a_0+a_z&a_x-ia_y\\
+a_x+ia_y & a_0-a_z
+\end{array}\right)
+\left(\begin{array}{c}
+e_z+1\\e_x+ie_y
+\end{array}\right)
+\nonumber\\
+&=&\frac{1}{2+2e_z}
+\Bigl[(a_0+a_z)(e_z+1)^2
++(a_0-a_z)
+\underbrace{(e_x-ie_y)(e_x+ie_y)}_{=e_x^2+e_y^2=1-e_z^2=(1-e_z)(1+e_z)}
+\nonumber\\
+&+&
+\underbrace{(a_x-ia_y)(e_x+ie_y)(e_z+1)
++(a_x+ia_y)(e_x-ie_y)(e_z+1)}_{2(e_z+1)\Re\Bigl[(a_x-ia_y)(e_x+ie_y)\Bigr]}
+\nonumber\\
+&=&\frac{1}{2}
+\Bigl[(a_0+a_z)(e_z+1)+(a_0-a_z)(1-e_z)
++2\Re\Bigl[(a_x-ia_y)(e_x+ie_y)\Bigr]
+\Bigr]
+\nonumber\\
+&=&a_0+\vec{a}\,\vec{e}
+\end{eqnarray}
+and for the negative one
+\begin{eqnarray}
+\langle -|\sum_{j=0}^4 a_j\mat{\sigma}^{(j)}|-\rangle
+&=&
+\left(\begin{array}{c}
+c_{\uparrow,-}^*\\c_{\downarrow,-}^*
+\end{array}\right)
+\left(\begin{array}{cc}
+a_0+a_z&a_x-ia_y\\
+a_x+ia_y & a_0-a_z
+\end{array}\right)
+\left(\begin{array}{c}
+c_{\uparrow,-}\\c_{\downarrow,-}
+\end{array}\right)
+\nonumber\\
+&=&
+\frac{1}{2-2e_z}
+\left(\begin{array}{c}
+e_z-1\\e_x-ie_y
+\end{array}\right)
+\left(\begin{array}{cc}
+a_0+a_z&a_x-ia_y\\
+a_x+ia_y & a_0-a_z
+\end{array}\right)
+\left(\begin{array}{c}
+e_z-1\\e_x+ie_y
+\end{array}\right)
+\nonumber\\
+&=&\frac{1}{2-2e_z}
+\Bigl[(a_0+a_z)(e_z-1)^2
++(a_0-a_z)
+\underbrace{(e_x-ie_y)(e_x+ie_y)}_{=e_x^2+e_y^2=1-e_z^2=(1-e_z)(1+e_z)}
+\nonumber\\
+&+&
+\underbrace{(a_x-ia_y)(e_x+ie_y)(e_z-1)
++(a_x+ia_y)(e_x-ie_y)(e_z-1)}_{2(e_z-1)\Re\Bigl[(a_x-ia_y)(e_x+ie_y)\Bigr]}
+\nonumber\\
+&=&\frac{1}{2}
+\Bigl[
+-(a_0+a_z)(e_z-1)
++(a_0-a_z)(1+e_z)
+-2Re\Bigl[(a_x-ia_y)(e_x+ie_y)\Bigr]
+\Bigr]
+\nonumber\\
+&=&a_0-\vec{a}\,\vec{e}
+\end{eqnarray}
+
+Thus we obtain
+\begin{eqnarray}
+D^{(\vec{e},\pm)}_{\alpha,\beta}
+&=&\sum_{\sigma,\sigma'}c^*_{\sigma,\pm} D_{\alpha,\sigma,\beta,\sigma'} 
+c_{\sigma',\pm}
+\nonumber\\
+&=&D_{\alpha,\beta,0}\pm\sum_{j=1}^3 D_{\alpha,\beta,j}e_j
+\end{eqnarray}
+
+%====================================================================
+\subsubsection{Orthogonalization of the basis set}
+%====================================================================
+The density of states depends strongly on the choice of orbitals.
+Scaling an orbital up by a factor will produce a density of states
+that will be scaled down by the suared inverse factor.  Currently, the
+states are the partial waves truncated within atomic spheres.
+
+In order to evaluate crystal-orbital overlap populations, the density
+of states needs to be multiplied with the overlap matrix. One
+convenient way is to define a new, orthonormal basis set
+$\{|\chi'_\alpha\rangle$.
+
+The new basisset is defined by
+\begin{eqnarray}
+|\chi'_\alpha\rangle&=&\sum_{\beta\le\alpha}|\chi_\beta\rangle G^{-1,T}_{\beta,\alpha}
+\label{eq:deforthobasis1}
+\\
+\langle\pi'_\alpha|&=&\sum_{\alpha\le\beta} G^{T}_{\alpha,\beta}\langle\pi_\beta|
+\label{eq:deforthobasis2}
+\end{eqnarray}
+where the lower triangular matrix $\mat{G}$ is obtained as Cholesky
+factor of the overlap matrix
+\begin{eqnarray}
+\langle\chi|\chi\rangle=\mat{G} \mat{G}^T
+\label{eq:choleskydecompoverlap}
+\end{eqnarray}
+As shown in appendix~\ref{app:prooflowertriangularinverse}, the
+inverse of a lower triangular matrix is itself lower triangular. This
+is required to restrict the sum in the defining equations
+The lower triangular form implies that $\mat{G}^{-1,T}$ and
+$\mat{G}^T$ are a upper triangular matrices.
+
+With these definitions, the overlap of the new basisset is unity and
+the new biorthogonality condition is obeyed.
+\begin{eqnarray}
+\langle\chi'|\chi'\rangle 
+&\eqrel{eq:deforthobasis1}{=}&
+\mat{G}^{-1}\langle\chi|\chi\rangle\mat{G}^{-1,T}
+\eqrel{eq:choleskydecompoverlap}{=}
+\mat{G}^{-1}\mat{G}\mat{G}^T
+\mat{G}^{-1,T}=1 
+\nonumber\\ 
+%
+\langle\pi'|\chi'\rangle
+&=&\mat{G}^{T}\langle\pi|\chi\rangle \mat{G}^{-1,T}
+=\mat{G}^{T}\mat{G}^{-1,T}=1
+\end{eqnarray}
+
+The coefficient arrays are transformed as follows:
+\begin{eqnarray}
+|\psi\rangle
+&=&
+\sum_\alpha|\chi_\alpha\rangle\langle\pi_\alpha|\psi\rangle
+\eqrel{eq:deforthobasis2}{=}
+\sum_\alpha|\chi'_\alpha\rangle
+\Bigl(\sum_{\beta\le\alpha} G^T_{\alpha,\beta}\langle\pi_\beta|\psi\rangle\Bigr)
+\nonumber\\
+\Rightarrow\qquad
+\langle\pi'_\alpha|\psi\rangle
+&=&
+\sum_{\beta\le\alpha} G^T_{\alpha,\beta}\langle\pi_\beta|\psi\rangle
+\end{eqnarray}
+
+
+
+
+
+%====================================================================
+\subsection{States}
+%====================================================================
+The states vector is read from the pdos file produced by the
+simulation code.  The states are kept in an array
+\verb|STATEARR(NKPT,NSPIN)|.
+
+
+Each element of \verb|STATEARR| is a structure \verb|STATE|, which
+contains
+\begin{itemize}
+\item a vector \verb|EIG(NB)| holding \verb|NB|
+one-particle energies, 
+\item a vector \verb|OCC(NB)| holding \verb|NB|
+occupations, and 
+\item a complex vector \verb|VEC(NDIM,NPRO,NB)| holding the wave
+function coefficients.
+\end{itemize}
+
+The order of the orbital indices are governed by 
+\begin{itemize}
+\item ispecies(nat)
+\item lnx(nsp)
+\item lox(lnxx,nsp)
+\end{itemize}
+
+\begin{verbatim}
+ipro=0
+do iat=1,nat
+  isp=ispecies(iat)
+  do ln=1,lnx(isp)
+    l=lox(ln,isp)
+    do m=1,2*l+1
+      ipro=ipro+1
+    enddo
+  enddo
+enddo
+\end{verbatim}
 
 
 %====================================================================
@@ -345,9 +769,52 @@ orbital vector for the entire system.
 
 \appendix
 %=================================================================
-\section{}
+\chapter{Proof that a the inverse of a 
+lower triangular matrix is itself lower triangular}
+\label{app:prooflowertriangularinverse}
 %================================================================
+Here it is shown that the inverse of a lower triangular matrix is
+itself lower triangular.
 
-\bibliographystyle{unsrtnat}
-\bibliography{../all}
+The proof is as follows: We consider the inverse of a
+matrix which is split into two blocks. Then we exploit that the block
+$\mat{A}_{12}=\mat{0}$ vanishes for a lower triangular matrix.
+
+\begin{eqnarray}
+\left(\begin{array}{cc} \mat{A}_{11}&\mat{A}_{12}\\\mat{A}_{21}&\mat{A}_{22}\end{array}\right)
+\left(\begin{array}{cc} \mat{B}_{11}&\mat{B}_{12}\\\mat{B}_{21}&\mat{B}_{22}\end{array}\right)
+=\left(\begin{array}{cc} \mat{1}&\mat{0}\\\mat{0}&\mat{1}\end{array}\right)
+\nonumber\\
+\mat{A}_{11}\mat{B}_{11}+\underbrace{\mat{A}_{12}}_{=0}\mat{B}_{21}=\mat{1}
+\nonumber\\
+\mat{A}_{11}\mat{B}_{12}+\underbrace{\mat{A}_{12}}_{=0}\mat{B}_{22}=\mat{0}
+\nonumber\\
+\mat{A}_{21}\mat{B}_{11}+\mat{A}_{22}\mat{B}_{21}=\mat{0}
+\nonumber\\
+\mat{A}_{21}\mat{B}_{12}+\mat{A}_{22}\mat{B}_{22}=\mat{1}
+\end{eqnarray}
+This yields
+\begin{eqnarray}
+\mat{B}_{11}&=&\mat{A}_{11}^{-1}
+\nonumber\\
+\mat{A}_{11}\mat{B}_{12}&=&\mat{0}
+\qquad\Rightarrow\qquad
+\mat{\mat{B}}_{12}=\mat{\mat{A}}_{11}^{-1}\mat{0}=\mat{0}
+\nonumber\\
+\mat{A}_{21}\underbrace{\mat{B}_{11}}_{\mat{A}_{11}^{-1}}
++\mat{A}_{22}\mat{B}_{21}&=&\mat{0}
+\qquad\Rightarrow\qquad
+\mat{B}_{21}=-\mat{A}_{22}^{-1}\mat{A}_{21}\mat{A}_{11}^{-1}
+\nonumber\\
+\mat{A}_{21}\underbrace{\mat{B}_{12}}_{\mat{0}}+\mat{A}_{22}\mat{B}_{22}&=&\mat{1}
+\qquad\Rightarrow\qquad
+\mat{B}_{22}=\mat{A}_{22}^{-1}
+\end{eqnarray}
+Now we consider successively larger subblocks of the equation starting
+from a $1\times1$ block. The equation $\mat{B}_{21}=0$ translates into
+the requirement that the matrix $\mat{B}$, the inverse of $\mat{B}$ is
+lower triangular, if it is true for the next smaller subblock.
+
+
+\bibliographystyle{unsrtnat} \bibliography{../all}
 \end{document}  
