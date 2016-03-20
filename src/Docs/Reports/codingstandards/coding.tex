@@ -419,9 +419,69 @@ that are to be used only from subroutines of the object, will be named
 as \verb|objnm\_subnm|, where the function part is separated by an
 underscore from the main part.
 
+%====================================================================
+\chapter{Code analysis using Doxygen}
+%====================================================================
+Doxygen is a free multi-platform code analysis and documentation tool.
+Doxygen can be downloaded from \url{www.doxygen.org}.
+
+
+A description on how to use it can be found in
+\url{http://www.msg.chem.iastate.edu/gamess/DoxygenRules.oct10.pdf}
+
+
+Lines starting with ``!>'' are interpreted as Doxygen comments
+
+Doxygen knows a couple of keywords:
+\begin{itemize}
+\item @brief: One-sentence description of the subroutine
+\item @details: Detailed information about the subroutine
+\item @note: special notes for the user
+\item @see
+\item @warning
+\item @todo
+\item @bug
+\item @param \textit{[dir] argument-name description}: in and output variables. Dir can be ``in'' or ``out''.
+\item @author
+\item @date \textit{Month,Year, Author's name}: used for Bugfixes
+\item \verb|\cite| \textit{label}: refers to latex bibliography
+  identifiers specified in \verb|CITE_BIB_FILES|
+\end{itemize}
+
+%=================================================================
+\subsection{Markdown language}
+%=================================================================
+%% \begin{itemize}
+%% \item Headers: a \# preceeding a text followed by another \# is
+%%   interpreted as a level-1 header. Preceeding with two or more
+%%   \#-signs leads to level-2 or further headings.
+%% %
+%% \item bullet lists: Unnumbered lists are created using properly
+%%   indented ``-'' signs. NUmbered paragrags are created by numbers
+%% %
+%% \end{itemize}
 
 
 
+%=================================================================
+\subsection{Ideas to automatically convert code into doxygen comments}
+%=================================================================
+
+\begin{itemize}
+\item the PAW comments should follow the rules of the markdown language
+\item A comment following an variable specification carrying the
+  intent(in),intent(out) or intent(inout) is the variable description
+  and is tagged by the @param keyword.
+%
+\item A subroutine comment is characterized by \verb|!  **| and
+  follows the subroutine statement
+\begin{itemize}
+\item the first sentence goes into @brief
+\item the rest, not identified by some other keyword goes into @details
+\item note,see,todo,bug is parsed and transformed into Doxygen statements
+\item @author is grabbed from the last line of the subroutine comment
+\end{itemize}
+\end{itemize}
 
 
 \clearpage

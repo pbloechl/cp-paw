@@ -778,10 +778,10 @@ flat inside the pseudization radius. Outside the pseudization radius
 it is chosen such that partial wave obeys the non-relativistic
 Schr\"odinger equation for this potential.
 
-Note that this potential little to do with the all-electron potential,
+This potential has little to do with the all-electron potential,
 nor with a pseudo potential. It should be viewed merely as a tool to
-construct partial waves. If this potential wew a constant, the
-Schr\"odinger equation would produce a Bessel functions, and its
+construct partial waves. If this potential were a constant, the
+Schr\"odinger equation would produce Bessel functions and their
 energy derivatives. 
 
 Now, we derive for this potential the radial wave function and its
@@ -906,6 +906,33 @@ derivative of $\hat{t}\phi$.
   we will use a plane wave cutoff of 30Ry for most calculations an
   augmentation radius of 0.7-0.8~$r_{cov}$ appears to be the best choice.}
 \end{figure}
+
+%====================================================================
+\subsection{Determine the matching radius for pseudo wave functions}
+\label{sec:determinepseudocutoff}
+%====================================================================
+The matching radius can be determined such that the pseudo-wave
+function is nearly norm conserving.  Norm-conservation is a useful
+criterion except for those partial waves that are already nodeless
+such as the 1s, 2p, 3d and 4f states. For the latter, the violation of
+norm conservation can be exploited to improve the plane-wave
+convergence.
+
+Norm-conservation can be imposed by changing the matching radius for
+the pseudo wave functions.
+
+This criterion of norm-conservation has been applied for the semi-core
+states of Ca. It turned out that increasing the matching radius
+resulted in unstable setups. Reducing them improved stability, and did
+not seem to result in more corrugated partial waves with worse plane
+wave convergence.  Then I realized that the norm-conservation is
+improved by reducing the matching radius.
+
+Norm conservation apparently requires that the pseudo partial wave
+stays below the all-electron partial wave at its outermost
+maximum. This behavior of the pseudo partial wave differs from the
+behavior of the nodeless partial wave, which extend the maximum of the
+all-electron partial waves further inward.
 
 
 %====================================================================
@@ -3225,39 +3252,6 @@ we obtain an expansion of the lattice constant by about 0.5~\%.
 
 
 %=====================================================================
-\subsubsection{Pr}
-%=====================================================================
-
-
-
-
-\begin{verbatim}
-  !SPECIES NAME='PR' NPRO=1 1 1 1 LRHOX=4
-    !AUGMENT  ID='PR_NDLSS_V0' Z=  59.00000 ZV= 5.
-             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=  0.250
-             RCL/RCOV=  0.8  0.8  0.8  0.8  1.0
-      !GRID DMIN=   1.e-6 DMAX= 0.100 RMAX= 9.000 !END
-      !POT  POW=  3.000 RC/RCOV=  0.902 val0=0. !END
-      !CORE POW=  3.000 RC/RCOV=  0.702  !END
-    !END
-  !END
-\end{verbatim}
-The partial waves corresponding to this setup are shown in
-Fig.~\ref{fig:prpartialwaves}.
-\begin{figure}[!h]
-\begin{center}
-\includegraphics[width=0.8\linewidth]{Figs/Pr_setuptest/prpartialwaves.eps}
-\end{center}
-\caption{\label{fig:prpartialwaves} Partial waves for Pr for cutoff
-  radius ??~ $r_{cov}$.  The s-partial waves are shown in black, the
-  p-type partial waves in read, the d-type partial waves 
-  in blue and the f-type partial waves are shown
-  in green. The pseudo partial waves are drawn as full lines, the
-  all-electron partial waves are dashed, and the nodeless partial
-  waves are dotted.}
-\end{figure}
-
-%=====================================================================
 \subsection{Gallium}
 %=====================================================================
 Gallium is special because it is a sp-metal like Al, but the
@@ -3318,6 +3312,87 @@ dominated by the core-like d-electrons.
 \end{verbatim}
 The setup will have difficutiues to converge. It helps to set
 $MPSICG2=0.5$ for the first iterations.
+
+
+%=====================================================================
+\subsection{Earth alkali metal: Calcium}
+%=====================================================================
+
+We treat the 3sp semi-core states as valence. It is important that the
+matching radius is chosen rather small. Otherwise the setup gets
+unstable. Here it has been chosen so that the 3s and 3p partial waves
+are approximately norm-conserving.
+\begin{verbatim}
+  !SPECIES   NAME='CA' NPRO=2 2 1 LRHOX=2 RAD/RCOV=1.
+    !NTBO    NOFL=1 1 0 CV=T  LHFWEIGHT=0.1
+             NDDO=F 31=F BONDX=F
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=0.7 RTAIL/RCOV=0.7
+    !END 
+    !AUGMENT ID='MY_NDLSS_CA_SC' EL='CA' ZV=10.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV= 0.6 0.6 0.6 0.6
+      !GRID  DMIN=1.E-6 DMAX=.1 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=.7 val0_X=-0.0 !END
+      !CORE  POW=2. RC/RCOV=.7 !END
+    !END
+  !END
+\end{verbatim}
+
+%=====================================================================
+\subsection{Lanthanide: Praseodymium}
+%=====================================================================
+
+The matching parameters of s,p,d state have been chosen to get
+approximate norm-conservation.
+
+
+\begin{verbatim}
+  !SPECIES NAME='PR' NPRO=2 2 1 1 LRHOX=4 RAD/COV=1.
+    !NTBO    NOFL=1 1 1 1 CV=T LHFWEIGHT=0.15
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=0.9 RTAIL/RCOV=1.2
+    !END 
+    !AUGMENT  ID='PR_NDLSS_V0' Z=  59.00000 ZV= 13.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=  0.250
+             RCL/RCOV=  0.84  0.77  0.8  0.7
+      !GRID DMIN=   1.e-6 DMAX= 0.100 RMAX= 9.000 !END
+      !POT  POW=  3.000 RC/RCOV=  0.8 val0=0.0 !END
+      !CORE POW=  3.000 RC/RCOV=  0.8  !END
+    !END
+  !END
+\end{verbatim}
+
+%=====================================================================
+\subsubsection{Pr}
+%=====================================================================
+
+
+
+
+%% \begin{verbatim}
+%%   !SPECIES NAME='PR' NPRO=1 1 1 1 LRHOX=4
+%%     !AUGMENT  ID='PR_NDLSS_V0' Z=  59.00000 ZV= 5.
+%%              TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=  0.250
+%%              RCL/RCOV=  0.8  0.8  0.8  0.8  1.0
+%%       !GRID DMIN=   1.e-6 DMAX= 0.100 RMAX= 9.000 !END
+%%       !POT  POW=  3.000 RC/RCOV=  0.902 val0=0. !END
+%%       !CORE POW=  3.000 RC/RCOV=  0.702  !END
+%%     !END
+%%   !END
+%% \end{verbatim}
+%% The partial waves corresponding to this setup are shown in
+%% Fig.~\ref{fig:prpartialwaves}.
+%% \begin{figure}[!h]
+%% \begin{center}
+%% \includegraphics[width=0.8\linewidth]{Figs/Pr_setuptest/prpartialwaves.eps}
+%% \end{center}
+%% \caption{\label{fig:prpartialwaves} Partial waves for Pr for cutoff
+%%   radius ??~ $r_{cov}$.  The s-partial waves are shown in black, the
+%%   p-type partial waves in read, the d-type partial waves 
+%%   in blue and the f-type partial waves are shown
+%%   in green. The pseudo partial waves are drawn as full lines, the
+%%   all-electron partial waves are dashed, and the nodeless partial
+%%   waves are dotted.}
+%% \end{figure}
 
 
 %=====================================================================

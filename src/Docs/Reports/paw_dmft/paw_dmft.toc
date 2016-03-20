@@ -1,98 +1,98 @@
-\contentsline {chapter}{\numberline {1}Purpose and theoretical background}{2}{chapter.1}
-\contentsline {section}{\numberline {1.1}Grand potential and density-matrix functional as starting point}{2}{section.1.1}
-\contentsline {section}{\numberline {1.2}Separate out static correlations: Towards DFT+}{3}{section.1.2}
-\contentsline {section}{\numberline {1.3}Dynamic-correlation correction}{6}{section.1.3}
-\contentsline {subsubsection}{Derivative of the dynamical correlation}{6}{section*.2}
-\contentsline {subsubsection}{Stationary conditions for wave functions and occupations}{9}{section*.3}
-\contentsline {section}{\numberline {1.4}Local orbitals}{10}{section.1.4}
-\contentsline {subsection}{\numberline {1.4.1}Projection onto local orbitals}{10}{subsection.1.4.1}
-\contentsline {subsection}{\numberline {1.4.2}Energy correction}{10}{subsection.1.4.2}
-\contentsline {subsection}{\numberline {1.4.3}Overlap matrix}{11}{subsection.1.4.3}
-\contentsline {subsection}{\numberline {1.4.4}U-tensor}{11}{subsection.1.4.4}
-\contentsline {subsection}{\numberline {1.4.5}Non-orthonormal orbitals}{11}{subsection.1.4.5}
-\contentsline {subsubsection}{Feynman diagrams}{12}{section*.4}
-\contentsline {subsection}{\numberline {1.4.6}Calculate $\bar {h}$ from the density matrix}{12}{subsection.1.4.6}
-\contentsline {subsubsection}{Derivatives}{13}{section*.5}
-\contentsline {section}{\numberline {1.5}Variational parameters for the Green's function}{14}{section.1.5}
-\contentsline {subsubsection}{Representation of the Green's function}{14}{section*.6}
-\contentsline {subsubsection}{Variational parameters}{15}{section*.7}
-\contentsline {subsubsection}{Local Green's function}{16}{section*.8}
-\contentsline {subsection}{\numberline {1.5.1}High-Freqency expansion of Matsubara sum}{16}{subsection.1.5.1}
-\contentsline {section}{\numberline {1.6}Dynamic-correlation correction in non-orthonormal basis and in Bloch representation}{19}{section.1.6}
-\contentsline {section}{\numberline {1.7}Spectral information}{20}{section.1.7}
-\contentsline {section}{\numberline {1.8}Description of Subroutines}{20}{section.1.8}
-\contentsline {subsubsection}{Data structures}{20}{section*.9}
-\contentsline {subsection}{\numberline {1.8.1}Data exchange of the Object wit the outer world}{21}{subsection.1.8.1}
-\contentsline {subsection}{\numberline {1.8.2}Flowchart}{21}{subsection.1.8.2}
-\contentsline {subsection}{\numberline {1.8.3}DMFT\$GREEN}{21}{subsection.1.8.3}
-\contentsline {subsection}{\numberline {1.8.4}DMFT\_INI}{27}{subsection.1.8.4}
-\contentsline {subsubsection}{Hardwired data}{27}{section*.10}
-\contentsline {subsubsection}{Inherited data}{27}{section*.11}
-\contentsline {subsubsection}{Derived data}{27}{section*.12}
-\contentsline {subsection}{\numberline {1.8.5}DMFT\_UTENSOR}{27}{subsection.1.8.5}
-\contentsline {subsection}{\numberline {1.8.6}DMFT\_NATORB}{28}{subsection.1.8.6}
-\contentsline {subsubsection}{Orthonormal orbitals without reference to the density matrix}{29}{section*.13}
-\contentsline {subsection}{\numberline {1.8.7}DMFT\_HRHO}{30}{subsection.1.8.7}
-\contentsline {subsubsection}{DMFT\_EOFF}{31}{section*.14}
-\contentsline {subsection}{\numberline {1.8.8}DMFT\_CONSTRAINTS}{32}{subsection.1.8.8}
-\contentsline {subsubsection}{Green's function}{32}{section*.15}
-\contentsline {subsubsection}{Green's function difference}{33}{section*.16}
-\contentsline {subsubsection}{Update $\bm {\Gamma }$}{33}{section*.17}
-\contentsline {subsubsection}{Minimize constraint violation with the conjugate gradient method}{34}{section*.18}
-\contentsline {subsection}{\numberline {1.8.9}DMFT\_SOLVER}{37}{subsection.1.8.9}
-\contentsline {subsection}{\numberline {1.8.10}DMFT\_ETOT}{38}{subsection.1.8.10}
-\contentsline {subsubsection}{Evaluation of the logarithm using a power series expansion}{38}{section*.19}
-\contentsline {subsubsection}{Evaluation of the logarithm using Dahlen's trick}{38}{section*.20}
-\contentsline {chapter}{\numberline {2}Tests and Numerical problems}{40}{chapter.2}
-\contentsline {chapter}{\numberline {3}Test calculations}{41}{chapter.3}
-\contentsline {section}{\numberline {3.1}Hubbard model}{41}{section.3.1}
-\contentsline {chapter}{\numberline {A}Matsubara frequencies}{42}{appendix.A}
-\contentsline {section}{\numberline {A.1}Evaluation using residual theorem}{42}{section.A.1}
-\contentsline {subsection}{\numberline {A.1.1}Matsubara sums}{44}{subsection.A.1.1}
-\contentsline {subsection}{\numberline {A.1.2}Matsubara sums on finite grids and regularization}{44}{subsection.A.1.2}
-\contentsline {subsubsection}{Avoid the spurious extrema of the fermi function by restricting the energy spectrum.}{46}{section*.21}
-\contentsline {subsubsection}{Alternative regularizatuon scheme}{47}{section*.22}
-\contentsline {chapter}{\numberline {B}The Green function}{49}{appendix.B}
-\contentsline {section}{\numberline {B.1}Generic properties}{49}{section.B.1}
-\contentsline {subsection}{\numberline {B.1.1}Green's function with negative Matsubara frequencies}{49}{subsection.B.1.1}
-\contentsline {subsection}{\numberline {B.1.2}Density of states}{49}{subsection.B.1.2}
-\contentsline {section}{\numberline {B.2}Greens functions between band states and local orbitals}{51}{section.B.2}
-\contentsline {subsection}{\numberline {B.2.1}Lattice Greens functions and limited set of band states}{51}{subsection.B.2.1}
-\contentsline {subsection}{\numberline {B.2.2}Green's function on the Hilbert space of correlated orbitals}{51}{subsection.B.2.2}
-\contentsline {section}{\numberline {B.3}Project Green's function onto local orbitals}{53}{section.B.3}
-\contentsline {subsection}{\numberline {B.3.1}Laurent expansion of the non-interacting Green's function}{55}{subsection.B.3.1}
-\contentsline {subsection}{\numberline {B.3.2}Laurent expansion of the Green's function (new)}{56}{subsection.B.3.2}
-\contentsline {subsubsection}{Laurent-expansion coefficients are Hermitean}{57}{section*.23}
-\contentsline {subsubsection}{Difference of Green's functions}{57}{section*.24}
-\contentsline {subsubsection}{Laurent expansion for the density matrix}{58}{section*.25}
-\contentsline {subsubsection}{Derivative of the Luttinger Ward functional}{58}{section*.26}
-\contentsline {chapter}{\numberline {C}in progress: Green function in matrix form}{59}{appendix.C}
-\contentsline {subsubsection}{$\bm {\Delta }$ and projection}{60}{section*.27}
-\contentsline {subsubsection}{Hamilton matrix and projection}{61}{section*.28}
-\contentsline {subsubsection}{Proof of the identity between \text {Eq.}\nobreakspace {}\ref {eq:greenmatrix1a} and \text {Eq.}\nobreakspace {}\ref {eq:greenmatrix2a}.}{62}{section*.29}
-\contentsline {subsubsection}{Self energy from the uncorrelated orbitals}{62}{section*.30}
-\contentsline {subsubsection}{Partitioning}{62}{section*.31}
-\contentsline {chapter}{\numberline {D}Dividing the correlation contribution into a static and a dynamic part}{65}{appendix.D}
-\contentsline {subsubsection}{Divided form}{66}{section*.32}
-\contentsline {subsubsection}{No Matsubara sum with a stationary self energy}{67}{section*.33}
-\contentsline {chapter}{\numberline {E}Hartree-Fock energy}{68}{appendix.E}
-\contentsline {chapter}{\numberline {F}Mixing of the self energy}{70}{appendix.F}
-\contentsline {section}{\numberline {F.1}Structure of the self-consistency}{70}{section.F.1}
-\contentsline {section}{\numberline {F.2}Euler-Lagrange equations}{71}{section.F.2}
-\contentsline {section}{\numberline {F.3}Model Green's function}{72}{section.F.3}
-\contentsline {section}{\numberline {F.4}Enforce constraints by minimizing deviation from the density matrix}{76}{section.F.4}
-\contentsline {chapter}{\numberline {G}Usage}{77}{appendix.G}
-\contentsline {subsection}{\numberline {G.0.1}Control file}{77}{subsection.G.0.1}
-\contentsline {subsection}{\numberline {G.0.2}Structure file}{77}{subsection.G.0.2}
-\contentsline {chapter}{\numberline {H}Bloch representation}{79}{appendix.H}
-\contentsline {chapter}{\numberline {I}Traditional formulation of the dynamical mean-field theory}{80}{appendix.I}
-\contentsline {chapter}{\numberline {J}Optimization}{82}{appendix.J}
-\contentsline {section}{\numberline {J.1}Conjugate-gradient method}{82}{section.J.1}
-\contentsline {subsection}{\numberline {J.1.1}Wirtinger Calculus}{82}{subsection.J.1.1}
-\contentsline {subsection}{\numberline {J.1.2}Definition of the problem}{82}{subsection.J.1.2}
-\contentsline {subsection}{\numberline {J.1.3}Minimization on a hyperplane}{83}{subsection.J.1.3}
-\contentsline {subsection}{\numberline {J.1.4}Determine next search direction}{84}{subsection.J.1.4}
-\contentsline {subsection}{\numberline {J.1.5}Nonlinear Conjugate Gradient Method}{86}{subsection.J.1.5}
-\contentsline {subsection}{\numberline {J.1.6}Recipe}{87}{subsection.J.1.6}
-\contentsline {section}{\numberline {J.2}Limited memory Broyden-Fletcher-Goldfarb-Shanno (l-BFGS)}{87}{section.J.2}
-\contentsline {subsection}{\numberline {J.2.1}Example code}{88}{subsection.J.2.1}
+\contentsline {chapter}{\numberline {1}Purpose and theoretical background}{4}{chapter.1}
+\contentsline {section}{\numberline {1.1}Grand potential and density-matrix functional as starting point}{4}{section.1.1}
+\contentsline {section}{\numberline {1.2}Separate out static correlations: Towards DFT+}{5}{section.1.2}
+\contentsline {section}{\numberline {1.3}Dynamic-correlation correction}{8}{section.1.3}
+\contentsline {subsubsection}{Derivative of the dynamical correlation}{8}{section*.2}
+\contentsline {subsubsection}{Stationary conditions for wave functions and occupations}{11}{section*.3}
+\contentsline {section}{\numberline {1.4}Local orbitals}{12}{section.1.4}
+\contentsline {subsection}{\numberline {1.4.1}Projection onto local orbitals}{12}{subsection.1.4.1}
+\contentsline {subsection}{\numberline {1.4.2}Energy correction}{12}{subsection.1.4.2}
+\contentsline {subsection}{\numberline {1.4.3}Overlap matrix}{13}{subsection.1.4.3}
+\contentsline {subsection}{\numberline {1.4.4}U-tensor}{13}{subsection.1.4.4}
+\contentsline {subsection}{\numberline {1.4.5}Non-orthonormal orbitals}{13}{subsection.1.4.5}
+\contentsline {subsubsection}{Feynman diagrams}{14}{section*.4}
+\contentsline {subsection}{\numberline {1.4.6}Calculate $\bar {h}$ from the density matrix}{14}{subsection.1.4.6}
+\contentsline {subsubsection}{Derivatives}{15}{section*.5}
+\contentsline {section}{\numberline {1.5}Variational parameters for the Green's function}{16}{section.1.5}
+\contentsline {subsubsection}{Representation of the Green's function}{16}{section*.6}
+\contentsline {subsubsection}{Variational parameters}{17}{section*.7}
+\contentsline {subsubsection}{Local Green's function}{18}{section*.8}
+\contentsline {subsection}{\numberline {1.5.1}High-Freqency expansion of Matsubara sum}{18}{subsection.1.5.1}
+\contentsline {section}{\numberline {1.6}Dynamic-correlation correction in non-orthonormal basis and in Bloch representation}{21}{section.1.6}
+\contentsline {section}{\numberline {1.7}Spectral information}{22}{section.1.7}
+\contentsline {section}{\numberline {1.8}Description of Subroutines}{22}{section.1.8}
+\contentsline {subsubsection}{Data structures}{22}{section*.9}
+\contentsline {subsection}{\numberline {1.8.1}Data exchange of the Object wit the outer world}{23}{subsection.1.8.1}
+\contentsline {subsection}{\numberline {1.8.2}Flowchart}{23}{subsection.1.8.2}
+\contentsline {subsection}{\numberline {1.8.3}DMFT\$GREEN}{23}{subsection.1.8.3}
+\contentsline {subsection}{\numberline {1.8.4}DMFT\_INI}{29}{subsection.1.8.4}
+\contentsline {subsubsection}{Hardwired data}{29}{section*.10}
+\contentsline {subsubsection}{Inherited data}{29}{section*.11}
+\contentsline {subsubsection}{Derived data}{29}{section*.12}
+\contentsline {subsection}{\numberline {1.8.5}DMFT\_UTENSOR}{29}{subsection.1.8.5}
+\contentsline {subsection}{\numberline {1.8.6}DMFT\_NATORB}{30}{subsection.1.8.6}
+\contentsline {subsubsection}{Orthonormal orbitals without reference to the density matrix}{31}{section*.13}
+\contentsline {subsection}{\numberline {1.8.7}DMFT\_HRHO}{32}{subsection.1.8.7}
+\contentsline {subsubsection}{DMFT\_EOFF}{33}{section*.14}
+\contentsline {subsection}{\numberline {1.8.8}DMFT\_CONSTRAINTS}{34}{subsection.1.8.8}
+\contentsline {subsubsection}{Green's function}{34}{section*.15}
+\contentsline {subsubsection}{Green's function difference}{35}{section*.16}
+\contentsline {subsubsection}{Update $\bm {\Gamma }$}{35}{section*.17}
+\contentsline {subsubsection}{Minimize constraint violation with the conjugate gradient method}{36}{section*.18}
+\contentsline {subsection}{\numberline {1.8.9}DMFT\_SOLVER}{39}{subsection.1.8.9}
+\contentsline {subsection}{\numberline {1.8.10}DMFT\_ETOT}{40}{subsection.1.8.10}
+\contentsline {subsubsection}{Evaluation of the logarithm using a power series expansion}{40}{section*.19}
+\contentsline {subsubsection}{Evaluation of the logarithm using Dahlen's trick}{40}{section*.20}
+\contentsline {chapter}{\numberline {2}Tests and Numerical problems}{42}{chapter.2}
+\contentsline {chapter}{\numberline {3}Test calculations}{43}{chapter.3}
+\contentsline {section}{\numberline {3.1}Hubbard model}{43}{section.3.1}
+\contentsline {chapter}{\numberline {A}Matsubara frequencies}{44}{appendix.A}
+\contentsline {section}{\numberline {A.1}Evaluation using residual theorem}{44}{section.A.1}
+\contentsline {subsection}{\numberline {A.1.1}Matsubara sums}{46}{subsection.A.1.1}
+\contentsline {subsection}{\numberline {A.1.2}Matsubara sums on finite grids and regularization}{46}{subsection.A.1.2}
+\contentsline {subsubsection}{Avoid the spurious extrema of the fermi function by restricting the energy spectrum.}{48}{section*.21}
+\contentsline {subsubsection}{Alternative regularizatuon scheme}{49}{section*.22}
+\contentsline {chapter}{\numberline {B}The Green function}{51}{appendix.B}
+\contentsline {section}{\numberline {B.1}Generic properties}{51}{section.B.1}
+\contentsline {subsection}{\numberline {B.1.1}Green's function with negative Matsubara frequencies}{51}{subsection.B.1.1}
+\contentsline {subsection}{\numberline {B.1.2}Density of states}{51}{subsection.B.1.2}
+\contentsline {section}{\numberline {B.2}Greens functions between band states and local orbitals}{53}{section.B.2}
+\contentsline {subsection}{\numberline {B.2.1}Lattice Greens functions and limited set of band states}{53}{subsection.B.2.1}
+\contentsline {subsection}{\numberline {B.2.2}Green's function on the Hilbert space of correlated orbitals}{53}{subsection.B.2.2}
+\contentsline {section}{\numberline {B.3}Project Green's function onto local orbitals}{55}{section.B.3}
+\contentsline {subsection}{\numberline {B.3.1}Laurent expansion of the non-interacting Green's function}{57}{subsection.B.3.1}
+\contentsline {subsection}{\numberline {B.3.2}Laurent expansion of the Green's function (new)}{58}{subsection.B.3.2}
+\contentsline {subsubsection}{Laurent-expansion coefficients are Hermitean}{59}{section*.23}
+\contentsline {subsubsection}{Difference of Green's functions}{59}{section*.24}
+\contentsline {subsubsection}{Laurent expansion for the density matrix}{60}{section*.25}
+\contentsline {subsubsection}{Derivative of the Luttinger Ward functional}{60}{section*.26}
+\contentsline {chapter}{\numberline {C}in progress: Green function in matrix form}{61}{appendix.C}
+\contentsline {subsubsection}{$\bm {\Delta }$ and projection}{62}{section*.27}
+\contentsline {subsubsection}{Hamilton matrix and projection}{63}{section*.28}
+\contentsline {subsubsection}{Proof of the identity between \text {Eq.}\nobreakspace {}\ref {eq:greenmatrix1a} and \text {Eq.}\nobreakspace {}\ref {eq:greenmatrix2a}.}{64}{section*.29}
+\contentsline {subsubsection}{Self energy from the uncorrelated orbitals}{64}{section*.30}
+\contentsline {subsubsection}{Partitioning}{64}{section*.31}
+\contentsline {chapter}{\numberline {D}Dividing the correlation contribution into a static and a dynamic part}{67}{appendix.D}
+\contentsline {subsubsection}{Divided form}{68}{section*.32}
+\contentsline {subsubsection}{No Matsubara sum with a stationary self energy}{69}{section*.33}
+\contentsline {chapter}{\numberline {E}Hartree-Fock energy}{70}{appendix.E}
+\contentsline {chapter}{\numberline {F}Mixing of the self energy}{72}{appendix.F}
+\contentsline {section}{\numberline {F.1}Structure of the self-consistency}{72}{section.F.1}
+\contentsline {section}{\numberline {F.2}Euler-Lagrange equations}{73}{section.F.2}
+\contentsline {section}{\numberline {F.3}Model Green's function}{74}{section.F.3}
+\contentsline {section}{\numberline {F.4}Enforce constraints by minimizing deviation from the density matrix}{78}{section.F.4}
+\contentsline {chapter}{\numberline {G}Usage}{79}{appendix.G}
+\contentsline {subsection}{\numberline {G.0.1}Control file}{79}{subsection.G.0.1}
+\contentsline {subsection}{\numberline {G.0.2}Structure file}{79}{subsection.G.0.2}
+\contentsline {chapter}{\numberline {H}Bloch representation}{81}{appendix.H}
+\contentsline {chapter}{\numberline {I}Traditional formulation of the dynamical mean-field theory}{82}{appendix.I}
+\contentsline {chapter}{\numberline {J}Optimization}{84}{appendix.J}
+\contentsline {section}{\numberline {J.1}Conjugate-gradient method}{84}{section.J.1}
+\contentsline {subsection}{\numberline {J.1.1}Wirtinger Calculus}{84}{subsection.J.1.1}
+\contentsline {subsection}{\numberline {J.1.2}Definition of the problem}{84}{subsection.J.1.2}
+\contentsline {subsection}{\numberline {J.1.3}Minimization on a hyperplane}{85}{subsection.J.1.3}
+\contentsline {subsection}{\numberline {J.1.4}Determine next search direction}{86}{subsection.J.1.4}
+\contentsline {subsection}{\numberline {J.1.5}Nonlinear Conjugate Gradient Method}{88}{subsection.J.1.5}
+\contentsline {subsection}{\numberline {J.1.6}Recipe}{89}{subsection.J.1.6}
+\contentsline {section}{\numberline {J.2}Limited memory Broyden-Fletcher-Goldfarb-Shanno (l-BFGS)}{89}{section.J.2}
+\contentsline {subsection}{\numberline {J.2.1}Example code}{90}{subsection.J.2.1}
