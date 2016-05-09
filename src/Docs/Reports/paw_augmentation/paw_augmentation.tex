@@ -1,0 +1,495 @@
+\documentclass[11pt,a4paper]{report}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                 %%
+%%    Header file for the Phi-S-X Series                           %%
+%%                                                                 %%
+%%    german version header_gm.tex is derived from header.tex      %%
+%%    by uncommenting the line ``\setboolean{german}{true}'' below %%
+%%                                                                 %%
+%%    Never edit the german version! all changes must be done      %%
+%%    in the english version header.tex                            %%
+%%                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{../header}
+\hypersetup{pdftitle=paw_brillouin}
+\begin{document}
+\begin{titlepage}
+\begin{center}
+\vspace*{3.5cm}
+{\huge \textbf{The Augmentation object of the CP-PAW code}}\\
+\vspace{0.5cm}
+{\large Peter E. Bl\"ochl}
+\vspace{0.5cm} 
+\end{center}
+
+\vfill
+\begin{center}
+Copyright Peter E. Bl\"ochl; Sept.2, 2013-\today\\
+{\small
+Institute of Theoretical Physics;
+Clausthal University of Technology;\\ 
+D-38678 Clausthal Zellerfeld; Germany;\\
+http://www.pt.tu-clausthal.de/atp/}
+\end{center}
+\end{titlepage}
+\noindent            
+\tableofcontents
+%====================================================================
+\chapter{Todo}
+%====================================================================
+%====================================================================
+\chapter{Purpose and theoretical background of the Augmentation Object}
+%====================================================================
+The AUGMENTATION object calculates the energies related to the
+one-center expansions of the wave functions.
+
+Look up my notes ``Methods'' section ``augmentation object'' in part
+objects.tex.
+
+%====================================================================
+\section{Exchange and correlation energy}
+%====================================================================
+\subsection{The energy}
+
+The exchange energy is expressed as a function of the electron density
+$n_t$, spin-density $n_s$, and the squares of the total and spin
+densities.
+\begin{equation}
+E_{xc}\Bigl(n_t,n_s,(\nabla n_t)^2,(\nabla n_s)^2,\nabla n_s\nabla n_t\Bigr)
+\end{equation}
+Because of the requirement of isotropy, the exchange correlation
+energy can only depend on the absolute values of the gradients, and on
+the relative angle between gradients of total and spin density.  
+
+The angle between the magnetization of a non-collinear spin density
+and the gradient of the densities is not taken into account. The
+rationale is that spin and lattice are decoupled in a non-relativistic
+description. A relativistic description however would also need to
+account for current densities.
+
+For reasons of simplicity we introduce a new symbol the five
+dimensional vector
+\begin{equation}
+u=\Bigl(n_t,n_s,(\vec{\nabla} n_t)^2,(\vec{\nabla}n_s)^2
+,\vec{\nabla}n_s\vec{\nabla}n_t\Bigr)
+\end{equation}
+The vector $u$ is expanded into real spherical harmonics, so that
+\begin{equation}
+u_j(\vec{r})=\sum_L u_{j,L}(|\vec{r}|)Y_L(\vec{r})
+\end{equation}
+In the code, $u_j$ is the variable \verb|XVAL|.
+
+The total energy is expanded to second order about the spherical
+contributions $u_{j,L=0}(\vec{r})Y_0$ of $u_j(\vec{r})$. The first-order term in the expansion vanishes during the angular average.
+\begin{eqnarray}
+E&=&\int d^3r\;
+E_{xc}\Bigl(u_{j,L=0}Y_0+\sum_{L\neq0} u_{j,L}Y_L\Bigr)
+\nonumber\\
+&=&\int d^3r\; 
+\biggl\lbrace
+E_{xc}(u_{L=0}Y_0)
++\sum_{L\neq 0} 
+\sum_m\frac{dE_{xc}}{d(u_mY_0)}
+u_{m,L}
+Y_L(\vec{r})
+\nonumber\\
+&&\hspace{1cm}
++\frac{1}{2}\sum_{L,L'\neq 0} 
+\sum_{m,n}\frac{d^2E_{xc}}{d(u_mY_0)d(u_nY_0)}
+u_{m,L}u_{n,L'}
+Y_LY_{L'}
+\biggr\rbrace
+\nonumber\\
+&=&\int dr\;r^2\; \biggl\lbrace
+4\pi E_{xc}(u_{L=0}Y_0)
++
+\frac{1}{2}
+\sum_{L\neq 0} 
+\sum_{m,n}
+\frac{d^2E_{xc}}{d(u_mY_0)d(u_nY_0)} u_{m,L}u_{n,L}
+\biggr\rbrace
+\end{eqnarray}
+Here we have used that $d\Omega Y_LY_L=4\pi Y_0 C_{0LL}=1$
+
+%===================================================================
+\subsection{The potential}
+%===================================================================
+
+The potential is defined via the variation of the total energy as
+\begin{eqnarray}
+dE&=&
+\int d^3r\; \frac{dE}{dn(\vec{r})}dn(\vec{r})
+=\int d^3r\; v(\vec{r})dn(\vec{r})
+=\int d^3r\sum_L 
+\Bigl[v_L(r) Y_L(\vec{r})\Bigr] \Bigl[dn_L(r) Y_L(\vec{r})\Bigr]
+\nonumber\\ 
+&=& \int dr\; r^2\;  \sum_L v_L(r)dn_L(r)
+\end{eqnarray}
+
+Thus, if the energy has the form of a radial integral
+\begin{eqnarray}
+E=\int dr\;r^2\; F[\{n_L(r)\}]
+\end{eqnarray}
+the angular momentum components of the potential are
+\begin{eqnarray}
+v_L(r)=\frac{\partial F}{\partial n_L(r)}
+\end{eqnarray}
+
+Hence, the exchange-correlation potential is obtained as follows:
+First we evaluate the variation of the total energy
+\begin{eqnarray}
+dE&=&\int dr\;r^2\; \biggl\lbrace
+4\pi \sum_j\frac{\partial E_{xc}}{\partial (u_{j,L=0}Y_0)}
+du_{j,L=0}Y_0
++
+\frac{1}{2}
+\sum_{L'\neq 0}\sum_{m,n,j} 
+\frac{\partial^3E_{xc}}{\partial(u_mY_0)\partial(u_nY_0)\partial(u_jY_0)} u_{m,L'}u_{n,L'}du_{j,L=0}Y_0
+\nonumber\\
+&&\hspace{1cm}
++\frac{1}{2}
+\sum_{L\neq 0} 
+\sum_{m,n}
+\frac{\partial^2E_{xc}}{\partial(u_mY_0)\partial(u_nY_0)} u_{m,L}du_{n,L}
++
+\frac{1}{2}
+\sum_{L\neq 0} 
+\sum_{m,n}
+\frac{\partial^2E_{xc}}{\partial(u_mY_0)\partial(u_nY_0)} u_{m,L}du_{n,L}
+\biggr\rbrace
+\end{eqnarray}
+
+
+Thus the potential of $u$, defined as
+\begin{eqnarray}
+dE=\int dr\;r^2\sum_L\sum_j K_{j,L}(r)du_{j,L}(r)
+\end{eqnarray}
+is
+\begin{eqnarray}
+K_{j,L=0}&=&
+4\pi\frac{\partial E_{xc}}{\partial (u_{j,L=0}Y_0)}Y_0
++
+\frac{1}{2}
+\sum_{L'\neq 0} 
+\sum_{m,n}
+\frac{d^3E_{xc}}{\partial(u_mY_0)\partial(u_nY_0)\partial(u_jY_0)} u_{m,L'}u_{n,L'}Y_0
+\nonumber\\
+K_{j,L\neq0}&=&
+\sum_m
+\frac{d^2E_{xc}}{\partial(u_mY_0)\partial(u_jY_0)} u_{m,L}
+\end{eqnarray}
+The potentials are represented in the code by the variable $XDER$.
+
+
+%===================================================================
+\subsection{The gradient terms and their derivatives}
+%===================================================================
+The gradient correction term of the one-center contribution to
+exchange and correlation energy is expressed by the radial functions
+for various $L$'s for total $n_t$ and spin $n_s$ density, and the
+square of the gradients, $w_{tt}=|\nabla n_t|^2$, $w_{ss}=|\nabla
+n_s|^2$ and $w_{ts}=\nabla n_t \nabla n_s$.
+
+The total energy is expressed as a Taylor expansion about the
+spherical parts, including the nonspherical parts up to second order.
+In this way the first order contributions drop out, because the energy
+is the scalar product of different angular momenta.
+
+%====================================================================
+\subsection{The gradient dependency}
+%====================================================================
+Firstly, we evaluate the square of the gradients. We use the indices
+$\alpha,\beta\in\{t,s\}$ to indicate the total and spin densities.
+\begin{eqnarray}
+w_{\alpha,\beta}(\vec{r})&=&\sum_L w_{\alpha,\beta,L}(r) Y_L(\vec{r})
+=(\nabla n_{\alpha}(r))(\nabla n_{\beta}(r))
+\nonumber\\
+&=&\sum_{L^\prime L^{\prime\prime}}
+[\nabla n_{\alpha,L^\prime}(r)Y_{L^\prime}(r))]
+[\nabla n_{\beta,L^{\prime\prime}}(r)Y_{L^{\prime\prime}}(r))]
+.
+\end{eqnarray}
+Note that the gradient acts on the radial function and the spherica
+harmonics.
+
+This expression contains terms of the form
+\begin{equation}
+[\nabla{f}][\nabla{g}]=\frac{1}{2} \Bigl[ \nabla^2(fg)-(\nabla^2 f)g
+-f(\nabla^2 g)\Bigr]
+\end{equation}
+where each of the two functions $f$ and $g$ are expressed in a
+spherical harmonics expansion.  The expression can be verified by
+evaluating $\nabla^2(fg)$.
+
+Next we use the Laplacian in an angular momentum representation
+\begin{equation}
+\nabla^2 f_L(r)Y_L(r)= \Bigl[{1\over{r}}\partial_r^2 r f_L
+ -{{\ell(\ell+1)}\over{r^2}}f_L\Bigr]Y_L.
+\end{equation}
+and the Gaunt coefficients $C_{L,L',L''}$ defined by
+$Y_LY_L'=\sum_{L''}C_{L,L',L''}Y_{L''}$
+
+\begin{eqnarray*}
+[\nabla{f}][\nabla{g}]
+&=&\frac{1}{2} \Bigl[\nabla^2(fg)-(\nabla^2 f)g-f(\nabla^2 g)\Bigr]
+\\
+&=&\frac{1}{2}\sum_{L,L',L''}C_{L,L',L''} 
+\biggl\lbrace 
+\underbrace{
+\biggl(
+\frac{1}{r}\partial^2_r r (f_{L'}g_{L''})-\frac{\ell(\ell+1}{r^2}f_{L'}g_{L''}
+\biggr)Y_L
+}_{\nabla^2\Bigl(f_{L'}g_{L''}Y_L\Bigr)}
+\\
+&&-
+\underbrace{
+\biggl(
+\frac{1}{r}\partial_2 r f_{L'}-\frac{\ell'(\ell'+1)}{r^2}f_{L'}\biggr)g_{L''}
+Y_L
+}_{\leftarrow\Bigl(\nabla^2f_{L'}Y_L'\Bigr)g_{L''}Y_{L''}}
+-\underbrace{
+f_{L'}\biggl(\frac{1}{r}\partial_2 r g_{L''}-\frac{\ell''(\ell''+1)}{r^2}g_{L''}
+\biggr)Y_L
+}_{\leftarrow f_{L'}Y_L\nabla^2\Bigl(g_{L''}Y_{L''}\Bigr)}
+\\
+&=&\frac{1}{2}\sum_{L,L',L''}C_{L,L',L''} Y_L(\vec{r})
+\biggl\lbrace
+\frac{1}{r}\Bigl[ 
+\left(\partial^2_r r f_{L'}g_{L''}\right)
+-\left(\partial^2 r f_{L'}\right)g_{L''}
+-f_{L'}\left(\partial^2 r g_{L''}\right)\Bigr]
+\\
+&&\hspace{3cm}
+-\Bigl[ \frac{\ell(\ell+1)}{r^2}-\frac{\ell'(\ell'+1)}{r^2}-\frac{\ell''(\ell''+1)}{r^2}\Bigr]
+f_{L'}g_{L''}\biggr\rbrace
+\end{eqnarray*}
+
+Let us simplify the terms with the derivatives
+\begin{eqnarray}
+\partial^2_r r f_{L'}g_{L''}
+&=&\partial_r\Bigl[ 
+\Bigl(\partial_r r f_{L'}\Bigr) g_{L''}
++f_{L'}\Bigl(\partial_r r g_{L''}\Bigr)-f_{L'}g_{L''}\Bigr]
+\nonumber\\
+&=&
+\underbrace{
+\Bigl(\partial^2_r r f_{L'}\Bigr) g_{L''}
+}_{(A)}
++\underbrace{
+\Bigl(\partial_r r f_{L'}\Bigr)\Bigl( \partial_r g_{L''}\Bigr)
+}_{(C_1)}
++
+\underbrace{
+\Bigl(\partial_rf_{L'}\Bigr)\Bigl(\partial_r r g_{L''}\Bigr)
+}_{(D_1)}
+\nonumber\\
+&+&\underbrace{
+f_{L'}\Bigl(\partial^2_r r g_{L''}\Bigr)
+}_{(B)}
+-\underbrace{
+\Bigl(\partial_rf_{L'}\Bigr)g_{L''}
+}_{(D_2)}
+-\underbrace{
+f_{L'}\Bigl(\partial_rg_{L''}\Bigr)
+}_{(C_2)}
+\nonumber\\
+&=&
+\underbrace{2r\Bigl(\partial_r f_{L'}\Bigr)\Bigl( \partial_r g_{L''}\Bigr)
+}_{(C_1-C_2+D_1-D_2)}
++\underbrace{\Bigl(\partial^2_r r f_{L'}\Bigr) g_{L''}}_{(A)}
++\underbrace{f_{L'}\Bigl(\partial^2_r r g_{L''}\Bigr)}_{(B)}
+\end{eqnarray}
+Thus we obtain
+\begin{eqnarray*}
+[\nabla{f}][\nabla{g}]
+&=&\sum_{L,L',L''}\Bigl[ 
+\Bigl(\partial_r f_{L'}\Bigr)\Bigl(\partial_rg_{L''}\Bigr)
+-\frac{1}{2}\Bigl( \frac{\ell(\ell+1)}{r^2}-\frac{\ell'(\ell'+1)}{r^2}-\frac{\ell''(\ell''+1)}{r^2}\Bigr)
+f_{L'}g_{L''}\Bigr]C_{L,L',L''}Y_L(\vec{r})
+\end{eqnarray*}
+
+
+If we apply this to the expression for the squared gradient, we obtain
+\begin{eqnarray}
+w_{\alpha,\beta}(\vec{r})&=&\sum_L w_{\alpha,\beta,L}(r) Y_L(\vec{r})
+\nonumber\\
+&=&\sum_{L^\prime L^{\prime\prime}}
+Y_L C_{LL^\prime L^{\prime\prime}}
+\Bigl[
+(\partial_r n_{\alpha,L^\prime})(\partial_r n_{\beta,L^{\prime\prime}})
++{{\gamma(ll^{\prime}l^{\prime\prime})}\over{r^2}}
+n_{L^\prime}n_{L^{\prime\prime}}
+\Bigr]
+\end{eqnarray}
+where 
+\begin{equation}
+\gamma(ll^{\prime}l^{\prime\prime})=-
+\frac{1}{2} 
+\left({{\ell(\ell+1)}\over{r^2}}-{{\ell_{L^\prime}(\ell_{L^\prime}+1)}\over{r^2}}
+-{{\ell_{L^{\prime\prime}}(\ell_{L^{\prime\prime}}+1)}\over{r^2}}\right)
+\end{equation}
+
+We divide $w_{\alpha,\beta}(\vec{r})$ into three contributions, 
+\begin{itemize}
+\item a spherical one, 
+\item a non-spherical one, which is linear in $n_{L{\neq}0}$ and 
+\item a non-spherical term
+quadratic in $n_{L{\neq}0}$. 
+\end{itemize}
+The last term is excluded, because it
+will not contribute to the total energy if we exclude terms higher
+than quadratic in the non-spherical contributions to the density
+$n_L$ with $L\neq0$, and those terms only contribute if combined
+with another contribution with $L\neq 0$.
+
+\begin{eqnarray}
+w_{\alpha,\beta}(\vec{r})&=&\sum_{L}Y_0 C_{0LL}
+\Bigl[(\partial_r n_{\alpha,L})(\partial_r n_{\beta,L})
++\frac{\ell(\ell+1)}{r^2}n_{\alpha,L}n_{\beta,L}
+\Bigr]
+\nonumber\\
+&+&\sum_{L\neq0}Y_L C_{0LL}\Bigl[
+(\partial_r n_{\alpha,0})(\partial_r n_{\beta,L}) 
++(\partial_r n_{\alpha,L})(\partial_r n_{\beta,0}) 
+\Bigr]
+\nonumber\\
+&+&
+\underbrace{\sum_{L\neq0}Y_L 
+\sum_{L'\neq0,L''\neq0}
+C_{LL'L''}\Bigl[
+(\partial_r n_{\alpha,L'})(\partial_r n_{\beta,L''}) 
++\frac{\gamma(\ell,\ell',\ell'')}{r^2}n_{\alpha,L}n_{\beta,L}
+\Bigr]}_{\text{ignored}}
+\end{eqnarray}
+
+
+This yields,
+\begin{eqnarray}
+w(\vec{r})&=&\sum_L w_{L}(|\vec{r}|)Y_{L}(\vec{r})
+\\
+w_{\alpha,\beta,L}(r)&=&\frac{1}{\sqrt{4\pi}}
+\begin{cases}
+\sum_{L}
+\Bigl[(\partial_r n_{\alpha,L})(\partial_r n_{\beta,L})
++\frac{\ell(\ell+1)}{r^2}n_{\alpha,L}n_{\beta,L}
+\Bigr]&\text{for $L=0$}\\
+\Bigl[
+(\partial_r n_{\alpha,0})(\partial_r n_{\beta,L}) 
++(\partial_r n_{\alpha,L})(\partial_r n_{\beta,0}) 
+\Bigr]
+&\text{for $L\neq0$}
+\end{cases}
+\end{eqnarray}
+We used $C_{0,L,L}=Y_0=1/\sqrt{4\pi}$.
+
+%====================================================================
+\subsection{The derivatives}
+%====================================================================
+\begin{eqnarray}
+dE&=&\int dr\; r^2 \sum_LK_{\alpha,\beta,L}(r)dw_{\alpha,\beta,L}(r)
+\nonumber\\
+&=&\int dr\; r^2
+\biggl\lbrace
+ K_{\alpha,\beta,0}(r)dw_{\alpha,\beta,0}(r)
++\sum_{L\neq0} K_{\alpha,\beta,L}(r)dw_{\alpha,\beta,L}(r)
+\biggr\rbrace
+\nonumber\\
+&=&\int dr\; r^2
+\biggl\lbrace
+ K_{\alpha,\beta,0}(r)\frac{1}{\sqrt{4\pi}}
+\sum_L\Bigl[(\partial_r dn_{\alpha,L})(\partial_r n_{\beta,L})
++(\partial_r n_{\alpha,L})(\partial_r dn_{\beta,L})
+\nonumber\\
+&&\hspace{3cm}+\frac{\ell(\ell+1)}{r^2}
+\Bigl(dn_{\alpha,L}n_{\beta,L}+n_{\alpha,L}dn_{\beta,L}\Bigr)
+\Bigr]
+\nonumber\\
+&&+\sum_{L\neq0} K_{\alpha,\beta,L}(r)\frac{1}{\sqrt{4\pi}}
+\Bigl[
+(\partial_r dn_{\alpha,0})(\partial_r n_{\beta,L}) 
++(\partial_r n_{\alpha,0})(\partial_r dn_{\beta,L}) 
+\nonumber\\
+&&\hspace{3cm}+(\partial_r dn_{\alpha,L})(\partial_r n_{\beta,0}) 
++(\partial_r n_{\alpha,L})(\partial_r dn_{\beta,0}) 
+\Bigr]
+\biggr\rbrace
+%
+%
+%
+\nonumber\\
+&=&\int dr\; r^2\biggl\lbrace
+\sum_L\biggl[-\frac{1}{r^2}\partial_rr^2\biggl(
+\frac{K_{\alpha,\beta,0}(r)}{\sqrt{4\pi}} (\partial_r n_{\beta,L})
+\biggr) 
++
+\frac{\ell(\ell+1)}{r^2}\frac{K_{\alpha,\beta,0}(r)}{\sqrt{4\pi}}n_{\beta,L}
+\biggr]dn_{\alpha,L}
+\nonumber\\
+&&\hspace{1.3cm}
++\biggl[-\frac{1}{r^2}\partial_rr^2\sum_{L\neq0}\biggl(
+\frac{K_{\alpha,\beta,L}(r)}{\sqrt{4\pi}} \partial_r n_{\beta,L}
+\biggr) 
+\biggr]dn_{\alpha,0}
++\sum_{L\neq0}\biggl[-\frac{1}{r^2}\partial_rr^2\biggl(
+\frac{K_{\alpha,\beta,L}(r)}{\sqrt{4\pi}} \partial_r n_{\beta,0}
+\biggr) 
+\biggr]dn_{\alpha,L}
+\nonumber\\
+&&\hspace{1.3cm}+\sum_L\biggl[-\frac{1}{r^2}\partial_rr^2\biggl(
+\frac{K_{\alpha,\beta,0}(r)}{\sqrt{4\pi}} \partial_r n_{\alpha,L}
+\biggr) 
++
+\frac{\ell(\ell+1)}{r^2}\frac{K_{\alpha,\beta,0}(r)}{\sqrt{4\pi}}n_{\alpha,L}
+\biggr]dn_{\beta,L}
+\nonumber\\
+&&\hspace{1.3cm}
++\biggl[-\frac{1}{r^2}\partial_rr^2\sum_{L\neq0}\biggl(
+\frac{K_{\alpha,\beta,L}(r)}{\sqrt{4\pi}} \partial_r n_{\alpha,L}
+\biggr) 
+\biggr]dn_{\beta,0}
++\sum_{L\neq0}\biggl[-\frac{1}{r^2}\partial_rr^2\biggl(
+\frac{K_{\alpha,\beta,L}(r)}{\sqrt{4\pi}} \partial_r n_{\alpha,0}
+\biggr) 
+\biggr]dn_{\beta,L}
+\biggr\rbrace
+\nonumber\\
+%
+%
+%
+&=&\int dr\; r^2\biggl\lbrace
+\sum_{L\neq0}\biggl[-\frac{1}{r^2}\partial_rr^2\biggl(
+\frac{K_{\alpha,\beta,0}(r)}{\sqrt{4\pi}} (\partial_r n_{\beta,L})
++\frac{K_{\alpha,\beta,L}(r)}{\sqrt{4\pi}} (\partial_r n_{\beta,0})
+\biggr) 
++
+\frac{\ell(\ell+1)}{r^2}\frac{K_{\alpha,\beta,0}(r)}{\sqrt{4\pi}}n_{\beta,L}
+\biggr]dn_{\alpha,L}
+\nonumber\\
+&&\hspace{1.3cm}
++\biggl[-\frac{1}{r^2}\partial_rr^2\sum_{L}\biggl(
+\frac{K_{\alpha,\beta,L}(r)}{\sqrt{4\pi}} \partial_r n_{\beta,L}
+\biggr) 
+\biggr]dn_{\alpha,0}
+\nonumber\\
+&&\hspace{1.3cm}+\sum_{L\neq0}\biggl[-\frac{1}{r^2}\partial_rr^2\biggl(
+\frac{K_{\alpha,\beta,0}(r)}{\sqrt{4\pi}} \partial_r n_{\alpha,L}
++\frac{K_{\alpha,\beta,L}(r)}{\sqrt{4\pi}} \partial_r n_{\alpha,0}
+\biggr) 
++
+\frac{\ell(\ell+1)}{r^2}\frac{K_{\alpha,\beta,0}(r)}{\sqrt{4\pi}}n_{\alpha,L}
+\biggr]dn_{\beta,L}
+\nonumber\\
+&&\hspace{1.3cm}
++\biggl[-\frac{1}{r^2}\partial_rr^2\sum_{L}\biggl(
+\frac{K_{\alpha,\beta,L}(r)}{\sqrt{4\pi}} \partial_r n_{\alpha,L}
+\biggr) 
+\biggr]dn_{\beta,0}
+\biggr\rbrace
+\nonumber\\
+\end{eqnarray}
+
+
+
+\clearpage
+\bibliographystyle{unsrtnat} \bibliography{../all}
+\end{document}  
