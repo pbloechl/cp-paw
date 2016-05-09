@@ -130,16 +130,18 @@ as follows:
   function} $|K^\infty_\alpha\rangle$ is defined.\footnote{The
   superscript $\infty$ denotes that the function extends over all
   space, a superscript $\Omega$ denotes that the function is truncated
-  (set to zero) outside the augmentation sphere $\Omega_{R}$ centerd
-  at the site denoted by the index. The superscript $I$ denotes that
-  the function is limited to the interstitial region, that is outside
-  all augmentation spheres. If the augmentation spheres overlap, the
-  function in the interstitial region is defined by subtraction of all
-  sphere contributions.}
+  (set to zero) outside the augmentation sphere $\Omega_{R}$ centered
+  at the site $R_\alpha$ denoted by the index $\alpha$. The
+  superscript $I$ denotes that the function is non-zero only in the
+  interstitial region, that is outside all augmentation spheres. If
+  the augmentation spheres overlap, the function in the interstitial
+  region is defined by subtraction of all sphere
+  contributions. Similarly, the interstitial function constains terms
+  from the higher angular momenta within the augmentation regions.}
 %
 \item In a second step, this envelope function is expanded about each
-  atomic site into spherical harmonics.  More generally, they are
-  expanded into \textbf{head functions}\index{head function}
+  atomic site $R_\alpha$ into spherical harmonics.  More generally,
+  they are expanded into \textbf{head functions}\index{head function}
   $|K^\Omega_\alpha\rangle$ and \textbf{tail functions}\index{tail
     function} $|J^\Omega_\alpha\rangle$. The head function is the
   dominant contribution and carries the quantum number of the final
@@ -182,8 +184,9 @@ as follows:
 In practice, we will use solid Hankel functions $H_L(\vec{r})$ as
 envelope functions, so that 
 \begin{eqnarray}
-\langle\vec{r}|K^\infty_{R,L}\rangle= H_L(\vec{r}-\vec{R})
+\langle\vec{r}|K^\infty_\alpha\rangle= H_{L_\alpha}(\vec{r}-\vec{R}_\alpha)
 \end{eqnarray}
+
 
 Solid Hankel functions are irregular solutions of the the
 inhomogeneous Helmholtz equation\footnote{I am not sure whether also
@@ -213,7 +216,6 @@ that the solution can be expanded about different centers into regular
 solutions of the same differential equation with specific angular
 momenta. The regular solutions of the Helmholtz equation are the
 Bessel functions.
-
 
 Hankel and Bessel functions are defined\footnote{This is our
   definition, not a generally accepted convention.} so that they
