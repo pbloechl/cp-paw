@@ -230,7 +230,7 @@ J^\Omega_{R,L}(\vec{r})&=&
 \biggl[\frac{1}{(2\ell+1)!!} |\vec{r}-\vec{R}|^{\ell+1} 
 +...\Bigr]Y_L(\vec{r}-\vec{R})\theta_{\Omega_R}(\vec{r})
 \end{eqnarray}
-$\theta_{\Omega_R}(\vec{r})$ is a step function, that is, one within the
+$\theta_{\Omega_R}(\vec{r})$ is a step function, which equals unity within the
 augmentation region $\Omega_R$ centered at site $R$, while it vanishes
 outside. The terms neglected are higher orders in $|\vec{r}-\vec{R}|$.
 
@@ -278,7 +278,7 @@ H_{L''}(\vec{R}'-\vec{R})
 With $C_{L,L',L''}$, we denote the \textbf{Gaunt
   coefficients}\index{Gaunt coeffocients} defined by
 \begin{eqnarray}
-Y_L'(\vec{r})Y_{L''}(\vec{r})=\sum_L Y_{L}(\vec{r})C_{L,L',L''}
+Y_{L'}(\vec{r})Y_{L''}(\vec{r})=\sum_L Y_{L}(\vec{r})C_{L,L',L''}
 \end{eqnarray}
 Note, that the Gaunt coefficients for spherical and real spherical
 harmonics differ.\footnote{In practice, we use real spherical
@@ -297,12 +297,11 @@ i.e. in general we have $S_{RL,R'L'}\neq S_{R,L',R'L}$.
 %====================================================================
 \subsection{Screened structure constants}
 %====================================================================
-A so-called \textbf{screened LMTO representations}\index{screened
+A so-called \textbf{screened LMTO representation}\index{screened
   LMTO's} is defined by a set of screened scattering partial waves
 $|\dot{\bar{\phi}}_\alpha\rangle$.  In what we call the
 nodeless-representation, the scattering partial waves are defined as
 nodeless scattering wave functions.
-
 
 The node-less scattering partial wave
 $|\dot{\bar{\phi}}_\alpha\rangle$ define the screening constants
@@ -379,26 +378,40 @@ c_{\beta,\alpha}&=&\delta_{\beta,\alpha}+
 which can be resolved to
 \footnote{
 \begin{eqnarray}
-\mat{c}&=&\mat{1}
-+\mat{\bar{Q}}\mat{\bar{S}}^\dagger
-=\mat{1}+\mat{\bar{Q}}\mat{S}^\dagger\mat{c}
-\qquad
-\Rightarrow\qquad\sum_\gamma \Bigl[\delta_{\beta,\gamma}
--\bar{Q}_\beta S^\dagger_{\beta,\gamma}\Bigr] c_{\gamma,\alpha}=\delta_{\beta,\alpha}
-\qquad\Rightarrow\qquad
-\mat{c}=[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]^{-1}
-\nonumber\\
-\mat{\bar{S}}^\dagger&=&\mat{S}^\dagger\mat{c}
-=\mat{S}^\dagger[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]^{-1}
-\qquad\Leftrightarrow\qquad
-[\mat{1}-\mat{S}\mat{\bar{Q}}]\mat{\bar{S}}=\mat{S}
+\mat{\bar{S}}^\dagger
+\eqrel{eq:definingeqsystemforsbarb}{=}
+\mat{S}^\dagger\mat{c}
+\eqrel{eq:definingeqsystemforsbara}{=}
+\mat{S}^\dagger\Bigl(\mat{1}+\mat{\bar{Q}}\mat{\bar{S}}^\dagger\Bigr)
+\Rightarrow
+\Bigl(\mat{1}-\mat{S}^\dagger\mat{\bar{Q}}\Bigr)\mat{\bar{S}}^\dagger
+=\mat{S}^\dagger
+\Rightarrow
+\mat{\bar{S}}^\dagger
+=\Bigl(\mat{1}-\mat{S}^\dagger\mat{\bar{Q}}\Bigr)^{-1}\mat{S}^\dagger
 \end{eqnarray}
+%% The following gives a wrong answer:
+%% \begin{eqnarray}
+%% \mat{c}&=&\mat{1}
+%% +\mat{\bar{Q}}\mat{\bar{S}}^\dagger
+%% =\mat{1}+\mat{\bar{Q}}\mat{S}^\dagger\mat{c}
+%% \qquad
+%% \Rightarrow\qquad\sum_\gamma \Bigl[\delta_{\beta,\gamma}
+%% -\bar{Q}_\beta S^\dagger_{\beta,\gamma}\Bigr] c_{\gamma,\alpha}=\delta_{\beta,\alpha}
+%% \qquad\Rightarrow\qquad
+%% \mat{c}=[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]^{-1}
+%% \nonumber\\
+%% \mat{\bar{S}}^\dagger&=&\mat{S}^\dagger\mat{c}
+%% =\mat{S}^\dagger[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]^{-1}
+%% \qquad\Leftrightarrow\qquad
+%% [\mat{1}-\mat{S}\mat{\bar{Q}}]\mat{\bar{S}}=\mat{S}
+%% \end{eqnarray}
   } the defining
 equation of the screened structure constants
 \begin{myshadowminipage}{screened structure constants}
 \begin{eqnarray}
-\mat{\bar{S}}^\dagger=\mat{S}^\dagger
-\Bigl[\mat{1}-\mat{S}^\dagger\mat{\bar{Q}}\Bigr]^{-1}
+\mat{\bar{S}}^\dagger=
+\Bigl[\mat{1}-\mat{S}^\dagger\mat{\bar{Q}}\Bigr]^{-1}\mat{S}^\dagger
 \label{eq:defscreenedstructureconstants}
 \end{eqnarray}
 and the expression of the screened Hankel functions 
@@ -416,6 +429,7 @@ calculations. Rather, the defining equations
 \eq{eq:definingeqsystemforsbarb} shall be used as shown in the
 following section.
 \end{myshadowminipage}{}
+
 
 %====================================================================
 \section{Screening on finite clusters}
@@ -511,6 +525,39 @@ Finally we obtain the screened structure constants as
 
 Note that the screened structure constants calculated on finite
 clusters are no more exactly hermitean.
+
+%====================================================================
+\section{Derivatives}
+%====================================================================
+In order to evaluate forces, we need to investigate the derivatives of
+the structure constants with respect to changes of the atomic
+structure.
+
+\begin{eqnarray}
+-\mat{\bar{Q}}d\mat{S}^\dagger\vec{c}_\alpha
++\Bigl[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger\Bigr]d\vec{c}_\alpha
+&\eqrel{eq:forscreenedsa}{=}&0
+\nonumber\\
+\Bigl[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger\Bigr]d\vec{c}_\alpha
+&=&
+\mat{\bar{Q}}d\mat{S}^\dagger\vec{c}_\alpha
+\nonumber\\
+\Rightarrow\quad
+d\vec{s}_\alpha
+&\eqrel{eq:forscreenedsb}{=}&
+d\mat{S}^\dagger\vec{c}_\alpha
++\mat{S}^\dagger d\vec{c}_\alpha
+=\mat{\bar{Q}}^{-1}d\vec{c}_\alpha
+\nonumber\\
+&=&\mat{\bar{Q}}^{-1}\Bigl[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger\Bigr]^{-1}
+\mat{\bar{Q}}d\mat{S}^\dagger\vec{c}_\alpha
+\nonumber\\
+&=&\Bigl[\mat{1}-\mat{S}^\dagger\mat{\bar{Q}}\Bigr]^{-1}
+d\mat{S}^\dagger\vec{c}_\alpha
+\end{eqnarray}
+If this is correct, i implies that the screened structure constants
+depend only in second order on a displacement of the atoms.
+
 
 %====================================================================
 \subsection{Lower and higher angular momenta}

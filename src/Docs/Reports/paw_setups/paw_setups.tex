@@ -422,7 +422,7 @@ in \eq{eq:phincompletediscreteandcont}
 
 The contribution of the energy-dependent partial wave
 $|\bar{q}_n^{(N_j)}(\epsilon)\rangle$ is the same in both expressions.
-This suggests introduce an approximation which ignores this
+This suggests to introduce an approximation which ignores this
 contribution: we truncate the expansion for the energy-dependent
 partial wave to $N_j$ terms. $n$ is the band index of the lowest
 valence (non-core) state.
@@ -648,6 +648,7 @@ The bare projector functions can be spanned by the $N_j$ independent functions
 \nonumber\\
 |\bar{p}^{(j)}\rangle&=&(\hat{\tilde{h}}-\hat{h})|q_n^{(j)}(\epsilon_{n+j})\rangle
 \qquad\text{for $2\le j\le N_j$}
+\label{eq:selectionprojectordfunctions}
 \end{eqnarray}
 This selection is independent from the choice of the energies
 $\epsilon_{n+p}$ used to define the sequence of node-reduced wave
@@ -705,8 +706,8 @@ The bi-orthogonalization shall establish
 
 We do this while maintaining the partial waves, i.e.
 \begin{eqnarray}
-|p^{(j)}\rangle=\sum_{n}|p'^{(n)}\rangle
-\Bigl(\langle p'^{(j)}|\tilde{\phi}^{(n)}\rangle\Bigr)_{n,j}
+|p^{(j)}\rangle=\sum_{n}|\bar{p}^{(n)}\rangle
+\Bigl(\langle\tilde{\phi}^{(j)}|\bar{p}^{(n)}\rangle\Bigr)^{-1}_{n,j}
 \end{eqnarray}
 
 \textbf{The biorthogonalization deteriorates quickly, if the number of
@@ -741,6 +742,132 @@ involved in the relativistic case.
   remedy could be to change the exponentially increasing behavior of
   the the node-reduced partial waves artificially such that they do no
   more grow. In that case, the pseudo-core contribution would not harm.}
+
+%====================================================================
+\subsection{Inclusion of phidot partial waves}
+%====================================================================
+There is a lot of freedom to calculate the projector functions if a
+finite set of partial waves is used. The requirement is that the
+projector functions of the lower (included) partial waves shall be
+orthogonal to the higher partial waves.
+
+One motivation is the desire that the projector functions are also the
+projector functions of well-defined local orbitals. We choose a set of
+local orbitals such that is represented as
+\begin{eqnarray}
+|\chi_\alpha\rangle=|\phi_\alpha^K\rangle-\sum_\beta |\phi_\beta^{\bar{J}}\rangle
+\bar{S}_{\beta,\alpha}
+\end{eqnarray}
+where the partial waves denoted with superscript $K$ have the
+logarithmic derivatibve of Hankel functions and partial waves denoted
+with superscript $\bar{J}$ have the logarithmic derivaive of nodeless
+scattering waves not included in the regular set of partial waves.
+
+Thus, we require that the projector functions are not only
+bi-orthonormal to the lower partial waves, but that they are
+orthonormal to the scattering partial wave $|\phi_\beta^{\bar{J}}\rangle$.
+
+The partial waves included are, according to
+\eq{eq:tildephijfromqbar},
+\begin{eqnarray}
+\Bigl|\tilde{\phi}^{(j)}\Bigr\rangle
+=\Bigl|\dot{q}_n^{(j)}(\epsilon_{n+j})\Bigr\rangle+|k\rangle\delta_{j,0}
+\qquad\text{for $j=0,\ldots,j_x$}
+\end{eqnarray}
+where $j_x=N_j-1$
+
+
+The construction of the scattering wave is largely analogous, namely
+that it is identical to the corresponding node-less partial wave,
+while its energy is taken at the energy $\epsilon_{n+j_x}$ of the
+highest partial wave included, rather than the next higher one.
+\begin{eqnarray}
+|\dot{\bar{\phi}}\rangle=|\dot{\tilde{\phi}}\rangle
+\defas
+\Bigl|\bar{q}_n^{(j_x+1)}(\epsilon_{n+j_x})\Bigr\rangle
+\end{eqnarray}
+It is thus the energy derivative of the last included node-less
+partial wave $|\tilde{\phi}^{(j_x)}_n\rangle=
+\Bigl|\dot{q}_n^{(j_x)}(\epsilon_{n+j_x})\Bigr\rangle$.
+
+The scattering partial wave is obtained according to \eq{eq:qbardiffgl}
+\begin{eqnarray}
+\Bigl(\hat{h}-\epsilon_{n+j_x}\Bigr)
+\Bigl|\dot{\phi}\Bigr\rangle
+=-\Bigl|\bar{q}_n^{(j_x)}(\epsilon_{n+j_x})\Bigr\rangle
+\end{eqnarray}
+
+The corresponding bare projector function is analogous to
+\eq{eq:selectionprojectordfunctions}
+\begin{eqnarray}
+|\dot{\bar{p}}\rangle
+=\Bigl(\hat{\tilde{h}}-\hat{h}\Bigr)|\dot{\bar{\phi}}\rangle
+\end{eqnarray}
+
+Now we adjust the projector functions such as if another partial wave
+would be there, that is the projector functions shall not be sensitive
+to the scattering partial wave included.
+
+The Ansatz for the projector functions as expressed by the bare
+projector functions is
+\begin{eqnarray}
+|p_\beta\rangle=\sum_\gamma|\bar{p}_\gamma\rangle a_{\gamma,\beta}
++|\dot{\bar{p}}\rangle b_\beta
+\end{eqnarray}
+and shall fulfill
+\begin{eqnarray}
+\langle\dot{\bar{\phi}}|p_\alpha\rangle=0
+\qquad\text{and}\qquad
+\langle\tilde{\phi}_\alpha|p_\beta\rangle=\delta_{\alpha,\beta}
+\end{eqnarray}
+where $\alpha\in\{0,\ldots,j_x\}$.
+
+From the first condition, we obtain
+\begin{eqnarray}
+\langle\dot{\bar{\phi}}|p_\alpha\rangle&=&0
+\nonumber\\
+\langle\dot{\bar{\phi}}|p_\beta\rangle&=&\sum_\gamma
+\langle\dot{\bar{\phi}}|\bar{p}_\gamma\rangle a_{\gamma,\beta}
++\langle\dot{\bar{\phi}}|\dot{\bar{p}}\rangle b_\beta
+\stackrel{!}{=}0
+\nonumber\\
+b_\beta&=&-\frac{1}{\langle\dot{\bar{\phi}}|\dot{\bar{p}}\rangle}
+\langle\dot{\bar{\phi}}|\bar{p}_\gamma\rangle a_{\gamma,\beta}
+\nonumber\\
+|p_\beta\rangle
+&=&\sum_\gamma|\bar{p}_\gamma\rangle a_{\gamma,\beta}
+-|\dot{\bar{p}}\rangle 
+\underbrace{\frac{1}{\langle\dot{\bar{\phi}}|\dot{\bar{p}}\rangle}
+\langle\dot{\bar{\phi}}|\bar{p}_\gamma\rangle a_{\gamma,\beta}
+}_{-b_\beta}
+\nonumber\\
+&=&
+\Bigl(\hat{1}
+-|\dot{\bar{p}}\rangle 
+\frac{1}{\langle\dot{\bar{\phi}}|\dot{\bar{p}}\rangle}
+\langle\dot{\bar{\phi}}|\Bigr)
+\sum_\gamma|\bar{p}_\gamma\rangle a_{\gamma,\beta}
+\end{eqnarray}
+where the coefficients $a_{\gamma,\beta}$ are determined so that the
+bi-orthogonality condition between the lower partial waves and
+projector functions are obeyed.
+
+
+This indicates that we need to transform the bare projector functions
+\begin{eqnarray}
+|\bar{p}'_\alpha\rangle=
+\Bigl(\hat{1}
+-|\dot{\bar{p}}\rangle 
+\frac{1}{\langle\dot{\bar{\phi}}|\dot{\bar{p}}\rangle}
+\langle\dot{\bar{\phi}}|\Bigr)
+|\bar{p}_\alpha\rangle
+\end{eqnarray}
+before the bi-orthogonalization.
+
+\editor{Implemented in subroutine setup\_newpro in
+  paw\_setups.f90. See ``ORTHOGONALIZE BARE PROJECTOR FUNCTION TO
+  HIGHER PARTIAL WAVE''}
+
 
 %====================================================================
 \subsection{Pseudo wave functions from node-reduced wave functions}
