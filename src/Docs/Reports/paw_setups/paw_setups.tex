@@ -744,8 +744,14 @@ involved in the relativistic case.
   more grow. In that case, the pseudo-core contribution would not harm.}
 
 %====================================================================
-\subsection{Inclusion of phidot partial waves}
+\subsection{Inclusion of phidot partial waves (failed!)}
 %====================================================================
+\editor{Implemented but commented out in subroutine setup\_newpro in
+  paw\_setups.f90. See ``ORTHOGONALIZE BARE PROJECTOR FUNCTION TO
+  HIGHER PARTIAL WAVE''. Failed because inclusion of second partial
+  wave is unstable for carbon.}
+
+
 There is a lot of freedom to calculate the projector functions if a
 finite set of partial waves is used. The requirement is that the
 projector functions of the lower (included) partial waves shall be
@@ -864,9 +870,34 @@ This indicates that we need to transform the bare projector functions
 \end{eqnarray}
 before the bi-orthogonalization.
 
-\editor{Implemented in subroutine setup\_newpro in
-  paw\_setups.f90. See ``ORTHOGONALIZE BARE PROJECTOR FUNCTION TO
-  HIGHER PARTIAL WAVE''}
+After the biorthogonalization, we enforce the biorthogonality with the
+dot functions.
+\begin{eqnarray}
+|\dot{p}\rangle&=&|\dot{\bar{p}}\rangle c +\sum_\beta |p_\beta\rangle d_\beta
+\end{eqnarray} 
+
+\begin{eqnarray}
+\langle\tilde{\phi}_\alpha|\dot{p}\rangle&=&0
+\nonumber\\
+\Rightarrow
+0&=&\langle\tilde{\phi}_\alpha|\dot{\bar{p}}\rangle c 
++\sum_\beta \underbrace{\langle\tilde{\phi}_\alpha|p_\beta\rangle
+}_{\delta_{\alpha,\beta}} d_\beta
+=\langle\tilde{\phi}_\alpha|\dot{\bar{p}}\rangle c 
++d_\alpha
+\nonumber\\
+d_\alpha&=&-\langle\tilde{\phi}_\alpha|\dot{\bar{p}}\rangle c 
+\end{eqnarray} 
+so that
+\begin{eqnarray}
+|\dot{p}\rangle&=&
+|\dot{\bar{p}}\rangle c -
+\sum_\beta |p_\beta\rangle\langle\tilde{\phi}_\alpha|\dot{\bar{p}}\rangle c 
+=\Bigl[|\dot{\bar{p}}\rangle -
+\sum_\beta |p_\beta\rangle\langle\tilde{\phi}_\alpha|\dot{\bar{p}}\rangle\Bigr] c 
+\end{eqnarray} 
+The factor $c$ is determined from
+$\langle\dot{\tilde{\phi}}|\tilde{p}\rangle=1$.
 
 
 %====================================================================
