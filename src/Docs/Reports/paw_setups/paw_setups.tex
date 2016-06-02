@@ -5306,6 +5306,85 @@ S_{\alpha,\beta}\langle\tilde{p}_\beta|\phi_j^{(0)}\rangle
 \epsilon_x
 \end{eqnarray}
 
+%====================================================================
+\chapter{Core valence exchange matrix elements}
+%====================================================================
+Consider Exchange term between the valence and the core wave functions
+\begin{eqnarray}
+E_{cvx}&=&-\sum_nf_n \sum_c 
+\sum_{\sigma,\sigma'}\int d^3r\int d^3r'
+\frac{e^2
+\psi^*_n(\vec{x})\psi^*_c(\vec{x'})
+\psi_c(\vec{x})\psi_n(\vec{x'})}{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+\end{eqnarray}
+
+Let us decompose the wave function into partial waves 
+\begin{eqnarray}
+|\psi_n\rangle=\sum_\alpha |\phi_\alpha\rangle c_{\alpha,n}
+\end{eqnarray}
+The set of partial waves may include higher partial waves such as the
+scattering solutions. Let me furthermore  introduce the density
+matrix in the form
+\begin{eqnarray}
+\Theta_{\alpha,\beta}=\sum_n c_{\alpha,n} f_n c^*_{\beta,n}
+\end{eqnarray}
+
+
+\begin{eqnarray}
+E_{cvx}
+&=&-
+\sum_{\alpha,\beta}\Theta_{\alpha,\beta}
+\sum_c 
+\sum_{\sigma,\sigma'}\int d^3r\int d^3r'
+\frac{e^2
+\phi^*_\beta(\vec{x})\psi^*_c(\vec{x'})
+\psi_c(\vec{x})\phi_\alpha(\vec{x'})}{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+\nonumber\\
+&=&-
+\sum_{\alpha,\beta}\Theta_{\alpha,\beta}\delta_{\sigma_\alpha,\sigma_\beta}
+\sum_{c;\sigma_c=\sigma_\alpha}
+\sum_{L}C_{L_\alpha,L_c,L}C_{L_c,L_\beta,L}
+\nonumber\\
+&&\times\int d^3r\int d^3r'
+\frac{e^2
+\phi_{\beta}(r)\psi_{c}(r)Y_L(\vec{r})
+\psi^*_c(r')
+\phi_\alpha(r')Y_{L}(\vec{r'})}{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+\nonumber\\
+&=&-
+\sum_{\alpha,\beta}\Theta_{\alpha,\beta}M_{\alpha,\beta}
+\end{eqnarray}
+where we used the notation
+\begin{eqnarray}
+\phi_\alpha(\vec{x})&=&\delta_{\sigma,\sigma_\alpha}
+\phi_\alpha(r)Y_{L_\alpha}(\vec{r})
+\nonumber\\
+\psi_c(\vec{x})&=&\delta_{\sigma,\sigma_c}
+\phi_c(r)Y_{L_c}(\vec{r})
+\end{eqnarray}
+and we exploited that the Coulomb interaction only acts between charge
+densities with the same angular momentum $L$.
+
+For a charge density given in spherical harmonics, the function
+\verb|RADIAL$POISSON| provides the corresponding Poisson potential.
+
+\begin{eqnarray}
+M_{\alpha,\beta}&=&-\sum_{c} \sum_{\ell_\rho}\delta_{\ell_\alpha,\ell_\beta}
+\underbrace{\biggl[\frac{4\pi}{2\ell_\rho+1}\sum_{m_\rho,m_c} C_{L_\alpha,L_c,L_\rho}^2\biggr]
+}_{F(\ell_\alpha,\ell_\rho,\ell_c)}
+V_{\alpha,c,\ell_\rho}(r)
+\nonumber\\
+V_{\alpha,c,\ell_\rho}(r)Y_{L_\rho}(\vec{r})&=&
+\int_0^\infty dr\; r^2\phi_c(r)\phi_\beta(r)
+\biggl[\int d^3r'\;\frac{e^2\phi_\alpha(r')\phi_c(r')Y_{L_\rho}(\vec{r'})}
+{4\pi\epsilon|\vec{r}-\vec{r'}|}\biggr]
+\end{eqnarray}
+
+
+
+
+
+
 \printindex
 \bibliographystyle{unsrtnat}
 \bibliography{all}
