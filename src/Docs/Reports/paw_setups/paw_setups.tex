@@ -5309,6 +5309,10 @@ S_{\alpha,\beta}\langle\tilde{p}_\beta|\phi_j^{(0)}\rangle
 %====================================================================
 \chapter{Core valence exchange matrix elements}
 %====================================================================
+
+
+
+
 Consider Exchange term between the valence and the core wave functions
 \begin{eqnarray}
 E_{cvx}&=&-\sum_nf_n \sum_c 
@@ -5340,46 +5344,100 @@ E_{cvx}
 \phi^*_\beta(\vec{x})\psi^*_c(\vec{x'})
 \psi_c(\vec{x})\phi_\alpha(\vec{x'})}{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
 \nonumber\\
+%
 &=&-
-\sum_{\alpha,\beta}\Theta_{\alpha,\beta}\delta_{\sigma_\alpha,\sigma_\beta}
-\sum_{c;\sigma_c=\sigma_\alpha}
-\sum_{L}C_{L_\alpha,L_c,L}C_{L_c,L_\beta,L}
+\sum_{\alpha,\beta}\Theta_{\alpha,\beta}
+\sum_{c=1}^{N_c}\delta_{\sigma_\alpha,\sigma_c}\delta_{\sigma_\beta,\sigma_c}
 \nonumber\\
 &&\times\int d^3r\int d^3r'
 \frac{e^2
-\phi_{\beta}(r)\psi_{c}(r)Y_L(\vec{r})
-\psi^*_c(r')
-\phi_\alpha(r')Y_{L}(\vec{r'})}{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+\Bigl(
+\mathcal{R}_{c}(r)Y_{L_c}(\vec{r})
+\mathcal{R}_{\beta}(r)Y_{L_\beta}(\vec{r})
+\Bigr)
+\Bigl(
+\mathcal{R}_{\alpha}(r')Y_{L_\alpha}(\vec{r'})
+\mathcal{R}_{c}(r')Y_{L_c}(\vec{r'})
+\Bigr)}
+{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
 \nonumber\\
+%
+&=&-
+\sum_{\alpha,\beta}\Theta_{\alpha,\beta}
+\sum_{c=1}^{N_c}
+\delta_{\sigma_\alpha,\sigma_c}\delta_{\sigma_\beta,\sigma_c}
+\sum_{L_\rho}C_{L_\beta,L_c,L_\rho}C_{L_\alpha,L_c,L_\rho}
+\nonumber\\
+&&\times\int d^3r
+\underbrace{
+\Bigl(
+\mathcal{R}_{c}(r)\mathcal{R}_{\beta}(r)Y_{L_\rho}(\vec{r})
+\Bigr)
+}_{\rho_{\beta,c,L_\rho}(r)Y_{L_\rho}(\vec{r})}
+\underbrace{
+\int d^3r'
+\frac{e^2
+\Bigl(
+\mathcal{R}_{\alpha}(r')\mathcal{R}_{c}(r')Y_{L_\rho}(\vec{r'})
+\Bigr)}
+{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+}_{v_{\alpha,c,L_\rho}(r)Y_{L_\rho}(\vec{r'})}
+\nonumber\\
+%
+&=&-
+\sum_{\alpha,\beta}\Theta_{\alpha,\beta}
+\sum_{c=1}^{N_c}
+\delta_{\sigma_\alpha,\sigma_c}\delta_{\sigma_\beta,\sigma_c}
+\sum_{L_\rho}C_{L_\beta,L_c,L_\rho}C_{L_\alpha,L_c,L_\rho}
+\underbrace{
+\int_0^\infty dr\;r^2
+\rho_{\beta,c,L_\rho}(r)v_{\alpha,c,L_\rho}(r)
+}_{\frac{4\pi}{2\ell_\rho+1}F^{(\ell_\rho)}_{\alpha,c,c,\beta}}
+\nonumber\\
+%
+&=&-
+\sum_{\alpha,\beta}\Theta_{\alpha,\beta}\delta_{\sigma_\alpha,\sigma_\beta}
+\sum_{n} \sum_\ell
+\sum_{c=1}^{N_c}\delta_{(n_c,\ell_c,\sigma_c)=(n,\ell,\sigma_\alpha)}
+\sum_{\ell_\rho}
+F^{(\ell_\rho)}_{\alpha,c,c,\beta}
+\nonumber\\
+&\times&\underbrace{\frac{1}{2\ell_c+1}\sum_{m=-\ell_c}^{\ell_c}}_{=1}
+\underbrace{
+\frac{4\pi}{2\ell_\rho+1}
+\sum_{m_\rho=-\ell_\rho}^{\ell_\rho}
+C_{L_\beta,L_c,L_\rho}C_{L_\alpha,L_c,L_\rho}
+}_{\delta_{L_\alpha,L_\beta}Q_{\ell_\rho,\ell_c,\ell_\alpha}}
+\nonumber\\
+%
+&=&-
+\sum_{\alpha,\beta}\Theta_{\alpha,\beta}\delta_{\sigma_\alpha,\sigma_\beta}
+\delta_{L_\alpha,L_\beta}
+\sum_{n} \sum_\ell
+\underbrace{
+\sum_{c=1}^{N_c}\frac{\delta_{(n_c,\ell_c,\sigma_c)=(n,\ell,\sigma_\alpha)}}{2\ell+1}
+}_{\text{$2\ell+1$ elements}}
+\sum_{\ell_\rho}
+F^{(\ell_\rho)}_{\alpha,c,c,\beta}
+Q_{\ell_\rho,\ell_c,\ell_\alpha}
+\nonumber\\
+%
 &=&-
 \sum_{\alpha,\beta}\Theta_{\alpha,\beta}M_{\alpha,\beta}
 \end{eqnarray}
 where we used the notation
 \begin{eqnarray}
 \phi_\alpha(\vec{x})&=&\delta_{\sigma,\sigma_\alpha}
-\phi_\alpha(r)Y_{L_\alpha}(\vec{r})
+\mathcal{R}_\alpha(r)Y_{L_\alpha}(\vec{r})
 \nonumber\\
 \psi_c(\vec{x})&=&\delta_{\sigma,\sigma_c}
-\phi_c(r)Y_{L_c}(\vec{r})
+\mathcval{R}_c(r)Y_{L_c}(\vec{r})
 \end{eqnarray}
 and we exploited that the Coulomb interaction only acts between charge
 densities with the same angular momentum $L$.
 
 For a charge density given in spherical harmonics, the function
 \verb|RADIAL$POISSON| provides the corresponding Poisson potential.
-
-\begin{eqnarray}
-M_{\alpha,\beta}&=&-\sum_{c} \sum_{\ell_\rho}\delta_{\ell_\alpha,\ell_\beta}
-\underbrace{\biggl[\frac{4\pi}{2\ell_\rho+1}\sum_{m_\rho,m_c} C_{L_\alpha,L_c,L_\rho}^2\biggr]
-}_{F(\ell_\alpha,\ell_\rho,\ell_c)}
-V_{\alpha,c,\ell_\rho}(r)
-\nonumber\\
-V_{\alpha,c,\ell_\rho}(r)Y_{L_\rho}(\vec{r})&=&
-\int_0^\infty dr\; r^2\phi_c(r)\phi_\beta(r)
-\biggl[\int d^3r'\;\frac{e^2\phi_\alpha(r')\phi_c(r')Y_{L_\rho}(\vec{r'})}
-{4\pi\epsilon|\vec{r}-\vec{r'}|}\biggr]
-\end{eqnarray}
-
 
 
 
