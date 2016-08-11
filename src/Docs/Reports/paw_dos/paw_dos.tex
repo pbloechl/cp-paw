@@ -59,11 +59,12 @@ are the matrix elements of the operator $\hat{A}$
 %============================================================================
 In order to understand how a material responds to external stimuli, it
 is often useful to split off the Fermi distribution
+$f_{\beta,\mu}(\epsilon)$.
 \begin{eqnarray}
 \langle{A}\rangle=\int d\epsilon\; D^{(A)}(\epsilon)
 f_{\beta,\mu}(\epsilon)
 \end{eqnarray}
-wher
+where
 \begin{eqnarray}
 D^{A}(\epsilon)=
 \sum_n\frac{1}{V_G}\int d^3k\; A_{n}(\vec{k})\delta(\epsilon-\epsilon_n(\vec{k}))
@@ -75,8 +76,8 @@ is the A-weighted density of states.
 %============================================================================
 Let us introduce local orbitals $|\chi_{\alpha,\vec{t}}\rangle$, which
 are characterized by an identifier $\alpha$, that is unique for each
-orbital in a unit cell, and a lattice translation vector, that
-identifies the relative lattice displacements.
+orbital in a unit cell, and a lattice translation vector $\vec{t}$,
+that identifies the relative lattice displacements.
 
 A wave function is decomposed into local orbitals using the projector
 functions $|\pi_{\alpha,\vec{t}}\rangle$, which obey the
@@ -210,7 +211,7 @@ A set contains an item which is to be plotted.
 It can be 
 \begin{enumerate}
 \item a sum of density matrix elements. Each density matrix element is
-  defined by a complex ortbital.
+  defined by a complex orbital.
 \item a sum of diagonal elements of the density matrix.
   The diagonal elements can be specified by 
   \begin{itemize}
@@ -297,17 +298,17 @@ D_{\alpha,\sigma,\beta,\sigma'}(\epsilon)
 
 We exploit the Pauli matrices
 \begin{eqnarray}
-\mat{\sigma}^(1)=\mat{\sigma}_x
+\mat{\sigma}^{(1)}=\mat{\sigma}_x
 =\left(\begin{array}{cc} 0&1\\1&0\end{array}\right)
 \quad\text{and}\quad
-\mat{\sigma}_2=\mat{\sigma}_y
+\mat{\sigma}^{(2)}=\mat{\sigma}_y
 =\left(\begin{array}{cc} 0&-i\\i&0\end{array}\right)
 \quad\text{and}\quad
 \nonumber\\
-\mat{\sigma}_3=\mat{\sigma}_z
+\mat{\sigma}^{(3)}=\mat{\sigma}_z
 =\left(\begin{array}{cc} 1&0\\0&-1\end{array}\right)
 \quad\text{and}\quad
-\mat{\sigma}_0=\mat{1}
+\mat{\sigma}^{(0)}=\mat{1}
 =\left(\begin{array}{cc} 1&0\\0&1\end{array}\right)
 \end{eqnarray}
 
