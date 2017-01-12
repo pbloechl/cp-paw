@@ -25,7 +25,7 @@ if [[ ! -d $SAMPLEDIR ]]; then
    exit 1 
 fi
 #== define directory with species information
-STPDIR=$G1DIR/src/Speciesfiles
+STPDIR=$G1DIR/bin/Speciesfiles
 if [[ ! -d $STPDIR ]]; then 
    echo "error in $0: STPDIR does not exist"
    exit 1 
@@ -50,7 +50,7 @@ for FILE in ${SAMPLEDIR}/*.strc_sample ; do
   NAME=${NAME##*/}     #  remove all preceeding directories
   DIR=$CASESDIR/$NAME
   #
-  X=$(paw_get -n -w etot ${DIR}/$NAME)
+  X=$(paw_get -n -w etot -u h ${DIR}/$NAME)
   RC=$?
   if [[ "$RC" = "0" ]] ; then
 #    echo writing $NAME $X
@@ -64,6 +64,6 @@ done
 ##  run analysis
 #####################################################################
 echo "building readpaw.out ..."
-g2_analyse.x <readpaw.in >readpaw.out
+$G1DIR/g2_analyse.x <readpaw.in >readpaw.out
 echo " ...done"
 exit 0

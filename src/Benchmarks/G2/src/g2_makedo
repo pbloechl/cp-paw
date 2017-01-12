@@ -243,23 +243,24 @@ for FILE in $SAMPLEDIR/*.strc_sample ; do
     execute "mkdir $DIR"
   fi
   execute "paw_resolve \
-              -r\"LATTICE=0.0 8.5 8.5 8.5 0.0 8.5 8.5 8.5 0.0\" \
-              -fHYDROGEN=$STPDIR/H_.species \
-              -fLITHIUM=$STPDIR/LI.species \
-              -fBERYLLIUM=$STPDIR/BE.species \
-              -fBORON=$STPDIR/B_.species \
-              -fCARBON=$STPDIR/C_.species \
-              -fNITROGEN=$STPDIR/N_.species \
-              -fOXYGEN=$STPDIR/O_.species \
-              -fFLOURINE=$STPDIR/F_.species \
-              -fSODIUM=$STPDIR/NA.species \
-              -fALUMINIUM=$STPDIR/AL.species \
-              -fSILICON=$STPDIR/SI.species \
-              -fPHOSPHORUS=$STPDIR/P_.species \
-              -fSULFUR=$STPDIR/S_.species \
-              -fCHLORINE=$STPDIR/CL.species \
-              -fBROMIUM=$STPDIR/BR.species \
-               $FILE > $DIR/${NAME}.strc"
+              -i $FILE \
+              -r \"LATTICE=0.0 8.5 8.5 8.5 0.0 8.5 8.5 8.5 0.0\" \
+              -f HYDROGEN=$STPDIR/H_.species \
+              -f LITHIUM=$STPDIR/LI.species \
+              -f BERYLLIUM=$STPDIR/BE.species \
+              -f BORON=$STPDIR/B_.species \
+              -f CARBON=$STPDIR/C_.species \
+              -f NITROGEN=$STPDIR/N_.species \
+              -f OXYGEN=$STPDIR/O_.species \
+              -f FLOURINE=$STPDIR/F_.species \
+              -f SODIUM=$STPDIR/NA.species \
+              -f ALUMINIUM=$STPDIR/AL.species \
+              -f SILICON=$STPDIR/SI.species \
+              -f PHOSPHORUS=$STPDIR/P_.species \
+              -f SULFUR=$STPDIR/S_.species \
+              -f CHLORINE=$STPDIR/CL.species \
+              -f BROMIUM=$STPDIR/BR.species \
+              > $DIR/${NAME}.strc"
   #   create sample control file
     ROOT=${DIR}/$NAME
     ROOT=${ROOT#$G1DIR/} 
