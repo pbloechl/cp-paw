@@ -2270,15 +2270,35 @@ n(\vec{r})
 \left(\frac{n_{R'}(\vec{r'})}{n(\vec{r'})}\right)
 \nonumber\\
 \end{eqnarray}
+as well as the potential energy of exchange and correlation
+\begin{eqnarray}
+U_{xc}
+&=&\frac{1}{2}\sum_{R,R'}\int d^3r\int d^3r'
+\left(\frac{n_R(\vec{r})}{n(\vec{r})}\right)
+\biggl(
+n(\vec{r})
+\frac{e^2 \int_0^1d\lambda\;h_{\lambda=1} (\vec{r},\vec{r'})}
+{4\pi\epsilon|\vec{r}-\vec{r'}|}\biggr)
+\left(\frac{n_{R'}(\vec{r'})}{n(\vec{r'})}\right)
+\nonumber\\
+\end{eqnarray}
+
 Note, however, that only the total exchange-correlation energy
 including Coulomb and kinetic energy contributions is a density
 functional, whereas both contributions can be expressed individually
 as density-matrix functional.
 
+%=====================================================================
+\subsubsection{Only local terms}
+%=====================================================================
+The equations above reproduce the full exchange correlation energy,
+respectively the kinetic energy correction as double sum over local
+terms.
 
-
-Thus, a double-counting correction for a set of correlated orbitals,
-which contribute $n_R$ to the total density would be
+If we employ the local approximation, only the diagonal terms in
+$R,R'$ need to be considered. Thus, a double-counting correction for a
+set of correlated orbitals, which contribute $n_R$ to the total
+density would be
 \begin{eqnarray}
 E_{dc}
 &=&-\frac{1}{2}\sum_{R}\int d^3r\int d^3r'
@@ -2289,7 +2309,6 @@ n(\vec{r})
 {4\pi\epsilon|\vec{r}-\vec{r'}|}\biggr)
 \left(\frac{n_{R}(\vec{r'})}{n(\vec{r'})}\right)
 \end{eqnarray}
-
 
 
 This integral can be approximated further as
