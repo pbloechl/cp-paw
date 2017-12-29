@@ -23,6 +23,7 @@
       CHARACTER(64)        :: FILE
       CHARACTER(64)        :: DIRECTORY
       LOGICAL(4)           :: TON ! TRUE IF CURRENTLY SCANNING SPECIES BLOCK
+      logical(4)           :: tchk
 !     **************************************************************************
 !
 !     == DEFINE DIRECTORY WHICH WILL HOLD THE SPECIES FILES
@@ -39,7 +40,11 @@ DIRECTORY='./'
         IL=IL+1
         IF(IL.GT.NLINE) EXIT
 !       == READ ONE FURTHER LINE FROM SPECIESALIST =============================
-        READ(5,FMT='(A)',END=1000)LINE(IL)  
+        do 
+          READ(5,FMT='(A)',END=1000)LINE(IL)  
+          IF(.NOT.TON.AND.LEN_TRIM(LINE(IL)).EQ.0) CYCLE !SKIP EMPTY LINES
+          IF(LINE(IL)(1:1).NE.'#')EXIT !SKIP COMMENT LINES (STARTS WITH '#')
+        ENDDO
 !
 !       == PUT BEGINNING OF FILE TO THE TOP (LINE(1)) OF THE LINE-LIST =========
         IF(INDEX(LINE(IL),'!SPECIES').NE.0) THEN

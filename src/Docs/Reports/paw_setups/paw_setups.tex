@@ -1956,6 +1956,29 @@ v_{nuc}(r)=
 \end{array}\right.
 \end{eqnarray*}
 
+In a relativistic description, it is mandatory to consider the finite
+size of the nucleus. The Dirac equation yields unphysical
+results\cite{eschrig04_inbook}, when the atomic number exceeds
+$Z=137$. The number $137$ corresponds to the speed of light in Hartree
+atomic units. (This may be due to the formation of electron-positron
+pairs, that screen the potential. This is a guess, however)
+
+Since the mass number changes from 1 to 270 trough the periodic table,
+the nuclear radii range in a surprisingly narrow window 
+\begin{eqnarray*}
+1.2\times 10^{-15}~\textrm{m}\le r_N<7.8\times10^{-15}~\textrm{m}
+\end{eqnarray*}
+or in atomic units
+\begin{eqnarray*}
+2.3\times 10^{-5}~\textrm{a}_0\le r_N<14.7\times10^{-5}~\textrm{a}_0\;.
+\end{eqnarray*}
+The radius of a nucleus changes only by a factor of 6.5 from hydrogen
+to the end of the periodic table. 
+
+The finite size of the nucleus shifts the non-relativistic 1s state of
+$Z/r$ potential with the atomic number of uranium up by about 0.5~H,
+while the change of the valence states is in the range of $meV$
+
 %====================================================================
 \section{Fock term}
 %====================================================================
@@ -4775,6 +4798,114 @@ f_3&=& r^{\ell+4}
 to the nodeless core wave function so that value and derivative agree
 at the pseudization radius.
 
+
+%=====================================================================
+\subsubsection{Pseudo core wave functions}
+%=====================================================================
+%=====================================================================
+\section{Benchmark tests}
+%=====================================================================
+
+\begin{tabular}{|l|r|l|}
+\hline
+aez        & & atomic number (can be non-integer) \\
+zv         & & number of valence electrons   \\
+rcl        & & matching radii of pseudo and allelectron partial waves\\
+rcsm       & $0.25 r_{cov}$& gaussian parameter for small compensation radii\\
+\hline
+\multicolumn{3}{|c|}{parameters outside augment block}\\
+\hline
+npro       &     & number of partial waves for angular momentum 0,1,2,3\\
+lrhox      &     & max. angular momentum for augmentation density\\
+RAD        &     & radius used for projected DoS\\
+\hline
+\multicolumn{3}{|c|}{pseudo potential}\\
+\hline
+pow\_pot   & & \\
+rc\_pot    & & \\
+tval0\_pot & & \\
+val0\_pot  & & \\
+\hline
+\multicolumn{3}{|c|}{pseudo core density}\\
+\hline
+pow\_core  & & \\
+rc\_core   & & \\
+tval0\_core& & \\
+val0\_core & & \\
+\hline
+\multicolumn{3}{|c|}{radial grid}\\
+\hline
+dmin       & $10^{-6}$~$a_B$& smallest spacing of shifted logarithmic grid\\
+dmax       & 0.1~$a_B$ & smallest spacing of shifted logarithmic grid\\
+rmax       & 20~$a_B$ & distance of outermost grid point \\
+\hline
+\multicolumn{3}{|c|}{radialredundant parameters}\\
+\hline
+rbox   & & 1.2~$r_{cov}$\\
+lambda & & \\
+\hline
+\end{tabular}
+
+The unit cell has been chosen as fcc unit cell with lattice constant
+$a_{lat}=18.4$~\AA. This ensures that the minimum distance of periodic
+images is larger than that (13~\AA) of the largest cell used by
+Paier\cite{paier05_jcp122_23410}.
+
+The plane wave cutoff has been set to EPW=80~Ry, consistent with
+EPW=1000~eV chosen by Paier.
+
+For the Br, I had to set $v(r=0)=1~H$ to avoid ghost states.
+
+
+\begin{tabular}{|l|c|c|c|}
+\hline
+Element  & rcl/rcov & rcl/$a_0$ & NPRO\\
+\hline                            
+H        &  1.323  &   0.800  &  100\\
+LI       &  0.559  &   1.300  &  110\\
+BE       &  1.117  &   1.900  &  110\\
+B        &  0.756  &   1.100  &  210\\
+C        &  0.756  &   1.100  &  210\\
+N        &  0.776  &   1.100  &  210\\
+O        &  0.725  &   1.000  &  210\\
+F        &  0.808  &   1.100  &  210\\
+NA       &  0.584  &   1.700  &  120\\
+SI       &  0.906  &   1.900  &  221\\
+P        &  0.749  &   1.500  &  221\\
+S        &  0.778  &   1.500  &  221\\
+CL       &  0.802  &   1.500  &  221\\
+BR       &  0.802  &   1.500  &  221\\
+\hline
+\end{tabular}
+
+
+\begin{tabular}{|l|l|}
+\hline
+dmin=1.e-6 dmax=0.1 rmax=9.&\\
+POT:  POW=3   & and the radii from paier. Val0 is not used\\
+CORE: POW=2   & and the radii from paier\\
+rbox/rcov=1.2 & except for H, for which rbox/rcov=1.4 so that rbox>rcl\\
+rcsm=0.25     & \\
+lrhox=4       & except or H for which lrhox=2 \\
+RAD/rcov=1.19 & so that RAD>RBOX\\
+\hline
+\end{tabular}
+
+
+Ingolf Harden 
+\begin{itemize}
+\item use two projector functions 
+\item Cl: The number of p-projectors have been increased from one to
+  two.  , i.e. npro=221. The cutoff has been reduced to rcl/rcov=0.75,
+  which however had a minor impact. 
+\item
+\end{itemize}
+ 
+
+
+
+
+
 \appendix
 %=====================================================================
 \chapter{Remarks}
@@ -5431,7 +5562,7 @@ where we used the notation
 \mathcal{R}_\alpha(r)Y_{L_\alpha}(\vec{r})
 \nonumber\\
 \psi_c(\vec{x})&=&\delta_{\sigma,\sigma_c}
-\mathcval{R}_c(r)Y_{L_c}(\vec{r})
+\mathcal{R}_c(r)Y_{L_c}(\vec{r})
 \end{eqnarray}
 and we exploited that the Coulomb interaction only acts between charge
 densities with the same angular momentum $L$.

@@ -1,0 +1,223 @@
+#  The setups used here try to mimmick those in table 1 of
+#  paier et al, j.chem. phys 122, 234102 (2005)  
+#
+#  1) the cutoff radii for the augmentation are those of r^l_comp
+#  2) the choice of core states agree with table 1. 
+#     The exception is Li: The construction failed for ZV=3.
+#
+#  3) npro=1 0   for H
+#     npro=1 1 0 for Li,Be
+#     npro=2 1 0 for B,C,N,O,F
+#     npro=1 2 0 for Na
+#     npro=2 2 1 for Al,Si,P,S,Cl,Br
+#
+#
+#  -) for Br, it was necessary to set the pot:val0=1. H
+#  -) GRID: the radial grid is dmin=1.e-6 dmax=0.1 rmax=9.
+#  -) POT:  POW=3. and the radii from paier. Val0 is not used
+#  -) CORE: POW=2 and the radii from paier
+#  -) rbox/rcov=1.2 except for H, for which rbox/rcov=1.4 so that rbox>rcl
+#  -) rcsm=0.25
+#  -) lrhox=4, except or H for which lrhox=2 
+#  -) RAD/rcov=1.19 so that RAD>RBOX
+#
+#  The setups for Br and Al are not described in paier's work. The
+#  radii (in units of rcov) for Al have been taken from Si and those for
+#  Br has been taken from Cl.
+#
+
+  !SPECIES   NAME='H_'  NPRO=1 0 0LRHOX=2 M=2. RAD/RCOV=1.19
+    !NTBO    NOFL=1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4
+    !END 
+    !AUGMENT ID='MY_NDLSS_H' EL='H' ZV= 1.
+             TYPE='NDLSS' RBOX/RCOV=1.4 RCSM/RCOV=.25
+             RCL/RCOV=1.323 1.323  1.323  1.323
+      !GRID  DMIN=1.E-6 DMAX=.1 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=1.323 VAL0_X=-1.6 !END
+      !CORE  POW=2. RC/RCOV=1.323 !END
+    !END
+  !END
+
+  !SPECIES   NAME='LI'  NPRO=1 1 0 LRHOX=4 RAD/RCOV=1.19
+    !NTBO    NOFL=2 0 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_LI' EL='LI' ZV= 1.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.559 .559 .559  .559 
+      !GRID  DMIN=1.E-6 DMAX=.1 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=.559 VAL0_X=-0.8 !END
+      !CORE  POW=2. RC/RCOV=.559  !END
+    !END
+  !END
+
+  !SPECIES   NAME='BE'  NPRO=1 1 0 LRHOX=4 RAD/RCOV=1.19
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_BE' EL='BE' ZV= 2.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=1.117 1.117 1.117 1.117 
+      !GRID  DMIN=1.E-6 DMAX=.1 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=1.117 VAL0_X= -1.6 !END
+      !CORE  POW=2. RC/RCOV=1.117 !END
+    !END
+  !END
+
+  !SPECIES   NAME='C_'  NPRO=2 1 0 LRHOX=4 RAD/RCOV=1.19
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_C' EL='C' ZV= 4.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.756 0.756 0.756 0.756 
+      !GRID  DMIN=1.E-6 DMAX=.1 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.756  VAL0_X=-2.7 !END
+      !CORE  POW=2. RC/RCOV=0.756  !END
+    !END
+  !END
+
+  !SPECIES   NAME='N_'  NPRO=2 1 0 LRHOX=4 RAD/RCOV=1.19
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_N' EL='N' ZV= 5.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.776 0.776 0.776  0.776
+      !GRID  DMIN=1.E-6 DMAX=.1 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.776 VAL0_X=-4.3 !END
+      !CORE  POW=2. RC/RCOV=0.776  !END
+    !END
+  !END
+
+  !SPECIES   NAME='O_'  NPRO=2 1 0 LRHOX=4 RAD/RCOV=1.19
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_O' EL='O' ZV= 6.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.725 0.725 0.725 0.725
+      !GRID  DMIN=1.E-6 DMAX=.1 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.725 VAL0_X=-3.8 !END
+      !CORE  POW=2. RC/RCOV=.725 !END
+    !END
+  !END
+
+  !SPECIES   NAME='F_'  NPRO=2 1 0 LRHOX=4 RAD/RCOV=1.19
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_F' EL='F_' ZV= 7.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.808 0.808 0.808 0.808 
+      !GRID  DMIN=1.E-6 DMAX=.1 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.808  VAL0_X=-3.5 !END
+      !CORE  POW=2. RC/RCOV=0.808   !END
+    !END
+  !END
+
+  !SPECIES   NAME='NA'  NPRO=1 2 0 LRHOX=4 RAD/RCOV=1.19
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_NA' EL='NA' ZV= 7.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.584 0.584 0.584 0.584 
+      !GRID  DMIN=1.E-6 DMAX=.1 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.584  VAL0_X=-1.1  !END
+      !CORE  POW=2. RC/RCOV=0.584  !END
+    !END
+  !END
+
+  !SPECIES   NAME='CL'  NPRO=2 2 1 LRHOX=4 RAD/RCOV=1.19
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_CL' EL='CL' ZV= 7.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.802 0.802 0.802 0.802 
+      !GRID  DMIN=1.E-6 DMAX=.1 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.802 VAL0_X=-3.5 !END
+      !CORE  POW=2. RC/RCOV=0.802  !END
+    !END
+  !END
+
+  !SPECIES   NAME='SI'  NPRO=2 2 1 LRHOX=4 RAD/RCOV=1.19
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_SI' EL='SI' ZV= 4.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.906 0.906 0.906 0.906
+      !GRID  DMIN=1.E-6 DMAX=.1 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.906  VAL0_X= -1.8 !END
+      !CORE  POW=2. RC/RCOV=0.906  !END
+    !END
+  !END
+
+  !SPECIES   NAME='P_'  NPRO=2 2 1 LRHOX=4 RAD/RCOV=1.19
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_P' EL='P_' ZV= 5.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.749 0.749 0.749 0.749 
+      !GRID  DMIN=1.E-6 DMAX=.1 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.749 VAL0_X=-2.4 !END
+      !CORE  POW=2. RC/RCOV=0.749 !END
+    !END
+  !END
+
+  !SPECIES   NAME='S_'  NPRO=2 2 1 LRHOX=4 RAD/RCOV=1.19
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_S' EL='S_' ZV= 6.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.778 0.778  0.778  0.778 
+      !GRID  DMIN=1.E-6 DMAX=.1 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.778  VAL0_X=-3.3 !END
+      !CORE  POW=2. RC/RCOV=0.778 !END
+    !END
+  !END
+
+  !SPECIES   NAME='B_'  NPRO=2 1 0 LRHOX=4 RAD/RCOV=1.19
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_B' EL='B' ZV= 3.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.756 0.756 0.756 0.756 
+      !GRID  DMIN=1.E-6 DMAX=.1 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.756  VAL0_X=-2.7 !END
+      !CORE  POW=2. RC/RCOV=0.756  !END
+    !END
+  !END
+
+  !SPECIES   NAME='AL'  NPRO=2 2 1 LRHOX=4 RAD/RCOV=1.19
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_AL' EL='AL' ZV= 3.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.906 .906 .906 .906
+      !GRID  DMIN=1.E-6 DMAX=.1 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=.906 VAL0_X= -1.5 !END
+      !CORE  POW=2. RC/RCOV=.906 !END
+    !END
+  !END
+
+  !SPECIES   NAME='BR'  NPRO=2 2 1 LRHOX=4 RAD/RCOV=1.19
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.19
+    !END 
+    !AUGMENT ID='MY_NDLSS_BR' EL='BR' ZV= 7.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.802 .802 .802 .802
+      !GRID  DMIN=1.E-6 DMAX=.1 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=.802 VAL0= 1.0 !END
+      !CORE  POW=2. RC/RCOV=.802 !END
+    !END
+  !END
+
