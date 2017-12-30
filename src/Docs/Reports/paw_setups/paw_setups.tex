@@ -4149,6 +4149,236 @@ RMAX is $2r_{cov}$ or $r_{cov}+0.73~$\AA$/a_0$, whatever is larger
 %=====================================================================
 \section{Flowchart of the paw\_setups object}
 %=====================================================================
+Todo:
+\begin{itemize}
+\item ignore setups, which are not used
+\item set the condition in the input that the outermost grid point
+  rmax must exceed rbox. Otherwise there is a problem in (or near)
+  \verb|atomlib$aescf|
+\item RCBG is set much too small! (see \verb|setup$select|)
+\end{itemize}
+
+
+\begin{verbatim}
+setup$readstrcin
+setup$read
+->setup_read
+  ->atomlib$aescf
+    ->ATOMLIB$BOUNDSTATES(WITHHF)
+      ->ATOMLIB$BOUNDSTATE
+      ->SCHROEDINGER$SPHSMALLCOMPONENT
+  ->setup_coreselect
+  ->setup_makeiscatt
+  ->setup_makepartialwaves
+    ->atomic_pseudize
+    if(type=ndlss) then
+    ->SETUP_OUTERNEWPROWRAPPER
+      ->setup_newpro
+    else
+    ->SETUP_OUTEROLDPROWRAPPER
+    end if
+    ->setup_pawdensity
+    ->atomic_unscreen
+    ->setup_parmsmassrenormalization
+  ->setup_cvxsetup
+  ->setup_prophidot
+  ->setup_testscattering
+  ->setup_testghost1
+  ->setup_testghost
+  besseltransforms
+  ->setup_report
+\end{verbatim}
+
+Caution the parameter \verb|This%rcbg=1/sqrt(0.218)| is set in in
+$\verb|setup$select|$, when a new setup is created. This radius
+corresponds to only 1.13~\AA. WARNING: This is much too small!
+
+
+\begin{itemize}
+\item \verb|setup$readstrcin| retrieves the following data from the
+  \verb|!structure!species|-blocks and inserts them into the
+  \verb|this|-structure:
+\begin{verbatim}
+ID,I,lnx,lmnx,lmrx,gid(->shlog,r1,dex,nr),m,rad,
+parms(id,aez,rcsm,zv,type,rcl,lambda
+     ,pow\_pot,rc\_pot,tval0_potm,val0_pot
+     ,pow\_core,rc\_core,tval0_core,val0_core)
+\end{verbatim}
+%
+%
+\item \verb|setup$read->setup_read|: \verb|setup$read| is the main
+  external call to initialize the setups object. It calls
+  \verb|setup_read| for each atom species.
+%
+\begin{enumerate}
+\item \verb|atomlib$aescf|: Self consistent spherical atom on a radial
+  grid. Produced are
+\begin{verbatim}
+etot,pot,vfock
+,lofi(n),sofi(n),fofi(n),nnofi(n),eofi(n),phi(nr,n),sphi(nr,n)
+\end{verbatim}
+
+The occupations are collected from periodictable.
+
+It uses a key to encode how the calculation is to be done, The key
+contains comma-separated items such as
+\verb|REL,SO,ZORA,START,FOCK=0.1,|, which set the corresponding
+options to true. It is possible to use the negative terms
+\verb|NONREL,NONSO,NONZORA|, which stop the code if they conflict with
+a positive key.
+\begin{center}
+\begin{tabular}{|c|c|c|l|}
+\hline
+REL & ZORA & SO & Description\\
+\hline
+F & F & F & $D_{rel}=0$, zero small component\\
+T & T & F & $D_{rel}(\epsilon=0)$, zero small component\\
+T & F & T & $D_{rel}(\epsilon_n)$ nonzero small component\\
+\hline
+\multicolumn{4}{|c|}{the following options shall be avoided}\\
+\hline
+F & F & T & $D_{rel}=0$, zero small component, nonsense\\
+F & T & F & $D_{rel}=0$, zero small component, nonsense\\
+F & T & T & $D_{rel}=0$, zero small component, nonsense\\
+T & F & F & $D_{rel}(\epsilon_n)$ nonzero small component,nonsense\\
+T & T & T & $D_{rel}(\epsilon=0)$ zero small component, nonsense\\
+\hline
+\end{tabular}
+\end{center}
+%
+\item \verb|setup_coreselect|: $ZV$ is used to determine the core
+  states. (atomic states are reordered if necessary.)
+  \verb|This%aepsi| and \verb|This%aepsism| are set.
+%
+\item Core densities. \verb|This%aecore| and \verb|This%pscore| are set.
+%
+\item \verb|setup_makeiscatt|. \verb|This%iscatt| is set.
+%
+\item \verb|setup_makepartialwaves|
+%
+\item \verb|setup_cvxsetup|
+%
+\item \verb|setup_prophidot|
+%
+\item \verb|setup_testscattering|
+%
+\item \verb|setup_testghost1|
+%
+\item \verb|setup_testghost|
+
+%
+\item Besseltransforms. The components
+  |vaddofg,pscoreofg,proofg,nhatprimeofg,vhatofg| of the structure This are set.
+
+\item \verb|setup_report|
+
+\end{enumerate}
+%
+\end{itemize}
+
+%======================================================
+\subsection{setup\_makepartialwaves}
+%======================================================
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\multicolumn{2}{|l|}{Input}\\
+\hline
+aez    & \\
+aepot  & \\
+aecore,pscore & \\
+rout   & \\
+rbox   & \\
+rcsm   & \\
+nc     & \\
+nb,lofi,sofi,nnofi,fofi,eofi &\\
+lnx,lox &\\
+iscatt &\\
+pow\_pot,rc\_pot,tval0\_pot,val0\_pot &\\
+pow\_core,rc\_core,tval0\_core,val\_core &\\
+\hline
+\hline
+\multicolumn{2}{|l|}{Output}\\
+\hline
+aephi,aephism &\\
+psphi,psphism &\\
+nlphi,nlphism &\\
+qn,qnsm       &\\
+aephidot,aephidotsm &\\
+,psphidot,psphidotsm &\\
+pro         &\\
+vadd,pspot &\\
+dt,dover,dh &\\
+psg2,psg4 & \\
+\hline
+\end{tabular}
+\end{center}
+
+
+
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+rnorm & rnorm=rbox\\
+rbndout &rbndout=rout\\
+ncl(0:lx)  & highest band index of a core state with $\ell$\\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{enumerate}
+\item resolve key$\leadsto$(trel,tzora,tso)
+%
+\item construct PSPOT with \verb|atomic_pseudize|
+%
+\item \verb|SETUP_OUTERNEWPROWRAPPER| (only for type=ndlss)
+\begin{enumerate}
+\item relativistic effects are switched off beyond the (innermost)
+  classical turning point of the highest atomic orbital. In absence of
+  a classical turning point choose radius 1~a$_B$. $D_{rel}$ is set to
+  zero beyond this radius.
+%
+\item construct node-less core states
+  \verb|ECORE,UCORE,UCORESM,TCORE|. The nodeless core states need to
+  be constructed to initiate the nodeless construction of valence
+  states.
+%
+\item construct node-less partial waves \verb|eofphi,qn,tqn,qnsm|
+%
+\item update core and valence states with fock potential
+%
+\item construct $qndot,qndotsm$
+%
+\item convert node-reduced into node-less partial waves
+%
+\item construct pseudo-core wave functions \verb|pscore,tpscore,pscoresm| and
+  all-electron core wave functions. \verb|aecore,taecore,aecoresm|
+%
+\item construct all-electron partialwaves \verb|aephi,taephi,aephism|
+  and \verb|aephidot,taephidot,aephidotsm| by orthogonalization to core states
+%
+\item construct pseudo partial waves from Qn with \verb|SETUP_MAKEPSPHI_FLAT|
+%
+\item construct bare projector functions
+\item orthogonalize projector functions to higher partial waves psphidot
+\item orthogonalize projector tp partial waves
+\begin{eqnarray}
+|\tilde{p}_\alpha\rangle=\sum_{\beta}|\tilde{p}^{bare}_{\beta}\rangle 
+\Bigl(\langle\tilde{\phi}|\tilde{p}^{bare}\rangle\Bigr)^{-1}_{\beta,\alpha}
+\end{eqnarray}
+%
+\item construct \verb|DOVER,DTKIN|
+
+\end{enumerate}
+%
+\end{enumerate}
+
+%======================================================
+\subsection{Previous sdescription}
+%======================================================
+
+
+
 \petertt{This is lifted from my notes and needs to be updated.}
 
 
@@ -4846,17 +5076,8 @@ lambda & & \\
 \hline
 \end{tabular}
 
-The unit cell has been chosen as fcc unit cell with lattice constant
-$a_{lat}=18.4$~\AA. This ensures that the minimum distance of periodic
-images is larger than that (13~\AA) of the largest cell used by
-Paier\cite{paier05_jcp122_23410}.
-
-The plane wave cutoff has been set to EPW=80~Ry, consistent with
-EPW=1000~eV chosen by Paier.
-
-For the Br, I had to set $v(r=0)=1~H$ to avoid ghost states.
-
-
+The cutoff radii obtained from Paier and the set of projector functions are
+\begin{center}
 \begin{tabular}{|l|c|c|c|}
 \hline
 Element  & rcl/rcov & rcl/$a_0$ & NPRO\\
@@ -4877,8 +5098,10 @@ CL       &  0.802  &   1.500  &  221\\
 BR       &  0.802  &   1.500  &  221\\
 \hline
 \end{tabular}
+\end{center}
+For the Br, I had to set $v(r=0)=1~H$ to avoid ghost states.
 
-
+The common parameters are 
 \begin{tabular}{|l|l|}
 \hline
 dmin=1.e-6 dmax=0.1 rmax=9.&\\
@@ -4891,10 +5114,67 @@ RAD/rcov=1.19 & so that RAD>RBOX\\
 \hline
 \end{tabular}
 
+ 
+The unit cell has been chosen as fcc unit cell with lattice constant
+$a_{lat}=18.4$~\AA. This ensures that the minimum distance of periodic
+images is larger than that (13~\AA) of the largest cell used by
+Paier\cite{paier05_jcp122_23410}.
+
+The plane wave cutoff has been set to EPW=80~Ry, consistent with
+EPW=1000~eV chosen by Paier.
+
+Dependence on the radial grid: For H and C, I compared the total
+energies and the energy levels of the atomic calculation on the radial
+grid for $D_{min}=10^{-6}$~a$_B$, $D_{max}=10^{-1}$~a$_B$,
+$R_{max}=9$~a$_B$, with one where either $D_{min}$ or $D_{max}$ has
+been reduced by a factor 10. The original set is denoted as ``Ref'' in
+the following table. The energies are given in Hartree.
+\begin{center}
+\begin{tabular}{|l|r|r|r|}
+\hline
+      & Ref & $D_{min}=10^{-7}$ & $D_{max}=0.01$ \\
+\hline
+$E_{tot}(H)$     & -0.4638777  & -0.4638772 & -0.4638908\\
+$\epsilon(H1s)$ &  -0.2437    & -0.2437    &  -0.2438 \\
+$E_{tot}(C)$     &-37.8138128  &-37.8138111 & -37.8134742\\
+$\epsilon(C1s)$ & -10.0571    & -10.0570   & -10.0573 \\
+$\epsilon(C2s)$ &  -0.5084    & -0.5084    & -0.5086 \\
+$\epsilon(C2p)$ & -0.1985     &  -0.1985   & -0.1987\\
+\hline
+\end{tabular}
+\end{center}
+The choice of $D_{min}$ appears to be safe, as the difference for
+total energies is in the range of $\mu$eV, and the one for the
+one-particle levels is below meV. The change due to $D_{max}$ is
+larger, even though still below 1~meV. This change is however due to
+the effective size of the box, which encloses the atom. The radius
+defines the outermost grid point, while the box radius is a few steps
+inward, so that the derivatives can still be evaluated. This amounts
+to a change of few times $D_{max}$. This is consistent with the
+observation that the deviation is larger for the larger atom. Relative
+energy shifts are little affected. I do not interprete this deviation
+as an effect of the grid size. Nevertheless, it provides an upper
+bound for the effect on the grid size.
+
+
 
 Ingolf Harden 
 \begin{itemize}
-\item use two projector functions 
+\item On p15, Ingolf finds that the energies from the atomic
+  calculation (before paw) depends on the setup. My explanation is
+  that the parameter !GRID:RMAX may be different, so that the boundary
+  conditions are changed. When I change RMAX from 9 a$_B$ to 20 a$_B$
+  the one-particle energies of the valence orbitals (s,p) of carbon
+  shift up by about 20~meV, which is consistent with the values of
+  Ingolf's table 4.1. Explanation: The setup construction is based on
+  the model of an atom in a spherical box. This also explains that the
+  shift of the energy levels is larger for larger atoms such as Si as
+  compared to C. If this box is larger than about 1.5 times the
+  covalent radius, the range of tight binding orbitals in a solid, the
+  radius of the box is not relevant. The shift of the energy
+  eigenvalues for the atomic calculations is relevant, if the ISOLATE
+  option is switched on.
+%
 \item Cl: The number of p-projectors have been increased from one to
   two.  , i.e. npro=221. The cutoff has been reduced to rcl/rcov=0.75,
   which however had a minor impact. 
