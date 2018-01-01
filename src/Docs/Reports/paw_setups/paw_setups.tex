@@ -182,6 +182,8 @@ with the boundary conditions
 {\langle\vec{r}|u_n\rangle}=1
 \qquad\text{for $n>1$}
 \end{eqnarray}
+For each $n$ one obtains one energy-dependent partial wave.
+
 
 The node-reduced wave functions have (typically\footnote{As shown in
   \cite{bloechl12_arxiv1210_5937}, the nodal theorem fails at high
@@ -1121,7 +1123,11 @@ $\sigma_x,\sigma_y,\sigma_z$.
 
 It will be convenient to introduce the function
 \begin{eqnarray}
-1+D(\vec{r})\defas\Bigl[1+\frac{\epsilon-v(\vec{r})}{2m_0c^2}\Bigr]^{-1}
+1+D(\epsilon,\vec{r})
+\defas\Bigl[1+\frac{\epsilon-v(\vec{r})}{2m_0c^2}\Bigr]^{-1}
+\nonumber\\
+\Rightarrow\quad
+D(\epsilon,\vec{r})&=&-\Bigl[1+\frac{2m_0c^2}{\epsilon-v(\vec{r})}\Bigr]^{-1}
 \label{eq:defrelativisticfactor}
 \end{eqnarray}
 so that the Dirac equation obtains the form
@@ -1132,6 +1138,11 @@ v-\epsilon &\quad \vec{\sigma}\vec{p}c\\
 \left(\begin{array}{c}|\phi\rangle\\|\chi\rangle\end{array}\right)=0
 \label{eq:dirac2by2withepsilonb}
 \end{eqnarray}
+The energy required to create an electron-positron pair is
+$2m_0c^2\approx4\times10^4$~H$\approx 10^6$~eV.  For a hydrogen
+potential the function starts at the origin as $D(\epsilon=0,r)\approx
+-1+\frac{4\pi\epsilon_0\cdot2m_0c^2}{e^2Z}r+O(r^2)$.
+
 
 The small contribution can be extracted from the second equation of
 \eq{eq:dirac2by2withepsilonb}
@@ -1180,15 +1191,34 @@ and we obtain the Dirac equation in the form
 \Bigl(\frac{\hbar}{i}(\underbrace{\vec{\nabla}\frac{1+D}{2m_0}}
 _{\frac{(\partial_r D)}{2m_0}\frac{\vec{r}}{|\vec{r}|}}\times\vec{p} \Bigr)
 +v-\epsilon\Bigr]|\phi\rangle=0
-\nonumber\\
-\Rightarrow\Bigl[
+\end{eqnarray}
+which yields
+\begin{myshadowminipage}{Dirac equation}
+\begin{eqnarray}
+\Bigl[
 \frac{1+D}{2m_0}\vec{p}^2 
 -i\frac{\hbar\partial_rD}{2m_0|\vec{r}|}\vec{r}\vec{p} 
 + \underbrace{\frac{(\partial_r D)}{m_0|\vec{r}|}\vec{S}\vec{L}}_{\text{spin-orbit}}
-+v-\epsilon\Bigr]|\phi\rangle=0
++v(\vec{r})-\epsilon\Bigr]|\phi\rangle=0
 \nonumber\\
+|\chi\rangle
+\eqrel{eq:defsmallcomponent}{=}
+\frac{1+D}{\hbar m_0c}
+\vec{S}\vec{p} |\phi\rangle
 \end{eqnarray}
-
+with
+\begin{eqnarray}
+D(\epsilon,\vec{r})
+\eqrel{eq:defrelativisticfactor}{=}
+-\Bigl[1+\frac{2m_0c^2}{\epsilon-v(\vec{r})}\Bigr]^{-1}
+\end{eqnarray}
+The norm of the wave function is
+\begin{eqnarray}
+\sum_{\sigma\in\{\uparrow,\downarrow\}} \int d^3r 
+\Bigl[\phi_\sigma^*(\vec{r})\phi_\sigma(\vec{r})
++\chi_\sigma^*(\vec{r})\chi_\sigma(\vec{r})\Bigr)=1
+\end{eqnarray}
+\end{myshadowminipage}
 
 %====================================================================
 \subsection{Approximation}
@@ -1409,7 +1439,7 @@ Bra.
 \left(\begin{array}{cc}
 \tilde{v}-\epsilon &\quad (\vec{\sigma}\vec{p}c)^\dagger \\
 \vec{\sigma}\vec{p}c &\quad -2m_0c^2+\tilde{v}-\epsilon\end{array}\right)
-\left(\begin{array}{c}|\psi\rangle\\
+\left(\begin{array}{c}|\tilde{\psi}\rangle\\
 \frac{\vec{\sigma}\vec{p}}{2m_0c}|\tilde{\psi}\rangle\end{array}\right)
 \nonumber\\
 &+&\sum_{\alpha,\beta}\langle\tilde{\psi}|\tilde{p}_\alpha\rangle
@@ -1439,7 +1469,8 @@ v-\epsilon &\quad (\vec{\sigma}\vec{p}c)^\dagger\\
 \nonumber\\  %==========================================================
 %
 &=&\langle\tilde\psi|
-\frac{\hat{\vec{p}}^2}{2m_0}+\tilde{v}-\epsilon
+\underbrace{\frac{\hat{\vec{p}}^2}{2m_0}
+}_{(\sigma\vec{p})^\dagger(\vec{\sigma}\vec{p})/w2m_0}+\tilde{v}-\epsilon
 +
 \underbrace{
 \textcolor{red}{(\vec{\sigma}\vec{p})^\dagger
@@ -1874,7 +1905,6 @@ and \eq{eq:nodelessdiracsmall}
 +\frac{1}{c^2}|v_{n-1}\rangle\Bigr]
 \end{eqnarray}
 which yields with \eq{eq:lsspinorharmonic}
-
 \begin{eqnarray}
 &&\hspace{-2cm}\biggl(
 (1+D)\frac{-\hbar^2}{2m_0}\biggl(\frac{1}{r}\partial_r^2r
@@ -1902,6 +1932,53 @@ Compare with Eq.~5.49-5.51 of the master thesis of Robert
 Schade\cite{schade12_thesis}.  (Note, however, that I changed the sign
 of $f_{n}$ relative to that of $f_{n-1}$, etc. relative to my earlier
 notes.)
+
+
+\begin{myshadowminipage}{Radial Dirac equation for nodeless wave functions}
+\begin{enumerate}
+\item prepare inhomogeneity
+\begin{eqnarray}
+G^{(n)}(r)&=&
+\begin{cases}
+0&\text{for $n=0$}\\
+ -g^{(n-1)}_{\kappa,j_z}(\epsilon_{n-1},r)
++
+\frac{\hbar}{c}\biggl[\partial_r+\frac{-\kappa+1}{|\vec{r}|}\biggr]
+\frac{1+D}{ 2m_0 }
+f_{-\kappa,j_z}^{(n-1)}(\epsilon_{n-1},r)
+&\text{for $n>0$\hspace{1cm}}\\
+\end{cases}
+\label{eq:raddiraca}
+\end{eqnarray}
+%
+\item determine large component of bound state
+  (\verb|ATOMLIB$BOUNDSTATE| 
+and \verb|SCHROEDINGER$SPHERICAL|)
+\begin{eqnarray}
+\biggl(
+(1+D)\frac{-\hbar^2}{2m_0}\biggl(\frac{1}{r}\partial_r^2r
+-\frac{\ell(\ell+1)}{r^2}\biggr)
+-\frac{\hbar^2(\partial_r D)}{2m_0}
+\biggl[\partial_r
++\frac{\kappa+1}{|\vec{r}|}\biggr]
++v-\epsilon \biggr)g^{(n)}_{\kappa,j_z}(\epsilon,r)
+&=& G^{(n)}(r)
+\nonumber\\
+\label{eq:raddiracb}
+\end{eqnarray}
+
+\item construct small component (\verb|SCHROEDINGER$SPHSMALLCOMPONENT|).
+\begin{eqnarray}
+f_{-\kappa,j_Z}^{(n)}(\epsilon,r)
+&=&\frac{1+D(\epsilon)}{2 m_0}
+\biggl(\frac{\hbar}{c}\biggl[\partial_r+\frac{\kappa+1}{|\vec{r}|}\biggr]
+g_{\kappa,j_z}^{(n)}(\epsilon,r)
++
+\frac{1}{c^2}f_{-\kappa,j_z}^{(n-1)}(\epsilon_{n-1},r)\biggr)
+\label{eq:raddiracc}
+\end{eqnarray}
+\end{enumerate}
+\end{myshadowminipage}
 
 %======================================================================
 \section{Pseudization}
@@ -1932,6 +2009,7 @@ The construction depends on three parameters:
 
 %======================================================================
 \section{Nucleus with finite size}
+\label{sec:finitesizenucleus}
 %======================================================================
 The nucleus is considered as a homogeneously charged sphere. The
 volume of the nucleus is proportional to the number of nucleons.  This
@@ -4109,6 +4187,62 @@ Nr. & El. & V0[\AA$^3]$ & B0 & B1 & space gr.\\
 %=====================================================================
 \chapter{Code structure}
 %=====================================================================
+
+
+%=====================================================================
+\section{Todo}
+%=====================================================================
+\begin{itemize}
+\item RELTYP=ZORA is hardwired in \verb|setup_piternewprowrapper|
+\item ignore setups, which are not used
+\item set the condition in the input that the outermost grid point
+  rmax must exceed rbox. Otherwise there is a problem in (or near)
+  \verb|atomlib$aescf|
+\item eliminate rbox: In the legacy version, rbox has been used to
+  select partial waves. In the new version it is only use after
+  uncreening, i.e. after the call of \verb|atomic_unscreen|, to cutoff
+  VADD.
+\item RCBG is set much too small!  The parameter
+  \verb|This%rcbg=1/sqrt(0.218)| is set in in $\verb|setup$select|$,
+  when a new setup is created. This radius corresponds to only
+  1.13~\AA. WARNING: This is much too small!
+\end{itemize}
+
+%=====================================================================
+\section{Flowchart of the paw\_setups object}
+%=====================================================================
+\begin{verbatim}
+setup$readstrcin
+
+setup$read
+->setup_read
+  ->atomlib$aescf
+    ->ATOMLIB$BOUNDSTATES(WITHHF)
+      ->ATOMLIB$BOUNDSTATE
+      ->SCHROEDINGER$SPHSMALLCOMPONENT
+  ->setup_coreselect
+  ->setup_makeiscatt
+  ->setup_makepartialwaves
+    ->atomic_pseudize
+    if(type=ndlss) then
+    ->SETUP_OUTERNEWPROWRAPPER
+      ->setup_newpro
+    else
+    ->SETUP_OUTEROLDPROWRAPPER
+    end if
+    ->setup_pawdensity
+    ->atomic_unscreen
+    ->setup_parmsmassrenormalization
+  ->setup_cvxsetup
+  ->setup_prophidot
+  ->setup_testscattering
+  ->setup_testghost1
+  ->setup_testghost
+  besseltransforms
+  ->setup_report
+\end{verbatim}
+
+
 %=====================================================================
 \section{Code to construct automatic stp.cntl file}
 %=====================================================================
@@ -4145,115 +4279,56 @@ RMAX is $2r_{cov}$ or $r_{cov}+0.73~$\AA$/a_0$, whatever is larger
 
 
 
-
 %=====================================================================
-\section{Flowchart of the paw\_setups object}
+\section{SETUPS\$STRCIN}
 %=====================================================================
-Todo:
-\begin{itemize}
-\item ignore setups, which are not used
-\item set the condition in the input that the outermost grid point
-  rmax must exceed rbox. Otherwise there is a problem in (or near)
-  \verb|atomlib$aescf|
-\item RCBG is set much too small! (see \verb|setup$select|)
-\end{itemize}
-
-
-\begin{verbatim}
-setup$readstrcin
-setup$read
-->setup_read
-  ->atomlib$aescf
-    ->ATOMLIB$BOUNDSTATES(WITHHF)
-      ->ATOMLIB$BOUNDSTATE
-      ->SCHROEDINGER$SPHSMALLCOMPONENT
-  ->setup_coreselect
-  ->setup_makeiscatt
-  ->setup_makepartialwaves
-    ->atomic_pseudize
-    if(type=ndlss) then
-    ->SETUP_OUTERNEWPROWRAPPER
-      ->setup_newpro
-    else
-    ->SETUP_OUTEROLDPROWRAPPER
-    end if
-    ->setup_pawdensity
-    ->atomic_unscreen
-    ->setup_parmsmassrenormalization
-  ->setup_cvxsetup
-  ->setup_prophidot
-  ->setup_testscattering
-  ->setup_testghost1
-  ->setup_testghost
-  besseltransforms
-  ->setup_report
-\end{verbatim}
-
-Caution the parameter \verb|This%rcbg=1/sqrt(0.218)| is set in in
-$\verb|setup$select|$, when a new setup is created. This radius
-corresponds to only 1.13~\AA. WARNING: This is much too small!
-
-
-\begin{itemize}
-\item \verb|setup$readstrcin| retrieves the following data from the
+\verb|setup$readstrcin| retrieves the data from the
   \verb|!structure!species|-blocks and inserts them into the
   \verb|this|-structure:
-\begin{verbatim}
-ID,I,lnx,lmnx,lmrx,gid(->shlog,r1,dex,nr),m,rad,
-parms(id,aez,rcsm,zv,type,rcl,lambda
-     ,pow\_pot,rc\_pot,tval0_potm,val0_pot
-     ,pow\_core,rc\_core,tval0_core,val0_core)
-\end{verbatim}
-%
-%
-\item \verb|setup$read->setup_read|: \verb|setup$read| is the main
-  external call to initialize the setups object. It calls
-  \verb|setup_read| for each atom species.
-%
-\begin{enumerate}
-\item \verb|atomlib$aescf|: Self consistent spherical atom on a radial
-  grid. Produced are
-\begin{verbatim}
-etot,pot,vfock
-,lofi(n),sofi(n),fofi(n),nnofi(n),eofi(n),phi(nr,n),sphi(nr,n)
-\end{verbatim}
-
-The occupations are collected from periodictable.
-
-It uses a key to encode how the calculation is to be done, The key
-contains comma-separated items such as
-\verb|REL,SO,ZORA,START,FOCK=0.1,|, which set the corresponding
-options to true. It is possible to use the negative terms
-\verb|NONREL,NONSO,NONZORA|, which stop the code if they conflict with
-a positive key.
 \begin{center}
-\begin{tabular}{|c|c|c|l|}
+\begin{tabular}{|l|l|l|}
 \hline
-REL & ZORA & SO & Description\\
+\multicolumn{2}{|c|}{components of this}\\
 \hline
-F & F & F & $D_{rel}=0$, zero small component\\
-T & T & F & $D_{rel}(\epsilon=0)$, zero small component\\
-T & F & T & $D_{rel}(\epsilon_n)$ nonzero small component\\
+ID     &  internal name of the atom type\\
+I      &  species index (running index)\\
+lnx    &  compiled from NPRO \\
+lox    & $\ell_s$ with $s\in\{1,\ldots,lnx\}$ compiled from NPRO \\
+lmnx   & $\sum_{s=1}^{lnx} (2\ell_s+1)$\\
+lmrx   & max angular momentum for augmentation charge\\
+gid    & grid id for radial object. Encodes shlog,r1,dex,nr.\\
+m      & mass\\
+rad    & \\
 \hline
-\multicolumn{4}{|c|}{the following options shall be avoided}\\
+\multicolumn{2}{|c|}{components of this\%parms}\\
 \hline
-F & F & T & $D_{rel}=0$, zero small component, nonsense\\
-F & T & F & $D_{rel}=0$, zero small component, nonsense\\
-F & T & T & $D_{rel}=0$, zero small component, nonsense\\
-T & F & F & $D_{rel}(\epsilon_n)$ nonzero small component,nonsense\\
-T & T & T & $D_{rel}(\epsilon=0)$ zero small component, nonsense\\
+id     & id for the setup (possibly obsolete)\\
+aez    & atomic number $Z$\\
+rcsm   & exponential decay for compensation charge\\
+zv     & number of valence electrons \\
+type   &\\
+rcl    & cutoff radii for pseudo-partial wave construction\\
+lambda & obsolete \\
+\hline
+pow\_pot & parameters for $\tilde{v}$-construction\\
+rc\_pot & parameters for $\tilde{v}$-construction\\
+tval0\_pot,val0\_pot & parameters for $\tilde{v}$-construction\\
+\hline
+pow\_core &parameters for $\tilde{n}_c$-construction\\
+rc\_core &parameters for $\tilde{n}_c$-construction\\
+tval0\_core,val0\_core &parameters for $\tilde{n}_c$-construction\\
 \hline
 \end{tabular}
 \end{center}
+
+%=====================================================================
+\section{SETUPS\$READ}
+%=====================================================================
+
+\begin{itemize}
 %
-\item \verb|setup_coreselect|: $ZV$ is used to determine the core
-  states. (atomic states are reordered if necessary.)
-  \verb|This%aepsi| and \verb|This%aepsism| are set.
-%
-\item Core densities. \verb|This%aecore| and \verb|This%pscore| are set.
-%
-\item \verb|setup_makeiscatt|. \verb|This%iscatt| is set.
-%
+\item
+\begin{enumerate}
 \item \verb|setup_makepartialwaves|
 %
 \item \verb|setup_cvxsetup|
@@ -4374,62 +4449,578 @@ ncl(0:lx)  & highest band index of a core state with $\ell$\\
 \end{enumerate}
 
 %======================================================
-\subsection{Previous sdescription}
+\section{SETUP\$READ, SETUP\_READ}
 %======================================================
-
-
-
-\petertt{This is lifted from my notes and needs to be updated.}
+\verb|setup$read| is the main
+external call to initialize the setups object. It calls
+\verb|setup_read| for each atom species.
 
 
 \begin{enumerate}
-\item collect input data
-\begin{itemize}
-\item AEZ: atomic number
-\item ZV:  Number of valence electros
-\item $r_{c,\ell}$,$\lambda_\ell$: Parameters for pseudo-partial-wave
-  construction
-\item $r_{c,small}$: The compensation density is proportional to
-  $\e{-(r/r_{c,small})^2}$
-\item $r_{c,big}=1/\sqrt{0.218}$. The extended compensation density is
-  proportional to $\e{-(r/r_{c,big})^2}$ (currently hardwired,
-  probably too small.)
-\item $\lambda,r_c,f(r=0)$: Parameters for pseudopotential construction 
-\item $\lambda,r_c,f(r=0)$: Parameters for pseudocore construction 
-\item The radial grid is encoded in grid-id ``GID''
-\item Atomic mass
-\item PSG2,PSG4
-\item NPRO number of partial waves per l-channel
-\item LRHOX density is expanded up to maximum angular momentum LRHOX
-\end{itemize}
-\item AESCF performs an all-electron self-consistent DFT calculation: The
-  boundary condition is a hard box with radius equal to the third-last
-  radial grid point. The calculation considers only spherical
-  densities and ignores spin-polarization. This is important so that the
-  setup construction does not artificially break the symmetry of the
-  environment.
+\item collect input data from THIS-structure\\
+\begin{tabular}{|l|l|l|}
+\hline
+AEZ  & $Z$ & atomic number\\
+ZV   &     & Number of valence electrons\\
+RCL  & $r_{c,\ell}$ & cutoff radius for pseudo-partial-wave
+  construction\\
+LAMBDA  & $\lambda_\ell$ & (obsolete) Parameter for pseudo-partial-wave
+  construction\\
+RCSM & $r_{c,small}$ & The compensation density is proportional to
+  $\e{-(r/r_{c,small})^2}$\\
+RCBG & $r_{c,big}=1/\sqrt{0.218}$ & extended compensation density is
+  $\sim\e{-(r/r_{c,big})^2}$ \\
+LNX & & number of partial waves $(\ell,n)$ \\
+LOX & $\ell_x$ &  angular momenta of partial waves. ($x\in\{1,\ldots,lnx\}$)\\
+    &$\lambda,r_c,f(r=0)$ &Parameters for pseudopotential construction \\
+    & $\lambda,r_c,f(r=0)$& Parameters for pseudocore construction \\
+GID & & grid-id for radial object. Encodes $r1,DEX,NR$\\
+\hline
+\end{tabular}
+%
+\item set a key encoding how the calculation is to be done.  The key
+  contains comma-separated items such as
+  \verb|REL,SO,ZORA,START,FOCK=0.1,|, which set the corresponding
+  options to true. It is possible to use the negative terms
+  \verb|NONREL,NONSO,NONZORA|, which stop the code if they conflict
+  with a positive key.
+\begin{center}
+\begin{tabular}{|c|c|c|l|}
+\hline
+REL & ZORA & SO & Description\\
+\hline
+F & F & F & $D_{rel}=0$, zero small component\\
+T & T & F & $D_{rel}(\epsilon=0)$, zero small component\\
+T & F & T & $D_{rel}(\epsilon_n)$ nonzero small component\\
+\hline
+\multicolumn{4}{|c|}{the following options shall be avoided}\\
+\hline
+F & F & T & $D_{rel}=0$, zero small component, nonsense\\
+F & T & F & $D_{rel}=0$, zero small component, nonsense\\
+F & T & T & $D_{rel}=0$, zero small component, nonsense\\
+T & F & F & $D_{rel}(\epsilon_n)$ nonzero small component,nonsense\\
+T & T & T & $D_{rel}(\epsilon=0)$ zero small component, nonsense\\
+\hline
+\end{tabular}
+\end{center}
+%
+\item \verb|atomlib$aescf| (Details in section  \ref{sec:atomlibaescf}):
+
+  AESCF performs an all-electron self-consistent
+  DFT calculation: The boundary condition is a hard box with radius
+  equal to the third-last radial grid point. The calculation considers
+  only spherical densities and ignores spin-polarization. This is
+  important so that the setup construction does not artificially break
+  the symmetry of the environment.
+
+  The occupations are collected from periodictable consistent with the
+  number of valence electrons $ZV$.
 
   One obtains the potential $v(\vec{r})$ of the all-electron atom, the
   all-electron wave functions $|\psi_n\rangle$., the one-particle
-  energies $\epsilon_n$
+  energies $\epsilon_n$.
 
-  The procedure is described in more detail in section
-  \ref{sec:atomlibaescf}.
+  Produced are
+  \begin{verbatim}
+  etot,pot,vfock
+  ,lofi(n),sofi(n),fofi(n),nnofi(n),eofi(n),phi(nr,n),sphi(nr,n)
+  \end{verbatim}
+%
+\item \verb|setup_coreselect|: $ZV$ is used to determine which of the
+  atomic states are core states. (atomic states are reordered if
+  necessary.)  
 
-\item ISCATT is a variable that is zero for the occupied partial wave
-  with the highest energy for a given angular momentum. ISCATT=-1
-  identifies a semi-core state, and ISCATT=1 identifies a scattering
-  state.
-\item calculate all-electron core density $n^C(\vec{r})$.
-\item calculate pseudo core density pscore $\tilde{n}^C(\vec{r})$ from
-  the all-electron core density. The method is described in section
-  \ref{sec:pseudiation}.
-\item MAKEPARTIALWAVES
+  The core wave functions are set to zero beyond $r_{out}=r(NR-3)$,
+  and renormalized.
+
+  The atomic wave functions are set in the THIS object.
+  \begin{verbatim}
+    ATOM%NC,atom%nb,atom%aepsi,atom%aepsism
+  \end{verbatim}
+%
+\item calculate all-electron core density $n^C(\vec{r})$=\verb|This%aecore|
+%
+\item calculate pseudo core density pscore
+  $\tilde{n}^C(\vec{r})$=\verb|This%pscore| from the all-electron core
+  density. The method is described in section \ref{sec:pseudiation}.
+%
+\item \verb|setup_makeiscatt|: ISCATT is a variable that is zero for
+  the occupied partial wave with the highest energy for a given
+  angular momentum. ISCATT=-1 identifies a semi-core state, and
+  ISCATT=1 identifies a scattering state.
+%
+\item \verb|setup_makepartialwaves|
 \begin{itemize}
 \item \textbf{pseudo potential:} construct pseudopotential PSPOT from
   the all-electron potential in a hard box with radius ROUT, provided
   on input. The method is described in section~\ref{sec:pseudiation}.
 %
+\item The code branches into 
+\begin{itemize}
+\item \verb|setup_outernewprowrapper| 
+for the nodeless construction and
+\item \verb|setup_outeroldprowrapper| 
+(For details, see section~\ref{sec:outeroldprowrapper}) 
+for the legacy constrution used previously
+\end{itemize}
+These routines determine the pseudo-partial waves and projector
+functions. 
+
+The routine \verb|SETUP\_OUTERNEWPROWRAPPER| is only a wrapper, which
+divides the task of construction partial waves and projector functions
+into angular momenta and spin-orbit orientation. The construction is
+then done for each set by the routine \verb|SETUP\_NEWPRO|. For
+details on \verb|SETUP\_NEWPRO|, see section~\ref{sec:newpro}
+
+%
+\item \verb|setup_pawdensity| perform a paw calculation on the radial
+  grid to determine the pseudo-density consisten with the
+  approximation done above.
+%
+\item \verb|atomic_unscreen|: determine $\bar{v}(\vec{r})$, the
+difference between the pseudopotential and the potential from the
+charge density.
+%
+\item determine DT, DOVER and DH
+%
+\item determine PSG2 and PSG4, the parameters for the mass renormalization
+%
+\item write setup report for the \verb|paw\_stpa.x| tool
+\end{itemize}
+%
+\item \verb|setup_cvxsetup|
+%
+\item \verb|setup_prophidot|
+%
+\item \verb|setup_testscattering|
+%
+\item \verb|setup_testghost1|
+%
+\item \verb|setup_testghost|
+%
+\item Besseltransforms. The components
+  |vaddofg,pscoreofg,proofg,nhatprimeofg,vhatofg| of the structure This are set.
+%
+\item \verb|setup_report|
+%
+\end{enumerate}
+
+
+%======================================================
+\section{SETUP\_NEWPRO}
+\label{sec:newpro}
+%======================================================
+
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+L       & $\ell$ & \\
+SO      & & \\
+\hline
+RELTYPE & & (NONREL,ZORA,SPINORBIT)\\
+GID     & & \\
+ROUT    & & \\
+NC      & & number of core states  with this $\ell$\\
+NJ      & & number of partial waves with this $\ell$\\
+RC      & & \\ 
+EOFPHI(NJ) & & \\
+ECOREIN(NC)& & \\
+AEPOT      & $v(r)$ & \\
+PSPOT      & $\tilde{v}(r)$ & \\
+VFOCK      & & \\
+\hline
+EOFPHI(NJ)      & & \\
+UCORE,UCORESM   & & \\
+AECORE,AECORESM & & \\
+PSCORE,PSCORESM & & \\
+QN,QNSM         & & \\
+AEPHI,AEPHISM   & & \\
+PSPHI,PSPHISM   & & \\
+QNDOT,QNDOTSM   & & \\
+AEPHIDOT,AEPHIDOTSM & & \\
+PRO             & & \\
+DOVER           & & \\
+DTKIN           & & \\
+\hline
+\end{tabular}
+\end{center}
+
+
+
+\begin{itemize}
+\item \textbf{nodeless atomic core wave functions:} construct nodeless
+  wave functions UCORE,UCORSM. We also keep TUCORE as
+  $(\hat{h}-v+\epsilon)|\psi\rangle$ to evaluate the relativistic
+  kinetic energy.  Even for calculations with a Fock contribution, the
+  wave functions will be determined here first only for the local
+  potential and it will be updated later with the Fock potential.
+\begin{eqnarray*}
+\left[\hat{h}_{loc}-\epsilon_n\right]|u_n\rangle&=&|u_{n-1}\rangle
+\\
+u_n(0)=\partial_r u_n(0)&=&0\qquad\text{for}\qquad n>0
+\end{eqnarray*}
+We use the relativistic version described in
+\eq{eq:raddiraca}-\ref{eq:raddiracc}.
+%
+The variable $DREL$ governs the treatment of relativistic effects. For
+ZORA and NONREL, it is kept constant, while it is recalculated for the
+fully relativistic calculation. For ZORA the energy for calculating
+DREL is taken from the highest energy of the atomic valence states
+calculated.
+%
+\item \textbf{nodeless partial waves:} construct nodeless partial
+  waves QN,QNSM.  They will be constructed with a hard sphere
+  potential at radius ROUT.  The option to construct all partial waves
+  at the same energy is currently disabled.
+
+  The lowest partial wave for each $\ell$ uses the highest core state
+  as inhomogneity, while the higher partial waves use the next lower
+  partial wave as inhomogeneity. Thus, a sequence of nodeless partial
+  waves in introduced. One potential disadvantage of this construction
+  is that the inhomogeneity extends further out with each partial
+  wave.
+
+\begin{eqnarray*}
+\left[\hat{h}_{loc}-\bar{\epsilon}_n\right]|\phi^{nl}_{n}\rangle&=&
+|\phi^{nl}_{n-1}\rangle
+\\
+\hat{t}|\phi^{nl}_n\rangle
+&=&|\phi^{nl}_{n-1}\rangle+(\bar{\epsilon}_n-v)|\phi^{nl}_n\rangle
+\end{eqnarray*}
+where $|\phi^{nl}_{-1}\rangle=|u_c\rangle$ is the nodeless wave
+function of the highest core state. The energies $\bar{\epsilon}_n$
+for the partial waves are EOFLN. (The energies of the atomic wave
+functions are EOFI).
+%
+\item \textbf{add Fock term to nodeless wave functions:} This step is
+  only done for Fock contribution in the potential: Starting from the
+  nodeless wave function obtained for the local potential only, the
+  nodeless atomic wave functions are constructed with the Fock
+  contribution.
+  \begin{eqnarray*}
+  \left(\hat{h}_{loc}-\epsilon_0\right)|\phi'\rangle&=&
+  -\left(\hat{h}_{loc}+v_{nl}-\epsilon_0\right)|\phi_0\rangle+|g\rangle
+\\
+  \left(\hat{h}_{loc}-\epsilon'\right)|\dot{\phi}\rangle&=&|\phi_0\rangle
+\\
+  \left(\hat{h}_{loc}-\epsilon'\right)|\phi_{hom}\rangle&=&0
+\\
+|\phi\rangle&=&|\phi_0\rangle+|\phi'\rangle
++|\dot{\phi}\rangle\delta\epsilon+|\phi_{hom}\rangle\alpha
+  \end{eqnarray*}
+  The variables are adjusted to fulfill the boundary conditions.  The
+  inhomogeneity is adapted as well.  The basic equation is derived
+  later in Section~\ref{sec:gpt}.
+%
+\item \textbf{add Fock term to partial waves:} This step is only done
+  for Fock contribution in the potential: Starting from the nodeless
+  partial waves and the inhomogeneity constructed consistently with
+  the Fock potential the nodeless partial waves are updated.
+%
+\item \textbf{rescale:} rescale wave functions and partial waves such
+  that the first partial wave has a maxium absolute value of one. All
+  functions are scaled consistently in order to maintain their
+  relations.
+%
+\item \textbf{nodeles scattering partial wave}: At the energy ENU, the
+  energy of the highest partial wave one additional unbound nodeless
+  partial wave is constructed.
+%
+\item \textbf{pseudo core wave functions}: starting from the nodeless
+  core wave functions, the routine \verb|SETUP_MAKEPSCORE| constructs
+  pseudo core states and their corresponding small components.
+%
+\item \textbf{all-electron core wave functions}: For $n=1,NC$
+\begin{eqnarray}
+|\psi_n\rangle=|u_n\rangle
+-\sum_{k=1}^{n-1}|u_m\rangle\prod_{k=1}^{m-1}(\epsilon_k-\epsilon_n)
+\nonumber\\
+|\psi_n^{sm}\rangle=|u^{sm}_n\rangle
+-\sum_{k=1}^{n-1}|u^{sm}_m\rangle\prod_{k=1}^{m-1}(\epsilon_k-\epsilon_n)
+\end{eqnarray}
+%
+\item \textbf{core-valence orthogonalization}: Here AEPHI is constructed.
+
+\textbf{caution: I do not understand the procedure for
+  orthonormalizing valence states!!! It seems that this breaks the
+  relative scaling of the nodeless construction.}
+
+\textbf{caution: Is this relation valid also for all relativistic versions?}
+
+\begin{eqnarray}
+|\phi_j\rangle=|u_j\rangle
+-\sum_{k=1}^{j-1}|u_k\rangle\prod_{k=1}^{m-1}(\epsilon_k-\epsilon_n)
+\nonumber\\
+|\phi^{sm}_j\rangle=|u_j\rangle
+-\sum_{k=1}^{j-1}|u^{sm}_k\rangle\prod_{k=1}^{m-1}(\epsilon_k-\epsilon_n)
+\end{eqnarray}
+
+%
+\item \textbf{pseudo wave functiuons}: Starting from QN the pseudo
+  wave functions are constructed. Only the first partial wave is
+  pseudized. The others remain equal to QN. The kinetic energy TPSPHI
+  is constructed with \verb|RADIAL$verletD1|, so that it matches the
+  TQN obtained from the Schr\"odinger equation.
+
+
+\textbf{Caution: TPSPHI and TPSPHIDOT are replaced by TQN, which seems
+  unneccesary}
+
+\item \textbf{Rescale}: All wave functins and partial waves are
+  rescaled so that the first partial wave is  normalized
+
+
+?????????????????????????????????????????
+
+
+\item \textbf{node-reduced partial waves:} construct
+  $|q_{c+1}(\epsilon_{n})\rangle$ functions, named \verb|QN|. Here
+  $c$ is the index of the highest state treated explicitely as core
+  state. Thus the index $c+1$ refers to the first wave function
+  included in the valence shell. The functions
+  $|q_{c+1}(\epsilon_{n+i})\rangle$ are not necessarily nodeless.  The
+  number of nodes for the $|q_{c+1}(\epsilon)\rangle$ function is
+  equal to the number of nodes of the corresponding all-electron
+  partial wave $|\phi(\epsilon)\rangle$ minus the number of core
+  states with the same angular momentum.
+
+We use \eq{eq:qmofepsilonanandnodeless} which is repeated below:
+\begin{eqnarray*}
+|q_{c+1}(\epsilon_n)\rangle&\eqrel{eq:qmofepsilonanandnodeless}{=}&
+\sum_{i=c+1}^n|\phi^{nl}_i\rangle
+\prod_{j=c+1}^{i-1}(\bar{\epsilon}_n-\bar{\epsilon}_j)
+\end{eqnarray*}
+This implies that the $|q_{c+1}(\epsilon_{n})\rangle$ and $|\phi^{nl}_n\rangle$
+functions are scaled such that their long-range tails differ.
+The long range parts behave as
+\begin{eqnarray*}
+|q_{c+1}(\epsilon_{n})\rangle\leftrightarrow
+|\phi^{nl}_{n}\rangle
+\prod_{j=c+1}^{n-1}(\epsilon_{n}-\epsilon_j)
+\end{eqnarray*}
+Thus we introduce a factor
+$qbyu_n=\prod_{j=c+1}^{n-1}\frac{1}{\bar{\epsilon}_{n}-\bar{\epsilon}_j}$.  
+
+
+A matrix $\mat{T}$ is constructed that describes the transformation
+from the nodeless partial waves to the $|q_{c+1}(\epsilon_n)\rangle$
+functions.
+\begin{eqnarray*}
+|q_{c+1}(\epsilon_n)\rangle&=&\sum_m|\phi^{nl}_m\rangle T_{m,n}
+\end{eqnarray*}
+This matrix will later allow to perform the back transform.
+%
+\item \textbf{rescale nodeless partial waves:} The nodeless
+  $|\phi^{nl}_n\rangle$ functions are now rescaled so that that their
+  long-range-behavior matches that of
+  $|q_{c+1}(\epsilon_{n+i})\rangle$. The scale factor is
+  \verb|ubyq|$=1/T_{n,n}$,
+  i.e. $|\phi^{nl}_n\rangle\leftarrow|\phi^{nl}_n\rangle T_{n,n}$.
+
+  The scaling of $|q_{c+1}(\epsilon_n)\rangle$ has been adopted
+  because the pseudization has to depend on the
+  q-function. Pseudization to nodeless functions does not work over
+  several bands.
+
+  From now on we \textbf{must no more use} the relation
+  $(\hat{h}-\epsilon_n)|\phi^{nl}_n\rangle=|\phi^{nl}_{n-1}\rangle$!
+
+\item \textbf{all-electron partial waves:} Construct all-electron
+  partial waves by mixing in the core states. We use the nodeless
+  construction instead of reorthogonalization. (The two methods differ
+  because the small component is ignored.)
+
+  We use \eq{eq:fromqntophi} which has the form
+  \begin{eqnarray*}
+    |\phi(\epsilon_n)\rangle&=& |q_{c+1}(\epsilon_n)\rangle+\sum_{i=1}^{c}
+    |u_i\rangle\prod_{j=i}^{c}\frac{1}{\bar{\epsilon}_n-\epsilon_j}
+    \label{eq:fromqntophi}
+  \end{eqnarray*}
+%
+\item \textbf{pseudo partial waves:} Construct pseudo partial waves
+\begin{itemize}
+\item Type HBS: The technique is analogous to the procedure of Hamann
+  Bachelet Schl\"uter.
+The equation 
+\begin{eqnarray*}
+\left[\frac{\vec{p}^2}{2m}+\tilde{v}
++ A\e{-\left(\frac{r}{r_{c,\alpha}}\right)^{\lambda_\alpha}}-\epsilon_\alpha\right]
+|\tilde\phi_\alpha\rangle=0
+\end{eqnarray*}
+is solved iteratively with differing $A$ until the logaritmic
+derivative and the number of nodes of the pseudo and true partial wave
+are identical. The logarithmic derivative is taken at a radius beyond
+which the following two conditions are fulfilled
+\begin{eqnarray*}
+\left|\frac{1}{\langle\vec{r}|q_n(\epsilon_\alpha)\rangle}
+\langle\vec{r}|
+\frac{p^2}{2m}+\tilde{v}-\epsilon_\alpha|q_n(\epsilon_\alpha)\rangle\right|
+<10^{-5}
+\\
+\e{-\left(\frac{r}{r_{c,\alpha}}\right)^{\lambda_\alpha}}<10^{-8}
+\end{eqnarray*}
+Note that this does not require the all-electron and the pseudo
+potential or partial waves to be identical! The partial waves may
+differ by an admixture of the core wave functions.
+
+Number of nodes and logarithmic derivative are encoded in the function
+\begin{eqnarray*}
+\alpha(\epsilon)\defas
+\frac{1}{2}-\frac{1}{\pi}
+\atan(\frac{\partial_r\phi(\epsilon,r)}{\phi(\epsilon,r)})+NN
+\end{eqnarray*}
+which I will name generalized phaseshift.  According to the Wigner
+rule, a band would lie between an half-integer and an integer value of
+this generalized phaseshift. 
+\begin{eqnarray*}
+\partial_r\phi=0&\qquad\Rightarrow\qquad&\alpha= NN+\frac{1}{2}\qquad\text{bond}
+\\
+\phi=0&\qquad\Rightarrow\qquad&\alpha=NN+1\qquad\text{antibond}
+\end{eqnarray*}
+
+
+\item Type Kerker:
+\end{itemize}
+\item construct bare projectors $\langle\bar{p}_\alpha|$:
+\begin{eqnarray*}
+|\bar{p}_\alpha\rangle
+&=&\left[\frac{\vec{p}^2}{2m}+\tilde{v}-\epsilon_\alpha\right]
+|\tilde{\phi}_\alpha\rangle
+\end{eqnarray*}
+This is a result of the closure relation that the PAW equations are
+exactly fulfilled for the pseudo partial waves.
+\item Biorthogonality
+  $\langle\tilde{p}_\alpha|\tilde{\phi}_\beta\rangle=\delta_{\alpha,\beta}$:
+
+The biorthogonality is enforced by a Gram-Schmidt-like procedure
+\begin{eqnarray*}
+|\tilde{\phi}'_\alpha\rangle&=&\sum_\beta |\tilde{\phi}_\beta\rangle A_{\beta\alpha}
+\\
+|\tilde{p}'_\alpha\rangle&=&\sum_\beta |\bar{p}_\beta\rangle B_{\beta,\alpha}
+\end{eqnarray*}
+so that 
+\begin{eqnarray*}
+\langle\tilde{p'}_\alpha|\tilde{\phi'}_\beta\rangle=\delta_{\alpha,\beta}
+\end{eqnarray*}
+The matrices $\mat{A}$ and $\mat{B}$ are triangular, i.e. $A_{i,j}=0$
+for $i>j$ and similar for $\mat{B}$.
+
+So-far, only the matrices $\mat{A}$ and $\mat{B}$ have been computed. The partial waves and
+projector functions are not updated.  
+Once the matrices $A$ and $B$ have been computed we cal
+\begin{eqnarray*}
+|\tilde{\phi}^{new}_\alpha\rangle&=&|\tilde{\phi}_\alpha\rangle
+\\
+|\tilde{p}^{new}_\alpha\rangle&=&\sum_\beta |\bar{p}_\beta\rangle C_{\beta,\alpha}
+\qquad\text{with $\mat{C}=\mat{B}\mat{A}^{\dagger}$}
+\end{eqnarray*}
+
+
+Only the projector functions are transformed. The partial waves remain
+unchanged and keep their physical meaning.
+
+\item Determine 
+\begin{eqnarray*}
+dT_{\alpha,\beta}&=&
+\langle\phi_\alpha|\frac{\vec{p}^2}{2m}|\phi_\beta\rangle
+-\langle\tilde{\phi}_\alpha|\frac{\vec{p}^2}{2m}|\tilde{\phi}_\beta\rangle
+\\
+dO_{\alpha,\beta}&=&
+\langle\phi_\alpha|\phi_\beta\rangle
+-\langle\tilde{\phi}_\alpha|\tilde{\phi}_\beta\rangle
+\\
+dH_{\alpha,\beta}&=&
+\langle\phi_\alpha|\frac{\vec{p}^2}{2m}+v|\phi_\beta\rangle
+-\langle\tilde{\phi}_\alpha|\frac{\vec{p}^2}{2m}+\tilde{v}|\tilde{\phi}_\beta\rangle
+\end{eqnarray*}
+In practive we do not use the kinetic energy operator
+$\hat{t}=\frac{\hat{\vec{p}}^2}{2m}$, but the expression
+$\hat{t}|\phi_\alpha
+\rangle=(\epsilon_\alpha-v)|\phi_\alpha\rangle$. There are two reasons
+for it. Applying a differential operator to a function stored on a
+grid, introduces numerical noise. The differential operator as used by
+us is strictly consistent with the Schr\"odinger equation including
+all numeric errors. Last but not least, our method automatically
+incorporates relativistic effects in the PAW method.
+\item construct scattering wave functions:
+
+First the nodeless scattering wave function is constructed
+\begin{eqnarray*}
+(\hat{h}-\epsilon_\gamma)|u^{scatt}\rangle=|u_n\rangle
+\end{eqnarray*}
+The scattering wave function $|q^{scatt}_{c+1}\rangle$
+and the pseudo version of the scattering wave function are set equal
+to $|u^{scatt}\rangle$. The reason is that both must not include any
+contribution from the head function. Remember that they do not obey
+the equations of the corresponding energy derivative wave functions!
+Then we project out the core wave function to obtain the all-electron
+version of scattering wave function
+\begin{eqnarray*}
+|q_{c+1}^{scatt}\rangle&=&|u^{scatt}\rangle
+\\
+|\tilde{\phi}^{scatt}\rangle&=&|u^{scatt}\rangle
+\\
+|\phi^{scatt}\rangle&=&|u^{scatt}\rangle-\sum_{i=1}^c |\phi_i\rangle\langle\phi_i|u^{scatt}\rangle
+\end{eqnarray*}
+
+\item calculate pseudo density: 
+\begin{itemize}
+\item We determine the PAW bound states
+  using the same boundary conditions as the all-electron calculation
+  (typically a hard box with radius equal to the third grid point from
+  the outside.)
+\begin{eqnarray*}
+\left[\frac{\vec{p}^2}{2m}+v-\epsilon_n
+\right]|\psi_n\rangle&=&0
+\\
+\left[\frac{\vec{p}^2}{2m}+\tilde{v}-\epsilon_n
++\sum_{\alpha,\beta}|\tilde{p}_\alpha\Bigl(
+dH_{\alpha,\beta}-\epsilon_n dO_{\alpha,\beta}\Bigr)
+\langle\tilde{p}_\beta|\right]|\tilde\psi_n\rangle&=&0
+\end{eqnarray*}
+The energies are determined independently. A deviation of the PAW
+bound energy from the original all-electron energy larger than
+$10^{-2}$~H, will cause an error message.
+
+\item Determine projections $\langle\tilde{p}_\alpha|\tilde\psi_n\rangle$.
+
+\item Normalize the all-electron and pseudo wave functions so that
+\begin{eqnarray*}
+\langle\tilde{\psi}_n|\tilde{\psi}_n\rangle
++\sum_{\alpha,\beta}\langle\tilde{\psi}_n|\tilde{p}_\alpha\rangle dO_{\alpha,\beta}
+\langle\tilde{p}_\beta|\tilde{\psi}_n\rangle &=&1
+\\
+\langle\psi_n|\psi_n\rangle&=&1
+\end{eqnarray*}
+The sign of the all-electron wave function is changed if it is
+inconsistent with the corresponding pseudo wave function.
+
+\item The densities are determined
+\begin{eqnarray*}
+n(\vec{r})&=&\sum_n f_n\psi^*_n(\vec{r})\psi_n(\vec{r})
+\\
+\tilde{n}(\vec{r})&=&\sum_n f_n\tilde{\psi}^*_n(\vec{r})\tilde{\psi}_n(\vec{r})
+\end{eqnarray*}
+\end{itemize}
+\item unscreening: The potential $\bar{v}(\vec{r})$ is constructed sich that
+\begin{eqnarray*}
+\tilde{v}(\vec{r})=\bar{v}(\vec{r})+\int d^3r'\;
+\frac{e^2\tilde{n}(\vec{r'})+e^2Z(\vec{r'})}{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
++\mu_{xc}([\tilde{n}],\vec{r})
+\end{eqnarray*}
+\end{itemize}
+
+
+%======================================================
+\section{setup\_outeroldprowrapper}
+\label{sec:outeroldprowrapper}
+%======================================================
+This is the legacy code, which does not handle the nodeless
+construction. It is kept for compatibility with the HBS construction.
+The description is lifted from an older version prepared before
+dividing the code into two branches. It needs to be reviewed.
+
+\begin{itemize}
 \item \textbf{nodeless atomic wave functions:} construct nodeless wave
   functions UOFI.  Even for calculations with a Fock contribution,
   UOFI will be determined here only for the local potential and it
@@ -4747,7 +5338,6 @@ n(\vec{r})&=&\sum_n f_n\psi^*_n(\vec{r})\psi_n(\vec{r})
 +\mu_{xc}([\tilde{n}],\vec{r})
 \end{eqnarray*}
 \end{itemize}
-\end{enumerate}
 
 
 
@@ -4836,7 +5426,10 @@ both for the normalization and for the charge density.
 %======================================================================
 \subsubsection{Potential of the nucleus}
 %======================================================================
-The nucleus is considered as a homogeneously charged sphere. The
+The nucleus is considered as a homogeneously charged sphere as
+described in section~\ref{sec:finitesizenucleus}.
+
+The
 volume of the nucleus is proportional to the number of nucleons.  This
 allows to relate the radius directly to the mass of the nucleus.\cite{cooper53_pr92_801,hofstadter56_rmp28_214}
 \begin{eqnarray*}
@@ -5046,28 +5639,28 @@ rcsm       & $0.25 r_{cov}$& gaussian parameter for small compensation radii\\
 \multicolumn{3}{|c|}{parameters outside augment block}\\
 \hline
 npro       &     & number of partial waves for angular momentum 0,1,2,3\\
-lrhox      &     & max. angular momentum for augmentation density\\
+lrhox      &  4   & max. angular momentum for augmentation density\\
 RAD        &     & radius used for projected DoS\\
 \hline
 \multicolumn{3}{|c|}{pseudo potential}\\
 \hline
-pow\_pot   & & \\
+pow\_pot   & 3 & \\
 rc\_pot    & & \\
-tval0\_pot & & \\
-val0\_pot  & & \\
+tval0\_pot & F & \\
+val0\_pot  & - & \\
 \hline
 \multicolumn{3}{|c|}{pseudo core density}\\
 \hline
-pow\_core  & & \\
+pow\_core  & 2 & \\
 rc\_core   & & \\
-tval0\_core& & \\
-val0\_core & & \\
+tval0\_core& F & \\
+val0\_core & - & \\
 \hline
 \multicolumn{3}{|c|}{radial grid}\\
 \hline
 dmin       & $10^{-6}$~$a_B$& smallest spacing of shifted logarithmic grid\\
 dmax       & 0.1~$a_B$ & smallest spacing of shifted logarithmic grid\\
-rmax       & 20~$a_B$ & distance of outermost grid point \\
+rmax       & 9~$a_B$ & distance of outermost grid point \\
 \hline
 \multicolumn{3}{|c|}{radialredundant parameters}\\
 \hline
@@ -5075,6 +5668,40 @@ rbox   & & 1.2~$r_{cov}$\\
 lambda & & \\
 \hline
 \end{tabular}
+
+
+
+
+The cutoff radii in Ingolf's setups are
+\begin{center}
+\begin{tabular}{|l|c|c|c|}
+\hline
+Element  & rcl/rcov & rcpot/$a_0$ & NPRO\\
+\hline                            
+H        &  1.200  &   1.200  &  110\\
+LI       &  0.850  &   0.861  &  110\\
+BE       &  1.117  &   1.117  &  110\\
+B        &  0.750  &   0.774  &  111\\
+C        &  0.750  &   0.750  &  111\\
+N        &  0.750  &   0.750  &  111\\
+O        &  0.880  &   0.650  &  221\\
+F        &  0.750  &   0.750  &  111\\
+NA       &  0.701  &   0.766  &  220(zv=7)\\
+AL       &  0.900  &   0.919  &  221\\
+SI       &  0.905  &   0.900  &  221\\
+P        &  0.900  &   0.900  &  221\\
+S        &  0.900  &   0.900  &  111\\
+CL       &  0.778  &   0.802  &  221\\
+BR       &  0.900  &   0.750  &  111\\
+\hline
+\end{tabular}
+\end{center}
+for O, Ingolf set rbox/rcov=0.88. For F,P,Cl Ingolf set LRHOX=2 and
+for Br it was setb to 1.
+
+
+
+
 
 The cutoff radii obtained from Paier and the set of projector functions are
 \begin{center}
@@ -5101,7 +5728,7 @@ BR       &  0.802  &   1.500  &  221\\
 \end{center}
 For the Br, I had to set $v(r=0)=1~H$ to avoid ghost states.
 
-The common parameters are 
+The common parameters are \\
 \begin{tabular}{|l|l|}
 \hline
 dmin=1.e-6 dmax=0.1 rmax=9.&\\
@@ -5113,6 +5740,45 @@ lrhox=4       & except or H for which lrhox=2 \\
 RAD/rcov=1.19 & so that RAD>RBOX\\
 \hline
 \end{tabular}
+
+%====================================================================
+\subsection{New setups}
+%====================================================================
+\begin{itemize}
+\item reduced rcpot for hydrogen to 1.0~$r_{cov}$.
+\item reduced rcl for B-F to 0.85~$r_{cov}$.
+\end{itemize}
+
+The modified cutoff radii are
+\begin{center}
+\begin{tabular}{|l|c|c|c|}
+\hline
+Element  & rcl/rcov & rcpot/rcov & NPRO\\
+\hline                            
+H        &  1.200  &   1.000  &  110\\
+LI       &  0.850  &   0.861  &  110\\
+BE       &  1.117  &   1.117  &  110\\
+B        &  0.850  &   0.774  &  221\\
+C        &  0.850  &   0.750  &  221\\
+N        &  0.850  &   0.750  &  221\\
+O        &  0.850  &   0.650  &  221\\
+F        &  0.850  &   0.750  &  221\\
+NA       &  0.701  &   0.766  &  220(zv=7)\\
+AL       &  0.900  &   0.900  &  221\\
+SI       &  0.900  &   0.900  &  221\\
+P        &  0.900  &   0.900  &  221\\
+S        &  0.900  &   0.900  &  111\\
+CL       &  0.778  &   0.802  &  221\\
+BR       &  0.900  &   0.750  &  111\\
+\hline
+\end{tabular}
+\end{center}
+for O, Ingolf set rbox/rcov=0.88. For F,P,Cl Ingolf set LRHOX=2 and
+for Br it was setb to 1.
+
+
+
+
 
  
 The unit cell has been chosen as fcc unit cell with lattice constant
