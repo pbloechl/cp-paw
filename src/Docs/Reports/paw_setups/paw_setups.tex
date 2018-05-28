@@ -1876,7 +1876,9 @@ antiparallel to the orbit angular momentum.
 %====================================================================
 The wave function of an electron is a four-component spinor function
 consisting of a two-dimensional large and a two-dimensional small
-component. Each has again a spin-up and a spin-down component.
+component. Each has again a spin-up and a spin-down
+component.\footnote{Compare with Eq.~5.69-5.72 of R. Schade Diploma
+  theses. The definitions are identical.}
 \begin{eqnarray}
 \left(\begin{array}{c}\phi(\epsilon,\vec{r})\\\chi(\epsilon,\vec{r})
 \end{array}\right) =
@@ -6382,6 +6384,711 @@ S_{\alpha,\beta}\langle\tilde{p}_\beta|\phi_j^{(0)}\rangle
 +\Bigl(Q_{i,j}-\sum_k Q_{i,k}Q_{k,j}\Bigr)
 \epsilon_x
 \end{eqnarray}
+
+%
+%===================================================================
+\chapter{Spinor harmonics}
+%===================================================================
+In the following we will investigate the spin-orbit coupling term,
+which we express in a spherical harmonics representation
+$|\ell,m,\sigma\rangle$, where $s_z=\frac{\hbar}{2}\sigma$.  In the
+scalar relativistic approximation to the Dirac equation without
+magnetic fields, states with identical $\ell$ values but different $m$
+and $\sigma$ eigenvalues are degenerate. In the presence of a spin
+orbit coupling term, $(\ell,m,s_z)$ are no more quantum numbers.
+
+%===================================================================
+\section{Spinor harmonics with $(j,\ell,j_z)$}
+%===================================================================
+Instead we need a representation of eigenstates of $\vec{L}^2$ and
+$\vec{L}\vec{S}$.  Eigenstates of $\vec{L}^2$, $\vec{S}^2$ and
+$\vec{L}\vec{S}$ are also eigenstates of the total spin-and-orbital
+angular momentum
+$\vec{J}^2=(\vec{L}+\vec{S})^2=\vec{L}^2+\vec{S}^2+2\vec{L}\vec{S}$.
+
+We will determine the spinor harmonics as eigenstates of $\vec{J}^2$,
+$J_z$ and $\vec{L}^2$. We will see that spinor harmonics are
+superpositions of $|\ell,m,\uparrow\rangle$ and
+$|\ell,m+1,\downarrow\rangle$, which both have the same total angular
+momentum $J_z$ in z-direction.
+
+We will arrive a spinor harmonics defined as 
+\begin{eqnarray}
+|\Omega_{j,\ell,j_z}\rangle&=&
+|\ell,m,\uparrow\rangle c_1+|\ell,m+1,\uparrow\rangle c_2=
+\left(\begin{array}{c}|Y_{\ell,m}\rangle c_1\\|Y_{\ell,m+1}\rangle c_2
+\end{array}\right)
+\label{eq:ansatzspinorharmonics}
+\end{eqnarray}
+which shall have the property
+\begin{eqnarray*}
+\vec{L}^2|\Omega_{j,\ell,j_z}\rangle&=&|\Omega_{j,\ell,j_z}\rangle\hbar^2\ell(\ell+1)
+\\
+\vec{S}^2|\Omega_{j,\ell,j_z}\rangle&=&|\Omega_{j,\ell,j_z}\rangle\hbar^2\frac{3}{4}
+\\
+\left(\vec{L}+\vec{S}\right)^2|\Omega_{j,\ell,j_z}\rangle
+&=&|\Omega_{j,\ell,j_z}\rangle\hbar^2 j(j+1)
+\\
+\left(\vec{L}_z+\vec{S}_z\right)|\Omega_{j,\ell,j_z}\rangle
+&=&|\Omega_{j,\ell,j_z}\rangle\hbar j_z
+\end{eqnarray*}
+
+Let me first work out some identities for spin $\frac{1}{2}$ particles:
+\begin{eqnarray*}
+\Bigl(\vec{L}+\vec{S}\Bigr)^2
+&=&\vec{L}^2+\vec{S}^2+2\vec{L}\vec{S}
+\\
+&=&\vec{L}^2+\vec{S}^2+2L_xS_x+2L_yS_y+2L_zS_z
+\\
+&=&\vec{L}^2+\vec{S}^2+(L_x+iL_y)(S_x-iS_y)+(L_x-iL_y)(S_x+iS_y)+2L_zS_z
+\\
+&=&\vec{L}^2+\vec{S}^2+L_+S_-+L_-S_++2L_zS_z
+\\
+&=&\left(\begin{array}{cc}\hat{\vec{L}}^2+\hbar^2\frac{3}{4}+\hbar\hat{L}_z&\hbar L_-\\
+\hbar\hat{L}_+&\vec{L}^2+\hbar^2\frac{3}{4}-\hbar\hat{L}_z\end{array}\right)
+\\
+\Bigl(\hat{L}_z+\hat{S}_z\Bigr)&=&\left(\begin{array}{cc}
+\hat{L}_z+\frac{\hbar}{2} & 0\\0 & \hat{L}_z-\frac{\hbar}{2}\end{array}\right)
+\end{eqnarray*}
+
+Now we apply these operators into our Ansatz
+\eq{eq:ansatzspinorharmonics} for the spinor harmonics.  We use the
+definition of spherical harmonics as eigenstates of the angular
+momenta $L^2$ and $L_z$:
+\begin{eqnarray*}
+L_z|\ell,m,\sigma\rangle&=&|\ell,m,\sigma\rangle\hbar m
+\\
+L_+|\ell,m,\sigma\rangle&=&|\ell,m+1,\sigma\rangle\hbar\sqrt{\ell(\ell+1)-m(m+1)}
+\\
+&=&|\ell,m+1,\sigma\rangle\hbar\sqrt{(\ell-m)(\ell+m+1)}
+\\
+L_-|\ell,m,\sigma\rangle&=&|\ell,m-1\rangle\hbar\sqrt{\ell(\ell+1)-m(m-1)}
+\\
+&=&|\ell,m-1,\sigma\rangle\hbar\sqrt{(\ell+m)(\ell-m+1)}
+\end{eqnarray*}
+
+\begin{eqnarray*}
+\Bigl(\hat{L}_z+\hat{S}_z\Bigr)|\Omega_{j,\ell,j_z}\rangle
+&=&\left(\begin{array}{cc}
+\hat{L}_z+\frac{\hbar}{2} & 0\\0 & \hat{L}_z-\frac{\hbar}{2}\end{array}\right)
+\left(\begin{array}{c}|Y_{\ell,m}\rangle c_1\\|Y_{\ell,m+1}\rangle c_2\end{array}\right)
+\\
+&=&
+\left(\begin{array}{c}|Y_{\ell,m}\rangle\hbar(m+\frac{1}{2})) c_1\\|Y_{\ell,m+1}\rangle\hbar(m+\frac{1}{2}) c_2\end{array}\right)
+=|\Omega_{j,\ell,j_z}\rangle \hbar(m+\frac{1}{2})
+\end{eqnarray*}
+
+
+\begin{eqnarray*}
+\Bigl(\vec{L}+\vec{S}\Bigr)^2|\Omega_{j,\ell,j_z}\rangle
+&=&\left(\begin{array}{cc}\hat{\vec{L}}^2+\hbar^2\frac{3}{4}+\hbar\hat{L}_z&\hbar L_-\\
+\hbar\hat{L}_+&\vec{L}^2+\hbar^2\frac{3}{4}-\hbar\hat{L}_z\end{array}\right)
+\left(\begin{array}{c}|Y_{\ell,m}\rangle c_1\\|Y_{\ell,m+1}\rangle c_2\end{array}\right)
+\\
+&=&\left(\begin{array}{c}|Y_{\ell,m}\rangle
+\hbar^2(\ell(\ell+1)+\frac{3}{4}+m)c_1
++|Y_{\ell,m}\rangle\hbar^2\sqrt{(\ell+m+1)(\ell-m)}c_2
+\\
+|Y_{\ell,m+1}\rangle\hbar^2\sqrt{(\ell-m)(\ell+m+1)}
++|Y_{\ell,m+1}\rangle\hbar^2(\ell(\ell+1)+\frac{3}{4}-m-1) c_2
+\end{array}\right)
+\end{eqnarray*}
+If the spinor harmonics are eigenstates of
+$\left(\vec{L}+\vec{S}\right)^2$, the coefficients fulfill the
+eigensystem
+\begin{eqnarray*}
+\hbar^2\Bigl[\ell(\ell+1)+\frac{3}{4}+m\Bigr]c_1
++\hbar^2\sqrt{(\ell+m+1)(\ell-m)}c_2&=&\hbar^2 j(j+1) c_1
+\\
+\hbar^2\sqrt{(\ell-m)(\ell+m+1)}
++\hbar^2\Bigl(\ell(\ell+1)+\frac{3}{4}-m-1\Bigr) c_2&=&\hbar^2 j(j+1)c_2
+\end{eqnarray*}
+Hence
+\begin{eqnarray*}
+\left(\begin{array}{cc}m &\sqrt{(\ell+m+1)(\ell-m)}\\
+\sqrt{(\ell+m+1)(\ell-m)} & -m-1\end{array}\right)
+\left(\begin{array}{c}c_1\\c_2\end{array}\right)
+&=&\left(\begin{array}{c}c_1\\c_2\end{array}\right)
+\underbrace{\Bigl[j(j+1)-\ell(\ell+1)-\frac{3}{4}\Bigr] }_{\epsilon}
+\end{eqnarray*}
+
+We find the eigenvalue of the prototype
+\begin{eqnarray*}
+\left(\begin{array}{cc}m-\epsilon &\Delta\\
+\Delta & -m-1-\epsilon\end{array}\right)
+\left(\begin{array}{c}c_1\\c_2\end{array}\right)
+=0\qquad
+\Rightarrow\qquad (\epsilon+\frac{1}{2})^2=\frac{1}{4}+m(m+1)+\Delta^2
+\end{eqnarray*}
+which leads to
+\begin{eqnarray*}
+\underbrace{\Bigl[j(j+1)-\ell(\ell+1)-\frac{1}{4}\Bigr]^2}_{(\epsilon+\frac{1}{2})^2}
+&=&\frac{1}{4}+m(m+1)+(\ell+m+1)(\ell-m)
+=\frac{1}{4}+\ell(\ell+1)=(\ell+\frac{1}{2})^2
+\\
+j(j+1)&=&(\ell+\frac{1}{2})^2\pm(\ell+\frac{1}{2})
+\\
+j&=&\pm\ell\pm\frac{1}{2}
+\end{eqnarray*}
+Thus we obtain four solutions for $j$. The negative solutions however lead to identical states as the positive solutions, that it is sufficient to use 
+\begin{eqnarray*}
+j=\ell\pm\frac{1}{2}
+\end{eqnarray*}
+
+Now we determine the spinor harmonics
+\begin{eqnarray*}
+c_1&=&-\sqrt{(\ell+m+1)(\ell-m)}C
+\\
+c_2&=&\left(m-j(j+1)+\ell(\ell+1)+\frac{3}{4}\right)C
+\stackrel{j=\ell\pm\frac{1}{2}}{=}
+\left(m-(\ell\pm\frac{1}{2})(\ell\pm\frac{1}{2}+1)+\ell(\ell+1)+\frac{3}{4}\right)C
+\\
+&=&\left\lbrace\begin{array}{cc}
+-(\ell-m)C\qquad&\text{for}\qquad j=\ell+\frac{1}{2}\\
+(\ell+m+1)C\qquad&\text{for}\qquad j=\ell-\frac{1}{2}
+\end{array}\right.
+\end{eqnarray*}
+
+Thus we obtain the spinor harmonics
+\begin{myshadowminipage}{Spinor harmonics}
+The spinor harmonics $|\Omega_{j,\ell,j_z}\rangle$ are defined as
+\begin{eqnarray}
+\Omega_{j=\ell+\frac{1}{2},\ell,m+\frac{1}{2}}=\left(
+\begin{array}{c}
+|Y_{\ell,m}\rangle\sqrt{\frac{\ell+m+1}{2\ell+1}}\\
+|Y_{\ell,m+1}\rangle\sqrt{\frac{\ell-m}{2\ell+1}}\end{array}\right)
+\qquad
+\Omega_{j=\ell-\frac{1}{2},\ell,m+\frac{1}{2}}=\left(
+\begin{array}{c}
+-|Y_{\ell,m}\rangle\sqrt{\frac{\ell-m}{2\ell+1}}\\
+|Y_{\ell,m+1}\rangle\sqrt{\frac{\ell+m+1}{2\ell+1}}\end{array}\right)
+\label{eq:defspinorharmonics1}
+\end{eqnarray}
+
+For each $\ell$ the total angular momentum quantum number may have the
+values $j=\ell\pm\frac{1}{2}$. The positive sign corresponds to
+parallel angular momentum and spin and the negative corresponds to
+antiparallel angular momentum and spin
+
+\begin{eqnarray*}
+j&=&\frac{1}{2},\frac{3}{2},\ldots
+\\
+\ell&=&\left\lbrace\begin{array}{cc}
+j-\frac{1}{2}&\qquad\text{for parallel $\vec{L}$ und $\vec{S}$}\\
+j+\frac{1}{2}&\qquad\text{for antiparallel $\vec{L}$ und $\vec{S}$}\\
+\end{array}\right.
+\\
+j_z&=&-j,-j+1,\ldots,j
+\end{eqnarray*}
+
+The spinor harmonics obey the eigenvalue equations
+\begin{eqnarray*}
+\left(\hat{\vec{L}}+\hat{\vec{S}}\right)^2|\Omega_{j,\ell,j_z}\rangle
+&=&|\Omega_{j,\ell,j_z}\rangle\quad\hbar^2j(j+1)
+\\
+\hat{\vec{L}}^2|\Omega_{j,\ell,j_z}\rangle
+&=&|\Omega_{j,\ell,j_z}\rangle\quad\hbar^2\ell(\ell+1)
+\\
+\hat{\vec{S}}^2|\Omega_{j,\ell,j_z}\rangle
+&=&|\Omega_{j,\ell,j_z}\rangle\quad\hbar^2\frac{3}{4}
+\\
+\hat{\vec{L}}\hat{\vec{S}}|\Omega_{j,\ell,j_z}\rangle
+&=&|\Omega_{j,\ell,j_z}\rangle\quad
+\hbar^2\frac{1}{2}\left[j(j+1)-\ell(\ell+1)-\frac{3}{4}\right]
+\\
+\left(\hat{L}_z+\hat{S}_z\right)|\Omega_{j,\ell,j_z}\rangle
+&=&|\Omega_{j,\ell,j_z}\rangle\quad\hbar(m+\frac{1}{2})
+\end{eqnarray*}
+
+According to Landau Lifshitz IVa \textit{Relativistic quantum
+  mechanics} (Eq.24.8) in seection 24: spherical waves, there is in
+addition the relation. Our equation given below differs from the one
+of Landau Lifshitz due to different phase-conventions of the spherical
+harmonics.
+\begin{eqnarray*}
+\frac{\vec{r}\vec{\sigma}}{|\vec{r}|}\Omega_{j,\ell,j_z}&=&-\Omega_{j,2j-\ell,j_z}
+\end{eqnarray*}
+
+Note that these equations cannot be generalized to real spherical harmonics.
+\end{myshadowminipage}
+
+
+
+%===================================================================
+\section{Spinor harmonics with quantum numbers $(\kappa,j_z)$}
+%===================================================================
+The first two quantum numbers of the spinor harmonics
+$\Omega_{j,\ell,m}$ fall into two classes, namely those with parallel
+spin and orbital momentum $\vec{L}\vec{S}\ge0$ and those with
+antiparallel spin and orbital angular momentum,
+i.e. $\vec{L}\vec{S}\ge0$. For each of the two subsets, total and
+orbital angular momentum are directly related.  Therefore one chooses
+to combine $j$ and the sign of $\vec{L}\vec{S}$ into a new quantum
+number $\kappa$
+\begin{eqnarray}
+\kappa\defas
+\begin{cases}
+-\ell-1 &\text{for $\vec{L}\vec{S}\ge0$}\\
+\ell &\text{for $\vec{L}\vec{S}<0$}\\
+\end{cases}
+\end{eqnarray}
+so that
+\begin{eqnarray}
+|\chi_{\kappa=-\ell-1,j_z=m+\frac{1}{2}}\rangle
+&\defas&|\Omega_{\ell+\frac{1}{2},\ell,m+\frac{1}{2}}\rangle
+\nonumber\\
+|\chi_{\kappa=\ell,j_z=m+\frac{1}{2}}\rangle
+&\defas&|\Omega_{\ell-\frac{1}{2},\ell,m+\frac{1}{2}}\rangle
+\end{eqnarray}
+
+
+\begin{myshadowminipage}{Spinor harmonics II}
+The spinor harmonics $|\chi_{\kappa,j_z}\rangle$ are defined as
+\begin{eqnarray}
+|\chi_{\kappa,j_z}\rangle
+\stackrel{\kappa<0}{=}\left(
+\begin{array}{c}
+|Y_{-\kappa-1,j_z-\frac{1}{2}}\rangle
+\sqrt{\frac{-\kappa+j_z-\frac{1}{2}}{-2\kappa-1}}\\
+|Y_{-\kappa-1,j_z+\frac{1}{2}}\rangle
+\sqrt{\frac{-\kappa-j_z-\frac{1}{2}}{-2\kappa-1}}\end{array}\right)
+\qquad
+|\chi_{\kappa,j_z}\rangle
+\stackrel{\kappa>0}{=}\left(
+\begin{array}{c}
+-|Y_{\kappa,j_z-\frac{1}{2}}\rangle
+\sqrt{\frac{\kappa-j_z+\frac{1}{2}}{2\kappa+1}}\\
+|Y_{\kappa,j_z+\frac{1}{2}}\rangle
+\sqrt{\frac{\kappa+j_z+\frac{1}{2}}{2\kappa+1}}\end{array}\right)
+\label{eq:spinorharmonicskappa_a}
+\\
+\underbrace{\chi_{-\ell-1,m+\frac{1}{2}}}_{\Omega_{\ell+\frac{1}{2},\ell,m+\frac{1}{2}}}
+=\left(
+\begin{array}{c}
+|Y_{\ell,m}\rangle\sqrt{\frac{\ell+m+1}{2\ell+1}}\\
+|Y_{\ell,m+1}\rangle\sqrt{\frac{\ell-m}{2\ell+1}}\end{array}\right)
+\qquad
+\underbrace{\chi_{\ell,m+\frac{1}{2}}}_{\Omega_{\ell-\frac{1}{2},\ell,m+\frac{1}{2}}}
+=\left(
+\begin{array}{c}
+-|Y_{\ell,m}\rangle\sqrt{\frac{\ell-m}{2\ell+1}}\\
+|Y_{\ell,m+1}\rangle\sqrt{\frac{\ell+m+1}{2\ell+1}}\end{array}\right)
+\label{eq:spinorharmonicskappa}
+\end{eqnarray}
+$\kappa$ can have any integer value \textbf{except zero}!  A negative
+value of $\kappa$ implies parallel spin and orbital angular momentum
+and a positive value of $\kappa$ implies an antiparallel
+allignment. The s-states have $\kappa=-1$.
+
+\begin{eqnarray}
+\kappa&=&\ldots,-2,-1,1,2,\ldots
+\\
+j_z&=&-|\kappa|+\frac{1}{2},-|\kappa|+\frac{3}{2},\ldots,|\kappa|-\frac{1}{2}
+\\
+j&=&|\kappa|-\frac{1}{2}
+\\
+\ell&=&|\kappa+\frac{1}{2}|-\frac{1}{2}
+\label{eq:lofkappa}
+\\
+m&=&j_z-\frac{1}{2}=-|\kappa|,-|\kappa|+1,\ldots,|\kappa|-1
+\end{eqnarray}
+
+
+The spinor harmonics obey the eigenvalue equations
+\begin{eqnarray}
+\left(\hat{\vec{L}}+\hat{\vec{S}}\right)^2|\chi_{\kappa,j_z}\rangle
+&=&|\chi_{\kappa,j_z}\rangle\quad\hbar^2(\kappa^2-\frac{1}{2})
+\label{eq:spinorkappaeigenvalueeq1}
+\\
+\hat{\vec{L}}^2|\chi_{\kappa,j_z}\rangle
+&=&|\chi_{\kappa,j_z}\rangle\quad\hbar^2 \kappa(\kappa+1)
+\label{eq:spinorkappaeigenvalueeq2}
+\\
+\hat{\vec{S}}^2|\chi_{\kappa,j_z}\rangle
+&=&|\chi_{\kappa,j_z}\rangle\quad\hbar^2\frac{3}{4}
+\label{eq:spinorkappaeigenvalueeq3}
+\\
+\hat{\vec{L}}\hat{\vec{S}}|\chi_{\kappa,j_z}\rangle
+&=&|\chi_{\kappa,j_z}\rangle\quad\left(-\hbar^2\frac{\kappa+1}{2}\right)
+\label{eq:spinorkappaeigenvalueeq4}
+\\
+\left(\hat{L}_z+\hat{S}_z\right)|\chi_{\kappa,j_z}\rangle
+&=&|\chi_{\kappa,j_z}\rangle\quad\hbar j_z
+\label{eq:spinorkappaeigenvalueeq5}
+\end{eqnarray}
+
+
+In addition the relation
+\begin{eqnarray}
+\frac{\vec{r}\vec{\sigma}}{|\vec{r}|}\chi_{\kappa,j_z}=-\chi_{-\kappa,,j_z}
+\label{eq:spinorharmonicskapparsigma}
+\end{eqnarray}
+which is derived in Section~\ref{sec:smallcomponentidenity}.
+
+Below we also introduce \eq{eq:spwithkappa}
+\begin{eqnarray}
+\vec{S}\vec{p}\; R_{\kappa,j_z}(|\vec{r}|)\chi_{\kappa,j_z}(\vec{r},\sigma)
+&\eqrel{eq:spwithkappa}{=}&
+\frac{i\hbar^2}{2}
+\left[\partial_r+\frac{\kappa+1}{|\vec{r}|}\right]
+R_{\kappa,j_z}(|\vec{r}|)\chi_{-\kappa,j_z}
+\end{eqnarray}
+
+\end{myshadowminipage}
+
+%===============================================================================
+\section{Identity}
+\label{sec:smallcomponentidenity}
+%===============================================================================
+Let us now proove identity \eq{eq:spinorharmonicskapparsigma}, which reads
+\begin{eqnarray*}
+\frac{\vec{r}\vec{\sigma}}{|\vec{r}|}\chi_{\kappa,j_z}=-\chi_{-\kappa,,j_z}
+\end{eqnarray*}
+
+The relation depends on the conventions for the spherical harmonics.
+\eq{eq:spinorharmonicskapparsigma} is consistent with the conventions
+in the CP-PAW code using real harmonics. An analogous equation
+\begin{eqnarray}
+\frac{\vec{r}\vec{\sigma}}{|\vec{r}|}\chi_{\kappa,j_z}
+&=&-i^{2(j-\ell)}\chi_{-\kappa,j_z}
+\end{eqnarray}
+has been derived in Landau Lifshitz IV (Eq.24.2). 
+
+
+Proof is not ready!!!! Sketch from
+\url{http://cronenberg.cc/gunther/Skripten/QED/qed.pdf}
+
+\begin{itemize}
+\item $[\frac{\vec{r}\vec{\sigma}}{|\vec{r}|},\vec{L}+\vec{S}]_-=0$,
+  from which follows that $j,j_z$ are unchanged under the operator$
+  \frac{1}{|\vec{r}|}\vec{r}\vec{\sigma}$. With this and the eigenvalue
+  equations \eq{eq:spinorkappaeigenvalueeq1} and
+  \eq{eq:spinorkappaeigenvalueeq5}, it follows that
+\begin{eqnarray}
+\frac{\vec{r}\vec{\sigma}}{|\vec{r}|}|\chi_{\kappa,j_z}\rangle=
+  |\chi_{\kappa,j_z}\rangle b+|\chi_{-\kappa,j_z}\rangle a
+\label{eq:smallcompidentityexp1}
+\end{eqnarray}
+
+Proof:
+\begin{eqnarray*}
+[\vec{r}\vec{\sigma},\vec{L}]_-
+&=&\sum_{k,l}\epsilon_{i,k,l}\sum_j [x_j\sigma_j,x_kp_l]_-
+%
+=\sum_{j,k,l}\epsilon_{i,k,l}\biggl(x_j\sigma_jx_kp_l-x_kp_lx_j\sigma_j\biggr)
+\\
+&=&\sum_{j,k,l}\epsilon_{i,k,l}\sigma_j\biggl(x_jx_kp_l
+-x_k\frac{\hbar}{i}\delta_{l,j}-x_kx_jp_l\biggr)
+%\\
+=-\frac{\hbar}{i}\sum_{k,l}\epsilon_{i,k,l}x_k\sigma_l
+\\
+&=&i\hbar\vec{r}\times\vec{\sigma}
+\\
+.[\vec{r}\vec{\sigma},\vec{S}]_-
+&=&\frac{\hbar}{2}\sum_{j} [x_j\sigma_j,\sigma_i]_-
+%
+=\frac{\hbar}{2}\sum_{j} x_j[\sigma_j,\sigma_i]_-
+\\
+&=&\frac{\hbar}{2}\sum_{j} x_j2i\epsilon_{j,i,k}\sigma_k
+%
+=-i\hbar\sum_{j} \epsilon_{i,j,k}x_j\sigma_k
+\\
+&=&-i\hbar\vec{r}\times\vec{\sigma}
+\end{eqnarray*}
+The two contributions cancel each other, which prooves the result.
+\item
+  $[\frac{\vec{r}\vec{\sigma}}{|\vec{r}|},\vec{\sigma}\vec{L}+\hbar]_+=0$,
+  from which follows that $\kappa$ changes sign. Thus $b=0$.
+
+  Proof: We multiply the equation with $|\vec{r}|$, which cancels the
+  inverse radius, because $|\vec{r}|$ commutates with $\vec{L}$ and
+  $\vec{\sigma}$.
+\begin{eqnarray*}
+\left[(\vec{r}\vec{\sigma}),(\vec{\sigma}\vec{L})+\hbar\right]_+
+&=&\sum_{i,j}\biggl(x_i\sigma_i\sigma_jL_j+\sigma_jL_jx_i\sigma_i\biggr)
++2\hbar\vec{r}\vec{\sigma}
+\\
+&=&\sum_{i,j}\biggl(\sigma_i\sigma_jx_i\sum_{k,l}\epsilon_{j,k,l}x_kp_l
++\sigma_j\sigma_i\sum_{k,l}\epsilon_{j,k,l}x_kp_lx_i\biggr)
++2\hbar\vec{r}\vec{\sigma}
+\\
+&=&\sum_{i,j,k,l}\epsilon_{j,k,l}
+\biggl(\sigma_i\sigma_jx_i\sum_{k,l}x_kp_l
++\sigma_j\sigma_i x_kp_lx_i\biggr)
++2\hbar\vec{r}\vec{\sigma}
+\\
+&=&\sum_{i,j,k,l}\epsilon_{j,k,l}
+\biggl(\sigma_i\sigma_jx_ix_kp_l
++\sigma_j\sigma_i x_k\frac{\hbar}{i}\delta_{i,l}
++\sigma_j\sigma_i x_kx_ip_l
+\biggr)
++2\hbar\vec{r}\vec{\sigma}
+\\
+&=&\sum_{i,j,k,l}\epsilon_{j,k,l}
+\biggl(\underbrace{\left[\sigma_i,\sigma_j\right]_+}_{2\delta_{i,j}}x_ix_kp_l
+\biggr)
++\frac{\hbar}{i}\sum_{i,j,k}\epsilon_{j,k,i}\sigma_j \sigma_i x_k
++2\hbar\vec{r}\vec{\sigma}
+\\
+&=&2\sum_l\underbrace{\biggl(\sum_{j,k}\epsilon_{j,k,l}x_jx_k\biggr)}_{=0}p_l
++\frac{\hbar}{i}\sum_k x_k
+\underbrace{\sum_{i,j}\epsilon_{k,i,j}\sigma_j \sigma_i}_{-2i\sigma_k}
++2\hbar\vec{r}\vec{\sigma}=0
+\end{eqnarray*}
+
+The eigenvalue equation \eq{eq:spinorkappaeigenvalueeq4} says
+\begin{eqnarray*}
+\hat{\vec{L}}\hat{\vec{S}}|\chi_{\kappa,j_z}\rangle
+&=&|\chi_{\kappa,j_z}\rangle\quad\left(-\hbar^2\frac{\kappa+1}{2}\right)
+\\
+\Rightarrow\qquad
+\biggl(\hat{\vec{L}}\hat{\vec{S}}+\frac{\hbar^2}{2}\biggr)
+|\chi_{\kappa,j_z}\rangle
+&=&|\chi_{\kappa,j_z}\rangle\quad\left(-\frac{\hbar^2}{2}\right)\kappa
+\\
+\Rightarrow\qquad
+\biggl(\hat{\vec{L}}\hat{\vec{\sigma}}+\hbar\biggr)
+|\chi_{\kappa,j_z}\rangle
+&=&|\chi_{\kappa,j_z}\rangle\quad\left(-\hbar\kappa\right)
+\end{eqnarray*}
+
+Now we use the anticommutator relation just derived for a spinor
+harmonics state
+\begin{eqnarray*}
+\frac{1}{|\vec{r}|}\vec{\sigma}\vec{r}\biggl(\vec{L}\vec{\sigma}+\hbar\biggr)
+|\chi_{\kappa,j_z}\rangle
++\biggl(\vec{L}\vec{\sigma}+\hbar\biggr)\frac{1}{|\vec{r}|}\vec{\sigma}\vec{r}
+|\chi_{\kappa,j_z}\rangle
+=0
+\\
+\frac{1}{|\vec{r}|}\vec{\sigma}\vec{r}
+|\chi_{\kappa,j_z}\rangle\left(-\hbar\kappa\right)
++\biggl(\vec{L}\vec{\sigma}+\hbar\biggr)\frac{1}{|\vec{r}|}\vec{\sigma}\vec{r}
+|\chi_{\kappa,j_z}\rangle
+=0
+\\
+\biggl(\vec{L}\vec{\sigma}+\hbar\biggr)\frac{1}{|\vec{r}|}\vec{\sigma}\vec{r}
+|\chi_{\kappa,j_z}\rangle
+=\frac{1}{|\vec{r}|}\vec{\sigma}\vec{r}
+|\chi_{\kappa,j_z}\rangle\left(+\hbar\kappa\right)
+\end{eqnarray*}
+Together with \eq{eq:smallcompidentityexp1} this prooves that
+$\frac{1}{|\vec{r}|}\vec{\sigma}\vec{r}
+|\chi_{\kappa,j_z}\rangle=|\chi_{-\kappa,j_z}\rangle a$, that is it is
+an eigenstate for a reversed value of $\kappa$.
+
+\item $(\vec{r}\vec{\sigma})^2=\vec{r}^2\mat{1}$. Thus $a^2=1$
+in \eq{eq:smallcompidentityexp1}. 
+
+\begin{eqnarray*}
+\vec{r}\vec{\sigma}&=&
+\left(\begin{array}{cc}z&x-iy\\x+iy&-z\end{array}\right)
+\\
+(\vec{r}\vec{\sigma})^2&=&
+\left(\begin{array}{cc}z&x-iy\\x+iy&-z\end{array}\right)
+\left(\begin{array}{cc}z&x-iy\\x+iy&-z\end{array}\right)
+=
+\left(\begin{array}{cc}\vec{r}^2&0\\0&\vec{r}^2\end{array}\right)
+=\vec{r}^2\mat{1}
+\end{eqnarray*}
+
+\begin{myshadowminipage}{Prooven sofar}
+So far we have shown that
+\begin{eqnarray*}
+\frac{1}{|\vec{r}|}\vec{\sigma}\vec{r}
+|\chi_{\kappa,j_z}\rangle=|\chi_{-\kappa,j_z}\rangle \e{i\phi_{\kappa,j_z}}
+\end{eqnarray*}
+with a real phase $\phi_{\kappa,j_z}$. The phase depends on the
+definition of the spinor harmonics.
+
+Robert Schade checked that in the convention of the CP-PAW code
+the phase has the value $\phi_{\kappa,j_z}=\pi$.
+\end{myshadowminipage}
+
+
+\item we extract the value of $a$, which may be a function of $\kappa$
+  and $j_z$ by comparison for a specific position $\vec{r}=\vec{e}_z$,
+  for which the equations can easily be evaluated. $\vec{e}_z$ is the
+  unit vector in $z$-direction. We use here the identity from $\Phi$SX:  Quantum Mechanics.
+\begin{eqnarray*}
+Y_{\ell,m}(\theta,\phi)&=&\sqrt{\frac{2\ell+1}{4\pi}\frac{(\ell-m)!}{(\ell+m)!}}
+P^{m}_\ell(\cos(\theta))\e{im\phi}
+\\
+Y_{\ell,m=0}(\theta,\phi)&=&
+\sqrt{\frac{2\ell+1}{4\pi}}P^{0}_\ell(\cos(\theta))
+=\sqrt{\frac{2\ell+1}{4\pi}}P_\ell(\cos(\theta))
+=\sqrt{\frac{2\ell+1}{4\pi}}
+\underbrace{\frac{1}{2^\ell\ell!}
+\left.\partial_u^\ell\right|_{u=\cos(\theta)}(u^2-1)^\ell}_{=1\text{for $\theta=0$}}
+\end{eqnarray*}
+
+
+\begin{eqnarray*}
+\Bigl\langle\vec{e},\uparrow\Bigr|
+\frac{\vec{r}\vec{\sigma}}{|\vec{r}|}
+\Bigr|\chi_{\kappa,j_z}\Bigr\rangle
+&=&
+\left(\begin{array}{c}\Bigl\langle\vec{e}\Bigr|
+\\0\end{array}\right)
+\left(\begin{array}{cc}e_z&e_x-ie_y\\e_x+ie_y&-e_z\end{array}\right)
+\left(\begin{array}{c}
+\langle\uparrow\Bigl|\chi_{\kappa,j_z}\Bigr\rangle\\
+\langle\downarrow\Bigl|\chi_{\kappa,j_z}\Bigr\rangle\end{array}\right)
+\\
+&=&
+e_z\Bigl\langle\vec{e},\uparrow\Bigr|
+\Bigl.\chi_{\kappa,j_z}\Bigr\rangle
++(e_x-ie_y)
+\Bigl\langle\vec{e},\downarrow\Bigr|
+\Bigl.\chi_{\kappa,j_z}\Bigr\rangle
+\\
+&\eqrel{eq:spinorharmonicskappa}{=}&
+\begin{cases}
+e_z\langle\vec{e}|Y_{-\kappa-1,j_z-\frac{1}{2}}\rangle
+\sqrt{\frac{-\kappa+j_z-\frac{1}{2}}{-2\kappa-1}}
++(e_x-ie_y)
+\langle\vec{e}|Y_{-\kappa-1,j_z+\frac{1}{2}}\rangle
+\sqrt{\frac{-\kappa-j_z-\frac{1}{2}}{-2\kappa-1}}
+&\qquad\text{for $\kappa<0$}\\
+-e_z\langle\vec{e}|Y_{\kappa,j_z-\frac{1}{2}}\rangle
+\sqrt{\frac{\kappa-j_z+\frac{1}{2}}{2\kappa+1}}
++(e_x-ie_y)\langle\vec{e}|Y_{\kappa,j_z+\frac{1}{2}}\rangle
+\sqrt{\frac{\kappa+j_z+\frac{1}{2}}{2\kappa+1}}
+&\qquad\text{for $\kappa>0$}\\
+\end{cases}
+\\
+&=&
+\begin{cases}
+e_z\langle\vec{e}|Y_{-\kappa-1,j_z-\frac{1}{2}}\rangle
+\sqrt{\frac{(-\kappa-1)+(j_z-\frac{1}{2})+1}{2(-\kappa-1)+1}}
++(e_x-ie_y)
+\langle\vec{e}|Y_{-\kappa-1,j_z+\frac{1}{2}}\rangle
+\sqrt{\frac{(-\kappa-1)-(j_z-\frac{1}{2})}{2(-\kappa-1)+1}}
+&\qquad\text{for $\kappa<0$}\\
+-e_z\langle\vec{e}|Y_{\kappa,j_z-\frac{1}{2}}\rangle
+\sqrt{\frac{\kappa-j_z+\frac{1}{2}}{2\kappa+1}}
++(e_x-ie_y)\langle\vec{e}|Y_{\kappa,j_z+\frac{1}{2}}\rangle
+\sqrt{\frac{\kappa+j_z+\frac{1}{2}}{2\kappa+1}}
+&\qquad\text{for $\kappa>0$}\\
+\end{cases}
+\\
+\Bigl\langle\vec{e},\uparrow\Bigr|
+\Bigr.\chi_{-\kappa,j_z}\Bigr\rangle
+&=&
+\begin{cases}
+-\langle\vec{e}|Y_{-\kappa,j_z-\frac{1}{2}}\rangle
+\sqrt{\frac{-\kappa-(j_z-\frac{1}{2})}{-2\kappa+1}}
+&\qquad\text{for $\kappa<0$}\\
+\langle\vec{e}|Y_{\kappa-1,j_z-\frac{1}{2}}\rangle
+\sqrt{\frac{\kappa+(j_z-\frac{1}{2})}{2\kappa-1}}
+&\qquad\text{for $\kappa>0$}\\
+\end{cases}
+\end{eqnarray*}
+Now we use that for $\kappa<0$
+
+\textbf{Not finished}
+\end{itemize}
+
+
+
+
+\newpage
+%===============================================================================
+\section{Scalar product of spin and translational momentum}
+%===============================================================================
+In the Dirac equation given by
+\eq{eq:sphericaldiracwithhomogeneousmagenticalfield} and
+\eq{eq:sphericaldiracsmallcompoonentwithhomogeneousmagenticalfield},
+the equation of the small component in the absence of magnetic fields
+is determined by the term $\vec{S}\vec{p}$ applied to the large
+component. This term,
+\begin{eqnarray*}
+\vec{S}\vec{p}\;R(|\vec{r}|)\chi_{\kappa,j_z}(\vec{r},\sigma)
+\end{eqnarray*}
+will be investigated now. $\chi_{\kappa,j_z}(\vec{r},\sigma)$ is
+a spinor harmonics defined in \eq{eq:spinorharmonicskappa}.
+
+Before we start let us evaluate the following relation
+\begin{eqnarray}
+\vec{\sigma}\vec{r}&=&
+\left(\begin{array}{cc} z&x-iy\\x+iy&-z\end{array}\right)
+\nonumber\\
+\qquad\Rightarrow
+(\vec{\sigma}\vec{r})^{-1}&=&\frac{1}{-z^2-x^2-y^2}\left(\begin{array}{cc} -z&-x+iy\\-x-iy&z\end{array}\right)
+=\frac{1}{r^2}\vec{\sigma}\vec{r}
+\label{eq:sphelper1}
+\end{eqnarray}
+
+Now we use our magic equation
+$(\vec{\sigma}\vec{a})(\vec{\sigma}\vec{b})=\vec{a}\vec{b}+i\vec{\sigma}(\vec{a}\times\vec{b})$
+and evaluate
+\begin{eqnarray}
+(\vec{r}\vec{\sigma})(\vec{\sigma}\vec{p})&=&\vec{r}\vec{p}+i\vec{\sigma}\vec{L}
+\label{eq:sphelper2}
+\end{eqnarray}
+We obtain
+\begin{eqnarray*}
+(\vec{\sigma}\vec{p})
+&\eqrel{eq:sphelper2}{=}&
+(\vec{r}\vec{\sigma})^{-1}\left[\vec{r}\vec{p}+i\vec{\sigma}\vec{L}\right]
+%
+\eqrel{eq:sphelper1}{=}
+\frac{1}{\vec{r}^2}(\vec{r}\vec{\sigma})
+\left[\vec{r}\vec{p}+i\vec{\sigma}\vec{L}\right]
+%
+=\frac{1}{\vec{r}^2}(\vec{r}\vec{\sigma})
+\left[-i\hbar\vec{r}\;\vec{\nabla}+i\frac{2}{\hbar}\vec{S}\vec{L}\right]
+\\
+&=&
+-i\hbar\frac{1}{|\vec{r}|}(\vec{r}\vec{\sigma})
+\left[\underbrace{\frac{\vec{r}}{|\vec{r}|}\vec{\nabla}}_{\partial_r}
+-\frac{1}{\hbar^2}\frac{2\vec{S}\vec{L}}{|\vec{r}|}\right]
+\\
+\stackrel{\times\frac{\hbar}{2}}{\Rightarrow}\qquad
+(\vec{S}\vec{p})
+&=&
+\frac{-i\hbar^2}{2}
+\frac{\vec{r}\vec{\sigma}}{|\vec{r}|} 
+\left[\partial_r-\frac{1}{\hbar^2}\frac{2\vec{S}\vec{L}}{|\vec{r}|}\right]
+\end{eqnarray*}
+The advantage of this expression is that the angular momentum does not
+act on the radial part and that the spinor-angular part is an
+eigenstate of $\vec{S}\vec{L}$. On the other hand, $\vec{r}\vec{p}$
+only acts on the radial part, but neither on the angular nor the
+spinor part.
+
+Now, let us apply this expression onto the radial function times spinor
+harmonics
+\begin{eqnarray}
+\vec{S}\vec{p}\; R_{\kappa,j_z}(|\vec{r}|)\chi_{\kappa,j_z}(\vec{r},\sigma)
+&=&
+\frac{-i\hbar^2}{2}
+\frac{\vec{r}\vec{\sigma}}{|\vec{r}|} 
+\left[\partial_r-\frac{1}{\hbar^2}\frac{2\vec{S}\vec{L}}{|\vec{r}|}\right]
+R_{\kappa,j_z}(|\vec{r}|)\chi_{\kappa,j_z}(\vec{r},\sigma)
+\nonumber\\
+&\eqrel{eq:spinorkappaeigenvalueeq4}{=}&
+\frac{-i\hbar^2}{2}
+\frac{\vec{r}\vec{\sigma}}{|\vec{r}|} \chi_{\kappa,j_z}(\vec{r},\sigma)
+\left[\partial_r+\frac{\kappa+1}{|\vec{r}|}\right]
+R_{\kappa,j_z}(|\vec{r}|)
+\nonumber\\
+&\eqrel{eq:spinorharmonicskapparsigma}{=}&
+\frac{-i\hbar^2}{2}
+\left(- \chi_{-\kappa,j_z}\right)
+\left[\partial_r+\frac{\kappa+1}{|\vec{r}|}\right]
+R_{\kappa,j_z}(|\vec{r}|)
+\nonumber\\
+&=&
+\frac{i\hbar^2}{2}
+\left[\partial_r+\frac{\kappa+1}{|\vec{r}|}\right]
+R_{\kappa,j_z}(|\vec{r}|)\chi_{-\kappa,j_z}
+\label{eq:spwithkappa}
+\end{eqnarray}
+
+See Eq. B35-B36 of Robert Schade's theses and his citation
+[W.R. Johnson. Atomic structure theory: lectures on atomic
+physics. Springer, 2007.]
 
 %====================================================================
 \chapter{Core valence exchange matrix elements}
