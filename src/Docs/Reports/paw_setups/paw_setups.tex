@@ -3218,7 +3218,7 @@ thus increases the convergence error by 50~\%.
 \subsection{Hydrogen}
 %=====================================================================
 Hydrogen is the second most important element, because it often
-saturates bonds. Therefore, I explore the hydrtogen molecule and water
+saturates bonds. Therefore, I explore the hydrogen molecule and water
 as its oxide.
 
 \textbf{Important Remark!} Special caution is required because the
@@ -3236,11 +3236,12 @@ from $r_c=0.5 r_{cov}$ to $r_c=1.0 r_{cov}$. While we cannot say which
 is the optimum result we will use $r_c=1.2~r_{cov}$. Up to this radius
 the reaction energy H$_2$+O$\rightarrow$H$_2$O is still independent of
 the radius, and the atomization energy of the hydrogen molecule
-becomes independent of the radius for larher distances. (This is only
+becomes independent of the radius for larger distances. (This is only
 a weak argument, though.) Finally we consider the plane wave
 convergence to choose the larger radius. While hydrogen does not
 dominate convergence as individual atom, there are usually many
-hydrogen atoms in a material.
+hydrogen atoms in a material. Therefore the plane wave convergence is
+an issue.
 
 \begin{figure}[h!]
 \begin{center}
@@ -3343,6 +3344,25 @@ is close to that of the oxygen molecule.
   !END
 \end{verbatim}
  
+%=====================================================================
+\subsection{Chlorine}
+%=====================================================================
+In his Forschungspraktikum
+\url{171204_harden_forschungspraktikum.pdf}, Ingolf Harden
+investigated the quality of the setups for the G2 database in
+comparison with the PAW calculations of Paier
+\cite{paier05_jcp122_234102}. Harden identified a few problematic elements.
+
+One of them is chlorine. 
+\begin{itemize}
+\item inrease the number of p-projectors from 1 to 2.
+\item reduce the partial wave cutoff ``RCL'' from $0.9 r_{cov}$ to
+  $0.75 r_{cov}$ for all angular momenta
+\end{itemize}
+
+
+
+
 
 %=====================================================================
 \subsection{Transition metals}
@@ -3926,18 +3946,18 @@ this wave function a sharp bend is required to avoid introduing nodes.
 \hline
 & Kresse \\
 \hline
-H  & 0.8 \\
-Li & 1.3 \\
-Be & 1.9 \\
-C  & 1.1 \\
-N  & 1.1 \\
-O  & 1.1 \\
-F  & 1.0 \\
-Si & 1.9 \\
-P  & 1.5 \\
-S  & 1.5 \\
-Cl & 1.5 \\
-Na & 1.7 \\
+H  & 0.8~$a_0$=1.323~$r_{cov}$  \\
+Li & 1.3~$a_0$=0.559~$r_{cov}$  \\
+Be & 1.9~$a_0$=1.117~$r_{cov}$  \\
+C  & 1.1~$a_0$=0.756~$r_{cov}$  \\
+N  & 1.1~$a_0$=0.776~$r_{cov}$  \\
+O  & 1.1~$a_0$=0.797~$r_{cov}$  \\
+F  & 1.0~$a_0$=0.735~$r_{cov}$  \\
+Si & 1.9~$a_0$=0.906~$r_{cov}$  \\
+P  & 1.5~$a_0$=0.749~$r_{cov}$  \\
+S  & 1.5~$a_0$=0.778~$r_{cov}$  \\
+Cl & 1.5~$a_0$=0.802~$r_{cov}$  \\
+Na & 1.7~$a_0$=0.584~$r_{cov}$  \\
 \hline
 \end{tabular}
 \end{center}
