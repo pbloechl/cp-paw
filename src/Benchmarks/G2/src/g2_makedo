@@ -23,7 +23,11 @@
 #   using the structure input files in the directory "Samples" and the
 #   species information from "src/Species"
 #
-#  3) it must be executed as src/g2_makedo inside the main directory
+#  3) it uses the setup information in "src/specieslist"
+#
+#  4) it uses the unit cell hardwired below
+#
+#  5) g2_makedo must be executed as src/g2_makedo inside the main directory
 #    of the database because it identifies the database with the
 #    current directory
 #
@@ -201,7 +205,8 @@ echo '#'                                          >>$DOSCRIPT
 echo '# uncomment or remove lines adding'         >>$DOSCRIPT
 echo '# undesired substances to LIST'             >>$DOSCRIPT
 echo '#'                                          >>$DOSCRIPT
-echo "export NNODES=3"                            >>$DOSCRIPT
+echo "export THISDIR=\$(pwd)"                     >>$DOSCRIPT
+echo "declare -ix NNODES=8"                       >>$DOSCRIPT
 echo "export G1DIR=$G1DIR"                        >>$DOSCRIPT
 echo '#'                                          >>$DOSCRIPT
 echo 'function calcone {'                         >>$DOSCRIPT
@@ -219,11 +224,20 @@ echo '      rm ${ROOT}_r.tra; fi'                 >>$DOSCRIPT
 echo 'if [[ -f ${ROOT}.pdos ]]; then'             >>$DOSCRIPT
 echo '      rm ${ROOT}.pdos; fi'                  >>$DOSCRIPT
 echo 'cp ${G1DIR}/sample.cntl ${ROOT}.cntl'       >>$DOSCRIPT
-echo 'cp ${ROOT}.rstrt ${ROOT}.rstrt_save1'       >>$DOSCRIPT
+echo 'if [[ -f ${ROOT}.rstrt ]]; then'            >>$DOSCRIPT
+echo '      cp ${ROOT}.rstrt ${ROOT}.rstrt_save1; fi' >>$DOSCRIPT
 echo 'echo doing $1'                              >>$DOSCRIPT
+echo 'cd ${ROOT%/*} # go to project directory'    >>$DOSCRIPT
+echo 'PNAME=${ROOT##*/} # project name w/o Dir.'  >>$DOSCRIPT
 echo 'paw_fast.x ${ROOT}.cntl 1>${ROOT}.err 2>&1' >>$DOSCRIPT
+echo '#sbatchpaw \'                               >>$DOSCRIPT
+echo '#   --ntasks=${NNODES} \'                   >>$DOSCRIPT
+echo '#   -p low_priority \'                      >>$DOSCRIPT
+echo '#   --pawversion=${PAWVERSION} \'           >>$DOSCRIPT
+echo '#   --cntl=${PNAME}.cntl 1>${PNAME}.err 2>&1' >>$DOSCRIPT
 echo '#doppaw ${ROOT}.cntl 1>${ROOT}.err 2>&1'    >>$DOSCRIPT
-echo  'echo $1 done'                              >>$DOSCRIPT
+echo 'cd ${THISDIR} # return to orig. directory'  >>$DOSCRIPT
+echo 'echo $1 done'                               >>$DOSCRIPT
 echo '}'                                          >>$DOSCRIPT
 echo '#'                                          >>$DOSCRIPT
 #
@@ -244,7 +258,7 @@ for FILE in $SAMPLEDIR/*.strc_sample ; do
   fi
   execute "paw_resolve \
               -i $FILE \
-              -r \"LATTICE=0.0 9.2 9.2 9.2 0.0 9.2 9.2 9.2 0.0\" \
+              -r \"LATTICE=0.0 10.6 10.6 10.6 0.0 10.6 10.6 10.6 0.0\" \
               -f HYDROGEN=$STPDIR/H_.species \
               -f LITHIUM=$STPDIR/LI.species \
               -f BERYLLIUM=$STPDIR/BE.species \
@@ -264,14 +278,13 @@ for FILE in $SAMPLEDIR/*.strc_sample ; do
   #   create sample control file
     ROOT=${DIR}/$NAME
     ROOT=${ROOT#$G1DIR/} 
-    echo "LIST=\"\$LIST ${ROOT}\"" >>$DOSCRIPT
+    echo "LIST=\"\$LIST ${ROOT}\""        >>$DOSCRIPT
 done
-echo "for X in \$LIST; do" >>$DOSCRIPT
-echo "  paw_waittillempty -n \${NNODES}" >>$DOSCRIPT #submit no more than 3 jobs at a time
-echo "  calcone \$X &"        >>$DOSCRIPT
-echo "done"                >>$DOSCRIPT 
-echo 'exit 0'              >>$DOSCRIPT
-execute "chmod +x $DOSCRIPT"
+echo 'for X in $LIST; do'                 >>$DOSCRIPT
+echo "  paw_waittillempty -n \${NNODES}"  >>$DOSCRIPT #submit no more than 3 jobs at a time
+echo "  calcone \$X &"                    >>$DOSCRIPT
+echo "done"                               >>$DOSCRIPT 
+execute "chmod +x $DOSCRIPT"              
 exit 0
 
 

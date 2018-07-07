@@ -44,13 +44,13 @@ if [[ $RC != 0 ]] ; then echo "error in $0: compilation failed"; exit 1 ; fi
 ## update readpaw.in
 #####################################################################
 echo "building readpaw.in ..."
-if [[ -f readpaw.in ]] ; then rm readpaw.in ; fi
+if [[ -f ${G1DIR}/readpaw.in ]] ; then rm ${G1DIR}/readpaw.in ; fi
 for FILE in ${SAMPLEDIR}/*.strc_sample ; do
   NAME=${FILE%.strc_sample} # strip extension
   NAME=${NAME##*/}     #  remove all preceeding directories
   DIR=$CASESDIR/$NAME
   #
-  X=$(paw_get -n -w etot -u h ${DIR}/$NAME)
+  X=$(paw_get -n -w etot -u h -- ${DIR}/$NAME)
   RC=$?
   if [[ "$RC" = "0" ]] ; then
 #    echo writing $NAME $X
@@ -64,6 +64,6 @@ done
 ##  run analysis
 #####################################################################
 echo "building readpaw.out ..."
-$G1DIR/g2_analyse.x <readpaw.in >readpaw.out
+$G1DIR/g2_analyse.x <${G1DIR}/readpaw.in >${G1DIR}/readpaw.out
 echo " ...done"
 exit 0

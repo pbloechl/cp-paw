@@ -7,11 +7,11 @@
  
  !SPECIES NAME= 'F_'    @FLOURINE@ !END
  
-   !ATOM NAME='SI1'      R=    0.0000000    0.0000000    0.0000000 !END
-   !ATOM NAME='F_2'      R=    1.0153860    1.1000879   -0.5277426 !END
-   !ATOM NAME='F_3'      R=   -0.8372852    0.5967509    1.2131544 !END
-   !ATOM NAME='F_4'      R=   -0.9926001   -0.3913179   -1.1839546 !END
-   !ATOM NAME='F_5'      R=    0.7862276   -1.2975402    0.4751464 !END
+  !ATOM NAME= 'SI1'      R=      0.00000     0.00000     0.00000 !END
+  !ATOM NAME= 'F_2'      R=      1.01624     1.08236    -0.51424 !END
+  !ATOM NAME= 'F_3'      R=     -0.82334     0.58545     1.20335 !END
+  !ATOM NAME= 'F_4'      R=     -0.98016    -0.39018    -1.16450 !END
+  !ATOM NAME= 'F_5'      R=      0.78447    -1.27646     0.47293 !END
  
  !ISOLATE NF=3 RC=0.5 RCFAC=1.5 GMAX2=3.0 !END
  !CONSTRAINTS

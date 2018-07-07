@@ -15,8 +15,12 @@
 #      CREATED: 9. Oct. 2015
 #
 ################################################################################
-LIST=".banddata .err .pdos _constr.report _r.tra .rstrt_save1" 
+LIST=".banddata .err .out .pdos _constr.report _r.tra .rstrt_save1" 
 for X in Cases/*; do
+#  echo X=$X
+  rm $X/*.err
+  rm $X/*.out
+  rm $X/psphi.dat
   ROOT=$X/${X#Cases/}
   for Y in $LIST ; do
     NAME=$ROOT$Y

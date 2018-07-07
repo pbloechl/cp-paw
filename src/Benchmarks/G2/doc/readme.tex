@@ -25,10 +25,15 @@
 \section*{Overview}
 %=========================================================================
 \begin{enumerate}
-\item \verb+src/g2_makedo+ scans the directory
-  \verb+src/Strcfiles+. For each molecule in this directory it creates
-  the directories in the directory ``Cases'', if necessary, and it
-  creates a shellscript \verb|g2_do_sample|,
+\item \verb+src/g2_makedo+ 
+  \begin{itemize}
+    \item scans the directory \verb+src/Strcfiles+. For each molecule
+       in this directory it creates the directories in the directory
+       ``Cases'', if necessary, and 
+    %
+    \item  it creates a shellscript \verb|g2_do_sample|. 
+  \end{itemize}
+%
 \item \verb|g2_do_sample| performs PAW on all molecules. It can be
   added to exclude certain molecules.
 \item \verb+src/g2_analyse+ compiles and runs the fortran program
@@ -46,16 +51,21 @@
 %=========================================================================
 \begin{verbatim}
 src/Strcfiles         
-src/Speciesfiles      
+src/specieslist
+src/splitspecieslist.f90       
 src/g2_makedo         
 src/g2_analyse         
 src/g2_analyse.f90       
-src/sample.cntl_relax 
-src/sample.cntl_start
+src/sample.cntl_strt
+src/sample.cntl_rlxe 
+src/sample.cntl_rlxr
 src/g2_tar
-src/splitspecieslist.f90       
 src/modify
+src/g2_cleanup
 doc/readme.tex
+doc/Figs
+doc/Bib
+doc/Sources
 \end{verbatim}
 
 \begin{itemize}
@@ -63,7 +73,7 @@ doc/readme.tex
 \item \textbf{doc/readme.tex, doc/Figs, doc/Bib, doc/Sources}: documentation of
   the G2-directory.  
 %
-\item \textbf{Samples/*.strc\_sample}: containes the structure files
+\item \textbf{Samples/*.strc\_sample}: contains the structure files
   for all molecules without the specific setup information. This
   information will be incorporated into the structure files of all
   calculations.
@@ -108,7 +118,7 @@ doc/readme.tex
 \section*{Adapt and run G1 tests}
 %=========================================================================
 \begin{enumerate}
-\item enter the main directory of the database. Check if you are in
+\item go to the main directory of the database. Check if you are in
   the correct place:
   \begin{itemize} 
     \item execute \verb|ls|. You should obtain ``\verb|src doc|. 
@@ -127,6 +137,14 @@ bibtex readme
 pdflatex readme
 cd ..
 \end{verbatim}
+%
+\item If desired adjust the following information:
+  \begin{itemize}
+     \item the unit cell is defined inside \verb|src/g2_makedo|
+     \item the setup information is taken from \verb|src/specieslist|.
+          (Intermediate files are stored in \verb|bin/Speciesfiles|).
+     \item structure information is in the directory \verb|src/Strcfiles|.
+  \end{itemize}
 %
 \item execute \verb|src/g2_makedo|. When done, there should be a
   directory ``\verb|Cases|'' and a shell script ``\verb|g2_do_sample|''
@@ -212,6 +230,105 @@ $\pi$ states right at the energy minimum
 \newpage
 \section*{Results}
 %=========================================================================
+%=========================================================================
+\subsection*{Benchmark June 24, 2018}
+%=========================================================================
+\begin{itemize}
+\item We use a fcc-unit cell with a lattice constant of $a=$21.2~{\AA}. This
+ensures that the nearest-neighbor distance of lattice points is
+15~\AA, which is as large as that in the largest unit cell used by
+Paier\cite{paier05_jcp122_234102}.
+%
+\item We use a plane wave cutoff of $E_{PW}^{\tilde{\psi}}=75$~Ry, which
+corresponds to the cutoff of 1000~eV used by
+Paier\cite{paier05_jcp122_234102}.
+The density cutoff has been set with CDUAL=4,
+i.e. $E_{PW}^{\tilde{n}}=300~Ry$.
+
+\item Setups \\
+\begin{center}
+\begin{tabular}{|l|r|r|}
+\hline
+& Paier\cite{paier05_jcp122_234102}  & CPPAW~75Ry\\
+\hline
+H  & 0.8~$a_0$=1.323~$r_{cov}$ & 1.20~$r_{cov}$ \\
+Li & 1.3~$a_0$=0.559~$r_{cov}$ & 0.70~$r_{cov}$ \\
+Be & 1.9~$a_0$=1.117~$r_{cov}$ & 1.00~$r_{cov}$ \\
+B  &                          & 0.75~$r_{cov}$ \\
+C  & 1.1~$a_0$=0.756~$r_{cov}$ & 0.75~$r_{cov}$ \\
+N  & 1.1~$a_0$=0.776~$r_{cov}$ & 0.75~$r_{cov}$ \\
+O  & 1.1~$a_0$=0.797~$r_{cov}$ & 0.75~$r_{cov}$ \\
+F  & 1.0~$a_0$=0.735~$r_{cov}$ & 0.75~$r_{cov}$ \\
+Al &                          & 0.75~$r_{cov}$ \\
+Si & 1.9~$a_0$=0.906~$r_{cov}$ & 0.75~$r_{cov}$ \\
+P  & 1.5~$a_0$=0.749~$r_{cov}$ & 0.75~$r_{cov}$ \\
+S  & 1.5~$a_0$=0.778~$r_{cov}$ & 0.75~$r_{cov}$ \\
+Cl & 1.5~$a_0$=0.802~$r_{cov}$ & 0.75~$r_{cov}$ \\
+Na & 1.7~$a_0$=0.584~$r_{cov}$ & 0.55~$r_{cov}$ \\
+%Br &                          & 0.85~$r_{cov}$ \\
+\hline
+\end{tabular}
+\end{center}
+Br required a cutoff of 0.85~$r_{cov}$ to avoid a negative
+contribution to the compensation charge. Br is not used in the
+G2-database.
+%
+\item A projector set 2s2p1d has been used except for 
+\begin{itemize}
+  \item H (1s1p), 
+  \item Li (1s1p) and 
+  \item Na (1s2p1d). For Na the semicore p-states have been used as valence
+\end{itemize}
+The use of two projector functions for s and p-electrons had a
+dramatic effect on the energetics.
+%
+\item The one-center density is expanded up to to $\ell=4$
+%
+\item The radial grids are shifted logarithmic, i.e.
+  $r_i=r_0[\exp(-\alpha i)-1]$. The minimum spacing is
+  $10^{-6}$~$a_B$, the maximum spacing is 0.15~$a_B$ and the outermost
+  grid point at 9~$a_B$.
+\end{itemize}
+
+%=========================================================================
+\subsection*{Observations}
+%=========================================================================
+Corrections: 
+\begin{itemize}
+\item the largest deviation from Paier's results is for LiF. I
+  attribute this to the fact that Lithium is positively charged and
+  therefore all valence electrons are ripped away. A better
+  description is probably obtained if Li is described explicitely with
+  the 1s and 2s electrons as valence electrons.
+%
+\item the second outlier is SiO.
+%
+\item the Li setup with a cutoff of $0.55~r_{cov}$ was unstable. I
+  increased the cutoff to $0.75~r_{cov}$.
+%
+\item Br required a cutoff of 0.85~$r_{cov}$ to avoid a negative
+  contribution to the compensation charge. Br is not used in the
+  G2-database.
+%
+\item It has been important to increase the number of projectors for s
+  and p-electrons to two per angular momentum. The following figure
+  shows the deviation of VASP-PBE \cite{paier} to the result with
+  $1s1p1d$ (red squares), $2s1p1d$ (green diamonds) and $2s2p1d$
+  (black circles). For second-row elements the $2s2p1d$ has been used
+  for all calculations.
+\begin{center}
+\includegraphics[width=\textwidth]{Figs/Nprodep/nprodep.eps}
+\end{center}
+
+The double set of p partial waves has been important (deviations
+>0.1ev) for CO$_2$ (Nr.92), O$_2$ (129), N$_2$H$_4$ (116), NO
+(126). The p-projectors systematically decreased the atomization
+energy.  The s-projectors systematically increased the atomization
+energy.
+\end{itemize}
+
+
+
 
 %=========================================================================
 \subsection*{Benchmark Oct.17, 2015}

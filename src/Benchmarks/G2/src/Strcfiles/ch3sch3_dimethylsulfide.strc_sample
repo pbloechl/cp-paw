@@ -9,15 +9,15 @@
  
  !SPECIES NAME= 'H_'    @HYDROGEN@ !END
  
-   !ATOM NAME='S_1'      R=    0.0000000    0.0000000    0.0000000 !END
-   !ATOM NAME='C_2'      R=    1.5281753   -0.3225250    0.9260859 !END
-   !ATOM NAME='C_3'      R=   -1.5691829   -0.3129431    0.8582420 !END
-   !ATOM NAME='H_4'      R=    1.6542691    0.3060305    1.8235834 !END
-   !ATOM NAME='H_5'      R=    2.2818549   -0.0097228    0.1805385 !END
-   !ATOM NAME='H_6'      R=    1.6987075   -1.3866491    1.1606321 !END
-   !ATOM NAME='H_7'      R=   -2.2874936    0.0060492    0.0811400 !END
-   !ATOM NAME='H_8'      R=   -1.7299193    0.3153481    1.7503632 !END
-   !ATOM NAME='H_9'      R=   -1.7570915   -1.3761563    1.0834879 !END
+  !ATOM NAME= 'S_1'      R=     -0.00000    -0.00000     0.00000 !END
+  !ATOM NAME= 'C_2'      R=      1.35956    -0.40264     1.13315 !END
+  !ATOM NAME= 'C_3'      R=     -1.41030    -0.39393     1.07258 !END
+  !ATOM NAME= 'H_4'      R=      1.32499     0.22524     2.03181 !END
+  !ATOM NAME= 'H_5'      R=      2.29267    -0.20085     0.59654 !END
+  !ATOM NAME= 'H_6'      R=      1.33707    -1.46136     1.41880 !END
+  !ATOM NAME= 'H_7'      R=     -2.31776    -0.18626     0.49575 !END
+  !ATOM NAME= 'H_8'      R=     -1.41105     0.23379     1.97202 !END
+  !ATOM NAME= 'H_9'      R=     -1.40702    -1.45275     1.35873 !END
  
  !ISOLATE NF=3 RC=0.5 RCFAC=1.5 GMAX2=3.0 !END
  !CONSTRAINTS

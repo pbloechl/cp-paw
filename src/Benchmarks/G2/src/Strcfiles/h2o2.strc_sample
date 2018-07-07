@@ -7,10 +7,10 @@
  
  !SPECIES NAME= 'H_'    @HYDROGEN@ !END
  
-   !ATOM NAME='O_1'      R=    0.0000000    0.0000000    0.0000000 !END
-   !ATOM NAME='O_2'      R=    1.4467825   -0.2442281    0.0026967 !END
-   !ATOM NAME='H_3'      R=    1.7534697    0.6932549    0.0015845 !END
-   !ATOM NAME='H_4'      R=   -0.3094478   -0.9366245    0.0034166 !END
+  !ATOM NAME= 'O_1'      R=      0.00000    -0.00000     0.00000 !END
+  !ATOM NAME= 'O_2'      R=      1.46162    -0.24500     0.00159 !END
+  !ATOM NAME= 'H_3'      R=      1.75738     0.68400     0.01663 !END
+  !ATOM NAME= 'H_4'      R=     -0.29575    -0.92888     0.01779 !END
  
  !ISOLATE NF=3 RC=0.5 RCFAC=1.5 GMAX2=3.0 !END
  !CONSTRAINTS

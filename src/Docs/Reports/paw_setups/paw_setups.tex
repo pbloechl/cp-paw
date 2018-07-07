@@ -2613,7 +2613,7 @@ LAPW.
 
 X. Gonze made a very careful analysis of ghost
 states\cite{gonze91_prb44_8503}. Here we generalize these results to
-teh PAW equation which has a complex overlap operator and which
+the PAW equation which has a complex overlap operator and which
 contains several projector functions per angular momentum.
 
 For the radial component of a pseudo partial wave for a given angular
@@ -3048,7 +3048,7 @@ the best choice is the smoothest setup (type4). This introduces errors
 of order 0.15~eV in the total energy. Relative errors can be expected
 to be smaller. The bond distance of the oxygen molecule for type 4
 setup is about 2~\% larger than for the type 1 setup. The experimental
-equilibrium lattice constant is 1.21~\AA.
+equilibrium lattice constant is 1.21~{\AA}.
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=0.45\linewidth,clip=true]
@@ -3072,14 +3072,14 @@ equilibrium lattice constant is 1.21~\AA.
   oxygen molecule for different setups calculated with
   $E_{PW}=50$~Ry. Black: type~1 setup with $r_c=0.65 r_{cov}$, red:
   type~2 setup with $r_c=0.75 r_{cov}$, blue: type~3 setup with
-  $r_c=0.75 r_{cov}$, green: type~4 setup with $r_c=0.85 r_{cov}$. The
+  $r_c=0.75 r_{cov}$, green: type~4 setup with $r_c=0.85$~$r_{cov}$. The
   parameters for the setup types are specified in the
   text. Calculations are performed with the PBE functional. The lines
   are interpolations of a cube polynomial through the values ranging
-  from 1.18~\AA to 1.25~\AA in steps of 0.01~\AA. The bond distance
-  increases from d=1.223~\AA for $r_c=0.65 r_{cov}$ to d=1.233~\AA
-  (+0.8~\%) for $r_c=0.75 r_{cov}$ to d=1.246~\AA (+1.8~\%) for
-  $r_c=0.85 r_{cov}$.}
+  from 1.18~{\AA} to 1.25~{\AA} in steps of 0.01~{\AA}. The bond distance
+  increases from d=1.223~{\AA} for $r_c=0.65 r_{cov}$ to d=1.233~{\AA}
+  (+0.8~\%) for $r_c=0.75$~$r_{cov}$ to $d=1.246$~{\AA} (+1.8~\%) for
+  $r_c=0.85$~$r_{cov}$.}
 \end{figure}
 \begin{itemize}
 \item type~1 setup with $r_c=0.65 r_{cov}$, pseudo potential at the
@@ -3202,7 +3202,7 @@ by a positive charge background.
 {Figs/Jello/eoxjello.eps}
 \end{center}
 \caption{\label{eoxjello} The oxidation energy of jello (jellium
-  oxide) with the lattice constant of CaO (4.8163~\AA) with a setup
+  oxide) with the lattice constant of CaO (4.8163~{\AA}) with a setup
   using a cutoff parameter of $r_c=0.85$~$r_{cov}$.  }
 \end{figure}
 
@@ -3523,7 +3523,7 @@ total energy of Mn rather than that of an oxidation energy.
 \end{center}
 \caption{\label{fig:mno_evsalat50ry}Energy in eV relative to the
   minimum vs. percentage deviation of the lattice constant from
-  4.445~\AA for for cutoff radii 0.8, 0.9, 1.0 $r_{cov}$ for the Mn
+  4.445~{\AA} for for cutoff radii 0.8, 0.9, 1.0 $r_{cov}$ for the Mn
   setup. The plane wave cutoff is 50~Ry.}
 \end{figure}
 The dependence of the lattice constant on the cutoff radii is minor as
@@ -3552,6 +3552,7 @@ d-electrons on Ga. On the other hand, the plane wave cutoff depends
 strongly on the radius for the d-electrons.
 The radial cutoff of the sp electrons compared to the d-electrons
 unimportant.
+
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|c|}
 \hline
@@ -3571,7 +3572,6 @@ $r_c(sp)/r_{cov}$ & $r_c(d)/r_{cov}$ &  $E_g[\mathrm{eV}]$  & $E_g[\mathrm{eV}]$
 \hline
 \end{tabular}
 \end{center}
-
 
 We choose $r_c(s,p)=$0.8~$r_{cov}$ and $r_c(d)=$0.6~$r_{cov}$. This
 gives a band gap that seems to be within 0.1~eV of the converged
@@ -3922,7 +3922,7 @@ this wave function a sharp bend is required to avoid introduing nodes.
   quantum number as the d-electrons. They have a similar radial
   extent. The valence s and p-states will have nodes in a natural way.
 %
-\item Restricting the valence electrons to teh true valence states
+\item Restricting the valence electrons to the true valence states
   requires that the pseudization radius for the s and p states is
   moved sufficiently far out, so that a reasonable shape of the pseudo
   partial waves results.
@@ -3942,22 +3942,22 @@ this wave function a sharp bend is required to avoid introduing nodes.
 
 
 \begin{center}
-\begin{tabular}{|l|r|}
+\begin{tabular}{|l|r|r|}
 \hline
-& Kresse \\
+& Kresse  & CPPAW~75Ry\\
 \hline
-H  & 0.8~$a_0$=1.323~$r_{cov}$  \\
-Li & 1.3~$a_0$=0.559~$r_{cov}$  \\
-Be & 1.9~$a_0$=1.117~$r_{cov}$  \\
-C  & 1.1~$a_0$=0.756~$r_{cov}$  \\
-N  & 1.1~$a_0$=0.776~$r_{cov}$  \\
-O  & 1.1~$a_0$=0.797~$r_{cov}$  \\
-F  & 1.0~$a_0$=0.735~$r_{cov}$  \\
-Si & 1.9~$a_0$=0.906~$r_{cov}$  \\
-P  & 1.5~$a_0$=0.749~$r_{cov}$  \\
-S  & 1.5~$a_0$=0.778~$r_{cov}$  \\
-Cl & 1.5~$a_0$=0.802~$r_{cov}$  \\
-Na & 1.7~$a_0$=0.584~$r_{cov}$  \\
+H  & 0.8~$a_0$=1.323~$r_{cov}$ & 1.20~$r_{cov}$ \\
+Li & 1.3~$a_0$=0.559~$r_{cov}$ & 0.55~$r_{cov}$ \\
+Be & 1.9~$a_0$=1.117~$r_{cov}$ & 1.00~$r_{cov}$ \\
+C  & 1.1~$a_0$=0.756~$r_{cov}$ & 0.75~$r_{cov}$ \\
+N  & 1.1~$a_0$=0.776~$r_{cov}$ & 0.75~$r_{cov}$ \\
+O  & 1.1~$a_0$=0.797~$r_{cov}$ & 0.75~$r_{cov}$ \\
+F  & 1.0~$a_0$=0.735~$r_{cov}$ & 0.75~$r_{cov}$ \\
+Si & 1.9~$a_0$=0.906~$r_{cov}$ & 0.75~$r_{cov}$ \\
+P  & 1.5~$a_0$=0.749~$r_{cov}$ & 0.75~$r_{cov}$ \\
+S  & 1.5~$a_0$=0.778~$r_{cov}$ & 0.75~$r_{cov}$ \\
+Cl & 1.5~$a_0$=0.802~$r_{cov}$ & 0.75~$r_{cov}$ \\
+Na & 1.7~$a_0$=0.584~$r_{cov}$ & 0.55~$r_{cov}$ \\
 \hline
 \end{tabular}
 \end{center}
@@ -4007,7 +4007,7 @@ repeated in tables~\ref{tab:wieneqs_a} and \ref{tab:wieneqs_a}.
 \begin{center}
 \begin{tabular}{|r|l|r|r|r|r|}
 \hline
-Nr. & El. & V0[\AA$^3]$ & B0 & B1 & space gr.\\
+Nr. & El. & V0[{\AA}$^3]$ & B0 & B1 & space gr.\\
 \hline
   1 & 'H '&    17.387D0&    10.315D0&     3.025D0&194 \\
   2 & 'HE'&    17.778D0&     0.847D0&     6.534D0&195 \\
@@ -4058,7 +4058,7 @@ Nr. & El. & V0[\AA$^3]$ & B0 & B1 & space gr.\\
 \begin{center}
 \begin{tabular}{|r|l|r|r|r|r|}
 \hline
-Nr. & El. & V0[\AA$^3]$ & B0 & B1 & space gr.\\
+Nr. & El. & V0[{\AA}$^3]$ & B0 & B1 & space gr.\\
 \hline
  37 & 'RB'&    91.130D0&     2.842D0&     2.321D0&229 \\
  38 & 'SR'&    54.561D0&    11.333D0&     4.172D0&225 \\
@@ -4227,7 +4227,7 @@ Nr. & El. & V0[\AA$^3]$ & B0 & B1 & space gr.\\
 \item RCBG is set much too small!  The parameter
   \verb|This%rcbg=1/sqrt(0.218)| is set in in $\verb|setup$select|$,
   when a new setup is created. This radius corresponds to only
-  1.13~\AA. WARNING: This is much too small!
+  1.13~{\AA}. WARNING: This is much too small!
 \end{itemize}
 
 %=====================================================================
@@ -4295,7 +4295,7 @@ and \verb|SETUP_BUILDPARMS_2| for the HBS-type setups.
 \item RCL/RCOV=6.
 \item GRID: DMIN=$5\times 10^{-6}$,
 DMAX=$5\times 10^{-1}$,
-RMAX is $2r_{cov}$ or $r_{cov}+0.73~$\AA$/a_0$, whatever is larger
+RMAX is $2r_{cov}$ or $r_{cov}+0.73~${\AA}$/a_0$, whatever is larger
 \item POT:
 \end{itemize}
 
@@ -5804,8 +5804,8 @@ for Br it was setb to 1.
 
  
 The unit cell has been chosen as fcc unit cell with lattice constant
-$a_{lat}=18.4$~\AA. This ensures that the minimum distance of periodic
-images is larger than that (13~\AA) of the largest cell used by
+$a_{lat}=18.4$~{\AA}. This ensures that the minimum distance of periodic
+images is larger than that (13~{\AA}) of the largest cell used by
 Paier\cite{paier05_jcp122_23410}.
 
 The plane wave cutoff has been set to EPW=80~Ry, consistent with
