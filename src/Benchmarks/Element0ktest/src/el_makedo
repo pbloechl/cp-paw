@@ -246,7 +246,7 @@ for FILE in $STRCDIR/*.strc_sample ; do
     if [[ ! -d $PDIR ]] ; then execute "mkdir $PDIR";  fi
     #
     COMMAND="paw_resolve -f $SY.species=${SPECIESFILE}"
-    COMMAND="$COMMAND ${STRCDIR}/${SY}.strc_sample |"
+    COMMAND="$COMMAND -i ${STRCDIR}/${SY}.strc_sample |"
     COMMAND="$COMMAND tr '[a-z]' '[A-Z]' |"
     COMMAND="$COMMAND sed -e s/R=45./R=45./g"
 #    COMMAND="$COMMAND     -e s/ORBPOT_X/ORBPOT/g "

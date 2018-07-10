@@ -38,29 +38,25 @@ To build up the test,
 \item change the file specieslist so that the desired setup
   construction is selected for each element.
 %
-\item split up the specieslist into individual files
-\begin{verbatim}
-cd bin
-gfortran -o splitspecies.x splitspecieslist.f90
-splitspecies.x < specieslist 
-mv *.species Speciesfiles/
-mv *.species_sc Speciesfiles/
-\end{verbatim}
-ensure that the species files ly in bin/Speciesfiles
-%
 \item construct an bash script to run the jobs
 \begin{verbatim}
 bin/el_makedo
 \end{verbatim}
-This creates a new bash script el\_do\_sample. 
+This creates a new bash script el\_do\_sample. It also updates the
+setup information: The file \verb|src/specieslist| is expanded into
+the files in the directory \verb|bin/Speciesfiles|.
 %
 \item copy \verb|el_do_sample| into \verb|el_do|. Unselect elements
   that shall not be studied by deleting or by commenting out the
   corresponding lines in the list.
 %
-\item construct a file \verb|sample.cntl|, which will be used by all
-  calculation. Take special care to remove \verb|START=T|, when the
-  restart files are present and if they shall be used.
+\item construct a file \verb|sample.cntl|.
+\begin{verbatim}
+cp src/sample.cntl_strt sample.cntl
+\end{verbatim}
+This control file which will be used by all calculations. Take special
+care to remove \verb|START=T|, when the restart files are present and
+if they shall be used.
 %
 \item perform the paw calculation by executing 
 \begin{verbatim}

@@ -1,6 +1,6 @@
 !STRUCTURE
   !GENERIC LUNIT[AA]=1.0 !END
-  !OCCUPATIONS empty=4  NSPIN=2 CHARGE[E]=0.0 SPIN[HBAR]=1.0  !END
+  !OCCUPATIONS empty=4  NSPIN=1 CHARGE[E]=0.0 SPIN[HBAR]=0.0  !END
   !LATTICE T= @LATTICE@ !END
   !SPECIES NAME= 'SI' @SILICON@ !END
   !ATOM NAME='SI1'      R=    0.0000000    0.0000000    0.0000000 !END
@@ -11,3 +11,5 @@
   !END
 !END
 !EOB
+
+The ground state is a triplet state with a bond distance of 2.166~/AA (PBE)
