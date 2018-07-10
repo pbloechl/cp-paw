@@ -117,6 +117,14 @@ while getopts :s:t:j:hv0 OPT ; do
 done
 shift $(($OPTIND - 1))
 if [[ -e $1 ]] ; then echo "error in $0: argument present. none expected" >&2; fi
+
+#
+#########################################################################
+# define paw command  to be passed to paw_scanlat 
+# the command will be ${PAWCMD} xxx.cntl 1>xxx.out 2>&1
+#########################################################################
+export PAWCMD="paw_waittillempty -t ${NJOBS} ; paw_fast.x"
+#export PAWCMD="sbatchpaw -t ${NJOBS} -p low_priority -v ${PAWVERSION} -c"
 #
 #########################################################################
 # define directories and check if all are present
@@ -181,7 +189,7 @@ echo '      exit 1'                               >>$DOSCRIPT
 echo '      ;;'                                   >>$DOSCRIPT
 echo '  esac'                                     >>$DOSCRIPT
 echo 'done'                                       >>$DOSCRIPT
-echo "export ELDIR=$ELDIR"                        >>$DOSCRIPT
+echo 'export ELDIR=$(pwd)'                        >>$DOSCRIPT
 echo 'function calcone {'                         >>$DOSCRIPT
 echo 'echo $0: doing $1'                          >>$DOSCRIPT
 echo 'ROOT=${ELDIR}/$1'                           >>$DOSCRIPT
@@ -190,12 +198,14 @@ echo 'SY=${ROOT##*/}'                             >>$DOSCRIPT
 echo 'cp ${ELDIR}/sample.cntl ${ROOT}.cntl'       >>$DOSCRIPT
 echo 'BACK=$(pwd)'                                >>$DOSCRIPT
 echo 'cd ${PDIR}'                                 >>$DOSCRIPT
-echo 'paw_scanlat $OPTNS -j ' $NJOBS ' -p ${SY} -l \
+echo 'paw_scanlat $OPTNS -j' $NJOBS '-p ${SY} -l \
              "98.02 98.35 98.68 99.01 99.34 99.67 100.00 \
-             100.33 100.66 100.99 101.32 101.65 101.98" ' >>$DOSCRIPT
+             100.33 100.66 100.99 101.32 101.65 101.98" \
+             -e ' \"${PAWCMD}\"                   >>$DOSCRIPT
 echo 'cd ${BACK}'                                 >>$DOSCRIPT
 echo  'echo $0: $1 done'                          >>$DOSCRIPT
 echo '}'                                          >>$DOSCRIPT
+#
 ################################################################
 # Scan Samples directory and update all structure files in the 
 #    Cases directory
@@ -259,6 +269,7 @@ for FILE in $STRCDIR/*.strc_sample ; do
     if [[ $VERBOSE = yes ]] ; then echo "... $NAME done"; fi
   done
 done
+#
 echo "for X in \$LIST; do" >>$DOSCRIPT
 echo "  calcone \$X "      >>$DOSCRIPT
 echo "done"                >>$DOSCRIPT 
