@@ -1,0 +1,13 @@
+#!/bin/bash
+export THISDIR=$(pwd)
+export TMPFILE=${THISDIR}/tmp
+cd Cases
+if [[ -e ${TMPFILE} ]] ; then  rm ${TMPFILE} ; fi
+for X in * ; do
+  echo $X >> ${TMPFILE} 
+  grep '!>' $X/$X.prot | tail -n 20 >> ${TMPFILE} 
+  cd $X
+  paw_do -S
+  cd ${THISDIR}/Cases
+done
+exit 0
