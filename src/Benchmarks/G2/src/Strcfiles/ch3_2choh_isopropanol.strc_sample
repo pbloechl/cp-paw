@@ -5,18 +5,18 @@
   !SPECIES NAME= 'C_'    @CARBON@ !END
   !SPECIES NAME= 'H_'    @HYDROGEN@ !END
   !SPECIES NAME= 'O_'    @OXYGEN@ !END
-  !ATOM NAME='C_1'      R=    0.0000000    0.0000000    0.0000000 !END
-  !ATOM NAME='C_2'      R=   -0.0395071    1.5198164   -0.0189281 !END
-  !ATOM NAME='C_3'      R=    1.2353672   -0.5655868   -0.6974255 !END
-  !ATOM NAME='H_4'      R=    2.1609230   -0.2293335   -0.1953052 !END
-  !ATOM NAME='H_5'      R=    1.2685222   -0.2344366   -1.7516157 !END
-  !ATOM NAME='H_6'      R=    1.2306426   -1.6719079   -0.6801818 !END
-  !ATOM NAME='H_7'      R=   -0.0330839    1.8902761   -1.0604659 !END
-  !ATOM NAME='H_8'      R=    0.8357732    1.9394985    0.5077954 !END
-  !ATOM NAME='H_9'      R=   -0.9541187    1.8900906    0.4744939 !END
-  !ATOM NAME='H_10'     R=   -0.0033435   -0.3449125    1.0592345 !END
-  !ATOM NAME='O_11'     R=   -1.2076804   -0.4518963   -0.6427173 !END
-  !ATOM NAME='H_12'     R=   -1.1736997   -1.4311035   -0.6973775 !END
+  !ATOM NAME= 'C_1'      R=     -0.00000    -0.00000    -0.00000 !END
+  !ATOM NAME= 'C_2'      R=     -0.04389     1.52027    -0.02222 !END
+  !ATOM NAME= 'C_3'      R=      1.23706    -0.56209    -0.69614 !END
+  !ATOM NAME= 'H_4'      R=      2.15499    -0.22708    -0.19471 !END
+  !ATOM NAME= 'H_5'      R=      1.26963    -0.23058    -1.74236 !END
+  !ATOM NAME= 'H_6'      R=      1.23410    -1.66119    -0.68231 !END
+  !ATOM NAME= 'H_7'      R=     -0.03984     1.88477    -1.05793 !END
+  !ATOM NAME= 'H_8'      R=      0.82547     1.93955     0.49903 !END
+  !ATOM NAME= 'H_9'      R=     -0.95375     1.88586     0.46781 !END
+  !ATOM NAME= 'H_10'     R=     -0.00578    -0.34153     1.05193 !END
+  !ATOM NAME= 'O_11'     R=     -1.21122    -0.44861    -0.64468 !END
+  !ATOM NAME= 'H_12'     R=     -1.19054    -1.41902    -0.67888 !END
   !ISOLATE NF=3 RC=0.5 RCFAC=1.5 GMAX2=3.0 !END
   !CONSTRAINTS
     !FREEZE ATOM='C_1' !END

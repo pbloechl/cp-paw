@@ -5,13 +5,13 @@
   !SPECIES NAME= 'H_'  @HYDROGEN@  !END
   !SPECIES NAME= 'C_'  @CARBON@    !END
   !SPECIES NAME= 'S_'  @SULFUR@  !END
-  !ATOM NAME='C_1'      R=    0.6733024    0.0000088    0.0782684 !END
-  !ATOM NAME='C_2'      R=   -0.8099933    0.0000076    0.0328540 !END
-  !ATOM NAME='H_3'      R=    1.1849611    0.9238680    0.3718017 !END
-  !ATOM NAME='H_4'      R=    1.1849486   -0.9238767    0.3718394 !END
-  !ATOM NAME='H_5'      R=   -1.3386590    0.9238547    0.2945067 !END
-  !ATOM NAME='H_6'      R=   -1.3387558   -0.9237967    0.2945453 !END
-  !ATOM NAME='S_7'      R=   -0.0171854   -0.0000015   -1.6172303 !END
+  !ATOM NAME= 'C_1'      R=      0.67376    -0.00001     0.07759 !END
+  !ATOM NAME= 'C_2'      R=     -0.81043     0.00001     0.03215 !END
+  !ATOM NAME= 'H_3'      R=      1.18004     0.91833     0.37003 !END
+  !ATOM NAME= 'H_4'      R=      1.18003    -0.91834     0.37005 !END
+  !ATOM NAME= 'H_5'      R=     -1.33363     0.91835     0.29310 !END
+  !ATOM NAME= 'H_6'      R=     -1.33366    -0.91831     0.29312 !END
+  !ATOM NAME= 'S_7'      R=     -0.01725    -0.00001    -1.61440 !END
   !ISOLATE NF=3 RC=0.5 RCFAC=1.5 GMAX2=3.0 !END
 !END
 !EOB

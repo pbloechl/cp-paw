@@ -5,12 +5,12 @@
   !SPECIES NAME= 'C_'    @CARBON@ !END
   !SPECIES NAME= 'H_'    @HYDROGEN@ !END
   !SPECIES NAME= 'O_'    @OXYGEN@ !END
-  !ATOM NAME='C_1'      R=    0.0000000    0.0000000    0.0000000 !END
-  !ATOM NAME='C_2'      R=    1.5294607    0.0657901   -0.0005017 !END
-  !ATOM NAME='H_3'      R=   -0.5108294    0.9998758   -0.0005616 !END
-  !ATOM NAME='O_4'      R=   -0.5960930   -1.0578178    0.0012911 !END
-  !ATOM NAME='O_5'      R=    2.1249350    1.1246475    0.0000839 !END
-  !ATOM NAME='H_6'      R=    2.0439031   -0.9317837   -0.0011424 !END
+  !ATOM NAME= 'C_1'      R=      0.00078     0.00212     0.00012 !END
+  !ATOM NAME= 'C_2'      R=      1.52827     0.06453    -0.00039 !END
+  !ATOM NAME= 'H_3'      R=     -0.50732     0.99490    -0.00030 !END
+  !ATOM NAME= 'O_4'      R=     -0.59227    -1.05465     0.00122 !END
+  !ATOM NAME= 'O_5'      R=      2.12144     1.12124     0.00001 !END
+  !ATOM NAME= 'H_6'      R=      2.03634    -0.92826    -0.00085 !END
   !ISOLATE NF=3 RC=0.5 RCFAC=1.5 GMAX2=3.0 !END
 !END
 !EOB

@@ -4,16 +4,16 @@
   !LATTICE T= @LATTICE@ !END
   !SPECIES NAME= 'C_'    @CARBON@ !END
   !SPECIES NAME= 'H_'    @HYDROGEN@ !END
-  !ATOM NAME='C_1'      R=    0.0000000    0.0000000    0.0000000 !END
-  !ATOM NAME='C_2'      R=   -0.7563893   -1.2345118   -0.2321714 !END
-  !ATOM NAME='C_3'      R=    0.7870926   -1.2142915   -0.2366524 !END
-  !ATOM NAME='C_4'      R=   -0.0154871    1.3007540    0.2504445 !END
-  !ATOM NAME='H_5'      R=    0.9149426    1.8721561    0.3550851 !END
-  !ATOM NAME='H_6'      R=   -0.9590768    1.8489534    0.3609685 !END
-  !ATOM NAME='H_7'      R=   -1.2688999   -1.3705247   -1.1931492 !END
-  !ATOM NAME='H_8'      R=   -1.2566738   -1.7178309    0.6169637 !END
-  !ATOM NAME='H_9'      R=    1.3048656   -1.6841803    0.6095298 !END
-  !ATOM NAME='H_10'     R=    1.2974661   -1.3366936   -1.2005859 !END
+  !ATOM NAME= 'C_1'      R=      0.00039     0.00058     0.00073 !END
+  !ATOM NAME= 'C_2'      R=     -0.75614    -1.23475    -0.23218 !END
+  !ATOM NAME= 'C_3'      R=      0.78697    -1.21496    -0.23677 !END
+  !ATOM NAME= 'C_4'      R=     -0.01565     1.30089     0.25033 !END
+  !ATOM NAME= 'H_5'      R=      0.90840     1.86896     0.35434 !END
+  !ATOM NAME= 'H_6'      R=     -0.95347     1.84486     0.35984 !END
+  !ATOM NAME= 'H_7'      R=     -1.26418    -1.36866    -1.18740 !END
+  !ATOM NAME= 'H_8'      R=     -1.25397    -1.71365     0.61121 !END
+  !ATOM NAME= 'H_9'      R=      1.30191    -1.68090     0.60359 !END
+  !ATOM NAME= 'H_10'     R=      1.29257    -1.33589    -1.19502 !END
   !ISOLATE NF=3 RC=0.5 RCFAC=1.5 GMAX2=3.0 !END
 !END
 !EOB

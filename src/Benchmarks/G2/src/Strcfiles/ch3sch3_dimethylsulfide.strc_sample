@@ -1,27 +1,22 @@
 !STRUCTURE
- !GENERIC LUNIT[AA]=1.0 !END
- !OCCUPATIONS nempty=4  NSPIN=1 CHARGE[E]=0.0 SPIN[HBAR]=0.0  !END
- !LATTICE T= @LATTICE@ !END
- 
- !SPECIES NAME= 'S_'    @SULFUR@ !END
- 
- !SPECIES NAME= 'C_'    @CARBON@ !END
- 
- !SPECIES NAME= 'H_'    @HYDROGEN@ !END
- 
-  !ATOM NAME= 'S_1'      R=     -0.00000    -0.00000     0.00000 !END
-  !ATOM NAME= 'C_2'      R=      1.35956    -0.40264     1.13315 !END
-  !ATOM NAME= 'C_3'      R=     -1.41030    -0.39393     1.07258 !END
-  !ATOM NAME= 'H_4'      R=      1.32499     0.22524     2.03181 !END
-  !ATOM NAME= 'H_5'      R=      2.29267    -0.20085     0.59654 !END
-  !ATOM NAME= 'H_6'      R=      1.33707    -1.46136     1.41880 !END
-  !ATOM NAME= 'H_7'      R=     -2.31776    -0.18626     0.49575 !END
-  !ATOM NAME= 'H_8'      R=     -1.41105     0.23379     1.97202 !END
-  !ATOM NAME= 'H_9'      R=     -1.40702    -1.45275     1.35873 !END
- 
- !ISOLATE NF=3 RC=0.5 RCFAC=1.5 GMAX2=3.0 !END
- !CONSTRAINTS
-   !FREEZE ATOM='S_1' !END
- !END
+  !GENERIC LUNIT[AA]=1.0 !END
+  !OCCUPATIONS nempty=4  NSPIN=1 CHARGE[E]=0.0 SPIN[HBAR]=0.0  !END
+  !LATTICE T= @LATTICE@ !END
+  !SPECIES NAME= 'S_'    @SULFUR@ !END
+  !SPECIES NAME= 'C_'    @CARBON@ !END
+  !SPECIES NAME= 'H_'    @HYDROGEN@ !END
+  !ATOM NAME= 'S_1'      R=      0.00000     0.00000     0.00000 !END
+  !ATOM NAME= 'C_2'      R=      1.35952    -0.40281     1.13316 !END
+  !ATOM NAME= 'C_3'      R=     -1.41008    -0.39416     1.07280 !END
+  !ATOM NAME= 'H_4'      R=      1.32698     0.22705     2.03050 !END
+  !ATOM NAME= 'H_5'      R=      2.29272    -0.20436     0.59546 !END
+  !ATOM NAME= 'H_6'      R=      1.33480    -1.46087     1.42109 !END
+  !ATOM NAME= 'H_7'      R=     -2.31771    -0.18995     0.49499 !END
+  !ATOM NAME= 'H_8'      R=     -1.41273     0.23560     1.97080 !END
+  !ATOM NAME= 'H_9'      R=     -1.40454    -1.45232     1.36139 !END
+  !ISOLATE NF=3 RC=0.5 RCFAC=1.5 GMAX2=3.0 !END
+  !CONSTRAINTS
+    !FREEZE ATOM='S_1' !END
+  !END
 !END
 !EOB

@@ -164,6 +164,16 @@ cd ..
 %
 \item execute \verb|g2_do|
 %
+\item In order to efficiently check the convergence enter the
+  following on the command line
+\begin{verbatim}
+cd Cases
+if [[ -e tmp ]] ; then rm tmp ; fi
+for X in * ; do echo $X >> tmp ; grep '!>' $X.prot | tail -n 20 >> tmp ; done
+\end{verbatim}
+Then inspect the file tmp to see if results are converged. (Do not
+forget to return to the original directory)
+%
 \end{enumerate}
 
 %=========================================================================

@@ -38,15 +38,21 @@ To build up the test,
 \item change the file specieslist so that the desired setup
   construction is selected for each element.
 %
-\item construct an bash script to run the jobs
+\item Adjust the variable PAWCMD in \verb|src/el_makedo|.
+%
+\item execute
 \begin{verbatim}
 bin/el_makedo
 \end{verbatim}
-This creates a new bash script el\_do\_sample. It also updates the
+This creates a new bash script \verb|el_do_sample|. It also updates the
 setup information: The file \verb|src/specieslist| is expanded into
 the files in the directory \verb|bin/Speciesfiles|.
 %
-\item copy \verb|el_do_sample| into \verb|el_do|. Unselect elements
+\item copy \verb|el_do_sample| into \verb|el_do|. 
+\begin{verbatim}
+cp el_do_sample el_do
+\end{verbatim}
+Unselect elements
   that shall not be studied by deleting or by commenting out the
   corresponding lines in the list.
 %

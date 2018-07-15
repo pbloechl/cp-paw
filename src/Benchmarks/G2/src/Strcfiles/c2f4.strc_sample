@@ -4,12 +4,12 @@
   !LATTICE T= @LATTICE@ !END
   !SPECIES NAME= 'F_'  @FLOURINE@  !END
   !SPECIES NAME= 'C_'  @CARBON@ !END
-  !ATOM NAME='C_1'      R=    0.1657245    0.0000056   -0.0000055 !END
-  !ATOM NAME='C_2'      R=   -1.1655127    0.0000013   -0.0000041 !END
-  !ATOM NAME='F_3'      R=    0.8975947    1.1101061   -0.0000225 !END
-  !ATOM NAME='F_4'      R=    0.8975788   -1.1101101    0.0000244 !END
-  !ATOM NAME='F_5'      R=   -1.8976971    1.1098378    0.0000273 !END
-  !ATOM NAME='F_6'      R=   -1.8976897   -1.1098407   -0.0000197 !END
+  !ATOM NAME= 'C_1'      R=      0.16621    -0.00000     0.0 !END
+  !ATOM NAME= 'C_2'      R=     -1.16629    -0.00001     0.0 !END
+  !ATOM NAME= 'F_3'      R=      0.89692     1.10989     0.0 !END
+  !ATOM NAME= 'F_4'      R=      0.89692    -1.10989     0.0 !END
+  !ATOM NAME= 'F_5'      R=     -1.89700     1.10989     0.0 !END
+  !ATOM NAME= 'F_6'      R=     -1.89700    -1.10989     0.0 !END
   !ISOLATE NF=3 RC=0.5 RCFAC=1.5 GMAX2=3.0 !END
 !END
 !EOB
