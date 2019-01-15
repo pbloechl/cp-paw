@@ -1,0 +1,6 @@
+#!/bin/bash
+doit_A  # water
+doit_B  # malonaldehyde static
+doit_C  # malonaldehyde MD
+doit_D  # solids
+doit_E  # convergence

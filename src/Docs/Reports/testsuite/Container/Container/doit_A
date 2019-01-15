@@ -1,0 +1,90 @@
+#!/bin/bash
+#  this script performs a subset of calculations for the Hands-On PAW course
+#   
+#  Here: h2o
+#
+#  It relies on a data structure in the ROOT directory specified below
+#  with a SRC directory containing all input files required, and a
+#  SANDBOX directory where the calculations are performed, and where
+#  the resulting files are kept.
+#
+function error {
+  if [[ $1 != 0 ]] ; then 
+    error "in $0:$THIS: $2"
+    exit $IERR
+  fi
+  IERR=$(echo "$IERR+1" |bc -l)
+}
+
+ROOT='/Users/ptpb/Tree/PhiSX/Praktikum/Calculations'
+SRC=$ROOT/Container
+SANDBOX=$ROOT/Sandbox
+IERR=1
+cd $SANDBOX; error $? "not in sandbox"
+#==================================================================
+#== exercise 1: H2O 
+#==================================================================
+#
+#==  optimization of the electronic structure =====================
+THIS=h2o_1
+cp $SRC/$THIS.cntl $THIS.cntl   ; error $? "copy cntl failed"
+cp $SRC/$THIS.strc $THIS.strc   ; error $? "copy strc failed"
+paw_fast.x $THIS.cntl 1>out 2>&1; error $? "paw_fast.x failed"
+paw_show -ec $THIS $THIS.show_out; error $? "paw_show.x failed"
+##### use gracebat?
+#
+#
+#== optimize atomic structure if h2o ==============================
+PREV=$THIS
+THIS=h2o_2
+cp $PREV.rstrt $THIS.rstrt       ; error $? "copy rstrt failed"
+cp $PREV.strc $THIS.strc         ; error $? "copy strc failed"
+cp $SRC/$THIS.cntl $THIS.cntl    ; error $? "copy cntl failed"
+paw_fast.x $THIS.cntl 1>out 2>&1 ; error $? "paw_fast.x failed"
+paw_show -ec $THIS $THIS.show_out; error $? "paw_show.x failed"
+paw_strc.x -m $THIS 1>out 2>&1   ; error $? "paw_strc.x failed"
+#
+#
+#==================================================================
+#== exercise 2: Molecular wave functions of a water molecule
+#==================================================================
+#
+#== plot cube files of molecular wave functions =======================
+PREV=$THIS
+THIS=h2o_3
+cp $PREV.rstrt $THIS.rstrt       ; error $? "copy rstrt failed"
+cp $PREV.strc $THIS.strc         ; error $? "copy strc failed"
+cp $SRC/$THIS.cntl $THIS.cntl    ; error $? "copy cntl failed"
+paw_fast.x $THIS.cntl 1>out 2>&1 ; error $? "paw_fast.x failed"
+cp $SRC/$THIS.wcntl $THIS.wcntl  ; error $? "copy wcntl failed"
+paw_wave.x $THIS.wcntl           ; error $? "paw_wave.x failed"
+for X in b1 b3 b4 b5; do
+  paw_resolve -rSTATE=$X $SRC/h2o_3a.wcntl > $THIS.wcntl 
+                                     error $? "resolve wcntl ($X)failed"
+  paw_wave.x $THIS.wcntl           ; error $? "paw_wave.x ($X) failed"
+done
+#
+#
+#== plot contour and rubbersheets of the wave functions================
+PREV=$THIS
+THIS=h2o_4
+cp $PREV.strc_out $THIS.strc_out ; error $? "copy strc failed"
+cp $SRC/$THIS.wcntl $THIS.wcntl  ; error $? "copy cntl failed"
+paw_wave.x $THIS.wcntl           ; error $? "paw_wave.x failed"
+gnuplot h2o_b2_r.gnu > h2o_b2_r.eps ; error $? "gnuplot rubbersheet failed"
+gnuplot h2o_b2_c.gnu > h2o_b2_c.eps ; error $? "gnuplot contour failed"
+#
+#
+#== plot density of states ==============================================
+PREV=$THIS
+THIS=h2o_5
+cp h2o_3.pdos $THIS.pdos         ; error $? "copy pdos failed"
+cp $SRC/$THIS.dcntl $THIS.dcntl  ; error $? "copy dcntl failed"
+if [[ ! -d Dos ]] ; then
+   mkdir Dos                     ; error $? "making Dos directory failed"
+fi
+paw_dos.x $THIS.dcntl            ; error $? "paw_dos.x failed"
+cp $SRC/$THIS.dpcntl $THIS.dpcntl; error $? "copy dpcntl failed"
+paw_dosplot.x $THIS.dpcntl       ; error $? "paw_dosplot.x failed"
+gracebat -nosafe -hdevice EPS -batch h2o_5.bat -hardcopy -printfile h2o_5.eps
+

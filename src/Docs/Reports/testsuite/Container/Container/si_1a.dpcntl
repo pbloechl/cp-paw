@@ -1,0 +1,13 @@
+!dpcntl
+  ezero[ev]=0.  emin[ev]=-5. emax[ev]=14. ymin=0. ymax=3.5 
+  !graph prefix='Dos_Sa/'
+    !SET ID='total' COLOR='BLACK'           !END
+    !SET ID='s'     COLOR='BLUE'            !END
+    !SET ID='p'     COLOR='green'  stack=T !END
+    !SET ID='d'     COLOR='magenta' stack=T !END
+    !SET ID='0s'    COLOR='yellow'    stack=T !END
+    !SET ID='0p'    COLOR='red'   stack=T !END
+    !SET ID='0d'    COLOR='orange' stack=T !END
+  !end
+!end
+!eob

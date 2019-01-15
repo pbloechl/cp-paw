@@ -1,0 +1,23 @@
+!Control
+ !GENERIC NSTEP=1 START=F !END 
+ !FOURIER EPWPSI=30. CDUAL=2.0 !END
+ !DFT     TYPE=10 !END 
+ !PSIDYN STOP=T 
+    !AUTO FRIC(-)=0.05 FACT(-)=0.97 FRIC(+)=0.2 FACT(+)=1.0 MINFRIC=0.05 !END
+ !END
+ !RDYN STOP=T
+    !AUTO FRIC(-)=0.00 FACT(-)=0.9 FRIC(+)=0.01 FACT(+)=1.0 !END
+ !END
+ !FILES
+   !FILE ID='RESTART_OUT' EXT=F NAME='/dev/null' !END
+ !END
+ !analyse
+   !wave title='h2o state 1' b=1  file='h2o_b1.wv' !end
+   !wave title='h2o state 2' b=2  file='h2o_b2.wv' !end
+   !wave title='h2o state 3' b=3  file='h2o_b3.wv' !end
+   !wave title='h2o state 4' b=4  file='h2o_b4.wv' !end
+   !wave title='h2o state 5' b=5  file='h2o_b5.wv' !end
+ !end
+!END
+!EOB 
+

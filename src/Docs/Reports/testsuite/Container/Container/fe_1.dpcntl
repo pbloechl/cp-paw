@@ -1,0 +1,20 @@
+!dpcntl
+  ezero[ev]=0.  emin[ev]=3. emax[ev]=30. ymin=-4.5 ymax=4.5 
+  !graph prefix='Dos_F/'
+    !SET ID='total' COLOR='BLACK'           !END
+    !SET ID='s'     COLOR='BLUE'            !END
+    !SET ID='p'     COLOR='cyan'  stack=T !END
+    !SET ID='d'     COLOR='magenta' stack=T !END
+  !end
+  !graph prefix='Dos_F/' ymin=-0.3 ymax=0.3 
+    !SET ID='s'     COLOR='BLUE'            !END
+    !SET ID='p'     COLOR='cyan'  stack=T !END
+  !end
+  !graph prefix='Dos_F/' ymin=-3. ymax=3. 
+    !SET ID='eg' COLOR='yellow' !END
+  !end
+  !graph prefix='Dos_F/' ymin=-3. ymax=3. 
+    !SET ID='t2g' COLOR='green' !END
+  !end
+!end
+!eob
