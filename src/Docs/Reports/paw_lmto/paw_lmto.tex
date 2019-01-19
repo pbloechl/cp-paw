@@ -1738,6 +1738,510 @@ double-counting term is only included for the local terms.
 \end{itemize}
 
 
+%=======================================================================
+\chapter{Implementation of simpler orbitals}
+%=======================================================================
+This is a description of a more recent development using simpler
+orbitals. The basic idea is to simplify the orbitals so that they do
+not change their shape but that are directly tied to the central
+atom. This can be accomplished by using envelope functions that fall
+of so rapidly, that they are almost zero at the nuclear site of the
+neighboring atoms.
+
+
+%=======================================================================
+\section{Analysis of the code structure in paw\_lmto}
+%=======================================================================
+
+
+PAW\_WAVES
+\begin{verbatim}
+  CALL LMTO$PROJTONTBO_NEW('FWRD',XK(:,IKPT),NDIM,NBH,NPRO,THIS\%PROJ &
+     &                                    ,NORB,THIS\%TBC_NEW)
+\end{verbatim}
+
+
+
+The subroutine lmto\$etot is called from the \verb|paw\_waves1| object. 
+\begin{verbatim}
+LMTO$ETOT(LMNXX_,NDIMD_,NAT_,DENMAT_,DH_)
+   LMTO_HYBRID()
+      CALL LMTO_NTBODENMAT_NEW() 
+      CALL LMTO_HYBRIDENERGY()
+      CALL LMTO_NTBODENMATDER_NEW()
+      CALL LMTO_CLEANDENMAT_NEW()
+\end{verbatim}
+
+%=======================================================================
+\section{New code}
+%=======================================================================
+%=======================================================================
+\subsection{Determine off-site density matrix in partial-wave representation}
+%=======================================================================
+With a routine derived from \verb|LMTO_NTBODENMAT_NEW|, I determine
+the density matrix in terms of partial-wave projector functions.
+
+\begin{eqnarray}
+\rho_{\alpha,\vec{0},\beta,\vec{t}}
+=\frac{1}{\sum_k}\sum_k\sum_{n=1}^{nb}
+\langle\tilde{p}_{\alpha,0}|\psi_{n,k}\rangle f_{n,k}
+\langle\psi_{n,k}|\tilde{p}_{\beta,\vec{0}}\rangle\e{i\vec{k}\vec{t}}
+\end{eqnarray}
+
+There is a data type for matrices represented by a neighborlist.
+The third dimension describes the spin indices.\footnote{
+\begin{itemize}
+\item non spin-polarized, $N3=1$.
+\item spin polarized, $N3=2$. The two matrices are $\sigma=\uparrow,\downarrow$
+\item non-collinear, $N3=3$. The three matrices are the projections
+  onto $S_x,S_y,S_z$.
+\end{itemize}
+} 
+\begin{verbatim}
+TYPE NGBRMAT_TYPE
+  INTEGER(4)      :: IAT1  ! FIRST ATOM (LINKED TO THE LEFT INDEX OF MAT)
+  INTEGER(4)      :: IAT2  ! SECOND ATOM (LINKED TO THE RIGHT INDEX OF MAT)
+  INTEGER(4)      :: IT(3) ! LATTICE TRANSLATIONS TO BE ADDED TO ATOM 2
+  INTEGER(4)      :: N1    ! RIGHT DIMENSION OF MAT
+  INTEGER(4)      :: N2    ! LEFT DIMENSION OF MAT
+  INTEGER(4)      :: N3    ! THIRD DIMENSION OF MAT
+  REAL(8),POINTER :: MAT(:,:,:)  !(N1,N2,N3)
+END TYPE NGBRMAT_TYPE
+\end{verbatim}
+In a closed-packed sphere packing there are 12 nearest neighbors.
+
+%=======================================================================
+\subsection{Density matrix in orbital representation}
+%=======================================================================
+The orbital projections are evaluated using an onsite transformation
+\begin{eqnarray}
+\langle\tilde{\pi}_\alpha|=\sum_{j\in R_\alpha} c_{\alpha,j}\langle\tilde{p}_j|
+\quad\text{with}\quad
+\langle\tilde{\pi}_\alpha|\tilde{\chi}_\beta\rangle
+=\sum_{j\in R_\alpha} c_{\alpha,j}\langle\tilde{p}_j|\tilde{\chi}_\beta\rangle
+\end{eqnarray}
+When the orbitals are frozen, the matrix $\mat{c}$ is calculated once
+and for all with singular value decomposition. (Note that $\mat{c}$ is
+not square.
+
+The restriction to onsite terms requires that the orbitals fall off
+with distance sufficiently fast, that the offsite terms of
+$\langle\tilde{p}_j|\tilde\chi_\alpha\rangle$ are neglegible.
+
+%=======================================================================
+\subsection{Bare structure constants}
+%=======================================================================
+
+\begin{verbatim}
+LM1X=(L1X+1)**2
+LM2X=(L2X+1)**2
+CALL LMTO$STRUCTURECONSTANTS(R2-R1,K2,L1X,L2X,S(:LM1X,:LM2X))
+\end{verbatim}
+
+
+
+%=======================================================================
+\subsection{Routine radial\$helmholtz}
+%=======================================================================
+The routine \verb|radial\$helmholtz| shall act like
+\verb|radial\$poisson| but with a Yukawa potential.
+
+
+
+%===============================================================================
+\newpage
+\section{Helmholtz equation}
+%===============================================================================
+
+
+
+\url{http://fortranwiki.org/fortran/show/Bessel+function}
+
+\paragraph{Yukawa Potential obeys the Helmholtz equation:}
+In RPA without local field effects, the Energy looks like that of a
+Hartree Fock calculation, but with a modified exchange term. In the
+exchange, the interaction is changed to the screened interaction,
+which is represented by a Yukawa potential.
+\begin{eqnarray}
+v(\vec{r})&=&
+\int d^3r'\; \frac{e^2 n(\vec{r'})}
+{4\pi\epsilon_0|\vec{r}-\vec{r'}|\exp(\lambda|\vec{r}-\vec{r'}|)}
+\end{eqnarray}
+
+The Yukawa potential satisfies the Helmholtz equation
+\footnote{
+\begin{eqnarray}
+\vec{\nabla}\frac{1}{r}\e{-\lambda r|}
+&=&\left(-\frac{1}{r^2}-\frac{1}{r}\lambda\right)\e{-\lambda|\vec{r}|}
+\frac{\vec{r}}{r}
+=-\left(\lambda r+1\right)\frac{\vec{r}}{r^3}\e{-\lambda|\vec{r}|}
+\nonumber\\
+\vec{\nabla}^2\frac{1}{|\vec{r}|}\e{-\lambda|\vec{r}|}
+&=&
+\vec{r}\biggl[
+-\lambda\frac{1}{r^3}\e{-\lambda|\vec{r}|}
++\left(\lambda r+1\right)\frac{3}{r^4}\e{-\lambda|\vec{r}|}
++\left(\lambda r+1\right)\frac{1}{r^3}\lambda\e{-\lambda|\vec{r}|}
+\biggr]\frac{\vec{r}}{r}
+-\left(\lambda r+1\right)\frac{3}{r^3}\e{-\lambda|\vec{r}|}
+\nonumber\\
+&=&
+\Bigl(
+-\lambda r
++3\left(\lambda r+1\right)
++\left(\lambda r+1\right)\lambda r
+-\left(\lambda r+1\right)3
+\Bigr)
+\frac{1}{r^3}\e{-\lambda|\vec{r}|}
+\nonumber\\
+&=&
+\Bigl(
+-\lambda r
++3\lambda r+3
++\left(\lambda r\right)^2+\lambda r
+-3\lambda r-3
+\Bigr)
+\frac{1}{r^3}\e{-\lambda|\vec{r}|}
+=\lambda^2\frac{1}{r}\e{-\lambda|\vec{r}|}
+\nonumber\\
+\end{eqnarray}
+In order to verify that the inhomogeneity is a delta function we
+consider the integral
+\begin{eqnarray}
+\int_{r<r_c} d^3r\;\Bigl(\vec{\nabla}^2-\lambda^2\Bigr)
+\frac{1}{r}\e{-\lambda r}&=&
+\int_{r=r_c} d\vec{A}\;\vec{\nabla}\frac{1}{r}\e{-\lambda r}
+-\lambda^2 4\pi\int_0^{r_c}dr\; r^2\frac{1}{r}\e{-\lambda r}
+\nonumber\\
+&=&
+-\underbrace{\int_{r=r_c} d\vec{A}\frac{\vec{r}}{r^3}}_{4\pi}
+\left(\lambda r+1\right)\e{-\lambda r|}
+-\lambda^2 4\pi\int_0^{r_c}dr\; 
+\underbrace{r\e{-\lambda r}
+}_{\frac{-1}{\lambda^2}\partial_r (\lambda r+1)\e{-\lambda r}}
+\nonumber\\
+&=&
+-4\pi 
+\left(\lambda r_c+1\right)\e{-\lambda r_c}
++4\pi \Bigl((\lambda r_c+1)\e{-\lambda r_c}-1\Bigr)=-4\pi
+\end{eqnarray}
+}
+\begin{eqnarray}
+\Bigl(\vec{\nabla}^2-\lambda^2\Bigr)
+\frac{\e{-\lambda|\vec{r}|}}{|\vec{r}|}=-4\pi\delta(\vec{r})
+\end{eqnarray}
+
+The Helmholtz equation has the form
+\begin{eqnarray}
+\Bigl(\nabla^2 -\lambda^2\Bigr)v(\vec{r})&=&
+\int d^3r'\; 
+\frac{e^2 n(\vec{r'})}{\epsilon_0}
+\Bigl(\nabla^2 -\lambda^2\Bigr)
+\frac{1}{4\pi|\vec{r}-\vec{r'}|\exp(\lambda|\vec{r}-\vec{r'}|)}
+\nonumber\\
+%
+&=&-\int d^3r'\; 
+\frac{e^2 n(\vec{r'})}{\epsilon_0}
+\delta(\vec{r}-\vec{r'})
+\nonumber\\
+&=&-\frac{e^2 }{\epsilon_0}n(\vec{r})
+\end{eqnarray}
+
+\paragraph{Radial Green function:}
+In order to obtain the radial Green's function, we expand the density
+and potential in spherical harmonics
+\begin{eqnarray}
+\Bigl(\nabla^2 -\lambda^2\Bigr)v_L(|\vec{r}|)Y_L(\vec{r})
+&=&-\frac{e^2}{\epsilon_0}n_L(|\vec{r}|)Y_L(\vec{r})
+\nonumber\\
+\Bigl(\frac{1}{r}\partial^2_r r-\frac{\ell(\ell+1)}{r^2}-\lambda^2\Bigr)
+v_L(|\vec{r}|)&=&-\frac{e^2}{\epsilon_0}n_L(|\vec{r}|)
+\nonumber\\
+%% \Bigl(r\partial^2_r r-\ell(\ell+1)-\lambda^2r^2\Bigr)v_L(r)
+%% &=&\frac{e^2}{\epsilon_0}n_L(r)r^2
+%% \nonumber\\
+%% \Bigl(r^2\partial^2_r+2r\partial r
+%% -\ell(\ell+1)-\lambda^2r^2\Bigr)v_L(r)
+%% &=&\frac{e^2}{\epsilon_0}n_L(r)r^2
+%% \nonumber\\
+%% \stackrel{x=\lambda r}{\Rightarrow}\quad
+%% \Bigl(x^2\partial^2_x+2x\partial_x
+%% -\ell(\ell+1)-x^2\Bigr)v_L(x/\lambda)
+%% &=&\frac{e^2}{\epsilon_0\lambda^2}n_L(x/\lambda)x^2
+\end{eqnarray}
+
+Determine a radial Green's function
+\begin{eqnarray}
+\Bigl(\frac{1}{r}\partial_r^2 r-\frac{\ell(\ell+1)}{r^2}-\lambda^2\Bigr)
+g_{\ell}(r,r')=\delta(r-r')
+\end{eqnarray}
+and make the following ansatz for the potential.
+\begin{eqnarray}
+v_L(r)=\int_0^\infty dr'\; g_\ell(r,r')\frac{e^2n_L(r')}{\epsilon_0}
+\end{eqnarray}
+
+Let $j_\ell(r)$ be the regular solution and $h_\ell(r)$ the irregular
+solution, which goes to zero at infinity. The $j_\ell(r)$ is, up to a
+constant factor, equal to the modified spherical Bessel function of
+the first kind with argument $\kappa r$ and $h_\ell(r)$ is, up to a
+constant factor, the modified bessel function of the third kind with
+argument $\kappa r$.  The factor is chosen so that they have the
+$\kappa$-independent limit for small arguments.
+\begin{eqnarray}
+j_\ell(r)=\frac{1}{(2\ell+1)!!}r^\ell(1+O(r^2))
+\quad\text{and}\quad
+h_\ell(r)=(2\ell-1)!!r^{-\ell-1}(1+O(r^2))
+\end{eqnarray}
+In the following, I will refer to the $j_\ell(r)$ as Bessel functions
+and to the $h_\ell(r)$ as Hankel functions.
+
+
+The Green's function must solve
+the homogeneous equation for $r\neq r'$, and it must no continuous but
+not differentiable for $r=r'$. This is accomplished with the ansatz
+\begin{eqnarray}
+g_\ell(r,r')
+&=&A(r')\biggl[ \theta(r'-r) \frac{j_\ell(r)}{j(\vec{r'})}
++\theta(r-r')\frac{h_\ell(r)}{h_\ell(r')}\biggr]
+\end{eqnarray}
+
+The factor $A(r)$ is then determined by
+\begin{eqnarray}
+\lim_{\epsilon\rightarrow 0}
+\int_{r'-\epsilon}^{r'+\epsilon} dr\; \frac{1}{r}\partial^2_r r\; g_L(r,r')=1
+\end{eqnarray}
+which leads to the following condition
+\begin{eqnarray}
+1&=&\lim_{\epsilon\rightarrow 0}\frac{1}{r'}
+\biggl[\partial_r r g_L(r,r')\biggr]_{r'-\epsilon}^{r'+\epsilon} 
+=
+\lim_{\epsilon\rightarrow 0}\frac{1}{r'}
+\biggl[
+g_L(r,r')+r \partial_r g_L(r,r')\biggr]_{r'-\epsilon}^{r'+\epsilon} 
+\nonumber\\
+&=&\left.\partial_r\right|_{r'+\epsilon}g_L(r,r')
+-\left.\partial_r\right|_{r'-\epsilon}g_L(r,r')
+\nonumber\\
+&=&A(r')
+\biggl[ 
+\delta(r-r')\frac{h_\ell(r)}{h_\ell(r')}
++\theta(r^{'+}-r')\frac{\partial_rh_\ell(r^{'+})}{h_\ell(r')}
+-\delta(r'-r) \frac{j_\ell(r)}{j(\vec{r'})}
+-\theta(r'-r^{'-})\partial_r\frac{j_\ell(r^{'-})}{j(\vec{r'})}
+\biggr]
+\nonumber\\
+&=&A(r')
+\biggl[ 
+\frac{\partial_rh_\ell(r')}{h_\ell(r')}
+-\frac{\partial_rj_\ell(r')}{j(\vec{r'})}
+\biggr]
+\nonumber\\
+&=&A(r')
+\biggl[ 
+\frac{j(\vec{r'})\partial_rh_\ell(r')
+-h_\ell(r')\partial_r j_\ell(r')}{j(\vec{r'})h_\ell(r')}
+\biggr]
+\end{eqnarray}
+
+The numerator can be simplified as follows: We can use the Helmholtz
+equation to show that the following integral vanishes. The origin has
+been excluded, because $K_L$ is not differentiable, so that Gauss
+theorem cannot be applied there
+\begin{eqnarray}
+0&=&\int_{r_1<|\vec{r}|<r_2} d^3r\; 
+\Bigl(J_L\vec{\nabla}^2 K_L-K_L\vec{\nabla}^2 J_L\Bigr)
+\nonumber\\
+%
+%
+&=&\int_{r_1<|\vec{r}|<r_2} d^3r\; 
+\vec{\nabla}\Bigl(J_L\vec{\nabla} K_L-K_L\vec{\nabla} J_L\Bigr)
+\nonumber\\
+%
+%
+&=&
+\int_{|\vec{r}|=r_2} d\vec{A}
+\Bigl(J_L\vec{\nabla} K_L-K_L\vec{\nabla} J_L\Bigr)
+-\int_{|\vec{r}|=r_1} d\vec{A}
+\Bigl(J_L\vec{\nabla} K_L-K_L\vec{\nabla} J_L\Bigr)
+\end{eqnarray}
+Thus the surface integral is independent of the radius. I name its
+value $C$
+\begin{eqnarray}
+C&=&\int_{|\vec{r}|=r_2} d\vec{A}\;\Bigl(J_L\vec{\nabla} K_L-K_L\vec{\nabla} J_L\Bigr)
+\nonumber\\
+%
+&=&\int_{|\vec{r}|=r_2} d\vec{A}\;\biggl[
+j_\ell Y_L\Bigl(h_\ell \vec{\nabla}Y_L+Y_L \vec{\nabla}h_\ell\Bigr) 
+-
+h_\ell Y_L\Bigl(j_\ell \vec{\nabla}Y_L+Y_L \vec{\nabla}j_\ell\Bigr) 
+\biggr]
+\nonumber\\
+%
+&=&\int_{|\vec{r}|=r_2} d\vec{A}\;
+\underbrace{Y_LY_L}_{\sum_{L''}C_{L'',L,L}Y_{L''}}
+\biggl[
+ j_\ell \vec{\nabla}h_\ell-h_\ell  \vec{\nabla}j_\ell\Bigr) 
+\biggr]
+\nonumber\\
+%
+&=&r^2\Bigl( j_\ell \partial_rh_\ell-h_\ell\partial_rj_\ell\Bigr) 
+\end{eqnarray}
+The Hankel and Bessel functions are defined\footnote{Methods, Section:
+  Working with spherical Hankel and Bessel functions} such that
+\begin{eqnarray}
+j_\ell(r)&=&\frac{1}{(2\ell+1)!!}r^\ell+\ldots
+\nonumber\\
+h_\ell(r)&=&(2\ell-1)!!r^{-\ell-1}+\ldots
+\end{eqnarray}
+so that
+\begin{eqnarray}
+C
+&=&r^2
+\frac{1}{2\ell+1}\Bigl((-\ell-1)r^{-2}-\ell r^{-2}\Bigr)
+=-1
+\end{eqnarray}
+
+\begin{eqnarray}
+A(\vec{r'})&=&
+\frac{j(\vec{r'})h_\ell(r')}{j(\vec{r'})\partial_rh_\ell(r')
+-h_\ell(r')\partial_r j_\ell(r')}
+=-r^2 j(\vec{r'})h_\ell(r')
+\end{eqnarray}
+
+
+
+We insert this result into the expression for the Green function
+\begin{eqnarray}
+g_\ell(r,r')
+&=&A(r')\biggl[ \theta(r'-r) \frac{j_\ell(r)}{j(\vec{r'})}
++\theta(r-r')\frac{h_\ell(r)}{h_\ell(r')}\biggr]
+\nonumber\\
+&=&
+-{r'}^2\biggl[ \theta(r'-r) j_\ell(r)h(\vec{r'})
++\theta(r-r')h_\ell(r)j_\ell(r')\biggr]
+\end{eqnarray}
+
+In practice we calculate the following steps
+\begin{eqnarray}
+v_l(r)&=&\int_0^\infty dr'\; g_\ell(r,r')\frac{e^2n_L(r')}{\epsilon_0}
+\nonumber\\
+&=&
+-4\pi\frac{e^2}{4\pi\epsilon_0}
+\int_0^\infty dr'\; {r'}^2
+\left[j_\ell(r)\theta(r'-r)h_\ell(\vec{r'})
++h_\ell(r)\theta(r-r')j_\ell(r')
+\right]n_L(r')
+\nonumber\\
+&=&
+j_\ell(r)
+\left[
+-4\pi\frac{e^2}{4\pi\epsilon_0}
+\int_0^\infty dr'\; {r'}^2\theta(r'-r) 
+h_\ell(\vec{r'})
+\frac{e^2n_L(r')}{\epsilon_0}\right]
+\nonumber\\
+&+&
+h_\ell(r)
+\left[
+-4\pi\frac{e^2}{4\pi\epsilon_0}
+\int_0^\infty dr'\; {r'}^2\theta(r-r')j_\ell(r')n_L(r')\right]
+\nonumber\\
+%
+%
+&=&
+j_\ell(r)
+\left[
+-4\pi\frac{e^2}{4\pi\epsilon_0}
+\int_0^{r} dr'\; {r'}^2
+h_\ell(\vec{r'})n_L(r')\right]
++
+h_\ell(r)
+\left[
+-4\pi\frac{e^2}{4\pi\epsilon_0}
+\int_{r}^\infty dr'\; {r'}^2j_\ell(r')n_L(r')\right]
+\nonumber\\
+%
+%
+&=&
+j_\ell(r)\Bigl[a(\infty)-a(r)\Bigr]
++
+h_\ell(r)b(r)
+\nonumber\\
+a(r)&=&
+-4\pi\frac{e^2}{4\pi\epsilon_0}
+\int_0^r dr'\; {r'}^2h_\ell(\vec{r'})n_L(r')
+\nonumber\\
+b(r)&=&
+-4\pi\frac{e^2}{4\pi\epsilon_0}
+\int_0^r dr'\; {r'}^2j_\ell(r')n_L(r')
+\end{eqnarray}
+
+
+%% This is a radial Helmholtz equation, which has spherical Bessel
+%% $j_\ell(x)$ and Neumann functions $n_\ell(x)$ as solution. 
+%% \begin{eqnarray}
+%% j_\ell(x)&=&(-x)^{\ell}\left(\frac{1}{x}\partial_x\right)^\ell\frac{\sin(x)}{x}
+%% \nonumber\\
+%% n_\ell(x)&=&-(-x)^{\ell}\left(\frac{1}{x}\partial_x\right)^\ell\frac{\cos(x)}{x}
+%% \end{eqnarray}
+%% \textbf{check this!}
+
+%% In Fortran
+%% 2008, we have Bessel functions of integer order as intrinsic
+%% function. The spherical Bessel and Hankel functions can be obtained
+%% from the latter as
+%% \begin{eqnarray}
+%% j_\ell(x)=\sqrt{\frac{\pi}{2x}}J_{\ell+\frac{1}{2}}(x)
+%% \end{eqnarray}
+%% which yields
+%% \begin{eqnarray}
+%% x\partial_x x^{-\frac{1}{2}}J(x)&=&
+%% x^{-\frac{1}{2}}
+%% \Bigl[x\partial_x -\frac{1}{2} \Bigr]J(x)
+%% \nonumber\\
+%% x^2\partial^2_x x^{-\frac{1}{2}}J(x)&=&
+%% x^{-\frac{1}{2}}\Bigl[x^2\partial^2_x
+%% - x\partial_x +\frac{3}{4}\Bigr]J(x)
+%% \end{eqnarray}
+
+%% \begin{eqnarray}
+%% &&\Bigl(x^2\partial^2_x+2x\partial_x
+%% -\ell(\ell+1)-x^2\Bigr)x^{-\frac{1}{2}}J(x)
+%% \nonumber\\
+%% &=&x^{-\frac{1}{2}}
+%% \Bigl(x^2\partial^2_x- x\partial_x +\frac{3}{4}
+%% +2x\partial_x-1-\ell(\ell+1)-x^2\Bigr)J(x)
+%% \nonumber\\
+%% &=&
+%% x^{-\frac{1}{2}}
+%% \Bigl(x^2\partial^2_x 
+%% +x\partial_x-\left(\ell+\frac{1}{2}\right)^2-x^2\Bigr)J(x)
+%% \nonumber\\
+%% \end{eqnarray}
+
+
+%% This is the equation for the modified Bessel function\footnote{Source:
+%%   \url{https://de.wikipedia.org/wiki/Besselsche_Differentialgleichung}}
+%% \begin{eqnarray}
+%% \Bigl[x^2\partial^2+x\partial_x-(x^2+\nu^2)\Bigr]f(x)=0
+%% \end{eqnarray}
+%% for $\nu=\ell+\frac{1}{2}$. The regular solution is the modified
+%% Bessel function $I_\nu(x)=i^{-\nu}J_\nu(ix)$ and the irregular
+%% solution is the Mac-Donald function
+%% $K_\nu(x)=\frac{\pi}{2}(-i)^{\nu+1} H_\nu^{(2)}(-ix)$ qwhich can be
+%% expressed by the Hankel function $H_\nu^{(2)}(-ix)$. (There is also a
+%% Hankel function $H_\nu^{(2)}(-ix)$!)
+
+%% In future there may be spherical besssel functions as intrinsic
+%% fortran functions. (It is not included in Fortran 2018).
+
+
+
+I use the routines \verb|SPFUNCTION$MODBESSEL(L,K*X,Y,DYDX)| (ABRAMOWITZ 10.2.4)
+and \verb|SPFUNCTION$MODHANKEL(L,K*X,Y,DYDX)|(ABRAMOWITZ 10.2.4)
+(which is taken from routione \verb|LMTO\$solidbessel| 
+\verb|LMTO\$solidhankel| in \verb|paw\_lmtobasics|
+
 
 
 
@@ -1813,6 +2317,56 @@ m_\ell(r)=\frac{2}{\pi} \Bigl[\sqrt{\frac{\pi}{2r}} K_{\ell+1}(r)\Bigr]
 which can be verified by comparing the defining equation \eq{eq:defml}
 with equations 10.2.24-25 and the definition Eq. 10.2.4 of Abramowitz.
 \end{itemize}
+
+
+%=======================================================================
+\section{Modified spherical Bessel functions}
+%=======================================================================
+The modified spherical Bessel functions of the first kind obey
+(Abramowitz 10.2.1)
+\begin{eqnarray}
+x^2\partial_x^2+2x\partial_x-\Bigl(x^2+\ell(\ell+1)\Bigr)w(x)=0
+\nonumber\\
+\Rightarrow\quad
+\Bigl(\frac{1}{x}\partial_x^2x-\frac{\ell(\ell+1)}{x^2}-1\Bigr)w(x)=0
+\end{eqnarray}
+
+The regular solutions are modified bessel functions of the first
+kind. (abramowitz 10.2.2, abramowitz 10.2.13)
+\begin{eqnarray}
+j_0(x)&=&\sqrt{\frac{\pi|}{2x}}I_{\frac{1}{2}}(x)=\frac{\sinh(x)}{x}
+\nonumber\\
+j_1(x)&=&\sqrt{\frac{\pi|}{2x}}I_{\frac{3}{2}}(x)=\frac{x\cosh(x)-\sinh(x)}{x^2}
+\nonumber\\
+j_2(x)&=&\sqrt{\frac{\pi|}{2x}}I_{\frac{5}{2}}(x)
+=\frac{x^2\sinh(x)-3x\cosh(x)+3\sinh(x)}{x^3}
+\end{eqnarray}
+They have the leading order (abramowitz 10.2.5)
+\begin{eqnarray}
+j_\ell(x)=\frac{x^\ell}{(2\ell+1)!!}+O(x^{\ell+2})
+\end{eqnarray}
+
+The irregular solutions are the \textbf{modified Bessel functions of
+  the third kind} (abramowitz 10.2.4, abramowitz 10.2.17)
+$\frac{\pi}{2}h_\ell(x)$. We will name $h_\ell(x)$ Hankel function.
+\begin{eqnarray}
+\frac{\pi}{2}h_0(x)&=&\sqrt{\frac{\pi}{2x}}K_{\frac{1}{2}}(x)
+=\frac{\pi}{2}\e{-x}\frac{1}{x}
+\nonumber\\
+\frac{\pi}{2}h_1(x)&=&\sqrt{\frac{\pi}{2x}}K_{\frac{3}{2}}(x)
+=\frac{\pi}{2}\e{-x}\frac{1+x}{x^2}
+\nonumber\\
+\frac{\pi}{2}h_2(x)&=&\sqrt{\frac{\pi}{2x}}K_{\frac{5}{2}}(x)
+=\frac{\pi}{2}\e{-x}\frac{x^2+3x+3}{x^3}
+\end{eqnarray}
+They have the leading order (abramowitz 10.2.6,abramowitz 10.2.4))
+\begin{eqnarray}
+\frac{\pi}{2}h_\ell(x)=\frac{\pi}{2}\frac{(2\ell-1)!!}{x^{\ell+1}}
++...
+\end{eqnarray}
+
+
+
 
 
 %=======================================================================
