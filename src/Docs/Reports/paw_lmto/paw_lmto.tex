@@ -1047,38 +1047,53 @@ is calculated first using \verb|potpar1(isp)%prok| and
 %====================================================================
 The double-counting correction is that of Eq.~36 of the paper by
 Bl\"ochl, Walther, Pruschke\cite{bloechl11_prb84_205101}.
-\begin{eqnarray}
-E_{xc}^{\hat{W}_R}
-&=&
-\int d^3r\; n^\chi_R(\vec{r})
-\epsilon_{xc}[n^\chi_{\sigma,\sigma'}(\vec{r})]
-\frac{n^\chi_R(\vec{r})}{n^\chi(\vec{r})}
-\nonumber\\
-&=&
-\int d^3r\; \biggl(n^\chi(\vec{r})
-\epsilon_{xc}[n^\chi_{\sigma,\sigma'}(\vec{r})]\biggr)
-\left(\frac{n^\chi_R(\vec{r})}{n^\chi(\vec{r})}\right)^2
-\end{eqnarray}
-The exchange correlation density is calculated with the correlated
-orbitals, but there is an additional factor, which cuts of the
-exchange correlation contribution at large radii, where the density
-vanishes.
 
-For hybrid functionals only the scaled Hartree-Fock energy is added,
-so that the double counting is weighted as well and it is furthermore
-limited to the exchange term only. \textbf{This will be different, if
-  also corrections for the correlation energies are added.}
+It is based on a partioning of the exchange correlation energy in the form
+using the functions 
+\begin{eqnarray}
+g_R(\vec{r})
+=\frac{n^{\chi,s}_R(\vec{r})}{\sum_{R'}n^{\chi,s}_{R'}(\vec{r})}
+=\left[1+\frac{\sum_{R';R'\neq R} n_{R'}(\vec{r})}{n_{R}(\vec{r})}\right]^{-1}
+\end{eqnarray}
+where $n^{\chi,s}_R(\vec{r})$ is the spherical part of the density from
+the local orbitals $|\chi\rangle$.  The partitioning functions obey
+$\sum_R g_R(\vec{r})=1$, which allows to rewrite the exchange
+correlation energy in the form
+\begin{eqnarray}
+E_{xc}=\sum_{R,R'}\int d^3r\; 
+n(\vec{r})\epsilon_{xc}[n(\vec{r})]\;g_R(\vec{r})g_{R'}(\vec{r})
+\end{eqnarray}
+
+The resulting onsite terms are used for our double-counting term for
+an on-site interaction. 
+\begin{eqnarray}
+E_{xc}^{\hat{W}_R} &=& \int d^3r\; \biggl(n(\vec{r})
+\epsilon_{xc}[n]\biggr) g_R^2(\vec{r})
+\end{eqnarray}
+The exchange correlation density is calculated with the partial wave
+expansion, and it is cut off by the squared partitioning function.
 
 Other double-counting schemes are discussed in appendix~\ref{app:dc}.
 
-
-Let us simplify the expression by introducing the symbols
-$n_R=n^\chi_R(\vec{r})$ and $n_t=n^\chi_{\sigma,\sigma'}(\vec{r})$.
-With $n^s_R$ and $n^s_t$ we denote the spherical parts of the
-respective densities.
-
-If the frozen-core density is employed, the contribution of the core
-must not be included in the double-counting term.
+\begin{itemize}
+\item For hybrid functionals only the scaled Hartree-Fock energy is
+  added, so that the double counting is weighted as well and it is
+  furthermore limited to the exchange term only. \textbf{This will be
+    different, if also corrections for the correlation energies are
+    added.}
+%
+\item Let us simplify the expression by introducing the symbols
+  $n_R=n^\chi_R(\vec{r})$ and $n_t=n^\chi_{\sigma,\sigma'}(\vec{r})$.
+  With $n^s_R$ and $n^s_t$ we denote the spherical parts of the
+  respective densities.
+%
+\item If the frozen-core density is employed, the contribution of the
+  core must be excluded in the double-counting term.
+%
+\item In the denominator of the cutoff function $g_R(\vec{r})$, I
+  replace the multicenter expansion of the density in terms of local
+  orbitals, the one-center partial-wave expansion.
+\end{itemize}
 
 The expression above can be written in the
 following form:
