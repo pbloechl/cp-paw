@@ -1045,6 +1045,85 @@ is calculated first using \verb|potpar1(isp)%prok| and
 %====================================================================
 \section{Double-counting correction}
 %====================================================================
+
+
+%====================================================================
+\subsection{HSE-like}
+%====================================================================
+In the HSE functional\cite{heyd03_jcp118_8207}, the double counting
+term exploits that the exchange-hole of the PBE functional is
+known.\cite{ernzerhof98_jcp109_3313}. The procedure is described in
+the appendix of the HSE03 paper.\cite{heyd03_jcp118_8207}. A
+subroutine for the range separated exchange derived from the exchange
+hole is given in the Thesis of J. Heyd. (\url{heyd04_thesis}) An
+improved exchange-corrfelation hole has been determined by Bahmann and
+Ernzerhof\cite{bahmann08_jcp128_234104}.
+
+
+
+
+See Kevin E. Riley et. al, Critical Assessement of the Performance of
+Density Functional Methods for Several Atomic and Molecular
+Properties, J. Chem. Theory Comput. 2007; 3(2): 407-433
+
+
+The following does not belong here. It is obtained from Joost
+VandeVondele ``Hybrid functionals in CP2K, A tutorial, Feb.10,
+2011.\url{https://www.cecam.org/upload/talk/presentation_5766.pdf}
+Least square fit to the correct wave function under the constraint of
+orthonormality. They use the term Auxiliary density matrix method
+(ADMM): Guidon, Hutter and VandeVondele, J. Chem. Theory Comput., 6,
+2348 (2010)
+\begin{eqnarray}
+I&=&\min\biggl[
+\sum_n f_n
+\Bigl(\langle\psi_n|-\sum_\alpha C^\dagger_{n,\alpha}\langle\chi_\alpha|\Bigr)
+\Bigl(\sum_{\gamma,\gamma'} |p_\gamma\rangle W_{\gamma,\gamma'}\langle p_{\gamma'}|\Bigr)
+\Bigl(|\psi_n\rangle-\sum_\beta |\chi_\beta\rangle C_{\beta,n}\Bigr)
+\nonumber\\
+&&+\sum_{m,n}\Lambda_{n,m}\biggl(
+\Bigl(\sum_{\alpha,\beta}
+C^\dagger_{m,\alpha}\langle\chi_{\alpha}|\chi_\beta\rangle C_{\beta,n}
+\Bigr)
+-\delta_{m,n}\biggr)
+\biggr]
+\end{eqnarray}
+
+
+\begin{eqnarray}
+\frac{dI}{dC^\dagger_{n,\alpha}}&=&
+\sum_\gamma
+\Bigl(\sum_{\gamma'} \langle\chi_\alpha|p_{\gamma'}\rangle W_{\gamma',\gamma}\Bigr)
+\Bigl(\langle p_{\gamma}|\psi_n\rangle-\sum_\beta \langle p_{\gamma}|\chi_\beta\rangle C_{\beta,n}\Bigr)f_n
+\nonumber\\
+&&+\sum_{m}
+\sum_{\beta}
+\langle\chi_{\alpha}|\chi_\beta\rangle C_{\beta,m}\Lambda_{m,n}\stackrel{!}{=}0
+\end{eqnarray}
+
+\begin{eqnarray}
+\Rightarrow 
+\sum_\beta
+\Bigl(\sum_{\gamma,\gamma'}
+\langle\chi_\alpha|p_{\gamma'}\rangle W_{\gamma',\gamma}
+ \langle p_{\gamma}|\chi_\beta\rangle \Bigr)C_{\beta,n}
+&-&\sum_{m}
+\sum_{\beta}
+\langle\chi_{\alpha}|\chi_\beta\rangle C_{\beta,m}\Lambda_{m,n}\frac{1}{f_n}\
+\nonumber\\
+&\stackrel{!}{=}&
+\sum_\gamma
+\Bigl(\sum_{\gamma'} \langle\chi_\alpha|p_{\gamma'}\rangle W_{\gamma',\gamma}\Bigr)
+\langle p_{\gamma}|\psi_n\rangle
+\end{eqnarray}
+
+
+
+
+
+%====================================================================
+\subsection{Bl\"ochl, Walther, Pruschke}
+%====================================================================
 The double-counting correction is that of Eq.~36 of the paper by
 Bl\"ochl, Walther, Pruschke\cite{bloechl11_prb84_205101}.
 
