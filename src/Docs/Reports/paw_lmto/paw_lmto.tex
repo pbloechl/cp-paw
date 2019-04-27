@@ -1844,6 +1844,682 @@ neighboring atoms.
 
 
 %=======================================================================
+\section{Local orbitals}
+%=======================================================================
+Local orbitals are augmented Hankelfunctions
+\begin{eqnarray}
+|\chi_\gamma\rangle&=&
+\sum_\gamma \biggl\lbrace
+\underbrace{
+|\phi^{K}_{\alpha}\rangle+ |K^{\notin\Omega_\alpha}_\alpha\rangle
+}_{\text{R-independent}}
+\underbrace{
+-\sum_{\beta}
+\biggl(|\phi^J_{\beta}\rangle -|J_{\beta}\rangle\biggr)
+S^\dagger_{R_\beta,L_\beta,R_\alpha,L_\alpha}}_{\text{R-dependent and small}}
+\biggr\rbrace c_{\alpha,\gamma}
+\nonumber\\
+&=&\sum_\gamma \biggl\lbrace
+|\phi^{K}_{\alpha}\rangle
+-\sum_{\beta}
+|\phi^J_{\beta}\rangle S^\dagger_{R_\beta,L_\beta,R_\alpha,L_\alpha}
++ |K^{I}_\alpha\rangle
+\biggr\rbrace c_{\alpha,\gamma}
+\end{eqnarray}
+Here $|\phi^K_\alpha\rangle$ is a superposition of partial waves,
+which match at the augmentation radius to $|K_\alpha\rangle$, and
+which are set to zero outside the augmentation region.
+$|K^{\notin\Omega}_\alpha\rangle$ is the Hankelfunction at site
+$R_\alpha$ and angular momentum $L_\alpha$, which is nonzero only
+outside its central augmentation region.
+
+A suitable definition for $\mat{c}$ is a matrix that produces
+orthonormal states for am isolated atom.
+
+
+
+
+
+
+%===============================================================
+\subsection{Using parameters}
+%===============================================================
+The potential parameters contain
+\begin{eqnarray}
+|\chi\rangle&=&
+\begin{cases}
+|\phi\rangle\texttt{KTOPHI}+|\dot{\phi}\rangle\texttt{KTOPHIDOT} 
+&\text{in central region}
+\\
+|H_L\rangle&\text{outside central region}
+\end{cases}
+\nonumber\\
+\langle{p}|\phi^K\rangle&=&
+\texttt{PROK}
+\nonumber\\
+\langle{p}|\phi^J\rangle&=& 
+\langle{p}|\phi^{\bar{J}}\rangle
++\langle{p}|\phi^{K}\rangle \bar{Q}
+=\texttt{PROJBAR}+\texttt{PROK}\cdot\texttt{QBAR}
+\end{eqnarray}
+
+
+
+
+
+Later we will need the inverse of $\langle{p}|\Phi^K\rangle\mat{c}$.
+$\langle{p}|\Phi^K\rangle$ is a $N^\phi\times N^\chi$ matrix and
+$\mat{c}$ is a $N^\chi\times N^\chi$ matrix.  The inversion shall be
+done in the least-square sense, that is
+\begin{eqnarray}
+\Bigl(\langle{p}|\Phi^K\rangle\mat{c}\Bigr)^{-1}
+&=&
+\Bigl(\mat{c}^\dagger\langle\Phi^K|p\rangle
+\langle\phi|\phi\rangle
+\langle{p}|\Phi^K\rangle\mat{c}\Bigr)^{-1}
+\mat{c}^\dagger\langle\Phi^K|p\rangle\langle\phi|\phi\rangle
+\end{eqnarray}
+
+
+
+%=======================================================================
+\section{Projector functions}
+%=======================================================================
+The projector functions are determined so that
+\begin{eqnarray}
+\langle{p}_\zeta|\psi\rangle
+=
+\sum_\gamma
+\langle{p}_\zeta|\chi_\alpha\rangle\langle\pi_\alpha|\psi\rangle
+\quad
+\Rightarrow\quad
+\langle\pi_\alpha|=
+\sum_\gamma \Bigl(\langle{p}|\chi\rangle\Bigr)^{-1}_{\alpha,\gamma}
+\langle{p}_\gamma|
+\end{eqnarray}
+
+
+\begin{eqnarray}
+\langle{p}_\zeta|\chi_\gamma\rangle&=&
+\sum_\alpha
+\biggl\lbrace
+\langle{p}_\zeta|\phi^K_\alpha\rangle
+-
+\sum_\beta 
+\langle{p}_\zeta|\phi^J_{\beta}\rangle S^\dagger_{R_\beta,L_\beta,R_\alpha,L_\alpha}
+\biggr\rbrace c_{\alpha,\gamma}
+\nonumber\\
+&=&
+\sum_{\eta}
+\biggl\lbrace
+\delta_{\zeta,\eta}
+-
+\underbrace{
+\sum_{\beta,\alpha}
+\langle{p}_\zeta|\phi^J_{\beta}\rangle S^\dagger_{R_\beta,L_\beta,R_\alpha,L_\alpha}
+\Bigl(\langle{p}|\phi^K\rangle\Bigr)^{-1}_{\alpha,\eta}
+}_{=:Z^\dagger_{\zeta,\eta}}
+\biggr\rbrace \sum_\mu \langle{p}_\eta|\phi^K_\mu\rangle c_{\mu,\gamma}
+\end{eqnarray}
+
+\begin{eqnarray}
+\langle\pi_{\mu}|=
+\Bigl(\langle{p}|\phi^K\rangle \mat{c}\Bigr)^{-1}_{\eta}
+\biggl\lbrace
+\delta_{\zeta,\eta}-Z_{\zeta,\eta}
+\biggr\rbrace^{-1,\dagger}_{\eta,\zeta}  
+\langle{p}_\zeta|
+\end{eqnarray}
+
+
+\begin{eqnarray}
+\mat{\rho}^\chi&=&\Bigl(\langle{p}|\phi^K\rangle \mat{c}\Bigr)^{-1}
+(\mat{1}-\mat{Z})^{-1,\dagger}
+\mat{\rho}^\phi
+(\mat{1}-\mat{Z})^{-1}
+\Bigl(\langle{p}|\phi^K\rangle \mat{c}\Bigr)^{\dagger,-1}
+\nonumber\\
+dE&=&
+\sum_{\alpha,\beta}\frac{dE}{d\rho^\chi_{\alpha,\beta}}d\rho^\chi_{\alpha,\beta}
+=\sum_{\alpha,\beta} H^\chi_{\beta,\alpha}d\rho^\chi_{\alpha,\beta}
+=\sum_{\alpha,\beta} H^\chi_{\beta,\alpha}d
+\Bigl(
+\sum_n\langle\pi_\alpha|\psi_n\rangle f_n\langle\psi_n|\pi_\alpha\rangle
+\Bigr)
+\nonumber\\
+%
+%
+&=&\sum_{\alpha,\beta} H^\chi_{\beta,\alpha}d
+\Bigl(\sum_n\langle\pi_\alpha|\psi_n\rangle f_n\langle\psi_n|\pi_\alpha\rangle\Bigr)
+\nonumber\\
+%
+%
+&=&\Tr
+\Bigl(\langle{p}|\phi^K\rangle \mat{c}\Bigr)^{\dagger-1}
+\mat{H}^\chi
+\Bigl(\langle{p}|\phi^K\rangle \mat{c}\Bigr)^{-1}
+d\biggl[
+\Bigl(\mat{1}-\mat{Z}\Bigr)^{\dagger,-1}
+\Bigl(\sum_n\langle{p}|\psi_n\rangle f_n\langle\psi_n|{p}\rangle\Bigr)
+\Bigl(\mat{1}-\mat{Z}\Bigr)^{-1}\biggr]
+\nonumber\\
+%
+%
+&=&\Tr
+\underbrace{
+\Bigl(\mat{1}-\mat{Z}\Bigr)^{\dagger,-1}\Bigl(\langle{p}|\phi^K\rangle \mat{c}\Bigr)^{\dagger-1}
+\mat{H}^\chi
+\Bigl(\langle{p}|\phi^K\rangle \mat{c}\Bigr)^{-1}
+\Bigl(\mat{1}-\mat{Z}\Bigr)^{-1}}_{\mat{H}^\phi}
+\nonumber\\
+&&
+\times\biggl[
+d\mat{Z}\Bigl(\mat{1}-\mat{Z}\Bigr)^{-1}\mat{\rho}^\phi
++
+d\mat{\rho}^\phi
++
+\mat{\rho}^\phi \Bigl(\mat{1}-\mat{Z}\Bigr)^{\dagger,-1}d\mat{Z}^\dagger
+\biggr]
+\nonumber\\
+%
+%
+&=&\Tr\Bigl[\mat{H}^\phi d\mat{\rho}\Bigr]
++2\Tr\Bigl[\Bigl(\mat{1}-\mat{Z}\Bigr)^{-1}
+\mat{\rho}^\phi \mat{H}^\phi
+d\mat{Z}\Bigr]
+\end{eqnarray}
+
+
+
+%=======================================================================
+\section{Approximate inversion}
+%=======================================================================
+\begin{eqnarray}
+\langle\pi_{\mu}|&=&
+\Bigl(\langle{p}|\phi^K\rangle \mat{c}\Bigr)^{-1}_{\eta}
+\biggl\lbrace
+\delta_{\zeta,\eta}-Z_{\zeta,\eta}
+\biggr\rbrace^{-1}_{\eta,\zeta}  
+\langle{p}_\zeta|
+\end{eqnarray}
+
+Instead of the complete inversion, I approximate it by downfolding: For
+this purpose, I divide the system in an on-site term and the
+surrounding, which is then treated as bath.
+\begin{eqnarray}
+\left(\begin{array}{cc} \mat{A}_{11}&\mat{A}_{12}
+\\\mat{A}_{21} & \mat{A}_{22}\end{array}\right)
+\left(\begin{array}{cc}\mat{1} &-\mat{Z}_{12}
+\\-\mat{Z}_{21} & \mat{Y}\end{array}\right)
+=
+\left(\begin{array}{cc} \mat{1}_{11}&\mat{0}_{12}
+\\\mat{0}_{2,1} & \mat{1}_{22}\end{array}\right)
+\end{eqnarray}
+The matrix $Z$ is not hermitean. Probably, it can be made hermitean by
+multiplication with onsite matrices to the left and to the right.
+$\mat{Y}:=\mat{1}_{22}-\mat{Z}_{22}$.
+
+
+\begin{eqnarray}
+\mat{A}_{11}-\mat{A}_{12}\mat{Z}_{21}&=&\mat{1}_{11}
+\nonumber\\
+-\mat{A}_{11}\mat{Z}_{12}+\mat{A}_{12}\mat{Y}_{22}&=&\mat{0}_{12}
+\nonumber\\
+\mat{A}_{21}-\mat{A}_{22}\mat{Z}_{21}&=&\mat{0}_{21}
+\nonumber\\
+-\mat{A}_{21}\mat{Z}_{12}+\mat{A}_{22}\mat{Y}_{22}&=&\mat{1}_{22}
+\nonumber\\
+\mat{A}_{12}&=&\mat{A}_{11}\mat{Z}_{12}\mat{Y}^{-1}
+\nonumber\\
+\mat{A}_{21}&=&\mat{A}_{22}\mat{Z}_{21}
+\nonumber\\
+\mat{A}_{11}
+&=&\Bigl(\mat{1}-\mat{Z}_{12}\mat{Y}^{-1}\mat{Z}_{21}\Bigr)^{-1}
+\nonumber\\
+\mat{A}_{12}&=&\Bigl(\mat{1}-\mat{Z}_{12}\mat{Y}^{-1}\mat{Z}_{21}\Bigr)^{-1}
+\mat{Z}_{12}\mat{Y}^{-1}
+\nonumber\\
+\mat{A}_{22}
+&=&
+\Bigl(\mat{Y}-\mat{Z}_{21}\mat{Z}_{12}\Bigr)^{-1}
+=\Bigl(\mat{1}-\mat{Y}^{-1}\mat{Z}_{21}\mat{Z}_{12}\Bigr)^{-1}\mat{Y}^{-1}
+\nonumber\\
+&=&\sum_{n=0}^\infty\Bigl(\mat{Y}^{-1} \mat{Z}_{21}\mat{Z}_{12}\Bigr)^n\mat{Y}^{-1} 
+\nonumber\\
+&=&\mat{Y}^{-1}
++\mat{Y}^{-1}\mat{Z}_{21}\sum_{n=0}\Bigl(\mat{Z}_{12}\mat{Y}^{-1}\mat{Z}_{21}\Bigr)^n\mat{Z}_{12}\mat{Y}^{-1}
+\nonumber\\
+&=&\mat{Y}^{-1}
++\mat{Y}^{-1}\mat{Z}_{21}\Bigl(\mat{1}-\mat{Z}_{12}\mat{Y}^{-1}\mat{Z}_{21}\Bigr)^{-1}\mat{Z}_{12}\mat{Y}^{-1}
+\nonumber\\
+\mat{A}_{21}&=&
+\mat{A}_{22}\mat{Z}_{21}
+=\sum_{n=0}^\infty\Bigl(\mat{Y}^{-1} \mat{Z}_{21}\mat{Z}_{12}\Bigr)^n
+\mat{Y}^{-1} \mat{Z}_{21}
+=\mat{Y}^{-1} \mat{Z}_{21}
+\sum_{n=0}^\infty\Bigl(\mat{Z}_{12}\mat{Y}^{-1} \mat{Z}_{21}\Bigr)^n
+\nonumber\\
+&=&\mat{Y}^{-1} \mat{Z}_{21}
+\Bigl(\mat{1}-\mat{Z}_{12}\mat{Y}^{-1} \mat{Z}_{21}\Bigr)^{-1}
+\end{eqnarray}
+
+
+
+\begin{eqnarray}
+\left(\begin{array}{cc} \mat{A}_{11}&\mat{A}_{12}
+\\\mat{A}_{21} & \mat{A}_{22}\end{array}\right)
+&=&
+\left(\begin{array}{cc}
+\Bigl(\mat{1}_{11}-\mat{Z}_{12}\mat{Y}^{-1}\mat{Z}_{21}\Bigr)^{-1}
+&
+\Bigl(\mat{1}_{11}-\mat{Z}_{12}\mat{Y}^{-1}\mat{Z}_{21}\Bigr)^{-1}
+\mat{Z}_{12}\mat{Y}^{-1}
+\\
+\mat{Y}^{-1}\mat{Z}_{21}\Bigl(\mat{1}_{11}-\mat{Z}_{12}\mat{Y}^{-1}\mat{Z}_{21}\Bigr)^{-1}
+&
+\Bigl(\mat{Y}-\mat{Z}_{21}\mat{Z}_{12}\Bigr)^{-1}
+\end{array}\right)
+\nonumber\\
+\end{eqnarray}
+
+\begin{eqnarray}
+\langle\pi_1|&=&
+\Bigl(\langle{p}|\phi^K\rangle \mat{c}\Bigr)^{-1}_{\eta}
+\Bigl(\mat{A}_{11}\langle{p}_1|+\mat{A}_{12}\langle\pi_2|\Bigr)
+\nonumber\\
+&=&
+\Bigl(\langle{p}|\phi^K\rangle \mat{c}\Bigr)^{-1}_{\eta}
+\Bigl(\mat{1}-\mat{Z}_{12}\mat{Y}^{-1}\mat{Z}_{21}\Bigr)^{-1}
+\Bigl(\langle{p}_1|+\mat{Z}_{12}\mat{Y}^{-1}\langle{p}_2|\Bigr)
+\nonumber\\
+&=&
+\mat{c}^{-1}
+\Bigl(\langle{p}|\phi^K\rangle\Bigr)^{-1}
+\Bigl(\mat{1}-\mat{Z}_{12}\mat{Y}^{-1}\mat{Z}_{21}\Bigr)^{-1}
+\Bigl(\langle{p}_1|+\mat{Z}_{12}\mat{Y}^{-1}\langle{p}_2|\Bigr)
+\nonumber\\
+&=&
+\mat{c}^{-1}
+\Bigl(\langle\Phi^K|{p}\rangle
+\langle\phi|\theta_\Omega|\phi\rangle\langle{p}|\phi^K\rangle\Bigr)^{-1}
+\langle\phi^K|{p}\rangle\langle\phi|\theta_\Omega|\phi\rangle
+\Bigl(\mat{1}-\mat{Z}_{12}\mat{Y}^{-1}\mat{Z}_{21}\Bigr)^{-1}
+\nonumber\\
+&&\times
+\Bigl(\langle{p}|+\mat{Z}_{12}\mat{Y}^{-1}\langle{p}|\Bigr)
+\end{eqnarray}
+
+\begin{eqnarray}
+|\chi\rangle=\Bigl(|\phi^K\rangle-|\phi^J\rangle \mat{S}^\dagger\Bigr)\mat{c}
+\end{eqnarray}
+
+Test:
+\begin{eqnarray}
+\langle\pi|\chi\rangle
+&=&
+\mat{c}^{-1}
+\Bigl(\langle\Phi^K|{p}\rangle
+\langle\phi|\theta_\Omega|\phi\rangle\langle{p}|\phi^K\rangle\Bigr)^{-1}
+\langle\phi^K|{p}\rangle\langle\phi|\theta_\Omega|\phi\rangle
+\Bigl(\mat{1}-\mat{Z}_{12}\mat{Y}^{-1}\mat{Z}_{21}\Bigr)^{-1}
+\nonumber\\
+&&\times
+\Bigl[
+\langle{p}|\phi^K\rangle+\mat{Z}_{12}\mat{Y}^{-1}\langle{p}|\phi^K\rangle
+-
+\Bigl(
+\langle{p}|\phi^J\rangle+\mat{Z}_{12}\mat{Y}^{-1}\langle{p}|\phi^J\rangle
+\Bigr)\mat{S}^\dagger\Bigr]\mat{c}
+\nonumber\\
+&=&
+\mat{c}^{-1}
+\Bigl(\langle\Phi^K|{p}\rangle\Bigr)^{-1}
+\Bigl(\mat{1}-\mat{Z}_{12}\mat{Y}^{-1}\mat{Z}_{21}\Bigr)^{-1}
+\nonumber\\
+&&\times
+\Bigl[\mat{1}
++\mat{Z}_{12}\mat{Y}^{-1}
+-
+\Bigl(\mat{1}+\mat{Z}_{12}\mat{Y}^{-1}
+\Bigr)\langle{p}|\phi^J\rangle\mat{S}^\dagger
+(\langle{p}|\phi^K\rangle)^{-1}\Bigr]
+\langle{p}|\phi^K\rangle\mat{c}
+\nonumber\\
+&=&
+\mat{c}^{-1}
+\Bigl(\langle\Phi^K|{p}\rangle\Bigr)^{-1}
+\Bigl(\mat{1}-\mat{Z}_{12}\mat{Y}^{-1}\mat{Z}_{21}\Bigr)^{-1}
+\nonumber\\
+&&\times
+\underbrace{
+\Bigl(\mat{1}+\mat{Z}_{12}\mat{Y}^{-1}\Bigr)
+\Bigl(\mat{1}-\mat{Z}\Bigr)}
+_{\mat{1}-\mat{Z}_{12}\mat{Y}^{-1}\mat{Z}_{2j}+Z_{12}\mat{Y}^{-1}-\mat{Z}_{1j}}
+\langle{p}_j|\phi^K\rangle\mat{c}
+\end{eqnarray}
+\begin{itemize}
+\item $j=1$:  
+$\mat{1}-\mat{Z}_{12}\mat{Y}^{-1}\mat{Z}_{21}+Z_{12}\mat{Y}^{-1}
+\underbrace{\mat{1}_{21}}_{=0}
+-\underbrace{\mat{Z}_{11}}_{=0}
+=\mat{1}-\mat{Z}_{12}\mat{Y}^{-1}\mat{Z}_{21}$
+%
+\item $j=2$:  
+$\mat{1}-\mat{Z}_{12}\mat{Y}^{-1}\mat{Z}_{22}+Z_{12}\mat{Y}^{-1}
+-\mat{Z}_{12}
+=\mat{1}+\mat{Z}_{12}\mat{Y}^{-1}\underbrace{(\mat{1}_{22}-\mat{Z}_{22})}_{\mat{Y}}
+-\mat{Z}_{12}=\mat{1}_{12}=\mat{0}_{12}$
+\end{itemize}
+
+When we set $\mat{Y}^{-1}=\mat{1}$, as done below, we obtain
+\begin{itemize}
+\item For the onsite terms $j=1$, the result for
+  $\langle\pi|\chi\rangle$ is a unit matrix as before
+\item for the off-site  terms, I obtain
+$\mat{1}_{12}-\mat{Z}_{12}\mat{Z}_{22}+\mat{Z}_{12}-\mat{Z}_{12}
+=\mat{0}_{12}-\mat{Z}_{12}\mat{Z}_{22}$
+\end{itemize}
+
+
+
+Up to now, everything is exact. However, we need to evaluate the
+inverse of $\mat{Y}:=\mat{1}-\mat{Z}_{22}$. Secondly the conversion of
+the density matrix involves complicated multicenter sums, which
+produce long-ranged contributions. The goal is to truncate the
+multicenter sum, but in way that is as consistent as possible. This is
+probably better than just truncating the sum so that the neighborlist
+is filled up.
+\begin{itemize}
+\item We approximate $\mat{Y}\approx\mat{1}_{22}$.
+%
+\item When we convert the density matrix from a partial-wave
+  representation into a local-orbital representation, we ignore 
+\begin{itemize}
+\item all
+  onsite terms, that contain more than two off-site terms of
+  $\mat{\rho}$ or $\mat{Z}$ in a product and we ignore 
+\item all off-site terms with
+  more than one off-site term. 
+\end{itemize}
+This approximation limits all products to terms that exist only on one
+atom pair at a time. This seems to be consisten with the first
+approximation setting $\mat{Y}=\mat{1}$.
+\begin{eqnarray}
+(\mat{1}+\mat{Z})\mat{\rho}^\phi(\mat{1}+\mat{Z})^\dagger
+\approx
+\begin{cases}
+\mat{\rho}^\phi_{\text{onsite}}+\mat{Z}\mat{\rho}^\phi_{\text{offsite}}
++\mat{\rho}^\phi_{\text{offsite}}\mat{Z}^\dagger 
++\mat{Z} \mat{\rho}^\phi_{\text{onsite}}\mat{Z}^\dagger 
+&\text{onsite}
+\\
+\mat{\rho}^\phi_{\text{offsite}}+\mat{Z}\mat{\rho}^\phi_{\text{onsite}}
++\mat{\rho}^\phi_{\text{on-site}}\mat{Z}^\dagger
+&\text{offsite}\\
+\end{cases}
+\end{eqnarray}
+Note that the onsite terms of $\mat{Z}$ are zero. 
+
+
+The error terms have the form
+\begin{eqnarray}
+\Delta
+\approx
+\begin{cases}
+\mat{Z} \mat{\rho}^\phi_{\text{offsite}}\mat{Z}^\dagger 
+&\text{onsite}
+\\
+\mat{Z} \Bigl(\mat{\rho}^\phi_{\text{onsite}}
++\mat{\rho}^\phi_{\text{offsite}}\Bigr)\mat{Z}^\dagger 
+&\text{offsite}\\
+\end{cases}
+\end{eqnarray}
+\end{itemize}
+
+
+The resulting local-orbital projector is
+\begin{eqnarray}
+\langle\pi_1|
+&\approx&
+\Bigl(\langle{p}|\phi^K\rangle \mat{c}\Bigr)^{-1}_{11}
+\bigl(\mat{A}_{11}\langle{p}_1|+\mat{A}_{12}\langle{p}_2|\Bigr)
+\nonumber\\
+%
+%
+&=&
+\Bigl(\langle{p}|\phi^K\rangle \mat{c}\Bigr)^{-1}_{11}
+\Bigl(\mat{1}_{11}-\mat{Z}_{12}\mat{Z}_{21}\Bigr)^{-1}
+\biggl[
+\langle{p}_1|
++
+\mat{Z}_{12}
+\langle{p}_2|\Bigr)\biggr]
+\nonumber\\
+\end{eqnarray}
+
+
+\begin{eqnarray}
+\mat{\rho}^\chi&=&\Bigl(\langle{p}|\phi^K\rangle \mat{c}\Bigr)^{-1}
+(\mat{1}-\mat{Z}_{12}\mat{Z}_{21})^{-1}
+\underbrace{
+\Bigl(\mat{1}+\mat{Z}\Bigr)
+\mat{\rho}^\phi
+\Bigl(\mat{1}+\mat{Z}^\dagger\Bigr)}_{\text{special}}
+(\mat{1}-\mat{Z}_{12}\mat{Z}_{21})^{\dagger,-1}
+\Bigl(\langle{p}|\phi^K\rangle \mat{c}\Bigr)^{\dagger,-1}
+\nonumber\\
+dE&=&
+\sum_{\alpha,\beta}\frac{dE}{d\rho^\chi_{\alpha,\beta}}d\rho^\chi_{\alpha,\beta}
+=\sum_{\alpha,\beta} H^\chi_{\beta,\alpha}d\rho^\chi_{\alpha,\beta}
+=\sum_{\alpha,\beta} H^\chi_{\beta,\alpha}d
+\Bigl(
+\sum_n\langle\pi_\alpha|\psi_n\rangle f_n\langle\psi_n|\pi_\alpha\rangle
+\Bigr)
+\nonumber\\
+%
+%
+&=&\sum_{\alpha,\beta} H^\chi_{\beta,\alpha}d
+\Bigl(\sum_n\langle\pi_\alpha|\psi_n\rangle f_n\langle\psi_n|\pi_\alpha\rangle\Bigr)
+\nonumber\\
+%
+%
+&=&\Tr
+\Bigl(\langle{p}|\phi^K\rangle \mat{c}\Bigr)^{\dagger-1}
+\mat{H}^\chi
+\Bigl(\langle{p}|\phi^K\rangle \mat{c}\Bigr)^{-1}
+d\biggl[
+\Bigl(\mat{1}-\mat{Z}_{12}\mat{Z}_{21}\Bigr)^{-1}
+\underbrace{\Bigl(\mat{1}+\mat{Z}\Bigr)
+\mat{\rho}^\phi
+\Bigl(\mat{1}+\mat{Z}\Bigr)^\dagger}_{\text{special}}
+\Bigl(\mat{1}-\mat{Z}_{12}\mat{Z}_{21}\Bigr)^{\dagger,-1}
+\biggr]
+\nonumber\\
+%
+%
+&=&\Tr
+\underbrace{\Bigl(\mat{1}-\mat{Z}_{12}\mat{Z}_{21}\Bigr)^{\dagger,-1}
+\Bigl(\langle{p}|\phi^K\rangle \mat{c}\Bigr)^{\dagger-1}
+\mat{H}^\chi
+\Bigl(\langle{p}|\phi^K\rangle \mat{c}\Bigr)^{-1}
+\Bigl(\mat{1}-\mat{Z}_{12}\mat{Z}_{21}\Bigr)^{-1}}_{\bar{H}}
+\nonumber\\
+&&
+\times\biggl[
+d\Bigl(\mat{Z}_{12}\mat{Z}_{21}\Bigr)
+\Bigl(\mat{1}-\mat{Z}_{12}\mat{Z}_{21}\Bigr)^{-1}
+\underbrace{\Bigl(\mat{1}+\mat{Z}\Bigr)
+\mat{\rho}^\phi
+\Bigl(\mat{1}+\mat{Z}\Bigr)}_{\text{special}}
+%
+%
++
+\underbrace{d\mat{Z}\mat{\rho}^\phi\Bigl(\mat{1}+\mat{Z}\Bigr)}_{\text{special}}
+\nonumber\\
+&&+
+\underbrace{\Bigl(\mat{1}+\mat{Z}\Bigr)
+d\mat{\rho}^\phi
+\Bigl(\mat{1}+\mat{Z}\Bigr)}_{\text{special}}
+\nonumber\\
+&&+
+\underbrace{\Bigl(\mat{1}+\mat{Z}\Bigr)\mat{\rho}^\phi d\mat{Z}^\dagger}_{\text{special}}
++
+\underbrace{
+\Bigl(\mat{1}+\mat{Z}\Bigr)\mat{\rho}^\phi \Bigl(\mat{1}+\mat{Z}\Bigr)^\dagger
+}_{\text{special}}
+\Bigl(\mat{1}-\mat{Z}_{12}\mat{Z}_{21}\Bigr)^{\dagger,-1}d\Bigl(\mat{Z}_{12}\mat{Z}_{21}\Bigr)^\dagger
+\biggr]
+\nonumber\\
+&=&\Tr\biggl[\Bigl(\mat{1}+\mat{Z}\Bigr)
+\bar{H}
+\Bigl(\mat{1}+\mat{Z}\Bigr)d\mat{\rho}^\phi\biggr]
+\nonumber\\
+&&+
+2\Tr\biggl[\mat{\rho}^\phi\Bigl(\mat{1}+\mat{Z}\Bigr)\bar{\mat{H}}d\mat{Z}\Bigr]
+\nonumber\\
+&&+
+2\Tr\biggl[\Bigl(\mat{1}-\mat{Z}_{12}\mat{Z}_{21}\Bigr)^{-1}
+\Bigl(\mat{1}+\mat{Z}\Bigr)
+\mat{\rho}^\phi
+\Bigl(\mat{1}+\mat{Z}\Bigr)
+\bar{\mat{H}}
+d\Bigl(\mat{Z}_{12}\mat{Z}_{21}\Bigr)
+\biggr]
+\end{eqnarray}
+
+
+
+
+\begin{itemize}
+\item bare structure constants on the neighbor list.
+\item Define coefficient matrix $\mat{c}$, which may initially equal
+  unity. Later it will be evaluated so that the local orbitals are
+  approximately onsite-orthonormal.
+\item Determine $\langle{p}|\phi^K\rangle$ and $\langle{p}|\phi^J\rangle$. 
+(Overcompleteness???)
+\item Determine 
+$\Bigl(\langle{p}|\phi^K\rangle\mat{c}\Bigr)^{-1}
+\left(\mat{1}+\mat{Z}_{12}\mat{Z}_{21}\right)^{-1}$ 
+\item transform $\rho^\phi$ to $\rho^\chi$
+\end{itemize}
+
+-----------------------------------------------------------------------
+
+We will calculate the on-site matrix
+\begin{eqnarray}
+X_{\alpha,\beta}(\vec{R}_2-\vec{R}_1)
+&=&
+\sum_\gamma \mat{Z}_{\alpha,\gamma}(\vec{R}_2-\vec{R}_1)
+\mat{Z}_{\gamma,\beta}(\vec{R}_1-\vec{R}_2)
+\nonumber\\
+%
+&=&\sum_{\eta,\mu\in R_1}\sum_{\gamma,\gamma'\in R_2}
+\langle{p}_\alpha|\phi^J_\eta\rangle
+S^\dagger_{R_\eta,L_\eta,R_\gamma,L_\gamma}
+\Bigl[
+\Bigl(\langle{p}|\phi^K\rangle\Bigr)^{-1}\langle{p}_\gamma|\phi^J_\theta\rangle
+\Bigr]_{\gamma,\gamma'}
+S^\dagger_{R_{\gamma',L_\gamma'},R_\mu,L_\mu}
+\Bigl(\langle{p}|\phi^K\rangle\Bigr)^{-1}_{\mu,\beta}
+\nonumber\\
+%
+&=&
+\sum_{L'}
+\sum_{\eta,\mu\in R_1}
+\langle{p}_\alpha|\phi^J_\eta\rangle
+S^\dagger_{R_1,L_\alpha,R_2,L'}
+\biggl[
+\sum_{\gamma,\gamma'\in (R_2,L')}
+\Bigl[
+\Bigl(\langle{p}|\phi^K\rangle\Bigr)^{-1}\langle{p}_\gamma|\phi^J_\theta\rangle
+\Bigr]_{\gamma,\gamma'}\biggr]
+S^\dagger_{R_2,L',R_1,L_\beta}
+\Bigl(\langle{p}|\phi^K\rangle\Bigr)^{-1}_{\mu,\beta}
+\nonumber\\
+\end{eqnarray}
+
+
+
+\begin{eqnarray}
+S_{RL,R'L'}
+&\eqrel{eq:fortmulaforbarestructureconstants}{=}&
+(-1)^{\ell'+1} 4\pi \sum_{L''} C_{L,L',L''} 
+H_{L''}(\vec{R}'-\vec{R})
+\begin{cases}
+(-ik)^{\ell+\ell'-\ell''}&\text{for $k^2>0$}\\
+\delta_{\ell+\ell'-\ell''}&\text{for $k^2=0$}\\
+\kappa^{\ell+\ell'-\ell''}&\text{for $k^2=-\kappa^2<0$}\\
+\end{cases}
+\nonumber\\
+%
+%
+S_{R'L',RL}&=&S_{RL,R'L'}
+\nonumber\\
+S_{RL,R'L'}S_{R'L',RL''}
+&=&
+(-1)^{\ell'+\ell''} (4\pi)^2 
+\sum_{\bar{L}} 
+\sum_{\bar{L'}} 
+C_{L,L',\bar{L}} C_{L',L'',\bar{L}'} 
+H_{\bar{L}}(\vec{R}'-\vec{R})
+H_{\bar{L}'}(\vec{R}-\vec{R}')
+\nonumber\\
+&&\times
+\begin{cases}
+(-ik)^{2\ell+2\ell'-\bar{\ell}-\bar{\ell}'}&\text{for $k^2>0$}\\
+\delta_{\ell+\ell'-\bar{\ell}}\delta_{\ell+\ell'-\bar{\ell}'}
+&\text{for $k^2=0$}\\
+\kappa^{2\ell+2\ell'-\bar{\ell}-\bar{\ell}'}
+&\text{for $k^2=-\kappa^2<0$}\\
+\end{cases}
+\nonumber\\
+%
+&=&
+(-1)^{\ell'+\ell''} (4\pi)^2 
+\sum_{\bar{L}} 
+\sum_{\bar{L'}} 
+C_{L,L',\bar{L}} C_{L',L'',\bar{L}'} 
+H_{\bar{L}}(\vec{R}'-\vec{R})
+H_{\bar{L}'}(\vec{R}-\vec{R}')
+\nonumber\\
+&&\times
+\begin{cases}
+(-ik)^{2\ell+2\ell'-\bar{\ell}-\bar{\ell}'}&\text{for $k^2>0$}\\
+\delta_{\ell+\ell'-\bar{\ell}}\delta_{\ell+\ell'-\bar{\ell}'}
+&\text{for $k^2=0$}\\
+\kappa^{2\ell+2\ell'-\bar{\ell}-\bar{\ell}'}
+&\text{for $k^2=-\kappa^2<0$}\\
+\end{cases}
+\nonumber\\
+\end{eqnarray}
+
+Let me denote the radial part of
+$H_L(\vec{R})=h_\ell(|\vec{r}|)Y_{L}(\vec{R})$.
+\begin{eqnarray}
+S_{RL,R'L'}S_{R'L',RL''}
+&=&
+(-1)^{\ell'+\ell''} (4\pi)^2 
+\sum_{\bar{\ell},\bar{\ell'}} 
+h_{\bar{\ell}}(|\vec{R}'-\vec{R}|)
+h_{\bar{\ell}'}(|\vec{R}'-\vec{R}|)
+\nonumber\\
+&&\times\sum_{\bar{m},\bar{m'}}
+C_{L,L',\bar{L}} C_{L',L'',\bar{L}'} 
+Y_{\bar{L}}(\vec{R'}-\vec{R})
+(-1)^{\bar{\ell'}} Y_{\bar{L'}}(\vec{R'}-\vec{R})
+\nonumber\\
+&&\times
+\begin{cases}
+(-ik)^{2\ell+2\ell'-\bar{\ell}-\bar{\ell}'}&\text{for $k^2>0$}\\
+\delta_{\ell+\ell'-\bar{\ell}}\delta_{\ell+\ell'-\bar{\ell}'}
+&\text{for $k^2=0$}\\
+\kappa^{2\ell+2\ell'-\bar{\ell}-\bar{\ell}'}
+&\text{for $k^2=-\kappa^2<0$}\\
+\end{cases}
+\nonumber\\
+\end{eqnarray}
+
+%=======================================================================
 \section{Analysis of the code structure in paw\_lmto}
 %=======================================================================
 
