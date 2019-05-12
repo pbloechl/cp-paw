@@ -1849,7 +1849,7 @@ neighboring atoms.
 Local orbitals are augmented Hankelfunctions
 \begin{eqnarray}
 |\chi_\gamma\rangle&=&
-\sum_\gamma \biggl\lbrace
+\sum_\alpha \biggl\lbrace
 \underbrace{
 |\phi^{K}_{\alpha}\rangle+ |K^{\notin\Omega_\alpha}_\alpha\rangle
 }_{\text{R-independent}}
@@ -1859,7 +1859,7 @@ Local orbitals are augmented Hankelfunctions
 S^\dagger_{R_\beta,L_\beta,R_\alpha,L_\alpha}}_{\text{R-dependent and small}}
 \biggr\rbrace c_{\alpha,\gamma}
 \nonumber\\
-&=&\sum_\gamma \biggl\lbrace
+&=&\sum_\alpha \biggl\lbrace
 |\phi^{K}_{\alpha}\rangle
 -\sum_{\beta}
 |\phi^J_{\beta}\rangle S^\dagger_{R_\beta,L_\beta,R_\alpha,L_\alpha}
@@ -1874,51 +1874,73 @@ $R_\alpha$ and angular momentum $L_\alpha$, which is nonzero only
 outside its central augmentation region.
 
 A suitable definition for $\mat{c}$ is a matrix that produces
-orthonormal states for am isolated atom.
+orthonormal states for am isolated atom. Thus, it is an onsite matrix.
 
-
-
+We introduce head and tail functions defined as
+\begin{eqnarray}
+|\phi^H_\alpha\rangle&=&\sum_{\beta; R_\beta=R_\alpha}
+|\phi^K_\beta\rangle c_{\beta,\alpha}
+\nonumber\\
+|\phi^T_\alpha\rangle&=&|\phi^J_\alpha\rangle
+\end{eqnarray}
+so that
+\begin{eqnarray}
+|\chi_\gamma\rangle&=&
+|\phi^{H}_{\gamma}\rangle
+-\sum_{\alpha,\beta}
+|\phi^J_{\beta}\rangle S^\dagger_{R_\beta,L_\beta,R_\alpha,L_\alpha}
+c_{\alpha,\gamma}
++\sum_\alpha |K^{I}_\alpha\rangle c_{\alpha,\gamma}
+\end{eqnarray}
 
 
 
 %===============================================================
 \subsection{Using parameters}
 %===============================================================
-The potential parameters contain
+We calculate ahead of time 
 \begin{eqnarray}
-|\chi\rangle&=&
-\begin{cases}
-|\phi\rangle\texttt{KTOPHI}+|\dot{\phi}\rangle\texttt{KTOPHIDOT} 
-&\text{in central region}
-\\
-|H_L\rangle&\text{outside central region}
-\end{cases}
+\langle{p}_\alpha|\phi^H_\beta\rangle = PROPHIH
 \nonumber\\
-\langle{p}|\phi^K\rangle&=&
-\texttt{PROK}
-\nonumber\\
-\langle{p}|\phi^J\rangle&=& 
-\langle{p}|\phi^{\bar{J}}\rangle
-+\langle{p}|\phi^{K}\rangle \bar{Q}
-=\texttt{PROJBAR}+\texttt{PROK}\cdot\texttt{QBAR}
+\langle{p}_\alpha|\phi^T_\beta\rangle = PROPHIT
 \end{eqnarray}
 
-
-
-
-
-Later we will need the inverse of $\langle{p}|\Phi^K\rangle\mat{c}$.
-$\langle{p}|\Phi^K\rangle$ is a $N^\phi\times N^\chi$ matrix and
+Later we will need the inverse of $\langle{p}|\phi^H\rangle$.
+$\langle{p}|\Phi^H\rangle$ is a $N^\phi\times N^\chi$ matrix and
 $\mat{c}$ is a $N^\chi\times N^\chi$ matrix.  The inversion shall be
 done in the least-square sense, that is
 \begin{eqnarray}
-\Bigl(\langle{p}|\Phi^K\rangle\mat{c}\Bigr)^{-1}
+\Bigl(\langle{p}|\Phi^H\rangle\Bigr)^{-1}
 &=&
-\Bigl(\mat{c}^\dagger\langle\Phi^K|p\rangle
+\Bigl(\langle\Phi^H|p\rangle
 \langle\phi|\phi\rangle
-\langle{p}|\Phi^K\rangle\mat{c}\Bigr)^{-1}
-\mat{c}^\dagger\langle\Phi^K|p\rangle\langle\phi|\phi\rangle
+\langle{p}|\Phi^H\rangle\Bigr)^{-1}
+\langle\Phi^H|p\rangle\langle\phi|\phi\rangle=PROPHIHINV
 \end{eqnarray}
+
+%% The potential parameters contain
+%% \begin{eqnarray}
+%% |\chi\rangle&=&
+%% \begin{cases}
+%% |\phi\rangle\texttt{KTOPHI}+|\dot{\phi}\rangle\texttt{KTOPHIDOT} 
+%% &\text{in central region}
+%% \\
+%% |H_L\rangle&\text{outside central region}
+%% \end{cases}
+%% \nonumber\\
+%% \langle{p}|\phi^K\rangle&=&
+%% \texttt{PROK}
+%% \nonumber\\
+%% \langle{p}|\phi^J\rangle&=& 
+%% \langle{p}|\phi^{\bar{J}}\rangle
+%% +\langle{p}|\phi^{K}\rangle \bar{Q}
+%% =\texttt{PROJBAR}+\texttt{PROK}\cdot\texttt{QBAR}
+%% \end{eqnarray}
+
+
+
+
+
 
 
 
@@ -1943,11 +1965,12 @@ The projector functions are determined so that
 \langle{p}_\zeta|\chi_\gamma\rangle&=&
 \sum_\alpha
 \biggl\lbrace
-\langle{p}_\zeta|\phi^K_\alpha\rangle
+\langle{p}_\zeta|\phi^H_\alpha\rangle
 -
 \sum_\beta 
-\langle{p}_\zeta|\phi^J_{\beta}\rangle S^\dagger_{R_\beta,L_\beta,R_\alpha,L_\alpha}
-\biggr\rbrace c_{\alpha,\gamma}
+\langle{p}_\zeta|\phi^T_{\beta}\rangle 
+S^\dagger_{R_\beta,L_\beta,R_\alpha,L_\alpha}c_{\alpha,\gamma}
+\biggr\rbrace 
 \nonumber\\
 &=&
 \sum_{\eta}
@@ -1955,23 +1978,46 @@ The projector functions are determined so that
 \delta_{\zeta,\eta}
 -
 \underbrace{
-\sum_{\beta,\alpha}
-\langle{p}_\zeta|\phi^J_{\beta}\rangle S^\dagger_{R_\beta,L_\beta,R_\alpha,L_\alpha}
-\Bigl(\langle{p}|\phi^K\rangle\Bigr)^{-1}_{\alpha,\eta}
-}_{=:Z^\dagger_{\zeta,\eta}}
-\biggr\rbrace \sum_\mu \langle{p}_\eta|\phi^K_\mu\rangle c_{\mu,\gamma}
+\sum_{\beta,\alpha,\mu}
+\langle{p}_\zeta|\phi^T_{\beta}\rangle S^\dagger_{R_\beta,L_\beta,R_\alpha,L_\alpha}
+c_{\alpha,\mu}
+\Bigl(\langle{p}|\phi^H\rangle\Bigr)^{-1}_{\mu,\eta}
+}_{=:X^\dagger_{\zeta,\eta}}
+\biggr\rbrace  \langle{p}_\eta|\phi^H_\gamma\rangle 
+\nonumber\\
+%
+\langle{p}|\chi\rangle
+&=&\Bigl(\mat{1}-\mat{X}^\dagger\Bigr)\langle{p}|\phi^H\rangle
 \end{eqnarray}
 
+We define the quantities
+\begin{eqnarray}
+\mat{X}_{\zeta,\eta}&\defas&
+\Bigl(\langle{p}|\phi^H\rangle\Bigr)^{-1}_{\zeta,\mu}
+\mat{c}^\dagger_{\mu,\alpha}
+\mat{S}_{\alpha,\beta}
+\Bigl(\langle{p}|\phi^J\rangle\Bigr)^\dagger
+\nonumber\\
+\mat{Z}&=&\mat{1}-\mat{X}
+\end{eqnarray}
+
+Thus, we obtain the projector functions for the local orbitals as
 \begin{eqnarray}
 \langle\pi_{\mu}|=
-\Bigl(\langle{p}|\phi^K\rangle \mat{c}\Bigr)^{-1}_{\eta}
+\Bigl(\langle{p}|\phi^H\rangle\Bigr)^{-1}_{\eta}
 \biggl\lbrace
-\delta_{\zeta,\eta}-Z_{\zeta,\eta}
-\biggr\rbrace^{-1,\dagger}_{\eta,\zeta}  
+\delta_{\zeta,\eta}-X^\dagger_{\zeta,\eta}
+\biggr\rbrace^{-1}_{\eta,\zeta}  
 \langle{p}_\zeta|
 \end{eqnarray}
 
 
+%=======================================================================
+\section{Transformation of density matrix and Hamiltonian}
+%=======================================================================
+%=======================================================================
+\subsection{Formally correct derivation}
+%=======================================================================
 \begin{eqnarray}
 \mat{\rho}^\chi&=&\Bigl(\langle{p}|\phi^K\rangle \mat{c}\Bigr)^{-1}
 (\mat{1}-\mat{Z})^{-1,\dagger}
@@ -2032,7 +2078,7 @@ d\mat{Z}\Bigr]
 
 
 %=======================================================================
-\section{Approximate inversion}
+\subsection{Approximate inversion}
 %=======================================================================
 \begin{eqnarray}
 \langle\pi_{\mu}|&=&
@@ -2636,6 +2682,7 @@ which is represented by a Yukawa potential.
 v(\vec{r})&=&
 \int d^3r'\; \frac{e^2 n(\vec{r'})}
 {4\pi\epsilon_0|\vec{r}-\vec{r'}|\exp(\lambda|\vec{r}-\vec{r'}|)}
+\label{eq:screenedcoulomb}
 \end{eqnarray}
 
 The Yukawa potential satisfies the Helmholtz equation
@@ -3012,7 +3059,1563 @@ and \verb|SPFUNCTION$MODHANKEL(L,K*X,Y,DYDX)|(ABRAMOWITZ 10.2.4)
 (which is taken from routione \verb|LMTO\$solidbessel| 
 \verb|LMTO\$solidhankel| in \verb|paw\_lmtobasics|
 
+%=======================================================================
+\chapter{Off-site matrix elements NDDO}
+%=======================================================================
 
+%=======================================================================
+\section{Exchange energy and U-tensor}
+%=======================================================================
+The exchange energy with a screened interaction has the form
+\begin{eqnarray}
+E_{xc}&=&-\frac{1}{2}\sum_{n,m}f_nf_m
+\int d^3r\int d^3r\;
+\psi^*_n(\vec{r})\psi_m(\vec{r})
+\frac{e^2\e{-\lambda|\vec{r}-\vec{r'}|}}
+{4\pi|\vec{r}-\vec{r'}|}
+\psi^*_m(\vec{r'})\psi_n(\vec{r'})
+\nonumber\\
+%
+%
+&=&-\frac{1}{2}\sum_{n,m}f_nf_m
+\sum_{\alpha,\beta,\gamma,\delta}
+\langle\psi_n|\pi_\alpha\rangle
+\langle\pi_\gamma|\psi_m\rangle
+\langle\psi_m|\pi_\beta\rangle
+\langle\pi_\delta|\psi_n\rangle
+\nonumber\\
+&&\times\underbrace{
+\int d^3r\int d^3r\;
+\chi^*_\alpha(\vec{r})\chi_\gamma(\vec{r})
+\frac{e^2\e{-\lambda|\vec{r}-\vec{r'}|}}
+{4\pi|\vec{r}-\vec{r'}|}
+\chi^*_\beta(\vec{r'})\chi_\delta(\vec{r'})
+}_{U_{\alpha,\beta,\gamma,\delta}}
+\nonumber\\
+%
+%
+&=&-\frac{1}{2}
+\sum_{\alpha,\beta,\gamma,\delta}
+\underbrace{
+\sum_n\langle\pi_\delta|\psi_n\rangle f_n\langle\psi_n|\pi_\alpha\rangle
+}_{\rho_{\delta,\alpha}}
+\underbrace{
+\sum_m\langle\pi_\gamma|\psi_m\rangle f_m\langle\psi_m|\pi_\beta\rangle
+}_{\rho_{\gamma,\beta}}
+U_{\alpha,\beta,\gamma,\delta}
+\nonumber\\
+%
+%
+&=&-\frac{1}{2}
+\sum_{\alpha,\beta,\gamma,\delta}
+\rho_{\delta,\alpha}\rho_{\gamma,\beta}U_{\alpha,\beta,\gamma,\delta}
+\end{eqnarray}
+with  the density matrix
+\begin{eqnarray}
+\rho_{\alpha,\beta}&=&
+\sum_n\langle\pi_\alpha|\psi_n\rangle f_n\langle\psi_n|\pi_\beta\rangle
+\end{eqnarray}
+and the screened U-tensor
+\begin{eqnarray}
+U_{\alpha,\beta,\gamma,\delta}
+&=&\int d^3r\int d^3r'\;
+\chi^*_\alpha(\vec{r})\chi^*_\beta(\vec{r'})
+\frac{e^2\cdot\e{-\lambda|\vec{r'}-\vec{r}|}}{4\pi\epsilon_0|\vec{r'}-\vec{r}|}
+\chi_\gamma(\vec{r})\chi_\delta(\vec{r'})
+\end{eqnarray}
+
+%=======================================================================
+\subsection{Division of exchange energy}
+%=======================================================================
+The goal is to limit the set of matrix elements for which the Coulomb
+interaction is considered to onsite terms and terms which are
+restricted to a pair of atoms.
+
+The exchange energy can be divided into terms for which the density
+connected to one node of the interaction, i.e. either $\vec{r}$ or
+$\vec{r'}$, are centered on the same atom or on different atoms.
+
+If the two orbitals are centered on two atoms, the density is located
+in the bond center and its contribution vanishes quickly with
+distance.
+
+When we exclude terms for which one node is connected to orbitals from
+different sites there are only in-site and NDDO terms left. NDDO
+stands for ``Neglect of diatomnic differential overlap'' and has been
+invented by Pople.
+
+\begin{eqnarray}
+E_{xc}&=&
+\underbrace{
+-\frac{1}{2}
+\sum_R\sum_{\alpha,\beta,\gamma,\delta\in R}
+\rho_{\delta,\alpha}\rho_{\gamma,\beta}U_{\alpha,\beta,\gamma,\delta}
+}_{\text{onsite}}
+\nonumber\\
+&&
+\underbrace{
+-\frac{1}{2}
+\sum_{R\neq R'}
+\sum_{\alpha,\gamma\in R}\sum_{\delta\beta,\in R'}
+\rho_{\delta,\alpha}\rho_{\gamma,\beta}U_{\alpha,\beta,\gamma,\delta}
+}_{\text{NDDO-terms}}
++\text{terms with off-site densities}
+\end{eqnarray}
+
+If we include all terms centered on a bond, there is one contribution
+with one off-site density, the 31-term , and one with two off-site
+densities, which I call bond exchange ``bondx''.
+\begin{eqnarray}
+\Delta E_{xc}
+&=&
+\underbrace{
+-\frac{1}{2}
+\sum_{R\neq R'}
+4\sum_{\alpha\in R}\sum_{\beta,\gamma,\delta\in R'}
+\rho_{\delta,\alpha}\rho_{\gamma,\beta}U_{\alpha,\beta,\gamma,\delta}
+}_{\text{31-terms}}
+\nonumber\\
+&&
+\underbrace{
+-\frac{1}{2}
+\sum_{R\neq R'}
+\sum_{\alpha,\beta\in R}\sum_{\delta\gamma,\in R'}
+\rho_{\delta,\alpha}\rho_{\gamma,\beta}U_{\alpha,\beta,\gamma,\delta}
+}_{\text{Bondx-terms}}
+\nonumber\\
+&&+\text{terms on at least three sites}
+\end{eqnarray}
+
+For the time being we concentrate on the NDDO terms.
+
+%=======================================================================
+\subsection{Interaction}
+%=======================================================================
+Let me abstract from the specific form of the interaction and describe
+it as $w(r)$. Later, we will require its value and derivatives which
+are computed here.
+
+\begin{eqnarray}
+w(r)&=&\frac{e^2}{4\pi\epsilon_0r}
+\underbrace{\e{-\lambda r}}_{\text{screening}}
+\nonumber\\
+\partial_rw(r)&=&
+\frac{-e^2}{4\pi\epsilon_0 r^2}
+\underbrace{
+\Bigl(1+\lambda r\Bigr)\e{-\lambda r}
+}_{\text{screening}}
+\nonumber\\
+\partial^2_rw(r)
+&=&
+\frac{-e^2}{4\pi\epsilon_0 r^2}
+\Bigl(1+\lambda r\Bigr)\e{-\lambda r}
+\biggl(-\frac{2}{r}
+\underbrace{
+-\lambda+\frac{\lambda}{1+\lambda r}
+}_{-\lambda^2r/(1+\lambda r)}
+\biggr)
+%\nonumber\\
+%&=&
+=\frac{+2e^2}{4\pi\epsilon_0 r^3}
+\underbrace{
+\Bigl(1+\lambda r\Bigr)
+\biggl(1+\frac{1}{2}\frac{\lambda^2r^2}{1+\lambda r}\biggr)
+\e{-\lambda r}
+}_{\text{screening}}
+\nonumber\\
+&=&
+\frac{+2e^2}{4\pi\epsilon_0 r^3}
+\underbrace{
+\biggl(1+\lambda r+\frac{1}{2}\lambda^2r^2\biggr)
+\e{-\lambda r}
+}_{\text{screening}}
+\end{eqnarray}
+
+
+
+
+%=======================================================================
+\section{Long-range expansions}
+%=======================================================================
+When the Coulomb potential is placed on a radial grid, it is important
+to remove the long-ranged tail, which extends beyond the grid.  This
+is important, in particular if the potential is interpolated.
+
+%=======================================================================
+\subsection{Long-range expansion of the potential}
+%=======================================================================
+Let me start with the potential of an electron density
+\begin{eqnarray}
+v(\vec{r})&=&
+\int d^3r'\; w(|\vec{r}-\vec{r'}|)n(\vec{r'})
+\nonumber\\
+%
+%
+&=&\int d^3r'\; n(\vec{r'})
+\biggl[
+w(|\vec{r}-\vec{R'}|)
++(\vec{r'}-\vec{R'})
+\left.\vec{\nabla}_{r'}w(|\vec{r}-\vec{r'}|)
+\right|_{\vec{r'}=\vec{R'}}+\ldots\biggr]
+\nonumber\\
+%
+%
+&=&\int d^3r'\; n(\vec{r'})
+\biggl[
+w(|\vec{r}-\vec{R'}|)\stackrel{\textcolor{red}{!}}{-}(\vec{r'}-\vec{R'})
+\vec{\nabla}_rw(|\vec{r}-\vec{R'}|)+\ldots\biggr]
+\nonumber\\
+%
+%
+&=&
+w(|\vec{r}-\vec{R}|)
+\underbrace{\Bigl[\int d^3r'\; n(\vec{r'})\Bigr]}_{Q}
+-\Bigl(\vec{\nabla}w(|\vec{r}-\vec{R'}|)\Bigr)
+\underbrace{
+\biggl[\int d^3r'\; n(\vec{r'})(\vec{r'}-\vec{R'})\biggr]
+}_{\vec{D}}
++\ldots
+\nonumber\\
+%
+%
+&=&
+\int d^3r'\; \delta(\vec{r'}-\vec{R'})
+\biggl[
+Q  w(|\vec{r}-\vec{r'}|)
+-\vec{D}\vec{\nabla}w(|\vec{r}-\vec{r'}|)
++\ldots\biggr]
+\nonumber\\
+%
+%
+&=&
+\int d^3r'\; 
+w(|\vec{r}-\vec{r'}|)
+\biggl[
+Q \delta(\vec{r'}-\vec{R'}) 
+-\vec{D}\vec{\nabla'}\delta(\vec{r'}-\vec{R'})
++\ldots\biggr]
+\end{eqnarray}
+This provides me with the multipole expansion of the potential, as
+well as a multipole representation of the density. 
+\begin{eqnarray}
+P(\vec{r})=\sum_R
+Q \delta(\vec{r}-\vec{R}) 
+-\vec{D}\vec{\nabla}\delta(\vec{r'}-\vec{R})
++\ldots
+\end{eqnarray}
+The multipole representation of the density is a density that vanishes
+everywhere else than a point, but produces the same multipole
+expansion of the potential as the original density.
+
+The long-ranged potential $v^{lr}(\vec{r})$ is the potential created
+by the multipole expansion.
+\begin{eqnarray}
+v^{lr}(\vec{r})&=&
+\int d^3r'\; w(|\vec{r}-\vec{r'}|)P(\vec{r'})
+=
+\Bigl(Q-\vec{D}\vec{\nabla}\Bigr)w(|\vec{r}-\vec{R'}|)
+\end{eqnarray}
+
+It can be expressed in terms of real spherical harmonics as
+\begin{eqnarray}
+v^{lr}(\vec{r})&=&
+\biggl[
+\sqrt{4\pi}Q w(|\vec{r}-\vec{R'}|)
+\biggr] 
+Y_s(\vec{r}-\vec{R'})
++\sum_i
+\biggl[
+\sqrt{\frac{4\pi}{3}} D_i
+\Bigl(\left.\partial_r w\right|_{|\vec{r}-\vec{R'}|}\Bigr) 
+\biggr]
+Y_{p_i}(\vec{r}-\vec{R'})
+\end{eqnarray}
+
+
+
+
+%=======================================================================
+\subsection{Long-range expansion of the energy}
+%=======================================================================
+\begin{eqnarray}
+E^{lr}
+&=&\int d^3r\int d^3r'\;P_1(\vec{r})w(|\vec{r}-\vec{r'}|)P_2(\vec{r'})
+\nonumber\\
+%
+%
+%
+&=&\int d^3r\;
+\Bigl[
+Q_1\delta(\vec{r}-\vec{R}_1)
+-\vec{D}_1\left(\vec{\nabla}_r\delta(\vec{r}-\vec{R}_1)\right)
+\Bigr]
+\nonumber\\
+&&\hspace{1cm}\times
+\int d^3r'\;w(|\vec{r}-\vec{r'}|)
+\Bigl[
+Q_2\delta(\vec{r'}-\vec{R}_2)
+-\vec{D}_2\vec{\nabla}_{r'}\delta(\vec{r'}-\vec{R}_2)
+\Bigr]
+\nonumber\\
+%
+%
+%
+&=&\int d^3r\;
+\Bigl[
+Q_1\delta(\vec{r}-\vec{R}_1)
++\delta(\vec{r}-\vec{R}_1)\vec{D}_1\vec{\nabla}_r
+\Bigr]
+\Bigl[
+Q_2w(|\vec{r}-\vec{R}_2|)
+-\vec{D}_2\vec{\nabla}_{r}w(|\vec{r}-\vec{R}_2)
+\Bigr]
+\nonumber\\
+%
+%
+%
+&=&
+Q_1Q_2w(|\vec{R}_1-\vec{R}_2|)
++\vec{D}_1Q_2\vec{\nabla}_{R_1}w(|\vec{R}_1-\vec{R}_2|)
+-Q_1\vec{D}_2\vec{\nabla}_{R_1}w(|\vec{R}_1-\vec{R}_2|)
+\nonumber\\
+&&-\Bigl(\vec{D}_1\vec{\nabla}_{R_1}\Bigr)
+\Bigl(\vec{D}_2\vec{\nabla}_{R_1}\Bigr)w(|\vec{R}_1-\vec{R}_2)
+\nonumber\\
+%
+%
+%
+&=&
+Q_1Q_2w(|\vec{R}_1-\vec{R}_2|)
++\Bigl(\vec{D}_1Q_2-Q_1\vec{D}_2\Bigr)
+\Bigl.\partial_rw\Bigr|_{|\vec{R}_1-\vec{R}_2|}
+\frac{\vec{R}_1-\vec{R}_2}{|\vec{R}_1-\vec{R}_2|}
+\nonumber\\
+&&-\Bigl(\vec{D}_1\vec{\nabla}_{R_1}\Bigr)
+\Bigl.\partial_rw\Bigr|_{|\vec{R}_1-\vec{R}_2|}
+\frac{\vec{D}_2(\vec{R}_1-\vec{R}_2)}{|\vec{R}_1-\vec{R}_2|}
+\nonumber\\
+%
+%
+%
+&=&
+Q_1Q_2w(|\vec{R}_1-\vec{R}_2|)
++\Bigl(\vec{D}_1Q_2-Q_1\vec{D}_2\Bigr)
+\Bigl.\partial_rw\Bigr|_{|\vec{R}_1-\vec{R}_2|}
+\frac{\vec{R}_1-\vec{R}_2}{|\vec{R}_1-\vec{R}_2|}
+\nonumber\\
+&&
+-\Bigl.\partial^2_rw\Bigr|_{|\vec{R}_1-\vec{R}_2|}
+\frac{\vec{D}_1(\vec{R}_1-\vec{R}_2)}{|\vec{R}_1-\vec{R}_2|}
+\frac{\vec{D}_2(\vec{R}_1-\vec{R}_2)}{|\vec{R}_1-\vec{R}_2|}
+-
+\Bigl.\partial_rw\Bigr|_{|\vec{R}_1-\vec{R}_2|}
+\biggl[
+\Bigl(\vec{D}_1\vec{\nabla}_{R_1}\Bigr)
+\frac{\vec{D}_2(\vec{R}_1-\vec{R}_2)}{|\vec{R}_1-\vec{R}_2|}
+\biggr]
+\nonumber\\
+%
+%
+%
+&=&
+Q_1Q_2w(|\vec{R}_1-\vec{R}_2|)
++\Bigl(\vec{D}_1Q_2-Q_1\vec{D}_2\Bigr)
+\Bigl.\partial_rw\Bigr|_{|\vec{R}_1-\vec{R}_2|}
+\frac{\vec{R}_1-\vec{R}_2}{|\vec{R}_1-\vec{R}_2|}
+\nonumber\\
+&&
+-\Bigl.\partial^2_rw\Bigr|_{|\vec{R}_1-\vec{R}_2|}
+\frac{\vec{D}_1(\vec{R}_1-\vec{R}_2)}{|\vec{R}_1-\vec{R}_2|}
+\frac{\vec{D}_2(\vec{R}_1-\vec{R}_2)}{|\vec{R}_1-\vec{R}_2|}
+\nonumber\\
+&&-
+\Bigl.\partial_rw\Bigr|_{|\vec{R}_1-\vec{R}_2|}
+\biggl[
+\frac{\vec{D}_1\vec{D}_2}{|\vec{R}_1-\vec{R}_2|}
+-
+\frac{\vec{D}_2(\vec{R}_1-\vec{R}_2)}{|\vec{R}_1-\vec{R}_2|^2}
+\frac{\vec{D}_1(\vec{R}_1-\vec{R}_2)}{|\vec{R}_1-\vec{R}_2|}
+\biggr]
+\nonumber\\
+%
+%
+%
+&=&
+Q_1Q_2w(|\vec{R}_1-\vec{R}_2|)
++
+\Bigl.\partial_rw\Bigr|_{|\vec{R}_1-\vec{R}_2|}
+\biggl[\Bigl(\vec{D}_1Q_2-Q_1\vec{D}_2\Bigr)
+\frac{\vec{R}_1-\vec{R}_2}{|\vec{R}_1-\vec{R}_2|}
+-\frac{\vec{D}_1\vec{D}_2}{|\vec{R}_1-\vec{R}_2|}\biggr]
+\nonumber\\
+&&
++
+\biggl[-\Bigl.\partial^2_rw\Bigr|_{|\vec{R}_1-\vec{R}_2|}
++\frac{1}{|\vec{R}_1-\vec{R}_2|}
+\Bigl.\partial_rw\Bigr|_{|\vec{R}_1-\vec{R}_2|}
+\biggr]
+\frac{\vec{D}_1(\vec{R}_1-\vec{R}_2)}{|\vec{R}_1-\vec{R}_2|}
+\frac{\vec{D}_2(\vec{R}_1-\vec{R}_2)}{|\vec{R}_1-\vec{R}_2|}
+\end{eqnarray}
+
+For the screened potential, we obtain:
+\begin{eqnarray}
+E^{lr}
+&=&\frac{e^2}{4\pi\epsilon_0}\e{-\lambda|\vec{R}_1-\vec{R}_2|}
+\biggl\lbrace
+\frac{Q_1Q_2}{|\vec{R}_1-\vec{R}_2|}
+-\frac{1+\lambda|\vec{R}_1-\vec{R}_2|}{|\vec{R}_1-\vec{R}_2|^2}
+\biggl[\Bigl(\vec{D}_1Q_2-Q_1\vec{D}_2\Bigr)
+\frac{\vec{R}_1-\vec{R}_2}{|\vec{R}_1-\vec{R}_2|}
+-\frac{\vec{D}_1\vec{D}_2}{|\vec{R}_1-\vec{R}_2|}\biggr]
+\nonumber\\
+&&
++
+\biggl[-2\frac{1+\lambda|\vec{R}_1-\vec{R}_2|
++\frac{1}{2}\lambda^2|\vec{R}_1-\vec{R}_2|^2}{|\vec{R}_1-\vec{R}_2|^3}
+-
+\frac{1+\lambda|\vec{R}_1-\vec{R}_2|}{|\vec{R}_1-\vec{R}_2|^3}
+\biggr]
+\frac{\vec{D}_1(\vec{R}_1-\vec{R}_2)}{|\vec{R}_1-\vec{R}_2|}
+\frac{\vec{D}_2(\vec{R}_1-\vec{R}_2)}{|\vec{R}_1-\vec{R}_2|}
+\biggr\rbrace
+\nonumber\\
+%
+%
+%
+&=&\frac{e^2}{4\pi\epsilon_0}\e{-\lambda|\vec{R}_1-\vec{R}_2|}
+\biggl\lbrace
+\frac{Q_1Q_2}{|\vec{R}_1-\vec{R}_2|}
+-\frac{1+\lambda|\vec{R}_1-\vec{R}_2|}{|\vec{R}_1-\vec{R}_2|^2}
+\biggl[\Bigl(\vec{D}_1Q_2-Q_1\vec{D}_2\Bigr)
+\frac{\vec{R}_1-\vec{R}_2}{|\vec{R}_1-\vec{R}_2|}
+-\frac{\vec{D}_1\vec{D}_2}{|\vec{R}_1-\vec{R}_2|}\biggr]
+\nonumber\\
+&&
+-
+\frac{3\Bigl(1+\lambda|\vec{R}_1-\vec{R}_2|\Bigr)
++\lambda^2|\vec{R}_1-\vec{R}_2|^2}{|\vec{R}_1-\vec{R}_2|^3}
+\frac{\vec{D}_1(\vec{R}_1-\vec{R}_2)}{|\vec{R}_1-\vec{R}_2|}
+\frac{\vec{D}_2(\vec{R}_1-\vec{R}_2)}{|\vec{R}_1-\vec{R}_2|}
+\biggr\rbrace
+\end{eqnarray}
+
+
+With $\vec{R}_2=\vec{R}_1+\Delta\vec{e}_z$, we obtain
+\begin{eqnarray}
+E^{lr}
+%
+%
+%
+&=&\frac{e^2}{4\pi\epsilon_0}\e{-\lambda\Delta}
+\biggl\lbrace
+\frac{Q_1Q_2}{\Delta}
++\frac{1+\lambda\Delta}{\Delta^2}
+\biggl[\Bigl(\vec{e}_z\vec{D}_1Q_2-Q_1\vec{e}_z\vec{D}_2\Bigr)
++\frac{\vec{D}_1\vec{D}_2}{\Delta}\biggr]
+\nonumber\\
+&&
+\hspace{2cm}-
+\frac{3\Bigl(1+\lambda\Delta\Bigr)
++\lambda^2\Delta^2}{\Delta^3}
+\Bigl(\vec{e}_z\vec{D}_1\Bigr)
+\Bigl(\vec{e}_z\vec{D}_2\Bigr)
+\biggr\rbrace
+\end{eqnarray}
+
+
+The potential of atom two and its gradient at $\vec{R}_1$ is obtained
+as
+\begin{eqnarray}
+V(\vec{R}_1)&=&\frac{\partial E^{lr}}{\partial Q_1}
+\nonumber\\
+\vec{\nabla}_{R_1}V(\vec{R}_1)&=&\vec{\nabla}_{D_1} E^{lr}
+\end{eqnarray}
+
+
+
+
+
+
+%=======================================================================
+\subsection{Division of U-tensor into short-  and  long-ranged parts}
+%=======================================================================
+In order to perform the integrations efficiently, we need to remove
+the long-ranged tails from the potential.
+
+Let me make the following definitions.
+\begin{eqnarray}
+n_{\alpha,\beta}(\vec{r})&=&\chi^*_\alpha(\vec{r})\chi_\beta(\vec{r})
+\nonumber\\
+n_{\gamma,\delta}(\vec{r})&=&\chi^*_\gamma(\vec{r})\chi_\delta(\vec{r})
+\nonumber\\
+v_{\alpha,\beta}(\vec{r})&=&
+\int d^3r'\; w(|\vec{r}-\vec{r'}|)n_{\alpha,\beta}(\vec{r'})
+\nonumber\\
+v_{\gamma,\delta}(\vec{r})&=&
+\int d^3r'\; w(|\vec{r}-\vec{r'}|)n_{\gamma,\delta}(\vec{r'})
+\end{eqnarray}
+Let me furthermore introduce the multipole representation of the
+density $n_{\alpha,\beta}(\vec{r})$ and $n_{\gamma,\delta}(\vec{r})$
+\begin{eqnarray}
+p_{\alpha,\beta}(\vec{r})&=& Q_{\alpha,\beta}\delta(\vec{r}-\vec{R})
+-\vec{D}_{\alpha,\beta}\vec{\nabla}\delta(\vec{r}-\vec{R})
+\nonumber\\
+p_{\gamma,\delta}(\vec{r})&=& Q_{\gamma,\delta}\delta(\vec{r}-\vec{R'})
+-\vec{D}_{\gamma,\delta}\vec{\nabla}\delta(\vec{r}-\vec{R'})
+\end{eqnarray}
+The multipole representation has the same multipoles as the original
+density, but it is non-zero only at a point.
+
+
+Then, the U-tensor matrix elements are
+\begin{eqnarray}
+U_{\alpha,\beta,\gamma,\delta}
+&=&\int d^3r\int d^3r'\;
+n_{\alpha,\beta}(\vec{r})w(|\vec{r}-\vec{r'}|)n_{\gamma,\delta}(\vec{r'})
+\nonumber\\
+&=&\int d^3r'\;v_{\alpha,\beta}(\vec{r}')n_{\gamma,\delta}(\vec{r'})
+\nonumber\\
+&=&\int d^3r'\;\Bigl[v_{\alpha,\beta}(\vec{r'})
+-\int d^3r\;p_{\alpha,\beta}(\vec{r})w(|\vec{r}-\vec{r'}|)\Bigr]
+n_{\gamma,\delta}(\vec{r'})
+\nonumber\\
+&&+\int d^3r\; p_{\alpha,\beta}(\vec{r}) v_{\gamma,\delta}(\vec{r})
+\nonumber\\
+&=&\int d^3r'\;\Bigl[v_{\alpha,\beta}(\vec{r'})
+-\int d^3r\;p_{\alpha,\beta}(\vec{r})w(|\vec{r}-\vec{r'}|)\Bigr]
+n_{\gamma,\delta}(\vec{r'})
+\nonumber\\
+&&+\int d^3r\; p_{\alpha,\beta}(\vec{r}) 
+\biggl[v_{\gamma,\delta}(\vec{r})-\int d^3r'\;w(|\vec{r}-\vec{r'}|)
+p_{\gamma,\delta}(\vec{r'})\biggr]
+\nonumber\\
+&&+\int d^3r\int d^3r'\; 
+p_{\alpha,\beta}(\vec{r}) w(|\vec{r}-\vec{r'}|)p_{\gamma,\delta}(\vec{r'})
+\nonumber\\
+%
+%
+%
+&=&\int d^3r'\;v^{sr}_{\alpha,\beta}(\vec{r'})n_{\gamma,\delta}(\vec{r'})
++\int d^3r\; p_{\alpha,\beta}(\vec{r}) v^{sr}_{\gamma,\delta}(\vec{r})
++U^{lr}_{\alpha,\beta,\gamma,\delta}
+\end{eqnarray}
+
+\begin{myshadowminipage}{offsite NDDO U-tensor in terms of 
+short and long-ranged contributions} The following division is exact,
+  even if the multipole expansion of the point representation
+  $p(\vec{r})$ differs from that of the corresponding densitis
+  $n(\vec{r})$. It is useful, whenm $n_{\alpha,\beta}$ and
+  $n_{\gamma,\delta}$ have rapidly converging multipole expansions,
+  which is well represented by the correasponding point
+  representation.
+\begin{eqnarray}
+U_{\alpha,\beta,\gamma,\delta} &=&\int
+d^3r'\;v^{sr}_{\alpha,\beta}(\vec{r'})n_{\gamma,\delta}(\vec{r'})
++\int d^3r\; p_{\alpha,\beta}(\vec{r}) v^{sr}_{\gamma,\delta}(\vec{r})
++U^{lr}_{\alpha,\beta,\gamma,\delta}
+\label{eq:udivision}
+\end{eqnarray}
+with the short-ranged potentials
+\begin{eqnarray}
+v^{sr}_{\alpha,\beta}(\vec{r'})&\defas&
+v_{\alpha,\beta}(\vec{r'})
+-\int d^3r\; w(|\vec{r'}-\vec{r}|)p_{\alpha,\beta}(\vec{r'})
+\label{eq:v12sr}
+\nonumber\\
+v^{sr}_{\gamma,\delta}(\vec{r})&\defas&
+v_{\gamma,\delta}(\vec{r})
+-\int d^3r\; w(|\vec{r}-\vec{r'}|)p_{\gamma,\delta}(\vec{r})
+\label{eq:v34sr}
+\end{eqnarray}
+and the long-ranged part of the U-tensor
+\begin{eqnarray}
+U^{lr}_{\alpha,\beta,\gamma,\delta}
+&\defas&
+\int d^3r\int d^3r'\; 
+p_{\alpha,\beta}(\vec{r}) w(\vec{r},\vec{r'})p_{\gamma,\delta}(\vec{r'})
+\label{eq:ulr}
+\end{eqnarray}
+\end{myshadowminipage}
+
+
+%% Let me now introduce the multipoles
+%% \begin{itemize}
+%% \item
+%% \begin{eqnarray}
+%% v^{sr}_{\gamma,\delta}(\vec{r})&=&
+%% v_{\gamma,\delta}(\vec{r})
+%% -\int d^3r'\; w(|\vec{r}-\vec{r'}|)p_{\gamma,\delta}(\vec{r'})
+%% \nonumber\\
+%% %
+%% %
+%% &=&v_{\gamma,\delta}(\vec{r})
+%% -\int d^3r'\; w(|\vec{r}-\vec{r'}|)
+%% \biggl(
+%% Q_{\gamma,\delta}\delta(\vec{r'}-\vec{R}_2)
+%% -\vec{D}_{\gamma,\delta}\vec{\nabla'}\delta(\vec{r'}-\vec{R}_2)
+%% \biggr)
+%% \nonumber\\
+%% %
+%% %
+%% &=&v_{\gamma,\delta}(\vec{r})
+%% -\int d^3r'\; \delta(\vec{r'}-\vec{R}_2)
+%% \biggl(
+%% Q_{\gamma,\delta}
+%% +\vec{D}_{\gamma,\delta}\vec{\nabla'}
+%% \biggr)
+%% w(|\vec{r}-\vec{r'}|)
+%% \nonumber\\
+%% %
+%% %
+%% &=&v_{\gamma,\delta}(\vec{r})
+%% -\int d^3r'\; \delta(\vec{r'}-\vec{R}_2)
+%% \biggl(
+%% Q_{\gamma,\delta}
+%% -\vec{D}_{\gamma,\delta}\vec{\nabla}
+%% \biggr)
+%% w(|\vec{r}-\vec{r'}|)
+%% \nonumber\\
+%% %
+%% %
+%% &=&v_{\gamma,\delta}(\vec{r})
+%% -
+%% \biggl(
+%% Q_{\gamma,\delta}
+%% -\vec{D}_{\gamma,\delta}\vec{\nabla}_r
+%% \biggr)
+%% w(|\vec{r}-\vec{R}_2|)
+%% \end{eqnarray}
+
+%% \end{itemize}
+
+
+
+
+
+%% \begin{eqnarray}
+%% U_{\alpha,\beta,\gamma,\delta}
+%% &=&\int d^3r'\;\Bigl[v_{\alpha,\beta}(\vec{r'})
+%% -\int d^3r\;p_{\alpha,\beta}(\vec{r})w(\vec{r},\vec{r'})\Bigr]
+%% n_{\gamma,\delta}(\vec{r'})
+%% \nonumber\\
+%% &&+\int d^3r\; 
+%% \Bigl[Q_{\alpha,\beta}\delta(\vec{r}-\vec{R})
+%% -\vec{D}_{\alpha,\beta}\vec{\nabla}\delta(\vec{r}-\vec{R})\Bigr]
+%% \biggl[v_{\gamma,\delta}(\vec{r})-\int d^3r'\;w(\vec{r},\vec{r'})
+%% p_{\gamma,\delta}(\vec{r'})\biggr]
+%% \nonumber\\
+%% &&+\int d^3r\int d^3r'\; 
+%% \Bigl[Q_{\alpha,\beta}\delta(\vec{r}-\vec{R})
+%% -\vec{D}_{\alpha,\beta}\vec{\nabla}\delta(\vec{r}-\vec{R})\Bigr]
+%% w(\vec{r},\vec{r'})
+%% \nonumber\\
+%% &&\hspace{3cm}\times
+%% \Bigl[Q_{\gamma,\delta}\delta(\vec{r'}-\vec{R'})
+%% -\vec{D}_{\gamma,\delta}\vec{\nabla'}\delta(\vec{r'}-\vec{R'})\Bigr]
+%% \nonumber\\
+%% %
+%% %
+%% %
+%% &=&\int d^3r'\;\Bigl[v_{\alpha,\beta}(\vec{r'})
+%% -\int d^3r\;p_{\alpha,\beta}(\vec{r})w(\vec{r},\vec{r'})\Bigr]
+%% n_{\gamma,\delta}(\vec{r'})
+%% \nonumber\\
+%% &&
+%% +\Bigl(Q+\vec{D}\vec{\nabla}_R\Bigr)
+%% \biggl[v_{\gamma,\delta}(\vec{R})-\int d^3r'\;w(\vec{R},\vec{r'})
+%% p_{\gamma,\delta}(\vec{r'})\biggr]
+%% \nonumber\\
+%% &&+
+%% Q_{\alpha,\beta}Q_{\gamma,\delta}w(\vec{R}-\vec{R'})
+%% +
+%% \underbrace{
+%% -Q_{\alpha,\beta}\vec{D}_{\gamma,\delta}\vec{\nabla}_{R'} w(\vec{R}-\vec{R'})
+%% +\vec{D}_{\alpha,\beta}Q_{\gamma,\delta}\vec{\nabla}_R w(\vec{R}-\vec{R'})
+%% }_{
+%% \Bigl(-Q_{\alpha,\beta}\vec{D}_{\gamma,\delta}
+%% +\vec{D}_{\alpha,\beta}Q_{\gamma,\delta}\Bigr)\vec{\nabla}_R w(\vec{R}-\vec{R'})
+%% }
+%% \nonumber\\
+%% &&+
+%% \underbrace{
+%% \vec{D}_{\alpha,\beta}\Bigl(\vec{\nabla}_R\otimes\vec{\nabla}_{R'}\Bigr) 
+%% w(\vec{R}-\vec{R'})\vec{D}_{\gamma,\delta}
+%% }_{-
+%% \vec{D}_{\alpha,\beta}
+%% \Bigl(\vec{\nabla}_R\otimes\vec{\nabla}_{R}
+%% w(\vec{R}-\vec{R'})\Bigr) 
+%% \vec{D}_{\gamma,\delta}
+%% }
+%% \nonumber\\
+%% \end{eqnarray}
+
+
+
+%% Now, we exploit that the interaction does not have an angular part.
+%% \begin{eqnarray}
+%% \vec{\nabla}_R w(\vec{R}-\vec{R'})
+%% &=&\frac{\vec{R}-\vec{R'}}{|\vec{R}-\vec{R'}|}\partial_Rw(|\vec{R}-\vec{R'}|)
+%% \nonumber\\
+%% &=&
+%% \sqrt{\frac{4\pi}{3}}Y_{\vec{p}}(\vec{R}-\vec{R'})\partial_Rw(|\vec{R}-\vec{R'}|)
+%% \nonumber\\
+%% \vec{\nabla}_R\otimes\vec{\nabla}_R w(\vec{R}-\vec{R'})
+%% &=&
+%% \biggl(\frac{1}{|\vec{R}-\vec{R'}|}
+%% -\frac{(\vec{R}-\vec{R'})\otimes(\vec{R}-\vec{R'})}{|\vec{R}-\vec{R'}|^3}
+%% \biggr)
+%% \partial_Rw(|\vec{R}-\vec{R'}|)
+%% \nonumber\\
+%% &+&\frac{(\vec{R}-\vec{R'})\otimes(\vec{R}-\vec{R'})}{|\vec{R}-\vec{R'}|^2}
+%% \partial^2_Rw(|\vec{R}-\vec{R'}|)
+%% \end{eqnarray}
+%% When we choose $\vec{R}-
+%% \vec{R'}$  parallel to $\vec{e}_z$, we obtain
+
+%% Now, we exploit that the atoms are placed along the z-axis. The
+%% orbitals are rotated first into the corresponding bond-specific
+%% coordinate system.
+%% \begin{eqnarray}
+%% \vec{\nabla}_R w(\vec{R}-\vec{R'})
+%% &=&\vec{e}_z\partial_Rw(|\vec{R}-\vec{R'}|)
+%% \nonumber\\
+%% &=&
+%% \sqrt{\frac{4\pi}{3}}Y_{\vec{p}_z}(\vec{R}-\vec{R'})
+%% \partial_Rw(|\vec{R}-\vec{R'}|)
+%% \nonumber\\
+%% %
+%% \vec{\nabla}_R\otimes\vec{\nabla}_R w(\vec{R}-\vec{R'})
+%% &=&
+%% \frac{\partial_Rw(|\vec{R}-\vec{R'}|)}{|\vec{R}-\vec{R'}|}
+%% \nonumber\\
+%% &+&\vec{e}_z\otimes\vec{e}_z
+%% \biggl(\partial^2_Rw(|\vec{R}-\vec{R'}|)
+%% -\frac{\partial_Rw(|\vec{R}-\vec{R'}|)}{|\vec{R}-\vec{R'}|}\biggr)
+%% \end{eqnarray}
+
+%% With these assumptions, the long-ranged part of the U-tensor obtains the form
+%% \begin{eqnarray}
+%% U_{\alpha,\beta,\gamma,\delta}^{\text{longrange}}
+%% &=&
+%% Q_{\alpha,\beta}Q_{\gamma,\delta}w(\vec{R}-\vec{R'})
+%% +
+%% \underbrace{
+%% Q_{\alpha,\beta}\vec{D}_{\gamma,\delta}\vec{\nabla}_{R'} w(\vec{R}-\vec{R'})
+%% +\vec{D}_{\alpha,\beta}Q_{\gamma,\delta}\vec{\nabla}_R w(\vec{R}-\vec{R'})
+%% }_{
+%% \Bigl(-Q_{\alpha,\beta}\vec{D}_{\gamma,\delta}
+%% +\vec{D}_{\alpha,\beta}Q_{\gamma,\delta}\Bigr)\vec{\nabla}_R w(\vec{R}-\vec{R'})
+%% }
+%% \nonumber\\
+%% &&+
+%% \underbrace{
+%% \vec{D}_{\alpha,\beta}\Bigl(\vec{\nabla}_R\otimes\vec{\nabla}_{R'}\Bigr) 
+%% w(\vec{R}-\vec{R'})\vec{D}_{\gamma,\delta}
+%% }_{-
+%% \vec{D}_{\alpha,\beta}
+%% \Bigl(\vec{\nabla}_R\otimes\vec{\nabla}_{R}
+%% w(\vec{R}-\vec{R'})\Bigr) 
+%% \vec{D}_{\gamma,\delta}
+%% }
+%% \nonumber\\
+%% &=&Q_{\alpha,\beta}Q_{\gamma,\delta}w(\vec{R}-\vec{R'})
+%% -\Bigl(Q_{\alpha,\beta}D_{z,\gamma,\delta}
+%% -D_{z,\alpha,\beta}Q_{\gamma,\delta}\Bigr)\partial_R w(\vec{R}-\vec{R'})
+%% \nonumber\\
+%% &&
+%% -\vec{D}_{\alpha,\beta}\vec{D}_{\gamma,\delta}
+%% \frac{\partial_Rw(|\vec{R}-\vec{R'}|)}{|\vec{R}-\vec{R'}|}
+%% -D_{z,\alpha,\beta}D_{z,\gamma,\delta}
+%% \biggl(\partial^2_Rw(|\vec{R}-\vec{R'}|)
+%% -\frac{\partial_Rw(|\vec{R}-\vec{R'}|)}{|\vec{R}-\vec{R'}|}\biggr)
+%% \nonumber\\
+%% %
+%% %
+%% &=&
+%% \frac{e^2
+%% Q_{\alpha,\beta}Q_{\gamma,\delta}
+%% }{4\pi\epsilon_0|\vec{R}-\vec{R'}|}\e{-\lambda|\vec{R}-\vec{R'}|}
+%% +
+%% \frac{e^2
+%% \Bigl(Q_{\alpha,\beta}D_{z,\gamma,\delta}
+%% -D_{z,\alpha,\beta}Q_{\gamma,\delta}\Bigr)
+%% }{4\pi\epsilon_0|\vec{R}-\vec{R'}|^2}
+%% \underbrace{
+%% \Bigl(1+\lambda|\vec{R}-\vec{R'}|\Bigr)
+%% \e{-\lambda|\vec{R}-\vec{R'}|}
+%% }_{\text{screening}}
+%% \nonumber\\
+%% &&
+%% +
+%% \frac{e^2\vec{D}_{\alpha,\beta}\vec{D}_{\gamma,\delta}}
+%% {4\pi\epsilon_0|\vec{R}-\vec{R'}|^3}
+%% \underbrace{
+%% \Bigl(1+\lambda|\vec{R}-\vec{R'}|\Bigr)
+%% \e{-\lambda|\vec{R}-\vec{R'}|}
+%% }_{\text{screening}}
+%% \nonumber\\
+%% &&-
+%% \frac{e^2\vec{D}_{z,\alpha,\beta}\vec{D}_{z,\gamma,\delta}}
+%% {4\pi\epsilon_0|\vec{R}-\vec{R'}|^3}
+%% \underbrace{
+%% \Bigl(3+3\lambda|\vec{R}-\vec{R'}|+\lambda^2|\vec{R}-\vec{R'}|^2\Bigr)
+%% \e{-\lambda|\vec{R}-\vec{R'}|}
+%% }_{\text{screening}}
+%% \biggr]
+%% \nonumber\\
+%% \end{eqnarray}
+
+
+%=======================================================================
+\section{Expansion of the density in angular momenta}
+%=======================================================================
+In
+\verb|simplelmto_onecenterqln|, we evaluate the quantities
+$q_{s,\alpha,\beta}$ and $q_{p,\alpha,\beta}$, which can be used to
+evaluate monopoles and dipoles. We divide an orbital into radial and
+angularpart, as
+\begin{eqnarray}
+\chi_\alpha(\vec{r})=f_{\alpha}(|\vec{r}-\vec{R}_\alpha|)
+Y_{L_\alpha}(\vec{r}-\vec{R}_\alpha)
+\end{eqnarray}
+
+Thus, we obtain the densities of two orbitals centered at the same
+site $\vec{R}=\vec{R}_\alpha=\vec{R}_\beta$
+\begin{eqnarray}
+n_{\alpha,\beta}(\vec{r})&=&\chi^*_\alpha(\vec{r})\chi_\beta(\vec{r})
+\nonumber\\
+&=&
+f_{\alpha}(|\vec{r}-\vec{R}|)f_{\beta}(|\vec{r}-\vec{R}|)
+Y^*_{L_\alpha}(\vec{r}-\vec{R})Y_{L_\beta}(\vec{r}-\vec{R})
+\nonumber\\
+&=&\sum_L  C_{L,L_\alpha,L_\beta}
+f_{\alpha}(|\vec{r}-\vec{R}|)f_{\beta}(|\vec{r}-\vec{R}|)
+Y_L(\vec{r}-\vec{R})
+\end{eqnarray}
+with the Gaunt coefficients $C_{L,L',L''}=\int d\Omega\; Y_L(\vec{r})
+Y_{L'}(\vec{r})Y_{L''}(\vec{r})$
+
+%% The 
+%% \begin{eqnarray}
+%% \int d^3r\; \chi^*_\alpha(\vec{r})\chi_\beta(\vec{r})r^\ell Y_L(\vec{r})
+%% &=&
+%% \int d^3r \;
+%% f_{\ell_{\alpha}}(r)Y^*_{L_\alpha}(\vec{r}))
+%% f_{\ell_{\beta}}(r)Y^*_{L_\beta}(\vec{r}))
+%% r^\ell Y_L(\vec{r})
+%% \nonumber\\
+%% &=&
+%% C_{L_\alpha,L_\beta,L}
+%% \int_0^\infty dr\; r^{2+\ell} 
+%% f_{\ell_{\alpha}}(r)
+%% f_{\ell_{\beta}}(r)
+%% \end{eqnarray}
+%% Now we evaluate the monopole $Q_0$ and dipole $Q_{x/y/z}$
+
+
+\begin{eqnarray}
+Q_{\alpha,\beta}&=&
+\int d^3r\; \chi^*_\alpha(\vec{r})\chi_\beta(\vec{r})
+=
+\int d^3r\; \chi^*_\alpha(\vec{r})\chi_\beta(\vec{r})
+\underbrace{\sqrt{4\pi}|\vec{r}-\vec{R}|^0 Y_s(\vec{r}-\vec{R})}_{=1}
+\nonumber\\
+&=&C_{s,L_\alpha,L_\beta}
+\underbrace{
+\sqrt{4\pi}\int_0^\infty dr\; r^{2} f_{\alpha}(r)f_{\beta}(r)
+}_{q_{s,\alpha,\beta}}
+\label{eq:monopoleslater}
+\\
+%
+%
+D_{j,\alpha,\beta}&=&
+\int d^3r\; \chi^*_\alpha(\vec{r})\chi_\beta(\vec{r}))(r_j-R_j)
+=
+\int d^3r\; \chi^*_\alpha(\vec{r})\chi_\beta(\vec{r})|\vec{r}-\vec{R}|^1 
+\underbrace{\sqrt{\frac{4\pi}{3}}Y_{p_j}(\vec{r}-\vec{R})}_{r_j}
+\nonumber\\
+&=&
+C_{p_j,L_\alpha,L_\beta}
+\underbrace{
+\sqrt{\frac{4\pi}{3}}\int_0^\infty dr\; r^3f_{\alpha}(r)f_{\beta}(r) 
+}_{q_{p,\alpha,\beta}}
+\label{eq:dipoleslater}
+\end{eqnarray}
+
+The variables $q_{s,\alpha,\beta}$ and $q_{p,\alpha,\beta}$ are stored
+as \verb|QLN(1,LN1,LN2)| and \verb|QLN(2,LN1,LN2)|, respectively.
+
+%=======================================================================
+\subsubsection{short-ranged potentials}
+%=======================================================================
+\begin{eqnarray}
+v^{sr}_{\gamma,\delta}(\vec{r})
+&=&\sum_L v^{sr}_{L,\gamma,\delta}(|\vec{r}-\vec{R}_2|)Y_L(\vec{r}-\vec{R}_2)
+\nonumber\\
+%
+%
+&=&
+\sum_L C_{L_\gamma,L_\delta,L}
+\int d^3r'\; 
+w(|\vec{r}-\vec{r'}|)
+f_{\gamma}(|\vec{r'}-\vec{R}_2|)
+f_{\gamma}(|\vec{r'}-\vec{R}_2|)
+Y_L(\vec{r'}-\vec{R}_2)
+\nonumber\\
+%
+%
+&&-\underbrace{C_{s,L_\gamma,L_\delta}q_{s,\gamma,\delta}}_{Q_{\gamma,\delta}}
+\sqrt{4\pi}w(|\vec{r}-\vec{R}_2|)Y_s(\vec{r}-\vec{R}_2)
+\nonumber\\
+&&-\sum_j
+\underbrace{C_{p_j,L_\gamma,L_\delta}q_{p,\gamma,\delta}}_{D_{j,\gamma,\delta}}
+\sqrt{\frac{4\pi}{3}}\Bigl(\left.\partial_rw\right|_{|\vec{r}-\vec{R}_2|}\Bigr)Y_{p_j}(\vec{r}-\vec{R}_2)
+\nonumber\\
+%
+%
+&=&
+\sum_L C_{L_\gamma,L_\delta,L}
+\biggl\lbrace
+\int d^3r'\; 
+w_\ell(|\vec{r}-\vec{r'}|)
+f_{\gamma}(|\vec{r'}-\vec{R}_2|)
+f_{\gamma}(|\vec{r'}-\vec{R}_2|)
+\nonumber\\
+%
+%
+&&-\biggl[\delta_{L,s}q_{s,\gamma,\delta}
+\sqrt{4\pi}w(|\vec{r}-\vec{R}_2|)
++\sum_j
+\delta_{L,p_j}q_{p,\gamma,\delta}
+\sqrt{\frac{4\pi}{3}} \Bigl(\left.\partial_rw\right|_{|\vec{r}-\vec{R}_2|}\Bigr)
+\biggr]
+\biggr\rbrace
+Y_L(\vec{r'}-\vec{R}_2)
+\nonumber\\
+%
+%
+&=&
+\sum_L C_{L_\gamma,L_\delta,L}
+\biggl\lbrace
+\int d^3r'\; 
+w_\ell(|\vec{r}-\vec{r'}|)
+f_{\gamma}(|\vec{r'}-\vec{R}_2|)
+f_{\gamma}(|\vec{r'}-\vec{R}_2|)
+\nonumber\\
+%
+%
+&&-\biggl[\delta_{\ell,0}q_{s,\gamma,\delta}
+\sqrt{4\pi}w(|\vec{r}-\vec{R}_2|)
++
+\delta_{\ell,1}q_{p,\gamma,\delta}
+\sqrt{\frac{4\pi}{3}} \Bigl(\left.\partial_rw\right|_{|\vec{r}-\vec{R}_2|}\Bigr)
+\biggr]
+\biggr\rbrace
+Y_L(\vec{r'}-\vec{R}_2)
+\end{eqnarray}
+This expression is used to comnstruct the short-ranged potentials.
+
+
+%=======================================================================
+\subsubsection{Correction}
+%=======================================================================
+The middle term in \eq{eq:udivision}, which I denote as $X$, is written as
+\begin{eqnarray}
+X&\defas&
+\int d^3r\; p_{\alpha,\beta}(\vec{r})v^{sr}_{\gamma,\delta}(\vec{r})
+\nonumber\\
+%
+%
+&=&\int d^3r\; 
+\biggl[Q_{\alpha,\beta}\delta(\vec{r}-\vec{R}_1)
+-\vec{D}_{\alpha,\beta}\vec{\nabla}\delta(\vec{r}-\vec{R}_1)
+\biggr]
+v^{sr}_{\gamma,\delta}(\vec{r})
+\nonumber\\
+%
+%
+&=&\int d^3r\; \delta(\vec{r}-\vec{R}_1)
+\biggl[Q_{\alpha,\beta}+\vec{D}_{\alpha,\beta}\vec{\nabla}\biggr]
+v^{sr}_{\gamma,\delta}(\vec{r})
+\nonumber\\
+%
+%
+&=&
+\biggl[Q_{\alpha,\beta}+\vec{D}_{\alpha,\beta}\vec{\nabla}_{R_1}\biggr]
+v^{sr}_{\gamma,\delta}(\vec{R}_1)
+\nonumber\\
+%
+%
+&=&\underbrace{C_{L_\alpha,L_\beta,s}q_{s,\alpha,\beta}}_{Q_{\alpha,\beta}}
++\sum_{j\in \{x,y,z\}}
+\underbrace{
+C_{L_\alpha,L_\beta,p_j}q_{p,\alpha,\beta}
+}_{D_{j,\alpha,\beta}}
+\frac{\partial}{\partial R_{1,j}}
+\biggr]
+\nonumber\\
+&&\times\sum_{L}v^{sr}_{L,\gamma,\delta}(|\vec{R}_1-\vec{R}_2|)Y_L(\vec{R}_1-\vec{R}_2)
+\nonumber\\
+%
+%
+&=&\sum_LC_{L_\alpha,L_\beta,s}q_{s,\alpha,\beta}
+v^{sr}_{L,\gamma,\delta}(|\vec{R}_1-\vec{R}_2|)Y_L(\vec{R}_1-\vec{R}_2)
+\nonumber\\
+%
+&+&\sum_L \sum_{j\in \{x,y,z\}} C_{L_\alpha,L_\beta,p_j}q_{p,\alpha,\beta}
+\left(\left.\partial_rv^{sr}_{L,\gamma,\delta}\right|_{|\vec{R}_1-\vec{R}_2|}\right)
+\frac{R_{1,j}-R_{2,j}}{|\vec{R}_1-\vec{R}_2|}
+Y_L(\vec{R}_1-\vec{R}_2)
+\nonumber\\
+%
+&+&\sum_L \sum_{j\in \{x,y,z\}} C_{L_\alpha,L_\beta,p_j}q_{p,\alpha,\beta}
+v^{sr}_{L,\gamma,\delta}(|\vec{R}_1-\vec{R}_2|)
+\nonumber\\
+&&
+\times
+\underbrace{
+\sqrt{\frac{4\pi}{3}}\sum_{L'}
+C_{j,L,L'}\frac{1}{|\vec{R}_1-\vec{R}_2|}
+\left[-\ell+(2\ell+1)\delta_{\ell',\ell-1}\right]Y_{L'}(\vec{R}_1-\vec{R}_2)
+}_{\frac{\partial}{\partial R_{1,j}}Y_L(\vec{R}_1-\vec{R}_2)}
+\end{eqnarray}
+
+We used the expression for the gradient of spherical harmonics
+(Section 49.10 ``Gradients of spherical harmonics'' of Methods)
+\begin{eqnarray}
+\vec{\nabla}_jY_L(\vec{r})&=&\sqrt{\frac{4\pi}{3}}\sum_{L'}
+C_{j,L,L'}\frac{1}{|\vec{r}|}
+\left[-\ell+(2\ell+1)\delta_{\ell',\ell-1}\right]Y_{L'}(\vec{r})
+\label{eq:gradientsphericalharmonics}
+\end{eqnarray}
+
+In the following step I use
+$\vec{R}_1-\vec{R}_2=-\vec{e}_z|\vec{R}_1-\vec{R}_2|$.
+\begin{eqnarray}
+X
+&=&\sum_LC_{L_\alpha,L_\beta,s}q_{s,\alpha,\beta}
+v^{sr}_{L,\gamma,\delta}(|\vec{R}_1-\vec{R}_2|)Y_L(\vec{R}_1-\vec{R}_2)
+\nonumber\\
+%
+&+&\sum_L \sum_{j\in \{x,y,z\}} C_{L_\alpha,L_\beta,p_j}q_{p,\alpha,\beta}
+\left(\left.\partial_rv^{sr}_{L,\gamma,\delta}\right|_{|\vec{R}_1-\vec{R}_2|}\right)
+\underbrace{\frac{R_{1,j}-R_{2,j}}{|\vec{R}_1-\vec{R}_2|}}_{-\delta_{j,z}}
+\underbrace{Y_L(\vec{R}_1-\vec{R}_2)}_{(-1)^\ell Y_L(+\vec{e}_z|\vec{R}_1-\vec{R}_2|)\delta_{m,0}}
+\nonumber\\
+%
+&+&\sum_L \sum_{j\in \{x,y,z\}} C_{L_\alpha,L_\beta,p_j}q_{p,\alpha,\beta}
+v^{sr}_{L,\gamma,\delta}(|\vec{R}_1-\vec{R}_2|)
+\nonumber\\
+%
+&&
+\times
+\sqrt{\frac{4\pi}{3}}\sum_{L'}
+C_{j,L,L'}\frac{1}{|\vec{R}_1-\vec{R}_2|}
+\left[-\ell+(2\ell+1)\delta_{\ell',\ell-1}\right]
+\underbrace{
+Y_{L'}(\vec{R}_1-\vec{R}_2)
+}_{\delta_{m',0}(-1)^{\ell'}Y_{L'}(+\vec{e}_z|\vec{R}_1-\vec{R}_2|)}
+\nonumber\\
+%
+%
+%
+&=&\sum_{\ell}
+C_{L_\alpha,L_\beta,s}
+q_{s,\alpha,\beta}(-1)^\ell Y_{\ell,0}(+e_z|\vec{R}_1-\vec{R}_2|)
+v^{sr}_{(\ell,0),\gamma,\delta}(|\vec{R}_1-\vec{R}_2|)
+\nonumber\\
+%
+&+&\sum_\ell C_{L_\alpha,L_\beta,p_z}q_{p,\alpha,\beta}
+\left(\left.\partial_rv^{sr}_{(\ell,0),\gamma,\delta}\right|_{|\vec{R}_1-\vec{R}_2|}\right)
+(-1)^{\ell+1}Y_{(\ell,0)}(+\vec{e}_z|\vec{R}_1-\vec{R}_2|)
+\nonumber\\
+%
+&+&\sum_L \sum_{j\in \{x,y,z\}} C_{L_\alpha,L_\beta,p_j}q_{p,\alpha,\beta}
+\frac{v^{sr}_{L,\gamma,\delta}(|\vec{R}_1-\vec{R}_2|)}{|\vec{R}_1-\vec{R}_2|}
+\nonumber\\
+&&
+\times
+\sqrt{\frac{4\pi}{3}}\sum_{\ell'}
+C_{p_j,L,(\ell',0)}
+\left[-\ell+(2\ell+1)\delta_{\ell',\ell-1}\right]
+(-1)^{\ell'}Y_{(\ell',0)}(+\vec{e}_z|\vec{R}_1-\vec{R}_2|)
+\nonumber\\
+\end{eqnarray}
+
+Now we exploit that $C_{p_j,L,(\ell',0)}$ vanishes except when
+$m_{p_j}=m_L$ and $\ell_L-\ell'=\pm1$.
+
+
+
+\begin{eqnarray}
+X&=&\sum_\ell C_{L_\alpha,L_\beta,s}q_{s,\alpha,\beta}
+v^{sr}_{(\ell,0),\gamma,\delta}(|\vec{R}_1-\vec{R}_2|)
+(-1)^{\ell}
+Y_{\ell,0}(+e_z|\vec{R}_1-\vec{R}_2|)
+\nonumber\\
+%
+&+&\sum_\ell C_{L_\alpha,L_\beta,p_z}q_{p,\alpha,\beta}
+\left(\left.\partial_rv^{sr}_{(\ell,0),\gamma,\delta}\right|_{|\vec{R}_1-\vec{R}_2|}\right)
+(-1)^{\ell+1}Y_{(\ell,0)}(+\vec{e}_z|\vec{R}_1-\vec{R}_2|)
+\nonumber\\
+%
+&+&\sum_{\ell} \sum_{j\in \{x,y,z\}} C_{L_\alpha,L_\beta,p_j}q_{p,\alpha,\beta}
+\frac{v^{sr}_{(\ell,m_j),\gamma,\delta}(|\vec{R}_1-\vec{R}_2|)}
+{|\vec{R}_1-\vec{R}_2|}
+\sqrt{\frac{4\pi}{3}}
+\nonumber\\
+&&
+\times\biggl\lbrace
+C_{p_j,(\ell,m_j),(\ell-1,0)}
+\left[\ell+1\right]
+(-1)^{\ell-1}Y_{(\ell-1,0)}(+\vec{e}_z|\vec{R}_1-\vec{R}_2|)
+\nonumber\\
+&&+
+C_{p_j,(\ell,m_j),(\ell+1,0)}
+\left[-\ell\right]
+(-1)^{\ell+1}Y_{(\ell+1,0)}(+\vec{e}_z|\vec{R}_1-\vec{R}_2|)
+\biggr\rbrace
+\end{eqnarray}
+
+
+
+%=======================================================================
+\subsection{Tabulating data}
+%=======================================================================
+\begin{eqnarray}
+U_{\alpha,\beta,\gamma,\delta}
+&=&
+\int d^3r\int d^3r'\; n_{\alpha,\gamma}(\vec{r}) w(\vec{r}-\vec{r'}) n_{\beta,\delta}(\vec{r})
+\nonumber\\
+&=&
+\int d^3r\; n_{\alpha,\gamma}(\vec{r}) v(\vec{r})
+\nonumber\\
+&=&\sum_{L,L'}\sum_{L_\alpha,L_\gamma}\sum_{L_\beta,L_\delta}\delta_{m,m'}
+C_{L,L_\alpha,L_\gamma}C_{L',L_\beta,L_\delta}
+\int dr\; 
+f_{\alpha}(\vec{r}-\vec{R})f_{\gamma}(\vec{r}-\vec{R}) Y_L(\vec{r}-\vec{R})
+\nonumber\\
+&&\times
+\underbrace{
+\int dr'\; w(\vec{r}-\vec{r'})
+f_{\beta}(\vec{r'}-\vec{R'})f_{\delta}(\vec{r'}-\vec{R'}) Y_{L'}(\vec{r'}-\vec{R'})
+}_{v_{\ell',\beta,\delta}(|\vec{r}-\vec{R'})Y_{L'}(\vec{r'}-\vec{R'})}
+\end{eqnarray}
+
+The integral is performed in \verb|simplelmto_twocenter|.
+\begin{eqnarray}
+I&=&\int_{-\infty}^\infty dz \int_0^{2\pi}d\phi \int_0^\infty d\rho\;
+F(|\vec{r}|)Y_{\ell,m}(\vec{r})G(|\vec{r}-d\vec{e}_z)|Y_{\ell',m'}(\vec{r}-d\vec{e}_z) 
+\nonumber\\
+&=& 2\pi\delta_{m,m'}
+\sqrt{\frac{2\ell+1}{4\pi}\frac{(\ell-m)!}{(\ell+m)!}}
+\sqrt{\frac{2\ell'+1}{4\pi}\frac{(\ell'-m)!}{(\ell'+m)!}}
+\nonumber\\
+&&\times\int_{-\infty}^{\infty}dz \int_{0}^{\infty} d\rho\;
+P^{m}_{\ell}\left(\frac{z}{\sqrt{\rho^2+z^2}}\right)
+P^{m}_{\ell'}\left(\frac{z-d}{\sqrt{\rho^2+(z-d)^2}}\right)
+F(|\vec{r}|)G(|\vec{r}-d\vec{e}_z|)
+\nonumber\\
+\label{eq:twocenterintegral}
+\end{eqnarray}
+The z-axis is chosen along the interatomic distance vector.  Thus the
+integral gives a non-zero result if the magnetic quantum numbers have
+the same value. $\rho$ is the distance from the bond axis.
+
+The Legendre polynomials are, with $m>0$,
+\begin{eqnarray}
+P^{m}_{\ell}(z)&=&\frac{(-1)^m}{\ell!2^\ell} (\sqrt{1-x^2})^m\left(\frac{d}{dx}\right)^{\ell+m}(1-x^2)^\ell
+\nonumber\\
+P^{-m}_{\ell}(z)&=&(-1)^m\frac{(\ell-m)!}{\ell+m)!} P^{m}_{\ell}(x)
+\end{eqnarray}
+
+
+
+The method is taken from Genz and
+Malik\cite{genz80_jcomputapplmath6_295}, who use a variant of the
+method of van Dooren and de
+Ridder\cite{vandooren76_jcomputapplmath2_207}.
+
+For comparison, see also the work of Romanowski and Jalbout.
+\cite{romanowski08_ijqc108_249,romanowski08_ijqc108_487,
+  romanowski08_ijqc108_1465 ,romanowski09_jmathchem46_97}
+
+
+
+The radial functions of the local orbitals do not depend on the
+magnetic quantum number. Hence, the integral depends on
+$(\ell,\ell',m,\ell_\alpha,n_\alpha,\ell_\gamma,n_\gamma,\ell_\beta,n_\beta,\ell_\delta,n_\delta)$
+with the same $m$.  These integrals are calculated on a distance grid
+and then fitted by a set of interpolating exponentials.
+
+The U-tensor is
+\begin{eqnarray}
+U_{\alpha,\beta,\gamma,\delta}
+&=&\sum_{\ell,\ell'}\sum_m\sum_{\ell_\alpha,\ell_\gamma}\sum_{\ell_\beta,\ell_\delta}
+\biggl(\sum_{m_\alpha,m_\gamma}\sum_{m_\beta,m_\delta}
+C_{\ell,m,L_\alpha,L_\gamma}C_{\ell',m,L_\beta,L_\delta}
+\biggr)
+\nonumber\\
+&&\times I_{\ell,\ell',m,\ell_\alpha,n_\alpha,\ell_\gamma,n_\gamma,\ell_\beta,n_\beta,\ell_\delta,n_\delta}
+\Bigl([n_{\ell,\alpha,\gamma}],[v_{\ell',\beta,\delta}],d\Bigr)
+\end{eqnarray}
+
+
+%=======================================================================
+\subsection{Integrals with the point density}
+%=======================================================================
+%% \begin{eqnarray}
+%% p(\vec{r})&=&Q\frac{3}{4\pi r_c^3} \theta(r_c-|r|)\underbrace{\sqrt{4\pi}Y_{s}(\vec{r})}_{=1}
+%% -\sum_{j=1}^{3} D_{j}\frac{5}{12\pi r_c^5} \theta(r_c-|r|)
+%% \underbrace{\sqrt{\frac{4\pi}{3}}Y_{p_j}(\vec{r})}_{r_j}
+%% \nonumber\\
+%% p_{\alpha,\beta}(\vec{r})
+%% &=&
+%% \underbrace{C_{s,L_\alpha,L_\beta}q_{s,\alpha,\beta}}_{Q_{\alpha,\beta}}\delta(\vec{r})
+%% -
+%% \sum_j \underbrace{C_{p_j,L_\alpha,L_\beta}q_{s,\alpha,\beta}}_{D_{j,\alpha,\beta}}\vec{\nabla}\delta(\vec{r})
+%% \nonumber\\
+%% &=&
+%% \underbrace{C_{s,L_\alpha,L_\beta}q_{s,\alpha,\beta}}_{Q_{\alpha,\beta}}
+%% \frac{3}{4\pi r_c^3} \theta(r_c-|r|)\underbrace{\sqrt{4\pi}Y_{s}(\vec{r})}_{=1}
+%% \nonumber\\
+%% &-&\sum_{j=1}^{3} 
+%% \underbrace{C_{p_j,L_\alpha,L_\beta}q_{p,\alpha,\beta}}
+%% _{D_{j,\alpha,\beta}}\frac{5}{12\pi r_c^5} \theta(r_c-|r|)
+%% \underbrace{
+%% \sqrt{\frac{4\pi}{3}}Y_{p_j}(\vec{r})
+%% }_{r_j}
+%% \end{eqnarray}
+
+%% Test:
+%% \begin{eqnarray}
+%% &&\int d^3r\;\Bigl(A+\vec{B}\vec{r}\Bigr)
+%% \Bigl(Q\frac{3}{4\pi r_c^3} \theta(r_c-r)
+%% -\sum_{j=1}^{3} D_{j}\frac{5}{4\pi r_c^5} \theta(r_c-|r|)r_j\Bigr)
+%% \nonumber\\
+%% &=&
+%% AQ\underbrace{\frac{3}{4\pi r_c^3} \int_{|\vec{r}|<r_c} d^3r\; 1}_{=1}
+%% +
+%% \sum_jB_jQ\frac{3}{4\pi r_c^3} \underbrace{\int_{|\vec{r}|<r_c} d^3r\; r_j}_{=0}
+%% +
+%% \sum_{j}AD_j\frac{5}{4\pi r_c^5} \underbrace{\int_{|\vec{r}|<r_c} d^3r\; r_j}_{=0}
+%% \nonumber\\
+%% &&+
+%% \sum_{i,j}B_iD_j
+%% \underbrace{
+%% \frac{5}{12\pi r_c^5} 
+%% \underbrace{
+%% \int_{|\vec{r}|<r_c} d^3r\; r_ir_j
+%% }_{\frac{1}{3}\delta_{i,j}\int_0^{r_c} dr\;r^4}
+%% }_{\delta_{i,j}}
+%% \nonumber\\
+%% &=&AQ+\vec{B}\vec{D}
+%% \end{eqnarray}
+
+
+
+Let me consider the two-center integral \eq{eq:twocenterintegral},
+with the density $n_{\alpha,\beta}$ replaced by its point-density
+representation.
+\begin{eqnarray}
+n_{\alpha,\beta}(\vec{R}+\vec{r})
+&=&\sum_{L}C_{L,L_\alpha,L_\beta}f_\alpha(|\vec{r}|)f_\beta(|\vec{r}|)Y_L(\vec{r})
+\nonumber\\
+\rightarrow 
+p_{\alpha,\beta}(\vec{R}+\vec{r})&=&
+C_{s,L_\alpha,L_\beta}q_{s,\alpha,\beta}\delta(\vec{r})
+-
+\sum_jC_{p_j,L_\alpha,L_\beta}q_{p,\alpha,\beta}\partial_{r_j}\delta(\vec{r})
+\end{eqnarray}
+This implies that we need to replace 
+\begin{eqnarray}
+n_{\ell,\alpha,\beta}(\vec{R}+\vec{r})
+&=&f_\alpha(|\vec{r}|)f_\beta(|\vec{r}|)
+\nonumber\\
+\rightarrow 
+p_{(\ell,m),\alpha,\beta}(\vec{R}+\vec{r})
+&=&
+\delta_{(\ell,m),s} q_{s,\alpha,\beta}\delta(\vec{r})
++
+\sum_j\delta_{(\ell,m),p_j}q_{p,\alpha,\beta}\delta(\vec{r})\partial_{r_j}
+\nonumber\\
+&=&
+\delta(\vec{r})\biggl[
+\delta_{(\ell,m),s} q_{s,\alpha,\beta}
++
+\sum_j\delta_{(\ell,m),p_j}q_{p,\alpha,\beta}\partial_{r_j}\biggr]
+\end{eqnarray}
+
+The resulting integral is
+\begin{eqnarray}
+&&I_{\ell,\ell',m,\ell_\alpha,n_\alpha,\ell_\gamma,n_\gamma,\ell_\beta,n_\beta,\ell_\delta,n_\delta}
+\nonumber\\
+&\eqrel{eq:twocenterintegral}{=}&\int d^3r\;
+\biggl(
+\delta_{(\ell,m),s}
+q_{s,\alpha,\beta}\delta(\vec{r})
+-
+\sum_j \delta_{(\ell,m),p_j}q_{p,\alpha,\beta}\vec{\nabla}\delta(\vec{r})\biggr)
+v_{(\ell',m),\gamma,\delta}(\vec{r}-(\vec{R'}-\vec{R})) Y_{\ell',m}(\vec{r}-(\vec{R'}-\vec{R}))
+\nonumber\\
+%
+%
+%
+&=&
+\delta_{(\ell,m),s}
+q_{s,\alpha,\beta}
+\Bigl(v_{(\ell',0),\gamma,\delta}(\vec{R}-\vec{R'})\Bigr)
+Y_{\ell',0}(\vec{R}-\vec{R'})
+\nonumber\\
+&+&
+\delta_{(\ell,m),p_z}q_{p,\alpha,\beta}
+\Bigl(\partial_rv_{(\ell',0),\gamma,\delta}(\vec{R}-\vec{R'}) \Bigr)
+Y_{\ell',0}(\vec{R}-\vec{R'}) 
+\nonumber\\
+&+&\sum_{p_j\in p_x,p_y,p_z} \delta_{(\ell,m),p_j}q_{p,\alpha,\beta}
+\Bigl(v_{(\ell',m),\gamma,\delta}(\vec{R}-\vec{R'})\Bigr)
+\nonumber\\
+&&\times\underbrace{
+\sqrt{\frac{4\pi}{3}}\frac{1}{|\vec{R}-\vec{R'}|}
+\sum_{L''}C_{p_j,(\ell',m),L''}\Bigl(-\ell'+(2\ell'+1)\delta_{l'',l'-1}\Bigr)
+Y_{L''}(\vec{R}-\vec{R'})
+}_{\text{$\vec{\nabla}_j Y_{\ell',m}(\vec{R}-\vec{R'}))$; see\eq{eq:gradientsphericalharmonics}}}
+\nonumber\\
+%
+%
+%
+&=&
+\delta_{(\ell,m),s}\frac{q_{s,\alpha,\beta}}{\sqrt{4\pi}}
+v_{(\ell',0),\gamma,\delta}(\vec{R}-\vec{R'}) 
+Y_{\ell',0}(\vec{R}-\vec{R'})
+\nonumber\\
+&+&
+\delta_{(\ell,m),p_z}q_{p,\alpha,\beta}
+\Bigl(\partial_rv_{(\ell',0),\gamma,\delta}(\vec{R}-\vec{R'}) \Bigr)
+Y_{\ell',0}(\vec{R}-\vec{R'}) 
+\nonumber\\
+&+&\sum_{p_j\in p_x,p_y,p_z} \delta_{(\ell,m),p_j}\sqrt{\frac{4\pi}{3}}q_{p,\alpha,\beta}
+\frac{v_{(\ell',m),\gamma,\delta}(\vec{R}-\vec{R'})}{|\vec{R}-\vec{R'}|}
+\nonumber\\
+&&\times\underbrace{
+\sum_{\ell''}C_{p_j,(\ell',m),(\ell'',0)}\Bigl(-\ell'+(2\ell'+1)\delta_{l'',l'-1}\Bigr)
+Y_{\ell'',0}(\vec{R}-\vec{R'})
+}_{-\ell' C_{p_j,(\ell',m),(\ell'+1,0)} Y_{\ell'+1,0}(\vec{R}-\vec{R'})
++C_{p_j,(\ell',m),(\ell'-1,0)}(\ell'+1)Y_{\ell'-1,0}(\vec{R}-\vec{R'})
+}
+\nonumber\\
+%
+%
+%
+&=&
+\delta_{(\ell,m),s}\frac{q_{s,\alpha,\beta}}{\sqrt{4\pi}}
+v_{(\ell',0),\gamma,\delta}(\vec{R}-\vec{R'}) 
+Y_{\ell',0}(\vec{R}-\vec{R'})
+\nonumber\\
+&+&
+\delta_{(\ell,m),p_z}q_{p,\alpha,\beta}
+\Bigl(\partial_rv_{(\ell',0),\gamma,\delta}(\vec{R}-\vec{R'}) \Bigr)
+Y_{\ell',0}(\vec{R}-\vec{R'}) 
+\nonumber\\
+%
+&+&\sum_{m'}\delta_{(\ell,m),(1,m')}\sqrt{\frac{4\pi}{3}}q_{p,\alpha,\beta}
+\frac{v_{(\ell',m),\gamma,\delta}(\vec{R}-\vec{R'})}{|\vec{R}-\vec{R'}|}
+\nonumber\\
+&&\times\biggl[
+-\ell' C_{(1,m'),(\ell',m),(\ell'+1,0)} Y_{\ell'+1,0}(\vec{R}-\vec{R'})
++C_{(1,m'),(\ell',m),(\ell'-1,0)}(\ell'+1)Y_{\ell'-1,0}(\vec{R}-\vec{R'})
+\biggr]
+\nonumber\\
+%
+%
+%
+&=&
+\delta_{(\ell,m),s}\frac{q_{s,\alpha,\beta}}{\sqrt{4\pi}}
+v_{(\ell',0),\gamma,\delta}(\vec{R}-\vec{R'}) 
+Y_{\ell',0}(\vec{R}-\vec{R'})
+\nonumber\\
+&+&
+\delta_{(\ell,m),p_z}q_{p,\alpha,\beta}
+\Bigl(\partial_rv_{(\ell',0),\gamma,\delta}(\vec{R}-\vec{R'}) \Bigr)
+Y_{\ell',0}(\vec{R}-\vec{R'}) 
+\nonumber\\
+%
+&+&\delta_{\ell,1}\sqrt{\frac{4\pi}{3}}q_{p,\alpha,\beta}
+\frac{v_{(\ell',m),\gamma,\delta}(\vec{R}-\vec{R'})}{|\vec{R}-\vec{R'}|}
+\nonumber\\
+&&\times\biggl[
+-\ell' C_{(1,m),(\ell',m),(\ell'+1,0)} Y_{\ell'+1,0}(\vec{R}-\vec{R'})
++C_{(1,m),(\ell',m),(\ell'-1,0)}(\ell'+1)Y_{\ell'-1,0}(\vec{R}-\vec{R'})
+\biggr]
+\nonumber\\
+\end{eqnarray}
+
+
+%% The associate Legendre polynomials $P^{m}_\ell(x)$ for $m=0$ are the
+%% Legendre polynomials $P_{\ell}(x)$
+%% [\url{https://de.wikipedia.org/wiki/Zugeordnete_Legendrepolynome}, May
+%%   3, 2019] For $x=\pm1$ the values are $P_{\ell}(\pm 1)= (\pm 1)^\ell$
+%% [\url{https://de.wikipedia.org/wiki/Zugeordnete_Legendrepolynome}, May
+%%   3, 2019].
+
+
+(Section 49.10 ``Gradients of spherical harmonics'' of Methods)
+\begin{eqnarray}
+\vec{\nabla}_jY_L(\vec{r})&=&\sqrt{\frac{4\pi}{3}}\sum_{L'}
+C_{j,L,L'}\frac{1}{|\vec{r}|}
+\left[-\ell+(2\ell+1)\delta_{\ell',\ell-1}\right]Y_{L'}(\vec{r})
+\label{eq:gradientsphericalharmonics}
+\end{eqnarray}
+
+
+
+
+%=======================================================================
+\subsection{Tests}
+%=======================================================================
+\begin{itemize}
+\item calculate $U^{lr}$ as function of distance, once with the
+  routine \verb|MONOANDDIPOLE| and once with the code in
+  \verb|SIMPLELMTO_OFFSITEX22SETUP|, which is embedded in the routine.
+%
+\item check that long range potentials and numercal potentials agree
+  for long distances. Then, replace the potentials by the long range
+  part.
+%
+\item The term $X$ (``correction'') gives the same result as $U^{lr}$.
+%
+\item the two-center term agrees with $U^{lr}$ in a certain distance
+  range.
+\end{itemize}
+During the tests all contributions to the density and the potential
+with $\ell,\ell'>0$ have been set to zero.
+
+
+
+
+
+%=======================================================================
+\subsection{Complete long-range expansion}
+%=======================================================================
+
+We use 
+\begin{eqnarray}
+Q_{\alpha,\beta}&\eqrel{eq:monopoleslater}{=}&C_{s,L_\alpha,L_\beta}q_{s,\alpha,\beta}
+\nonumber\\
+D_{j,\alpha,\beta}&\eqrel{eq:dipoleslater}{=}&C_{p_j,L_\alpha,L_\beta}q_{p,\alpha,\beta}
+\nonumber\\
+n_{\alpha,\beta}&=&\sum_Ln_{L,\alpha,\beta}(|\vec{r}-\vec{R}|) Y_L(\vec{r}-\vec{R})
+\nonumber\\
+n_{L,\alpha,\beta}(\vec{r})&=& f_{\alpha}(|\vec{r}-\vec{R}|)
+f_{\beta}(|\vec{r}-\vec{R}|)C_{L,L_\alpha,L_\beta}
+\nonumber\\
+n_{\gamma,\delta}&=&\sum_Ln_{L,\alpha,\beta}(|\vec{r}-\vec{R}|) Y_L(\vec{r}-\vec{R})
+\nonumber\\
+n_{L,\alpha,\beta}(\vec{r})&=& f_{\alpha}(|\vec{r}-\vec{R}|)
+f_{\beta}(|\vec{r}-\vec{R}|)C_{L,L_\alpha,L_\beta}
+\end{eqnarray}
+
+
+\begin{eqnarray}
+v^{sr}_{\gamma,\delta}(\vec{r})&=&\int d^3r'\; w(\vec{r}-\vec{r'})
+\biggl[\chi_\gamma(\vec{r'})\chi_\delta(\vec{r'})
+-Q_{\gamma,\delta}\delta(\vec{r'}-\vec{R'})
++D_{\gamma,\delta}\vec{\nabla'}\delta(\vec{r'}-\vec{R'})\biggr]
+\nonumber\\
+&=&\int d^3r'\; w(\vec{r}-\vec{r'})
+f_\gamma(|\vec{r'}-\vec{R'}|)
+f_\delta(|\vec{r'}-\vec{R'}|)\sum_LC_{L_\gamma,L_\delta,L}Y_L(\vec{r'}-\vec{R'})
+\nonumber\\
+&&-w(\vec{r}-\vec{R'}) C_{s,L_\gamma,L_\delta} q_{s,\gamma,\delta}
+-\sum_{j=1}^3
+C_{p_j,L_\gamma,L_\delta,L} q_{p,\gamma,\delta} \vec{\nabla}_jw(\vec{r}-\vec{R'})
+\nonumber\\
+&=&
+\sum_L
+C_{L_\gamma,L_\delta,L}Y_L(\vec{r}-\vec{R'})
+\biggl[
+v_{L,\gamma,\delta}(|\vec{r}-\vec{R'}|)
+\nonumber\\
+&&-q_{s,\gamma,\delta}\sqrt{4\pi}w(|\vec{r}-\vec{R'}|) \delta_{L,s}
+-
+q_{p,\gamma,\delta} \sqrt{\frac{4\pi}{3}}
+\left.\partial_rw\right|_{|\vec{r}-\vec{R'}|}\delta_{L,p_j}
+\biggr]
+\end{eqnarray}
+
+
+\begin{eqnarray}
+\int d^3r'\;v^{sr}_{\alpha,\beta}(\vec{r'})n_{\gamma,\delta}(\vec{r'})
+&=&
+\sum_{L,L'} 
+\int d^3r'\;
+Y_L(\vec{r'}-\vec{R})Y_{L'}(\vec{r'}-\vec{R'})
+v^{sr}_{L,\alpha,\beta}(\vec{r'}-\vec{R}))
+n_{L',\gamma,\delta}(\vec{r'}-\vec{R'}))
+\nonumber\\
+&=&
+\sum_{L,L'} 
+C_{L,L_\alpha,L_\beta}C_{L',L_\gamma,L_\delta}
+\int d^3r'\;
+Y_L(\vec{r'}-\vec{R})Y_{L'}(\vec{r'}-\vec{R'})
+v^{sr}_{L,\alpha,\beta}(\vec{r'}-\vec{R}))
+n_{L',\gamma,\delta}(\vec{r'}-\vec{R'}))
+\nonumber\\
+\end{eqnarray}
+
+To complete the short-ranged part of the U-tensor matrix element, we
+need to evaluate
+\begin{eqnarray}
+\Bigl(Q_{\alpha,\beta}+\vec{D}_{\alpha,\beta}
+\vec{\nabla}_R\Bigr)v^{sr}_{\gamma,\delta}(\vec{R})
+&=&\Bigl(Q_{\alpha,\beta}+\vec{D}_{\alpha,\beta}
+\vec{\nabla}_R\Bigr)\sum_L 
+C_{L_\gamma,L_\delta,L}Y_L(\vec{R}-\vec{R'})
+v_{L,\gamma,\delta}^{sr}(\vec{R}-\vec{R'})
+\nonumber\\
+&=&
+\sum_L C_{L_\gamma,L_\delta,L}\underbrace{
+Y_L(\vec{R}-\vec{R'})
+}_{\delta_{m,0}Y_{\ell,0}(-\vec{e}_z)}
+Q_{\alpha,\beta}v_{L,\gamma,\delta}^{sr}(\vec{R}-\vec{R'})
+\nonumber\\
+&+&
+\sum_L 
+C_{L_\gamma,L_\delta,L}
+v_{L,\gamma,\delta}^{sr}(\vec{R}-\vec{R'})
+\vec{D}_{\alpha,\beta}\vec{\nabla}_RY_L(\vec{R}-\vec{R'})
+\nonumber\\
+&+&
+\sum_L 
+C_{L_\gamma,L_\delta,L}Y_L(\vec{R}-\vec{R'})
+\vec{D}_{\alpha,\beta}
+\vec{\nabla}_R
+v_{L,\gamma,\delta}^{sr}(\vec{R}-\vec{R'})
+\nonumber\\
+&=&
+\sum_L C_{L_\gamma,L_\delta,L}\underbrace{
+Y_L(\vec{R}-\vec{R'})
+}_{\delta_{m,0}Y_{\ell,0}(-\vec{e}_z)}
+Q_{\alpha,\beta}v_{L,\gamma,\delta}^{sr}(\vec{R}-\vec{R'})
+\nonumber\\
+&+&
+\sum_L 
+C_{L_\gamma,L_\delta,L}
+v_{L,\gamma,\delta}^{sr}(\vec{R}-\vec{R'})
+\vec{D}_{\alpha,\beta}
+\vec{\nabla}_RY_L(\vec{R}-\vec{R'})
+\nonumber\\
+&+&
+\sum_L 
+C_{L_\gamma,L_\delta,L}
+\underbrace{
+Y_L(\vec{R}-\vec{R'})
+}_{\delta_{m,0}Y_{\ell,0}(-\vec{e}_z)}
+D_{z,\alpha,\beta}
+\partial_r v_{L,\gamma,\delta}^{sr}(\vec{R}-\vec{R'})
+\nonumber\\
+\end{eqnarray}
 
 
 \appendix
