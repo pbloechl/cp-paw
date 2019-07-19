@@ -1874,7 +1874,7 @@ $R_\alpha$ and angular momentum $L_\alpha$, which is nonzero only
 outside its central augmentation region.
 
 A suitable definition for $\mat{c}$ is a matrix that produces
-orthonormal states for am isolated atom. Thus, it is an onsite matrix.
+orthonormal states for an isolated atom. Thus, it is an onsite matrix.
 
 We introduce head and tail functions defined as
 \begin{eqnarray}
@@ -1909,39 +1909,49 @@ the original wave functions and the local orbital representation is
 minimized. The mean square deviation is approximated by the partial
 wave expansions in the augmentation regions.
 \begin{eqnarray}
-F(\vec{q})\defas \Bigl(\langle\psi|-q\langle\chi|\Bigr)
-\Bigl(|p\rangle\langle\phi|\theta_\Omega|\phi\rangle\langle{p}|\Bigr)
-\Bigl(|\psi\rangle-|\chi\rangle q\Bigr)\stackrel{!}{=}\text{min}
+F(\vec{q})\defas \Bigl(\langle\tilde{\psi}|-q\langle\tilde{\chi}|\Bigr)
+\Bigl(|\tilde{p}\rangle\langle\phi|\theta_\Omega|\phi\rangle\langle\tilde{p}|\Bigr)
+\Bigl(|\tilde{\psi}\rangle-|\tilde{\chi}\rangle q\Bigr)\stackrel{!}{=}\text{min}
 \end{eqnarray}
 
 \begin{eqnarray}
-\frac{dF}{dq^*}&=&-\langle\chi|p\rangle
+\frac{dF}{dq^*}&=&-\langle\tilde{\chi}|\tilde{p}\rangle
 \langle\phi|\theta_\Omega|\phi\rangle
 \Bigl(
-\langle{p}|\psi\rangle-\langle{p}|\chi\rangle q\Bigr)
+\langle\tilde{p}|\tilde{\psi}\rangle-\langle\tilde{p}|\chi\rangle q\Bigr)
 \stackrel{!}{=}0
 \nonumber\\
 %
 %
 %
-&&\langle\chi|p\rangle\langle\phi|\theta_\Omega|\phi\rangle\langle{p}|\psi\rangle
+&&\langle\tilde{\chi}|\tilde{p}\rangle
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle\tilde{p}|\tilde{\psi}\rangle
 =
-\langle\chi|p\rangle\langle\phi|\theta_\Omega|\phi\rangle
-\langle{p}|\chi\rangle q
+\langle\tilde{\chi}|\tilde{p}\rangle
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle\tilde{p}|\tilde\chi\rangle q
 \nonumber\\
 %
 %
 %
-q&=&\Bigl(\langle\chi|p\rangle\langle\phi|\theta_\Omega|\phi\rangle
-\langle{p}|\chi\rangle\Bigr)^{-1}
-\langle\chi|p\rangle\langle\phi|\theta_\Omega|\phi\rangle\langle{p}|\psi\rangle
+q&=&\Bigl(\langle\tilde{\chi}|\tilde{p}\rangle
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle\tilde{p}|\tilde{\chi}\rangle\Bigr)^{-1}
+\langle\tilde{\chi}|\tilde{p}\rangle
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle\tilde{p}|\tilde{\psi}\rangle
 \nonumber\\
 %
 %
 %
-\langle\pi|&=&\Bigl(\langle\chi|p\rangle\langle\phi|\theta_\Omega|\phi\rangle
-\langle{p}|\chi\rangle\Bigr)^{-1}
-\langle\chi|p\rangle\langle\phi|\theta_\Omega|\phi\rangle\langle{p}|
+\langle\tilde{\pi}|&=&
+\Bigl(\langle\tilde{\chi}|\tilde{p}\rangle
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle\tilde{p}|\tilde{\chi}\rangle\Bigr)^{-1}
+\langle\tilde{\chi}|\tilde{p}\rangle
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle\tilde{p}|
 \label{eq:orbitalprojector}
 \end{eqnarray}
 
@@ -1949,7 +1959,7 @@ q&=&\Bigl(\langle\chi|p\rangle\langle\phi|\theta_\Omega|\phi\rangle
 %=======================================================================
 \subsubsection{Projection}
 %=======================================================================
-Here I show that the fitting procedure described above is identical to
+Here, I show that the fitting procedure described above is identical to
 a projection, with the integration limited to the partial wave
 expansion in the augmentation regions.
 \begin{eqnarray}
@@ -1966,22 +1976,25 @@ expansion in the augmentation regions.
 \nonumber\\
 %
 %
-&\approx&|\chi\rangle\Bigl(\langle\chi|
+&\approx&|\chi\rangle\Bigl(\langle\tilde{\chi}|
 \Bigl(
-|p\rangle\langle\phi|\theta_{\Omega}|\phi\rangle\langle{p}|
+|\tilde{p}\rangle\langle\phi|\theta_{\Omega}|\phi\rangle\langle\tilde{p}|
 \Bigr)
-|\chi\rangle\Bigr)^{-1}
-\langle\chi|
+|\tilde{\chi}\rangle\Bigr)^{-1}
+\langle\tilde{\chi}|
 \Bigl(
-|p\rangle\langle\phi|\theta_{\Omega}|\phi\rangle\langle{p}|
-\Bigr)|\Psi\rangle
+|\tilde{p}\rangle\langle\phi|\theta_{\Omega}|\phi\rangle\langle\tilde{p}|
+\Bigr)|\tilde{\Psi}\rangle
 \end{eqnarray}
 Thus, I obtain the identical form for the projector function as found
 above in \eq{eq:orbitalprojector} for the fitting.
 \begin{eqnarray}
-\langle\pi|&=&\Bigl(\langle\chi|p\rangle\langle\phi|\theta_\Omega|\phi\rangle
-\langle{p}|\chi\rangle\Bigr)^{-1}
-\langle\chi|p\rangle\langle\phi|\theta_\Omega|\phi\rangle\langle{p}|
+\langle\tilde{\pi}|&=&\Bigl(\langle\tilde{\chi}|\tilde{p}\rangle
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle\tilde{p}|\tilde{\chi}\rangle\Bigr)^{-1}
+\langle\tilde{\chi}|\tilde{p}\rangle
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle\tilde{p}|
 \end{eqnarray}
 
 
@@ -2026,35 +2039,60 @@ S_{R_\delta,L_\delta,R_\gamma,L_\gamma}
 \langle\phi|\theta_\Omega|\phi\rangle
 \langle{p}|
 \end{eqnarray}
-where we used the short-hand notation
+where I used the short-hand notation
 \begin{eqnarray}
 \langle\phi^H|\theta_\Omega|\phi^H\rangle&=&
-\langle\phi^H|p\rangle
+\langle\tilde{\phi}^H|\tilde{p}\rangle
 \langle\phi|\theta_\Omega|\phi\rangle
-\langle{p}|\phi^H\rangle
+\langle\tilde{p}|\tilde{\phi}^H\rangle
  \nonumber\\
 %
 %
 \langle\phi^H|\theta_\Omega|\phi^J\rangle
 &=&
-\langle\phi^H|p\rangle
+\langle\tilde{\phi}^H|\tilde{p}\rangle
 \langle\phi|\theta_\Omega|\phi\rangle
-\langle{p}|\phi^J\rangle
+\langle\tilde{p}|\tilde{\phi}^J\rangle
 \nonumber\\
 %
 %
 \langle\phi^J|\theta_\Omega|\phi^J\rangle
 &=&
-\langle\phi^J|p\rangle
+\langle\tilde{\phi}^J|\tilde{p}\rangle
 \langle\phi|\theta_\Omega|\phi\rangle
-\langle{p}|\phi^J\rangle
+\langle\tilde{p}|\tilde{\phi}^J\rangle
 \end{eqnarray}
+
+
+The following variables are calculated in and supplied by
+\verb|SIMPLELMTO_MAKECHI1|
+\begin{eqnarray}
+\text{AEPHIH:}\qquad&&   \langle\vec{r}|\phi^H\rangle
+\nonumber\\
+\text{AEPHIT:}\qquad &&  \langle\vec{r}|\phi^T\rangle
+=\langle\vec{r}|\phi^J\rangle
+\nonumber\\
+\text{AECHI:}\qquad&&   \langle\vec{r}|\chi\rangle
+\nonumber\\
+\text{PROPHIH:}\qquad&&   \langle\tilde{p}|\tilde{\phi}^H\rangle
+\nonumber\\
+\text{PROPHIT:}\qquad&&   \langle\tilde{p}|\tilde{\phi}^T\rangle
+\nonumber\\
+\text{PHIOV:}\qquad&&   \langle\phi|\theta_\Omega|\phi\rangle
+\nonumber\\
+\text{CMAT:}\qquad&&    |\chi_\beta\rangle
+\leftarrow |K_\beta\rangle c_{\alpha,\beta}
+\end{eqnarray}
+The partial-wave overlap $\langle\phi|\theta_\Omega|\phi\rangle$ is
+calculated by integration up to the ASA radius. The latter is defined
+in the present code as the covalent radius of the element scaled up by
+the ratio between between the radii of volume filling and touching 
+spheres.
 
 %=======================================================================
 \subsection{Linear approximation in structure constants}
 %=======================================================================
-To linear order in the structure constants I obtain the projector as
-
+To linear order in the structure constants, I obtain the projector as
 \begin{eqnarray}
 \langle\pi|
 &=& 
@@ -2125,7 +2163,51 @@ We define the quantity
 \langle\pi|=\langle\pi|\phi\rangle\langle{p}|
 \end{eqnarray}
 
-
+The following variables are constructed in \verb|SIMPLELMTO_DEMATPHITOCHI2|.
+(translated from code)
+\begin{eqnarray}
+\text{PHIHHOV:} && 
+\langle\phi^H|\theta_\Omega|\phi^H\rangle
+=\langle\phi^H|p\rangle
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle{p}|\phi^H\rangle
+\nonumber\\
+%
+\text{PHIHHOVINV:} && \langle\phi^H|\theta_\Omega|\phi^H\rangle^{-1}
+\nonumber\\
+%
+\text{PHIHTOV:} && \langle\phi^H|\theta_\Omega|\phi^T\rangle
+=\langle\phi^H|p\rangle
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle{p}|\phi^T\rangle
+\nonumber\\
+%
+\langle\pi|\phi\rangle&=&
+\langle\phi^H|\theta_\Omega|\phi^H\rangle^{-1}
+\biggl[
+\langle\tilde{\phi}^H|\tilde{p}\rangle
+\biggr] \langle\phi|\theta_\Omega|\phi\rangle
+\qquad\text{for $R_\alpha=R_\beta$}
+\nonumber\\
+%
+%
+\langle\pi|\phi\rangle&=&
+\langle\phi^H|\theta_\Omega|\phi^H\rangle^{-1}
+\biggl[
+\mat{c}^\dagger\mat{S}
+\Bigl(
+\langle{p}|\phi^T\rangle
+-\langle{p}|\phi^H\rangle
+\langle\phi^H|\theta_\Omega|\phi^H\rangle^{-1}
+\langle\phi^H|\theta_\Omega|\phi^T\rangle\Bigr)^\dagger
+\nonumber\\
+&&+
+\langle\phi^H|\theta_\Omega|\phi^T\rangle\mat{S}^\dagger\mat{c}
+\langle\phi^H|\theta_\Omega|\phi^H\rangle^{-1}
+\langle\phi^H|{p}\rangle
+\biggr] \langle\phi|\theta_\Omega|\phi\rangle
+\qquad\text{for $R_\alpha\neq R_\beta$}
+\end{eqnarray}
 
 
 %=======================================================================
@@ -3738,12 +3820,20 @@ U_{\alpha,\beta,\gamma,\delta}
 \subsection{Division of exchange energy}
 %=======================================================================
 The goal is to limit the set of matrix elements for which the Coulomb
-interaction is considered to onsite terms and terms which are
-restricted to a pair of atoms.
+interaction is considered to 
+\begin{itemize}
+\item onsite terms and 
+\item terms which are restricted to a pairs of atoms.
+\item terms of the U-tensor with orbitals centered on more than two
+  sites.
+\end{itemize}
 
-The exchange energy can be divided into terms for which the density
-connected to one node of the interaction, i.e. either $\vec{r}$ or
-$\vec{r'}$, are centered on the same atom or on different atoms.
+Of the terms which are restricted to a pair of distinct atoms the
+so-called two-center NDDO terms are dominant: These terms consist of
+U-tensor matrix elements that describe an interaction of a charge
+density $n_{\alpha,\gamma}(\vec{r})$ centered on one site, i.e
+$R_\alpha=R_\gamma$, with a density $n_{\beta,\delta}(\vec{r'})$
+centered on another site, i.e. $R_\delta=R_\beta\neq R_\alpha$.
 
 If the two orbitals are centered on two atoms, the density is located
 in the bond center and its contribution vanishes quickly with
@@ -3751,9 +3841,8 @@ distance.
 
 When we exclude terms for which one node is connected to orbitals from
 different sites there are only in-site and NDDO terms left. NDDO
-stands for ``Neglect of diatomnic differential overlap'' and has been
-invented by Pople.
-
+stands for \textbf{``Neglect of diatomic differential overlap''} and
+has been invented by Pople.
 \begin{eqnarray}
 E_{xc}&=&
 \underbrace{
@@ -3772,8 +3861,8 @@ E_{xc}&=&
 +\text{terms with off-site densities}
 \end{eqnarray}
 
-If we include all terms centered on a bond, there is one contribution
-with one off-site density, the 31-term , and one with two off-site
+When we include all terms centered on a bond, there is one contribution
+with one off-site density, the 31-term, and one with two off-site
 densities, which I call bond exchange ``bondx''.
 \begin{eqnarray}
 \Delta E_{xc}
@@ -5227,6 +5316,45 @@ D_{z,\alpha,\beta}
 \nonumber\\
 \end{eqnarray}
 
+%=======================================================================
+\chapter{Interpolation of U-tensor matrix elements}
+%=======================================================================
+
+In the first iteration, the U-tensor matrix elements are calculated on
+a distance grid. Then a superposition of exponentials is fitted to the
+data points.
+\begin{eqnarray}
+y(r)=\sum_{j=1}^{N_f} B_j\e{-\lambda_jr}
+\end{eqnarray}
+
+The mean square deviation between data-points and fit is $Z(\vec{B})$
+\begin{eqnarray}
+Z&=&\sum_{j=1}^{N_d} \biggl( y(d_j)-\sum_{m=1}^{N_f}B_m\e{-\lambda_m d_j}\Bigr)^2
+\nonumber\\
+\frac{dZ}{dB_n}&=&
+-2\sum_{j=1}^{N_d} \biggl( y(d_j)-\sum_{m=1}^{N_f}B_m\e{-\lambda_m d_j}\Bigr)
+\e{-\lambda_n d_j}\Bigr)\stackrel{!}{=}0
+\nonumber\\
+0&=&
+\biggl(\sum_{j=1}^{N_d} y(d_j) \e{-\lambda_n d_j}\biggr)
+-
+\sum_{m=1}^{N_f}
+\biggl(\sum_{j=1}^{N_d} \e{-(\lambda_n+\lambda_m) d_j}\biggr)B_m
+\nonumber\\
+B_m&=&\sum_{n=1}^{N_f}
+\biggl(\sum_{j=1}^{N_d} \e{-(\lambda_n+\lambda_m) d_j}\biggr)^{-1}_{m,n}
+\biggl(\sum_{j=1}^{N_d} y(d_j) \e{-\lambda_n d_j}\biggr)
+\nonumber\\
+&=&
+\sum_{k=1}^{N_d} 
+\biggl[
+\sum_{n=1}^{N_f}
+\biggl(\sum_{j=1}^{N_d} \e{-(\lambda_n+\lambda_m) d_j}\biggr)^{-1}_{m,n}
+\Bigl(\e{-\lambda_n d_k}\Bigr)_{n,k}\biggr]_{m,k}
+y(d_k) 
+\end{eqnarray}
+
+
 
 \appendix
 %=======================================================================
@@ -6197,6 +6325,590 @@ The indices used here are spatial-orbital indices.
 
 
 %=====================================================================
+\chapter{Numerical two-center integrals}
+%=====================================================================
+%===============================================================================
+\subsubsection{Numerical two-center integrals}
+%===============================================================================
+This section is a copy from my notes \verb|methods| (In section ``Mapping
+onto local orbitals'').
+
+The Gaussian fit was apparentluy not very accurate. Therefore, I am
+using a numerical method for two-dimensional integration.  The method
+is the the adaptive algorithm of Genz and
+Malik\cite{genz80_jcomputapplmath6_295}, which rests on the work of
+van Dooren and de Riddler\cite{vandooren76_jcomputapplmath2_207}. This
+method refines the integral obtained by Gauss quadrature over a
+rectangle by repeatedly bisecting the rectangles until the total
+estimated error falls below a given tolerance.
+
+%==================================================================
+\section{Variable transforms}
+%==================================================================
+The first step is to transform the volume integral into an integral
+over a two-dimensional area:
+
+First we consider an interatomic distance vector which points into the
+positive $z$-direction and has length $d$. We consider the integral
+\begin{eqnarray*}
+I&=&\int d^3r\; f(|\vec{r}|)Y^*_{\ell,m}(\vec{r})g(|\vec{r}-d\vec{e}_z|)
+Y_{\ell',m'}(\vec{r}-d\vec{e}_z)
+\end{eqnarray*}
+
+%==================================================================
+\subsection{Cylindrical coordinates}
+%==================================================================
+The first step is a transformation into cylindrical coordinates.
+\begin{eqnarray*}
+x(\rho,\phi,z)&=&\rho\cos(\phi)
+\\
+y(\rho,\phi,z)&=&\rho\sin(\phi)
+\\
+z(\rho,\phi,z)&=&z
+\end{eqnarray*}
+
+The Jacobian is 
+\begin{eqnarray*}
+J=
+\det\left|\frac{d(x,y,z)}{d(\rho,\phi,z)}\right|=
+\det\left|\begin{array}{ccc}\cos(\phi)& -\rho\sin(\phi)& 0\\
+\sin(\phi)&\rho\cos(\phi)&0\\0&0&1\end{array}\right|
+=\rho
+\end{eqnarray*}
+so that the integral turns into
+\begin{eqnarray*}
+I&=&\int_{-\infty}^\infty dz\int_0^{2\pi} d\phi\;
+\int_0^\infty d\rho\;\rho\;
+f(|\vec{r}|)Y^*_{\ell,m}(\vec{r})\;
+g(|\vec{r}-d\vec{e}_z|)Y_{\ell',m'}(\vec{r}-d\vec{e}_z)
+\\
+&=&2\pi\delta_{m,m'}
+\sqrt{\frac{2\ell+1}{4\pi}\frac{(\ell-m)!}{(\ell+m)!}}
+\sqrt{\frac{2\ell'+1}{4\pi}\frac{(\ell'-m)!}{(\ell'+m)!}}
+\\
+&&\times\int_{-\infty}^\infty dz\;
+\int_0^\infty d\rho\;\rho\; 
+P^{m}_\ell\left(\frac{z}{\sqrt{\rho^2+z^2}}\right)
+P^{m}_{\ell\,'}\left(\frac{z-d}{\sqrt{\rho^2+(z-d)^2}}\right)
+f(|\vec{r}|)\;g(|\vec{r}-d\vec{e}_z|)
+\end{eqnarray*}
+
+%==================================================================
+\subsection{Distance from the two atoms}
+%==================================================================
+Next, we transform the two-dimensional coordinate system into one, where
+the two coordinates are the distances $r_a,r_b$ from the two atoms.
+\begin{eqnarray*}
+z+z'&=&d
+\\
+z^2+\rho^2&=&r_a^2
+\\
+z'^2+\rho^2&=&r_b^2
+\end{eqnarray*}
+
+We obtain 
+\begin{eqnarray*}
+z^2-z'^2&=&r_a^2-r_b^2
+\qquad\Rightarrow\qquad
+\underbrace{(z-z')}_{2z_a-d}\underbrace{(z+z')}_{d}=r_a^2-r_b^2
+\qquad\Rightarrow\qquad
+2dz-d^2=r_a^2-r_b^2
+\\
+\Rightarrow\qquad
+z&=&\frac{1}{2d}(d^2+r_a^2-r_b^2)
+\\
+\rho^2&=&r_a^2-z^2=r_a^2-\frac{1}{4d^2}\left(d^2+r_a^2-r_b^2\right)^2
+\\
+\Rightarrow\qquad
+\rho&=&
+\frac{1}{2d}\sqrt{4d^2r_a^2-\left(d^2+r_a^2-r_b^2\right)^2}
+\end{eqnarray*}
+
+Thus the transformation is
+\begin{eqnarray*}
+\rho(r_a,r_b)&=&\frac{1}{2d}\sqrt{4d^2r_a^2-\left(d^2+r_a^2-r_b^2\right)^2}
+\\
+z(r_a,r_b)&=&\frac{1}{2d}(d^2+r_a^2-r_b^2)
+\end{eqnarray*}
+Let us work out the derivatives for the Jacobian
+\begin{eqnarray*}
+\frac{\partial\rho}{\partial r_a}&=&
+\frac{1}{2d}\frac{1}{2\sqrt{\ldots}}
+\left(4d^2-2(d^2+r_a^2-r_b^2)\right)2r_a
+=
+\frac{1}{4d^2}\frac{r_a}{\rho}\left(4d^2-2(d^2+r_a^2-r_b^2)\right)
+\\
+&=&
+\frac{r_a}{2\rho}\left(1-\frac{r_a^2-r_b^2}{2d^2}\right)
+\\
+\frac{\partial\rho}{\partial r_b}&=&
+\frac{r_b}{2\rho}\left(1+\frac{r_a^2-r_b^2}{2d^2}\right)
+\\
+\frac{\partial z}{\partial r_a}&=&+\frac{r_a}{d}
+\\
+\frac{\partial z}{\partial r_b}&=&-\frac{r_b}{d}
+\end{eqnarray*}
+
+The Jacobian for the transformation is
+\begin{eqnarray*}
+J&=&\det\left|\frac{\partial (\rho,z)}{\partial(r_a,r_b)}\right|
+=\left|\frac{\partial\rho}{\partial r_a}\frac{\partial z}{\partial r_b}
+-\frac{\partial\rho}{\partial r_b}\frac{\partial z}{\partial r_a}
+\right|
+\\
+&=&\left|\frac{r_a}{2\rho}\left(1-\frac{r_a^2-r_b^2}{2d^2}\right)
+\biggl(-\frac{r_b}{d}\biggr)
+-\frac{r_b}{2\rho}\left(1+\frac{r_a^2-r_b^2}{2d^2}\right)
+\frac{r_a}{d}\right|
+\\
+&=&\frac{r_a}{2\rho}\left(1-\frac{r_a^2-r_b^2}{2d^2}\right)
+\frac{r_b}{d}+\frac{r_b}{2\rho}
+\left(1+\frac{r_a^2-r_b^2}{2d^2}\right)
+\frac{r_a}{d}
+\\
+&=&\frac{r_ar_b}{\rho d}
+\end{eqnarray*}
+
+Thus our integral obtains the form
+\begin{eqnarray*}
+I&=&
+2\pi\delta_{m,m'}
+\sqrt{\frac{2\ell+1}{4\pi}\frac{(\ell-m)!}{(\ell+m)!}}
+\sqrt{\frac{2\ell'+1}{4\pi}\frac{(\ell'-m)!}{(\ell'+m)!}}
+\\
+&&\times\int_{-\infty}^\infty dz\;
+\int_0^\infty d\rho\;\rho\; 
+P^{m}_\ell\biggl(\frac{z}{\sqrt{z^2+\rho^2}}\biggr)
+P^{m}_{\ell\,'}\biggl(\frac{z-d}{\sqrt{(z-d)^2+\rho^2}}\biggr)
+f(|\vec{r}|)g(|\vec{r}-d\vec{e}_z|)
+\\
+&=&2\pi\delta_{m,m'}
+\sqrt{\frac{2\ell+1}{4\pi}\frac{(\ell-m)!}{(\ell+m)!}}
+\sqrt{\frac{2\ell'+1}{4\pi}\frac{(\ell'-m)!}{(\ell'+m)!}}
+\\
+&&\times\int_0^\infty dr_a\int_0^\infty dr_b\;
+\rho\cdot\frac{r_ar_b}{\rho d}\; 
+P^{m}_\ell\biggl(\frac{z}{r_a}\biggr)
+P^{m}_{\ell\,'}\biggl(\frac{z-d}{r_b}\biggr)
+f(r_a)g(r_b)
+\\
+&=&2\pi\delta_{m,m'}
+\sqrt{\frac{2\ell+1}{4\pi}\frac{(\ell-m)!}{(\ell+m)!}}
+\sqrt{\frac{2\ell'+1}{4\pi}\frac{(\ell'-m)!}{(\ell'+m)!}}
+\\
+&&\times\frac{1}{d}\; 
+\int dr_a\int dr_b\;
+P^{m}_\ell\biggl(\frac{r_a^2-r_b^2+d^2}{2dr_a}\biggr)
+P^{m}_{\ell\,'}\biggl(\frac{r_a^2-r_b^2-d^2}{2dr_b}\biggr)
+\biggl[r_af(r_a)\biggr]\biggl[r_bg(r_b)\biggr]
+\\
+&\stackrel{r=xd}{=}&2\pi\delta_{m,m'}
+\sqrt{\frac{2\ell+1}{4\pi}\frac{(\ell-m)!}{(\ell+m)!}}
+\sqrt{\frac{2\ell'+1}{4\pi}\frac{(\ell'-m)!}{(\ell'+m)!}}
+\\
+&&\times\; 
+\int_0^\infty dx_a\int_0^\infty dx_b\;
+P^{m}_\ell\biggl(\frac{x_a^2-x_b^2+1}{2x_a}\biggr)
+P^{m}_{\ell\,'}\biggl(\frac{x_a^2-x_b^2-1}{2x_b}\biggr)
+x_ax_b\cdot\biggl[d^3f(x_ad)g(x_bd)\biggr]
+\end{eqnarray*}
+where we introduced the scaled coordinates
+\begin{eqnarray*}
+x_a=r_a/d \qquad\text{and}\qquad x_b=r_b/d
+\end{eqnarray*}
+
+
+The integration area in $(r_a,r_b)$-coordinates is limited by the
+bounds
+\begin{eqnarray*}
+r_a+r_b\ge d
+\\
+|r_a-r_b|\le d
+\\
+r_a\le r_a^{max}
+\\
+r_b\le r_b^{max}
+\end{eqnarray*}
+
+\begin{center}
+\includegraphics[width=0.5\linewidth]{Figs/Twocenterintegral/tcenter.eps}
+\end{center}
+
+This region is extended to a rectangle limited by
+\begin{eqnarray*}
+d\le r_a+r_b\le  max\biggl(r_a^{\text{max}},r_b^{\text{max}}\biggr)
+\qquad\text{and}\qquad
+-d\le r_a-r_b\le d
+\end{eqnarray*}
+
+
+
+Often the \textbf{prolate spheroidal coordinate system} \index{prolate
+  spheroidal coordinate system} is introduced with the variables
+\begin{eqnarray*}
+\zeta(r_a,r_b)&=&\frac{1}{d}(r_a+r_b)=x_a+x_b
+\\
+\eta(r_a,r_b)&=&\frac{1}{d}(r_a-r_b)=x_a-x_b
+\end{eqnarray*}
+which essentially turns the integration area by $45^\circ$.
+
+
+%==================================================================
+\section{Integration using the adaptive algorithm}
+\label{app:adaptiveintegration}
+%==================================================================
+For the integration we use the adaptive algorithm of van Dooren and de
+Riddler\cite{vandooren76_jcomputapplmath2_207,
+  genz80_jcomputapplmath6_295}
+
+%==================================================================
+\subsection{Gaussian quadrature on a square}
+%==================================================================
+One element of the method is the integration over an rectangle using
+Gaussian quadrature of 7th and 5th order, such, that the 5th-order
+algorithm uses the same positions as the 7th-order integration. The
+comparison of the two integrations provides an error estimate in
+addition to the integral.
+
+This Gaussian-quadrature scheme containes 17 points for the
+square\cite{genz80_jcomputapplmath6_295} $[-1,1]\otimes[-1,1]$
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+$(0,0)$&$(+\lambda_2,0) $&$(+\lambda_3,0) $&$(+\lambda_4,+\lambda_4) $&$(+\lambda_5,+\lambda_5)$ \\
+      &$(-\lambda_2,0) $&$(-\lambda_3,0) $&$(+\lambda_4,-\lambda_4) $&$(+\lambda_5,-\lambda_5)$ \\
+      &$(0,+\lambda_2) $&$(0,+\lambda_3) $&$(-\lambda_4,+\lambda_4) $&$(-\lambda_5,+\lambda_5)$ \\
+      &$(0,-\lambda_2) $&$(0,-\lambda_3) $&$(-\lambda_4,-\lambda_4) $&$(-\lambda_5,-\lambda_5)$ \\
+\hline
+$w_1   $&$ w_2           $&$    w_3        $&$     w_4                $&$     w_5$ \\
+\hline
+$w'_1   $&$ w'_2           $&$    w'_3        $&$     w'_4                $&$0$ \\
+\hline
+\end{tabular}
+\end{center}
+The weights sum up to four, the total area of the square. The weights
+$w_i$ refer to the 7th order scheme, and the weights $w'_i$ refer to
+the fifth-order scheme. 
+
+The values are
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+$\lambda_1$ &$\lambda_2$ &$\lambda_3$ &$\lambda_4$ &$\lambda_5$ \\
+\hline
+            &$\sqrt{9/70}$ &$\sqrt{9/10}$ &$\sqrt{9/10}$ &$\sqrt{9/19}$ \\
+\hline
+\hline
+$w_1$ &$w_2$ &$w_3$ &$w_4$ &$w_5$ \\
+\hline
+-15264/19683 & 11760/19683 & 4080/19683 &800/19683 & 6859/19683\\
+\hline
+\hline
+$w'_1$ &$w'_2$ &$w'_3$ &$w'_4$ &$w'_5$ \\
+\hline
+-3884/729 & 1470/729 & 130/729 & 100/729 & 0\\
+\hline
+\end{tabular}
+\end{center}
+
+%==================================================================
+\subsection{Refining the grid}
+%==================================================================
+Once the integral of a square is obtained, the error estimate tells us
+whether, we need to refine the grid by bisecting the square in use.
+
+We need the information on which of the two ways of bisecting the
+square is more promising. For this purpose we use the result from the
+weighted sums according to the description.
+\begin{center}
+\begin{tabular}{|l|c|c|c|c|c|}
+\hline
+points 1st direction &$(-\lambda_2,0)$ & $(-\lambda_3,0)$ & $(0,0)$ & $(\lambda_3,0)$ & $(\lambda_2,0)$ \\
+points 2nd direction &$(0,-\lambda_2)$ & $(0,-\lambda_3)$ & $(0,0)$ & $(0,\lambda_3)$ & $(0\lambda_2)$ \\
+\hline
+weights &1 & $-\left(\frac{\lambda_2}{\lambda_3}\right)^2$ &
+$-2+2\left(\frac{\lambda_2}{\lambda_3}\right)^2$ & $-\left(\frac{\lambda_1}{\lambda_3}\right)^2$ &1\\ 
+\hline
+\end{tabular}
+\end{center}
+The direction with the larger absolute value is the next to be
+bisected.
+
+The rectangles are kept on an ordered stack, where the rectangles are
+ordered according to the size of the predicted error. The top
+rectangle with the largest error is replaced by two rectangles
+covering the same area.  The rectangle with the larger error is
+incorporated into the correct position starting from the top of the
+stack and proceeding until its error is larger than the next on the
+stack. Similarly, the rectangle with the smaller error is placed into
+the correct position starting from the bottom of the stack.  For each
+bisected integral the stack grows by one segment.
+
+
+
+The value of the integral and the estimated total error is updated by
+subtracting the contributions from the removed rectangle and by adding
+the the values and error estimates for the two new rectangles.
+
+======
+
+To obtain the value of the integrand for a point in the 2-dimensional
+square $[-1,1]\times[-1,1]$, we use the variable transform
+\begin{eqnarray*}
+\left(\begin{array}{c}r_a\\r_b\end{array}\right)
+=\left(\begin{array}{c}d\\0\end{array}\right)
++\left(\begin{array}{c}r_x\\r_x\end{array}\right)\frac{1+p_1}{2}
++\left(\begin{array}{c}-d\\d\end{array}\right)\frac{1+p_2}{2}
+\end{eqnarray*}
+where $r_x=\max(r_a^{max},r_b^{max})$
+
+$r_x$ is obtained by the condition that the rectangle shall cover the
+complete area of points with $r_a<r_a^{max}$ and $r_b< r_b^{max}$.
+Let us determine the values for $(p_1,p_2)$ that correspond to $(r_a,r_b)$.
+We obtain
+\begin{eqnarray*}
+r^{max}_a=d+r_x\frac{1+p_1}{2}-d\frac{1+p_2}{2}
+&\qquad\text{and}\qquad&
+r^{max}_b=r_x\frac{1+p_1}{2}+d\frac{1+p_2}{2}
+\\
+\Rightarrow
+r^{max}_a+r^{max}_b-d=r_x\underbrace{(1+p_1)}_{<2}
+&\qquad\text{and}\qquad&
+r^{max}_b-r^{max}_a+d=d(1+p_2)
+\\
+\Rightarrow
+r_x=\frac{r^{max}_a+r^{max}_b-d}{2}
+&\qquad\text{and}\qquad&
+p_2=\frac{r^{max}_b-r^{max}_a}{d}
+\end{eqnarray*}
+By inspection we observe that there are situations where $r_x$ can be
+chosen smaller. This is the case when the value of the resulting $p_2$
+coordinate falls out of the allowed range, i.e. when
+$|r^{max}_b-r^{max}_a|>d$.
+
+
+
+
+%===============================================================================
+\section{Long-range charge-charge term}
+%===============================================================================
+Let us consider the Coulomb interaction of two non-overlapping charge
+distributions $\rho^{(A)}(\vec{r})$ and $\rho^{(B)}(\vec{r})$.
+\begin{eqnarray*}
+V(\vec{d})&=& \int d^3r\int d^3r'\frac{e^2\rho^{(A)}(\vec{r})\rho^{(B)}(\vec{r'}-\vec{e}_z d)}
+{4\pi\epsilon_{0}|\vec{r}-\vec{r'}|}
+\end{eqnarray*}
+
+Wir verwenden die Zerlegung der Poisson Gleichung in
+Kugelflaechenfunktionen, wa fuer den fernbereich das Potential
+\begin{eqnarray*}
+v(\vec{r})&=&\int d^3r'\frac{e^2\rho^{(A)}(\vec{r'})}
+{4\pi\epsilon_{0}|\vec{r}-\vec{r'}|}
+\\
+&=&\sum_L \frac{4\pi}{2\ell+1} \frac{e^2}{4\pi\epsilon_0} 
+\underbrace{\biggl[\int d^3r\; \rho(\vec{r}) r^{\ell} Y_L(\vec{r})\biggr]}_{Q^{(A)}_L}
+\frac{1}{|\vec{r}|^{\ell+1}}Y_L(\vec{r})
+\end{eqnarray*}
+
+\begin{eqnarray*}
+V(\vec{d})&=& 
+\frac{e^2}{4\pi\epsilon_0} \sum_L \frac{4\pi Q_L^{(A)}}{2\ell+1} 
+\int d^3r \frac{1}{|\vec{r}|^{\ell+1}}Y_L(\vec{r})\rho^{(B)}(\vec{r'}-\vec{e}_z d)
+\\
+\text{with}\qquad &&
+Q_L^{(A)}\defas\int d^3r\; \rho^{(A)}(\vec{r}) r^{\ell} Y_L(\vec{r})
+\end{eqnarray*}
+
+Next we use the decomposition of Hankel function into
+offsite-Besselfunctions for $\kappa=0$.
+\begin{eqnarray*}
+\underbrace{(2\ell-1)!! \frac{1}{|\vec{r}|^{\ell+1}}Y_L(\vec{r})}_{H_L(\vec{r})}&=&
+-\sum_{L'}
+\underbrace{
+\biggl[\frac{1}{(2\ell'+1)!!} |\vec{r}-\vec{R}|^{\ell'} Y_{L'}(\vec{r}-\vec{R})\biggr]
+}_{J_{L'}(\vec{r}-\vec{R})}
+\\
+&&
+\times\underbrace{
+\biggl[-4\pi\sum_{L''}\frac{(2\ell''-1)!!}{|\vec{R}|^{\ell''+1}}Y_{L''}(\vec{R})C_{L,L',L''}
+(-1)^{\ell'}\delta_{\ell+\ell'-\ell''}\biggr]
+}_{S^\dagger_{R,L'0,L}}
+\\
+\frac{1}{|\vec{r}|^{\ell+1}}Y_L(\vec{r})&=&
+\sum_{L'}
+\biggl[|\vec{r}-\vec{R}|^{\ell'} Y_{L'}(\vec{r}-\vec{R})\biggr]
+\\
+&&
+\times
+\biggl[\sum_{L''}\delta_{\ell+\ell'-\ell''}C_{L,L',L''}
+\frac{(-1)^{\ell'}4\pi(2\ell''-1)!!}{(2\ell-1)!!(2\ell'+1)!!}
+\frac{1}{|\vec{R}|^{\ell''+1}}Y_{L''}(\vec{R})
+\biggr]
+\end{eqnarray*}
+The double factorial is defined as
+\begin{eqnarray*}
+n!!=\begin{cases}
+1 & \text{for $n=-1,0$}\\
+1\cdot3\cdot 5\cdots n & \text{for $n>0$ odd}\\
+2\cdot4\cdot 6\cdots n & \text{for $n>0$ even}
+\end{cases}
+\end{eqnarray*}
+
+
+\begin{eqnarray*}
+V(d)&=& 
+\frac{e^2}{4\pi\epsilon_0} \sum_L \frac{4\pi Q_L^{(A)}}{2\ell+1} 
+\int d^3r \frac{1}{|\vec{r}|^{\ell+1}}Y_L(\vec{r})\rho^{(B)}(\vec{r'}-\vec{e}_z d)
+\\
+&=&
+\frac{e^2}{4\pi\epsilon_0} \sum_{L,L'} \frac{4\pi Q_L^{(A)}}{2\ell+1} 
+\biggl[\sum_{L''}\delta_{\ell+\ell'-\ell''}C_{L,L',L''}
+\frac{(-1)^{\ell'}4\pi(2\ell''-1)!!}{(2\ell-1)!!(2\ell'+1)!!}
+\frac{1}{|\vec{d}|^{\ell''+1}}Y_{L''}(\vec{e}_z)
+\biggr]
+\\
+&&\times
+\int d^3r\;|\vec{r}-\vec{e}_zd|^{\ell}Y_{L'}(\vec{r}-\vec{e}_zd)\rho^{(B)}(\vec{r'}-\vec{e}_z d)
+\\
+&=&
+\frac{e^2}{4\pi\epsilon_0} \sum_{L,L'} \frac{4\pi Q_L^{(A)}Q_{L'}^{(B)}}{2\ell+1} 
+\biggl[\sum_{L''}\delta_{\ell+\ell'-\ell''}C_{L,L',L''}
+\frac{(-1)^{\ell'}4\pi(2\ell''-1)!!}{(2\ell-1)!!(2\ell'+1)!!}
+\frac{1}{|\vec{d}|^{\ell''+1}}Y_{L''}(\vec{e}_z)
+\biggr]
+\\
+&=&
+\frac{e^2}{4\pi\epsilon_0} \sum_{L,L'} \frac{4\pi Q_L^{(A)}Q_{L'}^{(B)}}{2\ell+1} 
+\biggl[C_{L,L',\ell+\ell',m=0}
+\frac{(-1)^{\ell'}4\pi(2\ell+2\ell'-1)!!}{(2\ell-1)!!(2\ell'+1)!!}
+\frac{1}{|\vec{d}|^{\ell+\ell'+1}}Y_{\ell+\ell',m=0}(\vec{e}_z)
+\biggr]
+\\
+&=&
+\frac{e^2}{4\pi\epsilon_0} \sum_{L,L'} \frac{ Q_L^{(A)}Q_{L'}^{(B)}}{|\vec{d}|^{\ell+\ell'+1}}
+\biggl[C_{L,L',\ell+\ell',m=0}
+\frac{(-1)^{\ell'}(4\pi)^2(2\ell+2\ell'-1)!!}{((2\ell+1)!!(2\ell'+1)!!}
+Y_{\ell+\ell',m=0}(\vec{e}_z)
+\biggr]
+\end{eqnarray*}
+
+If we conly consider monopoles and dipoles, we can use
+$\bar{Y}_1(\vec{e}_x)=\frac{1}{\sqrt{4\pi}}$,
+  $\bar{Y}_3(\vec{e}_z)=\sqrt{\frac{3}{4\pi}}$ and
+  $\bar{Y}_7(\vec{e}_z)=\sqrt{\frac{5}{4\pi}}$.
+The Gaunt coefficients needed for Monopole and dipole moments oriented along the z-direction are
+$C_{sss}$, $C_{sp_zp_z}$, $C_{p_xp_x,d_{3z^2-r^2}}$,$C_{p_yp_y,d_{3z^2-r^2}}$,$C_{p_zp_z,d_{3z^2-r^2}}$.
+With
+\begin{eqnarray*}
+\bar{Y}_s\bar{Y}_{L}&=&\frac{1}{\sqrt{4\pi}}\bar{Y}_L=C_{szz}\bar{Y}_L\qquad\Rightarrow C_{sss}=C_{sp_zp_z}=\frac{1}{\sqrt{4\pi}}
+\end{eqnarray*}
+
+\begin{eqnarray*}
+\bar{Y}_5&=&\sqrt{\frac{15}{16\pi}}\frac{x^2-y^2}{\vec{r}^2}
+=\sqrt{\frac{15}{16\pi}}\frac{4\pi}{3}(Y_{p_x}^2-Y_{p_y}^2)
+\\
+\bar{Y}_7&=&\sqrt{\frac{5}{16\pi}}\frac{3z^2-\vec{r}^2}{\vec{r}^2}=
+\sqrt{\frac{5}{16\pi}}\frac{4\pi}{3}(2Y_{p_z}^2-Y_{p_x}^2-Y_{p_y}^2)
+\\
+\bar{Y}_0&=&\frac{1}{\sqrt{4\pi}}\frac{x^2+y^2+z^2}{\vec{r}^2}
+=\sqrt{\frac{4}{16\pi}}\frac{4\pi}{3}(Y_{p_x}^2+Y_{p_y}^2+Y_{p_z}^2)
+\\
+\bar{Y}_{p_z}^2&=&\frac{3}{4\pi}\frac{1}{3}\biggl(\sqrt{\frac{16\pi}{4}}\bar{Y}_0+\sqrt{\frac{16\pi}{5}}\bar{Y}_7\biggr)
+=\sqrt{\frac{1}{4\pi}}\bar{Y}_0+\sqrt{\frac{1}{5\pi}}\bar{Y}_7
+\\
+\Rightarrow \bar{C}_{p_zp_zd_{3z^2-r^2}}&=&\frac{1}{\sqrt{5\pi}}
+\\
+\bar{Y}_{p_x}^2
+&=&\frac{3}{4\pi}\frac{1}{6}
+\biggl(2\sqrt{\frac{16\pi}{4}}\bar{Y}_0-\sqrt{\frac{16\pi}{5}}\bar{Y}_7+3\sqrt{\frac{16\pi}{15}}\bar{Y}_5\biggr)
+=
+\sqrt{\frac{1}{4\pi}}\bar{Y}_0-\sqrt{\frac{1}{20\pi}}\bar{Y}_7+\sqrt{\frac{3}{20\pi}}\bar{Y}_5
+\\
+\Rightarrow \bar{C}_{p_xp_xd_{3z^2-r^2}}&=&\bar{C}_{p_yp_yd_{3z^2-r^2}}=-\frac{1}{\sqrt{20\pi}}
+\end{eqnarray*}
+
+
+\begin{eqnarray*}
+V(d)&=&
+\frac{e^2}{4\pi\epsilon_0} \sum_{L,L'} \frac{ Q_L^{(A)}Q_{L'}^{(B)}}{|\vec{d}|^{\ell+\ell'+1}}
+\biggl[C_{L,L',\ell+\ell',m=0}
+\frac{(-1)^{\ell'}(4\pi)^2(2\ell+2\ell'-1)!!}{((2\ell+1)!!(2\ell'+1)!!}
+Y_{\ell+\ell',m=0}(\vec{e}_z)
+\biggr]
+\\
+&=&
+\frac{e^2}{4\pi\epsilon_0}\biggl\lbrace 
+\frac{ Q_s^{(A)}Q_{s}^{(B)}}{|\vec{d}|}\biggl[\frac{1}{\sqrt{4\pi}}(4\pi)^2\frac{1}{\sqrt{4\pi}}\biggr]
+\\
+&+&\frac{ Q_s^{(A)}Q_{p_z}^{(B)}}{|\vec{d}|^{2}}
+\biggl[\frac{1}{\sqrt{4\pi}}\frac{(-1)(4\pi)^2}{3}\sqrt{\frac{3}{4\pi}}\biggr]
++\frac{ Q_{p_z}^{(A)}Q_{s}^{(B)}}{|\vec{d}|^{2}}
+\biggl[\frac{1}{\sqrt{4\pi}}\frac{(4\pi)^2}{3}\sqrt{\frac{3}{4\pi}}\biggr]
+\\
+&+&\frac{ Q_{p_z}^{(A)}Q_{p_z}^{(B)}}{|\vec{d}|^3}\biggl[\frac{1}{\sqrt{5\pi}}(4\pi)^2\frac{(-1)3}{3\cdot3}
+\sqrt{\frac{5}{4\pi}}\biggr]
+\\
+&+&\frac{ Q_{p_x}^{(A)}Q_{p_x}^{(B)}+Q_{p_y}^{(A)}Q_{p_y}^{(B)}}{|\vec{d}|^3}
+\biggl[-\frac{1}{\sqrt{20\pi}}(4\pi)^2\frac{(-1)3}{3\cdot3}
+\sqrt{\frac{5}{4\pi}}\biggr]
+\\
+&=&
+\frac{e^2}{4\pi\epsilon_0}\biggl\lbrace 
+\frac{ Q_s^{(A)}Q_{s}^{(B)}}{|\vec{d}|} 4\pi
++\frac{Q_{p_z}^{(A)}Q_{s}^{(B)}- Q_s^{(A)}Q_{p_z}^{(B)}}{|\vec{d}|^{2}}
+\frac{4\pi}{\sqrt{3}} 
+\\
+&+&\frac{ Q_{p_z}^{(A)}Q_{p_z}^{(B)}}{|\vec{d}|^3}\biggl( -4\pi\frac{2}{3}\biggr)
++\frac{ Q_{p_x}^{(A)}Q_{p_x}^{(B)}+Q_{p_y}^{(A)}Q_{p_y}^{(B)}}{|\vec{d}|^3}
+\biggl[\frac{1}{3}(4\pi)\biggr]
+\\
+&=&
+4\pi\cdot\frac{e^2}{4\pi\epsilon_0}\biggl\lbrace 
+\frac{ Q_s^{(A)}Q_{s}^{(B)}}{|\vec{d}|}
++\frac{1}{\sqrt{3}}\frac{Q_{p_z}^{(A)}Q_{s}^{(B)}}{d^2}- \frac{1}{\sqrt{3}}\frac{Q_s^{(A)}Q_{p_z}^{(B)}}{d^2}
+\\
+&&-\frac{2}{3}\frac{ Q_{p_z}^{(A)}Q_{p_z}^{(B)}}{|\vec{d}|^3}
++\frac{1}{3}\frac{ Q_{p_x}^{(A)}Q_{p_x}^{(B)}}{|\vec{d}|^3}
++\frac{1}{3}\frac{ Q_{p_y}^{(A)}Q_{p_y}^{(B)}}{|\vec{d}|^3}\biggr\rbrace
+\end{eqnarray*}
+
+This expression can also be divided into rotationally invariant
+repulsive terms and axial terms that may be attractive or repulsive.
+\begin{eqnarray*}
+V(d)&=&
+4\pi\cdot\frac{e^2}{4\pi\epsilon_0}\biggl\lbrace 
+\frac{ Q_s^{(A)}Q_{s}^{(B)}}{|\vec{d}|}+\frac{1}{3}\frac{Q_{p_x}^{(A)}Q_{p_x}^{(B)}+Q_{p_y}^{(A)}Q_{p_y}^{(B)}+Q_{p_z}^{(A)}Q_{p_z}^{(B)}
+}{|\vec{d}|^3}
+\\
+&&\hspace{1.7cm}
+-\frac{1}{\sqrt{3}}\frac{Q_s^{(A)}Q_{p_z}^{(B)}-Q_{p_z}^{(A)}Q_{s}^{(B)}}{d^2}
+-\frac{ Q_{p_z}^{(A)}Q_{p_z}^{(B)}}{|\vec{d}|^3}
+\biggr\rbrace
+\end{eqnarray*}
+
+Now we introduce the definition for the dipole
+\begin{eqnarray*}
+q&=&\sqrt{4\pi}Q_s=\sqrt{4\pi}\int d^3r\;\rho(\vec{r})Y_s(\vec{r})=\int d^3r\;\rho(\vec{r})
+\\
+\vec{D}&=&\sqrt{\frac{4\pi}{3}}\left(\begin{array}{c}Q_{p_x}\\Q_{p_y}\\Q_{p_z}\end{array}\right)
+=\sqrt{\frac{4\pi}{3}}\int d^3r\;\rho(\vec{r})|\vec{r}|
+\left(\begin{array}{c}Y_{p_x}\\Y_{p_y}\\Y_{p_z}\end{array}\right)
+=\sqrt{\frac{4\pi}{3}}\int d^3r\;\rho(\vec{r})\sqrt{\frac{3}{4\pi}}\vec{r}
+=\int d^3r\;\rho(\vec{r})\vec{r}
+\end{eqnarray*}
+so that
+\begin{eqnarray*}
+V(d)&=&
+\frac{e^2}{4\pi\epsilon_0}\biggl\lbrace 
+\frac{ q^{(A)}q^{(B)}}{|\vec{d}|}+\frac{\vec{D}^{(A)}\vec{D}^{(B)}}{|\vec{d}|^3}
+-\frac{q^{(A)}\vec{D}^{(B)}\vec{e}_z-\vec{D}^{(A)}\vec{e}_zq^{(B)}}{d^2}
+-\frac{ 3(\vec{e}_z\vec{D}^{(A)})(\vec{e}_z\vec{D}^{(B)})}{|\vec{d}|^3}
+\biggr\rbrace
+\end{eqnarray*}
+
+
+
+%=====================================================================
 \chapter{Changelog, Bugfixes}
 %=====================================================================
 \begin{itemize}
@@ -6207,7 +6919,7 @@ The indices used here are spatial-orbital indices.
 %
 \item there has been a bug in \verb|lmto$screen|, which has been fixed
   with version 3. It may be better to rewrite all structure constants
-  routines with teh transposed structure constants.
+  routines with the transposed structure constants.
 %
 \item in \verb|lmto$makestructureconstants|, the structure constants
   have not been calculated because the parallelzation was wrong.  in
