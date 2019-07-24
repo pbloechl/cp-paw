@@ -1243,7 +1243,24 @@ We start from two density matrices, which are the same at the moment.
 
 see \verb|lmto_simpledc_new|.
 
-
+%====================================================================
+\subsubsection{Avoid singularities}
+%====================================================================
+In practice, the cutoff function is evaliuated as 
+\begin{eqnarray}
+g_{R}(\vec{r})=\left(\frac{n^s_R(\vec{r})}{n_t^2(\vec{r})+\Delta}\right)^2
+\end{eqnarray}
+where
+\begin{eqnarray}
+n^s_R=\rho^{\chi}_{\alpha,\beta}\chi_\beta^*(\vec{r})\chi_{\alpha}(\vec{r})
+\end{eqnarray}
+ is evaluated from the local orbitals from site $R$.
+\begin{eqnarray}
+n^s_t(\vec{r})=\rho^{\phi}_{\alpha,\beta}\phi_\beta^*(\vec{r})\phi_{\alpha}(\vec{r})
+\end{eqnarray}
+is evaluated from the partial waves centered at this
+site. $\Delta$, chosen as $10^{-2}$~a.u., avoids problems, when
+$n^s_t$ becomes smaller than the true density at larger distances.
 
 
 %====================================================================
@@ -2213,13 +2230,68 @@ The following variables are constructed in \verb|SIMPLELMTO_DEMATPHITOCHI2|.
 %=======================================================================
 \subsubsection{Density matrix}
 %=======================================================================
+Here, we use the expression for $\langle\phi|\pi\rangle$, which is
+approximated by the linear terms in the structure constants to
+evaluate the density matrix in the local orbitals. Consistent with the
+previous approximation, we retain only terms that are linear in the
+offsite terms of $\langle\phi|\pi\rangle$.
 
 \begin{eqnarray}
 \rho^\chi&=&\langle\pi|\phi\rangle\rho^\phi\langle\phi|\pi\rangle
-\nonumber
-\langle\pi|\phi\rangle\rho^\phi\langle\phi|\pi\rangle
 \end{eqnarray}
 
+In the following, I break this expression up into on- and off-site terms.
+The indices $j,k$ are site indices and not orbital indices. The
+objects are matrices related to the orbital indices of each site.
+\begin{eqnarray}
+\rho^\chi_{j,k}
+&=&\langle\pi_j|\phi_k\rangle\rho^\phi_{kk}\langle\phi_k|\pi_k\rangle
++\langle\pi_j|\phi_j\rangle\rho^\phi_{jk}\langle\phi_k|\pi_k\rangle
++\langle\pi_j|\phi_j\rangle\rho^\phi_{jj}\langle\phi_j|\pi_k\rangle
+\quad\text{for $j\neq k$}
+\nonumber\\
+\rho^\chi_{j,j}
+&=&\langle\pi_j|\phi_j\rangle\rho^\phi_{jj}\langle\phi_j|\pi_j\rangle
++\sum_k\langle\pi_j|\phi_j\rangle\rho^\phi_{jk}\langle\phi_k|\pi_j\rangle
++\sum_k\langle\pi_j|\phi_k\rangle\rho^\phi_{kj}\langle\phi_j|\pi_j\rangle
+\nonumber\\
+\end{eqnarray}
+
+I define analogous potentials
+\begin{eqnarray}
+dE&=&
+\sum_{\alpha,\beta}
+\frac{dE}{d\rho^\chi_{\alpha,\beta}}d\rho^{\chi}_{\alpha,\beta}
+=\sum_{\alpha,\beta}
+\left(\frac{dE}{d\rho^\chi_{\beta,\alpha}}\right)^* d\rho^{\chi}_{\alpha,\beta}
+=\Tr\left[\left(\frac{dE}{d\rho^\chi}\right)^* d\rho\right]
+=\Tr\left[v^\chi d\rho\right]
+\nonumber\\
+v^\chi&=&\left(\frac{dE}{d\rho^\chi}\right)^*
+\nonumber\\
+v^\phi&=&\left(\frac{dE}{d\rho^\phi}\right)^*
+\end{eqnarray}
+
+
+
+\begin{eqnarray}
+v^\phi=\langle\phi|\pi\rangle v^\chi \langle\pi|\phi\rangle
+\end{eqnarray}
+and split up into on- and off-site terms
+\begin{eqnarray}
+v^\phi_{j,k}
+&=&
+\langle\phi_j|\pi_j\rangle v^\chi_{j,k} \langle\pi_k|\phi_k\rangle
++\langle\phi_j|\pi_k\rangle v^\chi_{k,k} \langle\pi_k|\phi_k\rangle
++\langle\phi_j|\pi_j\rangle v^\chi_{j,j} \langle\pi_j|\phi_k\rangle
+\quad\text{for $j\neq k$}
+\nonumber\\
+%
+v^\phi_{j,j}&=&
+\sum_k\langle\phi_j|\pi_j\rangle v^\chi_{j,k} \langle\pi_k|\phi_j\rangle
++\langle\phi_j|\pi_j\rangle v^\chi_{j,j} \langle\pi_j|\phi_j\rangle
++\sum_k\langle\phi_j|\pi_k\rangle v^\chi_{k,j} \langle\pi_j|\phi_j\rangle
+\end{eqnarray}
 
 
 %=======================================================================
