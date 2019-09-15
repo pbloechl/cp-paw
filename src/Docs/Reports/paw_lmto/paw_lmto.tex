@@ -11,7 +11,7 @@
 %%                                                                 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{../header}
-\hypersetup{pdftitle=paw_brillouin}
+\hypersetup{pdftitle=paw_lmto}
 \begin{document}
 \begin{titlepage}
 \begin{center}
@@ -35,8 +35,23 @@ http://www.pt.tu-clausthal.de/atp/}
 \noindent            
 \tableofcontents
 %====================================================================
-\chapter{Todo}
+\chapter{Notes}
 %====================================================================
+%% \begin{itemize}
+%% \item The variable \verb|RAUG| must be large enough to enclose the
+%%   semi-core states, because the decay of the envelope function is
+%%   usually much too slow for them. 
+%% %
+%% \end{itemize}
+
+%====================================================================
+\section{Tests}
+%====================================================================
+\begin{itemize}
+\item is the dynamics energy conserving with fixed positions?
+%
+\end{itemize}
+
 %====================================================================
 \section{Fixes}
 %====================================================================
@@ -64,51 +79,10 @@ http://www.pt.tu-clausthal.de/atp/}
 %
 \end{itemize}
 
-%====================================================================
-\section{Ideas}
-%====================================================================
-\begin{itemize}
-\item With the introduction of the tailed representation of the NTBO's
-  we \textbf{switch from a multi-center expansion to a one-center
-    expansion}.  This, however, requires to increase the number of
-  angular momenta for the tail functions beyond that used for the
-  augmentation: Each (screening) Hankel function centered on the
-  neighboring site contributes arbitrary many angular momenta at the
-  central site.
 
-  The tail functions for the higher angular momenta behave, at the
-  central site, like a bare Bessel function. Beyond the central site,
-  we can add the same pairs of exponential tails as for the lower
-  tailed partial waves.
-
-  (The following is probably no more true. please check!) Currently we
-  use the following rule: Rule: (1) Each head function has exactly one
-  tail function attributed to it.  Thus we can identify the phidot
-  function uniquely by looking for the tail function with the correct
-  angular momentum.  From (1) follows, that there is at most one tail
-  function per site and angular momentum.
-%
-\item Suggestion: the exponential functions for the tailed expansion
-  are determined by trial and error. A more systematic approach for
-  the tail function would be to (1) build a Hankel function on a
-  neighboring site, which is augmented by (a) a bare Bessel function
-  and (b) by a screened scattering partial wave
-  $|\dot{\bar{\phi}}\rangle$. (1a) In order to make the formulation
-  less dependent on the neighbor distance, we could also include the
-  gradients of these functions. (2) These functions are expanded about
-  the central site into an angular-momentum expansion.  (3) a
-  reasonably weighted least-square fit of the exponential tails to
-  these functions will provide a ``optimum shape'' of the tails for
-  each angular momentum.
-%
-\item The orbitals in the tailed one-center expansion and as
-  multicenter expansions can be compared using \verb|LMTO_PLOTORBS|.
-  Calculations for hydrogen suggest that a good choice is $K2=-1.$ and
-  $(\lambda_1,\lambda_2)=(4,2)$. The rationale for $K2$ is that the
-  energy of the hydrogen orbital is at
-  $-1Ry=-\frac{1}{2}H=\frac{1}{2}K2$. (see
-  \url{Dummy/Sitest/Test/Occtest/H2test})
-\end{itemize}
+%====================================================================
+\section{Ideas and remarks}
+%====================================================================
 
 %====================================================================
 \chapter{Purpose and theoretical background of the LMTO Object}
@@ -121,7 +95,7 @@ tails exhibit only scattering character in the context of nodeless
 wave functions\cite{bloechl12_arxiv1210_5937}.
 
 %====================================================================
-\section{Augmentation}
+\section{Augmentation: Overview}
 %====================================================================
 The concept of linear augmented waves\cite{andersen75_prb12_3060} is
 as follows:
@@ -152,6 +126,7 @@ as follows:
 |K_{\alpha}^\infty\rangle=|K^\Omega_{\alpha}\rangle
 -\sum_{\beta}|J^\Omega_{\beta}\rangle S^\dagger_{\beta,\alpha}
 +|K^I_{\alpha}\rangle
+\label{eq:multicenterexpandenvelopefunction1}
 \end{eqnarray}
    The coefficients $S_{\alpha,\beta}$ of the tail functions are
    called \textbf{structure constants}\index{structure constants}.
@@ -176,7 +151,7 @@ as follows:
 \end{enumerate}
 
 %====================================================================
-\section{Structure constants}
+\section{Envelope functions and structure constants}
 %====================================================================
 %====================================================================
 \subsection{Hankel functions as envelope function}
@@ -294,359 +269,144 @@ S_{RL,R'L'}=S_{R'L',RL}
 This is, however, not true for each angular-momentum block individually,
 i.e. in general we have $S_{RL,R'L'}\neq S_{R,L',R'L}$.
 
-%====================================================================
-\subsection{Screened structure constants}
-%====================================================================
-A so-called \textbf{screened LMTO representation}\index{screened
-  LMTO's} is defined by a set of screened scattering partial waves
-$|\dot{\bar{\phi}}_\alpha\rangle$.  In what we call the
-nodeless-representation, the scattering partial waves are defined as
-nodeless scattering wave functions.
-
-The node-less scattering partial wave
-$|\dot{\bar{\phi}}_\alpha\rangle$ define the screening constants
-$\bar{Q}_{\alpha}$ such that the screened tail functions
-$|\bar{J}_\alpha\rangle$ match with value and derivative to the
-scattering partial wave
-\begin{eqnarray}
-|\dot{\bar{\phi}}_\alpha\rangle \rightarrow 
-|\bar{J}^{\Omega}_{\alpha}\rangle
-\defas
-|J^{\Omega}_{\alpha}\rangle
--|K^{\Omega}_{\alpha}\rangle \bar{Q}_{\alpha}
-\end{eqnarray}
-
-A screened solid Hankel function $|\bar{K}_{\alpha}^\infty\rangle$ is
-a superposition of bare solid Hankel functions on a set of atomic
-positions
-\begin{eqnarray}
-|\bar{K}^\infty_\alpha\rangle=\sum_\beta|K^\infty_\beta\rangle c_{\beta,\alpha}
-\label{eq:kbarassuperposofkbare}
-\end{eqnarray}
-with the property that the tail functions are made entirely
-from screened Bessel functions $|\bar{J}^\Omega_{\beta}\rangle$, i.e.
-\begin{eqnarray}
-|\bar{K}_{\alpha}^\infty\rangle=|K^\Omega_{\alpha}\rangle
--\sum_{\beta}|\bar{J}^\Omega_{\beta}\rangle \bar{S}^\dagger_{\beta,\alpha}
-+|\bar{K}^I_{\alpha}\rangle
-\label{eq:kbarwithsbar}
-\end{eqnarray}
-The expansion coefficients $\bar{S}$ are the \textbf{screened structure
-constants}\index{Structure constants !screened}.
-
-
-By equating the two expressions for the screened Hankel functions,
-namely \eq{eq:kbarassuperposofkbare} and \eq{eq:kbarwithsbar}, we can
-extract the screened structure constants
-$\bar{S}^\dagger_{\beta,\alpha}$ and the superposition coefficients
-$c_{\beta,\alpha}$.
-\begin{eqnarray}
-\sum_\beta\Bigl[|K^\Omega_{\beta}\rangle
--\sum_{\gamma}|J^\Omega_{\gamma}\rangle S^\dagger_{\gamma,\beta}
-+|K^I_{\beta}\rangle \Bigr]c_{\beta,\alpha}
-=
-|K^\Omega_{\alpha}\rangle
--\sum_{\beta}
-\underbrace{\Bigl[|J^\Omega_{\beta}\rangle-|K^\Omega_{\beta}\rangle\bar{Q}_\beta\Bigr]}
-_{|\bar{J}^\Omega_{\beta}\rangle} \bar{S}^\dagger_{\beta,\alpha}
-+|\bar{K}^I_{\alpha}\rangle
-\nonumber\\
-\eqrel{eq:kbarassuperposofkbare}{\Rightarrow}\quad
-\sum_\beta
-|K^\Omega_{\beta}\rangle c_{\beta,\alpha}
--\sum_{\beta,\gamma}|J^\Omega_{\gamma}\rangle S^\dagger_{\gamma,\beta} c_{\beta,\alpha}
-%+\sum_\beta|K^I_{\beta}\rangle c_{\beta,\alpha}
-=
-\sum_{\beta}|K^\Omega_{\beta}\rangle
-\Bigl[\delta_{\beta,\alpha}+
-\bar{Q}_\beta \bar{S}^\dagger_{\beta,\alpha}\Bigr]
--\sum_{\beta}|J^\Omega_{\beta}\rangle \bar{S}^\dagger_{\beta,\alpha}
-%+|\bar{K}^I_{\alpha}\rangle
-\nonumber\\
-\end{eqnarray}
-By comparing the coefficients, we obtain
-\begin{eqnarray}
-c_{\beta,\alpha}&=&\delta_{\beta,\alpha}+
-\bar{Q}_\beta \bar{S}^\dagger_{\beta,\alpha}
-\label{eq:definingeqsystemforsbara}
-\\
-\bar{S}^\dagger_{\gamma,\alpha}&=&\sum_\beta S^\dagger_{\gamma,\beta} c_{\beta,\alpha}
-\,,
-\label{eq:definingeqsystemforsbar}
-\label{eq:definingeqsystemforsbarb}
-\end{eqnarray}
-which can be resolved to
-\footnote{
-\begin{eqnarray}
-\mat{\bar{S}}^\dagger
-\eqrel{eq:definingeqsystemforsbarb}{=}
-\mat{S}^\dagger\mat{c}
-\eqrel{eq:definingeqsystemforsbara}{=}
-\mat{S}^\dagger\Bigl(\mat{1}+\mat{\bar{Q}}\mat{\bar{S}}^\dagger\Bigr)
-\Rightarrow
-\Bigl(\mat{1}-\mat{S}^\dagger\mat{\bar{Q}}\Bigr)\mat{\bar{S}}^\dagger
-=\mat{S}^\dagger
-\Rightarrow
-\mat{\bar{S}}^\dagger
-=\Bigl(\mat{1}-\mat{S}^\dagger\mat{\bar{Q}}\Bigr)^{-1}\mat{S}^\dagger
-\end{eqnarray}
-%% The following gives a wrong answer:
-%% \begin{eqnarray}
-%% \mat{c}&=&\mat{1}
-%% +\mat{\bar{Q}}\mat{\bar{S}}^\dagger
-%% =\mat{1}+\mat{\bar{Q}}\mat{S}^\dagger\mat{c}
-%% \qquad
-%% \Rightarrow\qquad\sum_\gamma \Bigl[\delta_{\beta,\gamma}
-%% -\bar{Q}_\beta S^\dagger_{\beta,\gamma}\Bigr] c_{\gamma,\alpha}=\delta_{\beta,\alpha}
-%% \qquad\Rightarrow\qquad
-%% \mat{c}=[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]^{-1}
-%% \nonumber\\
-%% \mat{\bar{S}}^\dagger&=&\mat{S}^\dagger\mat{c}
-%% =\mat{S}^\dagger[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]^{-1}
-%% \qquad\Leftrightarrow\qquad
-%% [\mat{1}-\mat{S}\mat{\bar{Q}}]\mat{\bar{S}}=\mat{S}
-%% \end{eqnarray}
-  } the defining
-equation of the screened structure constants
-\begin{myshadowminipage}{screened structure constants}
-\begin{eqnarray}
-\mat{\bar{S}}^\dagger=
-\Bigl[\mat{1}-\mat{S}^\dagger\mat{\bar{Q}}\Bigr]^{-1}\mat{S}^\dagger
-\label{eq:defscreenedstructureconstants}
-\end{eqnarray}
-and the expression of the screened Hankel functions 
-\begin{eqnarray}
-|\bar{K}^\infty_\alpha\rangle=\sum_\beta |K^\infty_\beta\rangle
-\Bigl[\delta_{\beta,\alpha}+
-\bar{Q}_\beta \bar{S}^\dagger_{\beta,\alpha}\Bigr]
-\;.
-\end{eqnarray}
-
-Because we calculate the screened structure constants on finite
-clusters, \eq{eq:defscreenedstructureconstants} should be considered
-of only formal value and should not be used in the actual
-calculations. Rather, the defining equations
-\eq{eq:definingeqsystemforsbarb} shall be used as shown in the
-following section.
-\end{myshadowminipage}{}
 
 
 %====================================================================
-\section{Screening on finite clusters}
+\subsection{Gradient of structure constants}
 %====================================================================
-The screened structure constants are calculated on a cluster of atomic
-sites. The calculation can, in principle, be done for each single
-screened Hankel function independently. In practice, we do the
-calculations for all atoms centered on a given site in one step.
 
-We go back to the defining equation system
-\eq{eq:definingeqsystemforsbara}, \eq{eq:definingeqsystemforsbarb} and
-rewrite it in terms of vectors, which are defined on the cluster
-$B$. The index $\alpha$ labeling the vectors counts the envelope
-functions centered at the central site. The dimension of the vectors
-and matrices defined below is given by angular momentum channels and
-sites with non-zero screening charge\footnote{Inclusion of orbitals
-  with vanishing screening charge does not affect the expansion
-  coefficients $c_{\alpha,\beta}$. However, it also includes the
-  structure constant matrix elements for the higher angular momenta
-  with vanishing screening charge. The contribution of the higher
-  angular momenta can be calculated after the screening has been
-  done.} $\bar{Q}$.
-
-The equations attain the form
+See P. Bl\"ochl, Methods: chapter \textit{Working with spherical harmonics},
+Section \textit{Gradients of spherical harmonics}.
 \begin{eqnarray}
-\vec{c}_\alpha&\eqrel{eq:definingeqsystemforsbara}{=}&
-\vec{e}_\alpha+\mat{\bar{Q}}\vec{s}_\alpha
-\label{eq:definingeqsystemforsbarveca}
-\\
-\vec{s}_\alpha&\eqrel{eq:definingeqsystemforsbarb}{=}&
-\mat{S}^\dagger\vec{c}_\alpha
-\label{eq:definingeqsystemforsbarvecb}
-\label{eq:definingeqsystemforsbarvec}
+\partial_{r_j} Y_L(\vec{r})=\sqrt{\frac{4\pi}{3}}\sum_{L'}
+C_{p_j,L,L'}\left[\frac{-\ell}{r}+\frac{2\ell+1}{r}\delta_{\ell',\ell-1}
+\right]Y_{\ell'}(\vec{r})
 \end{eqnarray}
-where the vectors $\vec{c}_\alpha$, $\vec{s}_\alpha$ and $\vec{e}_\alpha$ are
-defined by its components
+
+
+For the product of a radial function $f(|\vec{r}|)$ and a spherical 
+harmonic I obtain
 \begin{eqnarray}
-\Bigl(\vec{c}_\alpha\Bigr)_\beta&=&c_{\beta,\alpha}
-\nonumber\\
-\Bigl(\vec{s}_\alpha\Bigr)_\beta&=&\bar{S}^\dagger_{\beta,\alpha}
-\nonumber\\
-\Bigl(\vec{e}_\alpha\Bigr)_\beta&=&\delta_{\beta,\alpha}
+\partial_{r_j}\Bigl[f(|\vec{r}|) Y_L(\vec{r})\Bigr]
+=\sqrt{\frac{4\pi}{3}}\sum_{L'}
+C_{p_j,L,L'}
+\left[
+\frac{-\ell}{r}+\frac{2\ell+1}{r}\delta_{\ell',\ell-1}
++\left.\partial_r\right|_{r=\sqrt{\vec{r}^2}} 
+\right]
+f(|\vec{r}|)Y_{\ell'}(\vec{r})
 \end{eqnarray}
-In matrix form, all these quantities are non-square matrices.
-
-\begin{eqnarray}
-\vec{c}_\alpha
-&\eqrel{eq:definingeqsystemforsbarveca}{=}&
-\vec{e}_\alpha+\mat{\bar{Q}}\vec{s}_\alpha
-\eqrel{eq:definingeqsystemforsbarvecb}{=}
-\vec{e}_\alpha+\mat{\bar{Q}}\mat{S}^\dagger\vec{c}_\alpha
-\nonumber\\
-\Rightarrow\qquad
-\Bigl[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger\Bigr]\vec{c}_\alpha&=&\vec{e}_\alpha
-\nonumber\\
-\Rightarrow\qquad
-\vec{c}_\alpha&=&[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]^{-1}\vec{e}_\alpha
-\nonumber\\
-\vec{s}_\alpha
-&\eqrel{eq:definingeqsystemforsbarvecb}{=}&
-\mat{S}^\dagger\vec{c}_\alpha
-=\mat{S}^\dagger[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]^{-1}\vec{e}_\alpha
-\end{eqnarray}
-Interestingly, the vector on the right-hand side $\vec{e}_\alpha$ can
-not be simply ignored as the matrix form seems to suggest. This is
-specific to the calculation on the cluster. Because of this, we cannot
-identify the contribution of these vectors with a unit matrix.
 
 
 
-\begin{myshadowminipage}{Calculation of screened structure constants}
-Thus, we first evaluate the bare structure constants $\mat{S}^\dagger$
-on the cluster, and from that
-$[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]$. Then we solve the equation
-\begin{eqnarray}
-[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger]\vec{c}_\alpha&=&\vec{e}_\alpha
-\label{eq:forscreenedsa}
-\\
-\vec{s}_\alpha&=&\mat{S}^\dagger\vec{c}_\alpha
-\label{eq:forscreenedsb}
-\end{eqnarray}
-for $\vec{c}_\alpha$ first from \eq{eq:forscreenedsa} using a standard
-routine for linear equation systems. Using the result for
-$\vec{c}_\alpha$, we obtain the screened structure constants
-$\vec{s}_\alpha$ from \eq{eq:forscreenedsb} by multiplication with the
-bare structure constants.
-
-Finally we obtain the screened structure constants as
-\begin{eqnarray}
-\bar{S}^\dagger_{\gamma,\alpha}=\Bigl(\vec{s}_\alpha\Bigr)_\gamma
-\end{eqnarray}
-\end{myshadowminipage}
-
-Note that the screened structure constants calculated on finite
-clusters are no more exactly hermitean.
-
-%====================================================================
-\section{Derivatives}
-%====================================================================
-In order to evaluate forces, we need to investigate the derivatives of
-the structure constants with respect to changes of the atomic
-structure.
-
-\begin{eqnarray}
--\mat{\bar{Q}}d\mat{S}^\dagger\vec{c}_\alpha
-+\Bigl[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger\Bigr]d\vec{c}_\alpha
-&\eqrel{eq:forscreenedsa}{=}&0
-\nonumber\\
-\Bigl[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger\Bigr]d\vec{c}_\alpha
-&=&
-\mat{\bar{Q}}d\mat{S}^\dagger\vec{c}_\alpha
-\nonumber\\
-\Rightarrow\quad
-d\vec{s}_\alpha
-&\eqrel{eq:forscreenedsb}{=}&
-d\mat{S}^\dagger\vec{c}_\alpha
-+\mat{S}^\dagger d\vec{c}_\alpha
-=\mat{\bar{Q}}^{-1}d\vec{c}_\alpha
-\nonumber\\
-&=&\mat{\bar{Q}}^{-1}\Bigl[\mat{1}-\mat{\bar{Q}}\mat{S}^\dagger\Bigr]^{-1}
-\mat{\bar{Q}}d\mat{S}^\dagger\vec{c}_\alpha
-\nonumber\\
-&=&\Bigl[\mat{1}-\mat{S}^\dagger\mat{\bar{Q}}\Bigr]^{-1}
-d\mat{S}^\dagger\vec{c}_\alpha
-\end{eqnarray}
-If this is correct, i implies that the screened structure constants
-depend only in second order on a displacement of the atoms.
-
-
-%====================================================================
-\subsection{Lower and higher angular momenta}
-%====================================================================
-The angular momentum expansion of a Hankel function
-$|K^\infty_\alpha\rangle$ about a neighboring size has infinitely many
-angular momentum contributions $|J^\Omega_\alpha\rangle$. The Hankel
-functions $|K^\Omega_\alpha\rangle$, on the other hand, are limited to
-a subset. We call the angular momenta, for which the Hankel functions
-$|K^\Omega_\alpha\rangle$ are taken into account, lower angular
-momenta, and those for which only the Bessel function
-$|J^\Omega_\alpha\rangle$ are considered, the higher angular momenta.
-The distinction reflects directly to the values of $\bar{Q}$, which
-are nonzero for the lower angular momenta and which vanish for the
-higher angular momenta. 
-
-To avoid the confusion between the choice of screening charges and the
-selection of tight-binding orbitals, we assume that there is an
-orbital considered for each non-zero screening charge. A truncation of
-the basisset is postponed.  With this choice, the left index of the
-expansion coefficients $c_{\beta,\alpha}$ in
-\eq{eq:kbarassuperposofkbare} runs over all sites in the cluster and
-angular momenta for which there is a non-zero screening charge
-$\bar{Q}_\beta$. The right index includes all orbital indices on the
-central site of the cluster.
-
-If there are two orbitals with the same leading angular momentum, they
-will have, per definition, the same envelope function and the same
-tails.\footnote{The difference between two such orbitals is thus
-  confined to the augmentation region of the central site, and can
-  probably be identified with a local orbital as they are used in
-  LAPW.} Thus, we consider only the angular momenta during the
-construction and expand the structure-constant array after the
-screening has been completed.
-
-\begin{center}
-\begin{tabular}{|c|l|}
-\hline
-A&indices of screened orbitals\\
-B&indices of non-zero screening charges\\
-C&indices of partial waves\\
-D&indices of angular momenta considered one-center expansion of 
-the tailed representation\\
-\hline
-\end{tabular}
-\end{center}
-
-Screened orbitals (A) can only be formed in channels with partial waves (C),
-because they require augmentation of the envelope function.
-
-Non-zero screening charges (B) are only possible where partial waves (C)
-exist, because the irregular contribution must be augmented.
-
-The number of screened orbitals (A) may be a subset of (B) the
-channels with non0zero screening charges.
 
 %====================================================================
 \section{Augmentation and Potential parameters}
 %====================================================================
-%===============================================================================
+%=======================================================================
 \subsection{Local orbitals}
-%===============================================================================
-The local orbitals have the form
+%=======================================================================
+Local orbitals are augmented Hankelfunctions
 \begin{eqnarray}
-|\chi_\alpha\rangle&=&|\phi^K_\alpha\rangle
-- \sum_{R,L}|\phi^{\bar{J}}_{R,L}\rangle \bar{S}^\dagger_{R,L,R_\alpha,L_\alpha}
+|\chi_\gamma\rangle&=&
+\sum_\alpha \biggl\lbrace
+\underbrace{
+|\phi^{K}_{\alpha}\rangle+ |K^{\notin\Omega_\alpha}_\alpha\rangle
+}_{\text{R-independent}}
+\underbrace{
+-\sum_{\beta}
+\biggl(|\phi^J_{\beta}\rangle -|J_{\beta}\rangle\biggr)
+S^\dagger_{R_\beta,L_\beta,R_\alpha,L_\alpha}}_{\text{R-dependent and small}}
+\biggr\rbrace c_{\alpha,\gamma}
 \nonumber\\
-&+&\sum_{R',L'}|K^I_{R',L'}\rangle\Bigl[ \delta_{R',L',R_\alpha,L_\alpha}-\bar{Q}_{R',L'}
-\bar{S}^\dagger_{R',L',R_\alpha,L_\alpha}\Bigr]
+&=&\sum_\alpha \biggl\lbrace
+|\phi^{K}_{\alpha}\rangle
+-\sum_{\beta}
+|\phi^J_{\beta}\rangle S^\dagger_{R_\beta,L_\beta,R_\alpha,L_\alpha}
++ |K^{I}_\alpha\rangle
+\biggr\rbrace c_{\alpha,\gamma}
 \end{eqnarray}
-where the new partial waves $|\phi^K_\alpha\rangle$ and
+Here, $|\phi^K_\alpha\rangle$ is a superposition of partial waves,
+which match at the augmentation radius to $|K_\alpha\rangle$, and
+which are set to zero outside the augmentation region.
+$|K^{\notin\Omega_\alpha}_\alpha\rangle$ is the Hankelfunction at site
+$R_\alpha$ and angular momentum $L_\alpha$, which is set to zero
+inside its central augmentation region $\Omega_\alpha$.
+
+The interstitial envelope function, which is zero in all augmentation
+regions is (see also \eq{eq:multicenterexpandenvelopefunction1})
+\begin{eqnarray}
+|K^I_\alpha\rangle= |K^{\notin\Omega_\alpha}_\alpha\rangle
+-\sum_{\beta}|J_{\beta}\rangle
+S^\dagger_{R_\beta,L_\beta,R_\alpha,L_\alpha}
+\end{eqnarray}
+
+
+A suitable definition for $\mat{c}$ is a matrix that produces
+orthonormal states for an isolated atom. Thus, it is an onsite matrix.
+It is constructed by a onsite-Gram-Schmidt decomposition.
+
+We introduce head and tail functions defined as
+\begin{eqnarray}
+|\phi^H_\alpha\rangle&=&\sum_{\beta; R_\beta=R_\alpha}
+|\phi^K_\beta\rangle c_{\beta,\alpha}
+\nonumber\\
+|\phi^T_\alpha\rangle&=&|\phi^J_\alpha\rangle
+\end{eqnarray}
+so that
+\begin{eqnarray}
+|\chi_\gamma\rangle&=&
+|\phi^{H}_{\gamma}\rangle
+-\sum_{\alpha,\beta}
+|\phi^J_{\beta}\rangle S^\dagger_{R_\beta,L_\beta,R_\alpha,L_\alpha}
+c_{\alpha,\gamma}
++\sum_\alpha |K^{I}_\alpha\rangle c_{\alpha,\gamma}
+\end{eqnarray}
+
+
+
+%===============================================================================
+\subsection{Partial waves}
+%===============================================================================
+The partial waves are constructed using the nodeless (or node
+reduced?) construction. 
+
+\begin{enumerate}
+\item The node-reduced partial waves are matched to the envelope
+  function.
+\item the all-electron and pseudo local orbitals are constructed by
+  adding and subtracting the difference of the corresponding partial
+  wave minus the node-reduced partial waves. This construction allows
+  the all-electron and pseudo orbitals to deviate from the envelope
+  functuion also beyond the augmentation region.
+\end{enumerate}
+
+
+
+
+%===============================================================================
+\subsection{Matching}
+%===============================================================================
+The new partial waves $|\phi^K_\alpha\rangle$ and
 $|\phi^{\bar{J}}_\alpha\rangle$ are superpositions of the valence and
 scattering partial waves that match differentiably to the head and
-tail functions $|K_\alpha\rangle$ and $|\bar{J}_\alpha\rangle$.
+tail functions $|K_\alpha\rangle$ and $|J_\alpha\rangle$.
 \begin{eqnarray}
+|K_\alpha\rangle\rightarrow
 |\phi^K_\alpha\rangle&=&
 \overbrace{
 |\phi_\alpha\rangle 
 \underbrace{
-\frac{W_\alpha[K,\dot{\bar{\phi}}]}{W_\alpha[\phi,\dot{\bar{\phi}}]}}_{Ktophi}
--\,|\dot{\bar{\phi}}_\alpha\rangle 
-\underbrace{\frac{W_\alpha[K,\phi]}{W_\alpha[\phi,\dot{\bar{\phi}}]}}_{-Ktophidot}
+\frac{W_\alpha[K,\dot{\phi}]}{W_\alpha[\phi,\dot{\phi}]}}_{Ktophi}
+-\,|\dot{\phi}_\alpha\rangle 
+\underbrace{\frac{W_\alpha[K,\phi]}{W_\alpha[\phi,\dot{\phi}]}}_{-Ktophidot}
 }^{\rightarrow |K^\Omega_\alpha\rangle}
 \nonumber\\
-|\phi^{\bar{J}}_{R,L}\rangle
+|\phi^{J}_{R,L}\rangle
 &=&\overbrace{
-|\dot{\bar{\phi}}_\beta\rangle 
-\underbrace{\biggl(-\frac{W_\beta[\bar{J},\phi]}{W_\beta[\phi,\dot{\bar{\phi}}]}\biggr)}_{JBARtophidot}
-}^{\rightarrow |\bar{J}\;^\Omega_\beta\rangle}
+|\dot{\phi}_\beta\rangle 
+\underbrace{\biggl(-\frac{W_\beta[J,\phi]}{W_\beta[\phi,\dot{\phi}]}\biggr)}_{JBARtophidot}
+}^{\rightarrow |J\;^\Omega_\beta\rangle}
 \end{eqnarray}
 Note, that in the factor $JBARTOPHIDOT$ does not depend on the choice
 of $|\phi\rangle$.
@@ -676,9 +436,146 @@ needed later, have the form
 \bar{S}^\dagger_{R_\gamma,L_\gamma,R_\alpha,L_\alpha}
 \end{eqnarray}
 
+%===============================================================================
+\subsection{Select phi and phidot}
+%===============================================================================
+
+For each value of $\alpha$ a set of $\phi$ and $\dot{phi}$ partial
+waves need to be selected. Let us consider one site and one specific
+angular momentum. There is a number $n^\phi_\ell$ of partial waves
+plus one energy derivative function of the highest partial wave.
+
+From the sequence of $n^\phi_\ell+1$, we select the current and the
+next partial wave. 
+
+\textcolor{blue}{Remark: Another option is to use the current partial
+  wave together with the last partial wave (the phidot function) in
+  the sequence of $n^\phi_\ell+1$ partial waves. In that case the
+  effective potential defining the shape of the partial wave
+  $|\Phi^K\rangle$ would behave very similar to the current partial
+  wave, while it would raise sharply towards the boundary of the
+  augmentation region.}
+
+%===============================================================================
+\subsection{Orthonormalization}
+%===============================================================================
+The local orbitals are approximately orthonormalized: For an isolated
+atom, the orbitals shall be orthonormal.
+
+The approximate orthonormalization is done by a Gram-Schmidt
+orthonormalization, so that the nature of the lowest states is almost
+preserved.
+
+
+
 %====================================================================
 \section{Coefficients of the tight-binding orbital}
 %====================================================================
+
+
+%=======================================================================
+\subsection{Fitting vs. projection}
+%=======================================================================
+%=======================================================================
+\subsubsection{Fitting}
+%=======================================================================
+The projections are determined such that the square deviation between
+the original wave functions and the local orbital representation is
+minimized. The mean square deviation is approximated by the partial
+wave expansions in the augmentation regions.
+\begin{eqnarray}
+F(\vec{q})\defas \Bigl(\langle\tilde{\psi}|-q\langle\tilde{\chi}|\Bigr)
+\Bigl(|\tilde{p}\rangle\langle\phi|\theta_\Omega|\phi\rangle\langle\tilde{p}|\Bigr)
+\Bigl(|\tilde{\psi}\rangle-|\tilde{\chi}\rangle q\Bigr)\stackrel{!}{=}\text{min}
+\end{eqnarray}
+
+\begin{eqnarray}
+\frac{dF}{dq^*}&=&-\langle\tilde{\chi}|\tilde{p}\rangle
+\langle\phi|\theta_\Omega|\phi\rangle
+\Bigl(
+\langle\tilde{p}|\tilde{\psi}\rangle-\langle\tilde{p}|\chi\rangle q\Bigr)
+\stackrel{!}{=}0
+\nonumber\\
+%
+%
+%
+&&\langle\tilde{\chi}|\tilde{p}\rangle
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle\tilde{p}|\tilde{\psi}\rangle
+=
+\langle\tilde{\chi}|\tilde{p}\rangle
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle\tilde{p}|\tilde\chi\rangle q
+\nonumber\\
+%
+%
+%
+q&=&\Bigl(\langle\tilde{\chi}|\tilde{p}\rangle
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle\tilde{p}|\tilde{\chi}\rangle\Bigr)^{-1}
+\langle\tilde{\chi}|\tilde{p}\rangle
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle\tilde{p}|\tilde{\psi}\rangle
+\nonumber\\
+%
+%
+%
+\langle\tilde{\pi}|&=&
+\Bigl(\langle\tilde{\chi}|\tilde{p}\rangle
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle\tilde{p}|\tilde{\chi}\rangle\Bigr)^{-1}
+\langle\tilde{\chi}|\tilde{p}\rangle
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle\tilde{p}|
+\label{eq:orbitalprojector}
+\end{eqnarray}
+
+
+%=======================================================================
+\subsubsection{Projection}
+%=======================================================================
+Here, I show that the fitting procedure described above is identical to
+a projection, with the integration limited to the partial wave
+expansion in the augmentation regions.
+\begin{eqnarray}
+\hat{P}^\chi|\Psi\rangle
+&=&|\chi\rangle\Bigl(\langle\chi|\chi\rangle\Bigr)^{-1}
+\langle\chi|\Psi\rangle
+\nonumber\\
+%
+%
+&\approx&|\chi\rangle\Bigl(\langle\chi|
+\Bigl(\sum_R \theta_{\Omega_R}\Bigr)
+|\chi\rangle\Bigr)^{-1}
+\langle\chi|\Bigl(\sum_R \theta_{\Omega_R}\Bigr)|\Psi\rangle
+\nonumber\\
+%
+%
+&\approx&|\chi\rangle\Bigl(\langle\tilde{\chi}|
+\Bigl(
+|\tilde{p}\rangle\langle\phi|\theta_{\Omega}|\phi\rangle\langle\tilde{p}|
+\Bigr)
+|\tilde{\chi}\rangle\Bigr)^{-1}
+\langle\tilde{\chi}|
+\Bigl(
+|\tilde{p}\rangle\langle\phi|\theta_{\Omega}|\phi\rangle\langle\tilde{p}|
+\Bigr)|\tilde{\Psi}\rangle
+\end{eqnarray}
+Thus, I obtain the identical form for the projector function as found
+above in \eq{eq:orbitalprojector} for the fitting.
+\begin{eqnarray}
+\langle\tilde{\pi}|&=&\Bigl(\langle\tilde{\chi}|\tilde{p}\rangle
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle\tilde{p}|\tilde{\chi}\rangle\Bigr)^{-1}
+\langle\tilde{\chi}|\tilde{p}\rangle
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle\tilde{p}|
+\end{eqnarray}
+
+
+
+
+
 %====================================================================
 \subsection{Introduction}
 %====================================================================
@@ -902,16 +799,6 @@ The forces acting on the occupations are, as usual, determined as
 \biggr]
 \end{eqnarray}
 
-%====================================================================
-\section{Tailed representation of the natural tight-binding orbitals}
-%====================================================================
-The tailed representation replaces the multi-center expansion of the
-natural tight-binding orbitals by a one-center expansion. The
-underlying idea the short-ranged tails of the screened orbitals can be
-approximatd by exponential tails, that are matched to the one-center
-expansion of the orbitals at the central site. Thus both the head and
-the tail functions centered on the central site are extended by a
-superposition of exponential tails.
 
 %====================================================================
 \section{How to choose the parameters}
@@ -1889,9 +1776,18 @@ which are set to zero outside the augmentation region.
 $|K^{\notin\Omega}_\alpha\rangle$ is the Hankelfunction at site
 $R_\alpha$ and angular momentum $L_\alpha$, which is nonzero only
 outside its central augmentation region.
+\begin{eqnarray}
+|K^I_\alpha\rangle= |K^{\notin\Omega_\alpha}_\alpha\rangle-
+-\sum_{\beta}
+\biggl(|\phi^J_{\beta}\rangle -|J_{\beta}\rangle\biggr)
+S^\dagger_{R_\beta,L_\beta,R_\alpha,L_\alpha}
+\end{eqnarray}
+
 
 A suitable definition for $\mat{c}$ is a matrix that produces
 orthonormal states for an isolated atom. Thus, it is an onsite matrix.
+It is constructed by a onsite-Gram-Schmidt decomposition.
+
 
 We introduce head and tail functions defined as
 \begin{eqnarray}
@@ -5009,8 +4905,7 @@ method of van Dooren and de
 Ridder\cite{vandooren76_jcomputapplmath2_207}.
 
 For comparison, see also the work of Romanowski and Jalbout.
-\cite{romanowski08_ijqc108_249,romanowski08_ijqc108_487,
-  romanowski08_ijqc108_1465 ,romanowski09_jmathchem46_97}
+\cite{romanowski08_ijqc108_249,romanowski08_ijqc108_487,romanowski08_ijqc108_1465,romanowski09_jmathchem46_97}
 
 
 
