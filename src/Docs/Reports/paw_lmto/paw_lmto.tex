@@ -280,12 +280,12 @@ Section \textit{Gradients of spherical harmonics}.
 \begin{eqnarray}
 \partial_{r_j} Y_L(\vec{r})=\sqrt{\frac{4\pi}{3}}\sum_{L'}
 C_{p_j,L,L'}\left[\frac{-\ell}{r}+\frac{2\ell+1}{r}\delta_{\ell',\ell-1}
-\right]Y_{\ell'}(\vec{r})
+\right]Y_{L'}(\vec{r})
 \end{eqnarray}
 
 
 For the product of a radial function $f(|\vec{r}|)$ and a spherical 
-harmonic I obtain
+harmonics, I obtain
 \begin{eqnarray}
 \partial_{r_j}\Bigl[f(|\vec{r}|) Y_L(\vec{r})\Bigr]
 =\sqrt{\frac{4\pi}{3}}\sum_{L'}
@@ -294,11 +294,13 @@ C_{p_j,L,L'}
 \frac{-\ell}{r}+\frac{2\ell+1}{r}\delta_{\ell',\ell-1}
 +\left.\partial_r\right|_{r=\sqrt{\vec{r}^2}} 
 \right]
-f(|\vec{r}|)Y_{\ell'}(\vec{r})
+f(|\vec{r}|)Y_{L'}(\vec{r})
 \end{eqnarray}
 
-
-
+I used
+\begin{eqnarray}
+  Y_{p_j}(\vec{r})=\sqrt{\frac{3}{4\pi}}\frac{r_j}{|\vec{r}|}
+\end{eqnarray}
 
 %====================================================================
 \section{Augmentation and Potential parameters}
@@ -476,6 +478,13 @@ preserved.
 %=======================================================================
 \subsection{Fitting vs. projection}
 %=======================================================================
+In this section I show that fitting and projection lead to the same
+result, if the integrations are limited to the partial wave
+expansions. In this section, I use an implicit vector notation to make
+the the underlying content evident. However, this notation may not be
+unambigous.
+
+
 %=======================================================================
 \subsubsection{Fitting}
 %=======================================================================
@@ -573,11 +582,8 @@ above in \eq{eq:orbitalprojector} for the fitting.
 \end{eqnarray}
 
 
-
-
-
 %====================================================================
-\subsection{Introduction}
+\subsection{Local-orbital projection (Explicit derivation)}
 %====================================================================
 In this section, I describe how to determine the wave functions in
 terms of local orbitals, if the projections
@@ -689,7 +695,9 @@ This allows one to write the wave function in the form
 with
 \begin{eqnarray}
 \langle\tilde{\pi}_\alpha|=
-\sum_\gamma \biggl[
+\sum_\gamma 
+\underbrace{
+\biggl[
 \sum_{\gamma',\delta'}
 \langle\tilde{\chi}_\alpha|\tilde{p}_{\delta'}\rangle
 \langle\phi_{\delta'}|\theta_{\Omega_{R_\delta}}|\phi_{\gamma'}\rangle
@@ -700,6 +708,10 @@ with
 \langle\tilde{\chi}_\alpha|\tilde{p}_\delta\rangle
 \langle\phi_\delta|\theta_{\Omega_{R_\delta}}|\phi_\gamma\rangle
 \biggr]
+}_{
+=:\langle\tilde{\pi}_\alpha|\tilde{\phi}_\gamma\rangle
+:=\langle\pi_\alpha|\phi_\gamma\rangle
+}
 \langle\tilde{p}_\gamma|
 \label{eq:pitilde}
 \end{eqnarray}
@@ -710,94 +722,673 @@ functions $\langle{p}_\gamma|$. Because of the inversion, The
 multicenter expansion for the projector function is long-ranged so
 that this expression needs to be evaluated in a Bloch representation.
 
-%===============================================================================
-\subsection{Transformation between local-orbital and partial-wave projections}
-%===============================================================================
+%====================================================================
+\section{Transformation of density matrix and Hamiltonian}
+%====================================================================
 In the previous section, I derived in \eq{eq:pitilde} a relation
 between orbital and partial wave projector functions.
 \begin{eqnarray}
 \langle\tilde{\pi}_\alpha|\tilde{\psi}_n\rangle
-&=&\sum_\beta M_{\alpha,\beta}\langle\tilde{p}_\alpha|\tilde{\psi}_n\rangle
+&=&\sum_\beta 
+\underbrace{\langle\pi_\alpha|\phi_\beta\rangle}
+_{:=\langle\tilde{\pi}_\alpha|\tilde{\phi}_\beta\rangle}
+\langle\tilde{p}_\beta|\tilde{\psi}_n\rangle
 \end{eqnarray}
-This operation is performed in \verb|lmto$projtontbo| with \verb|ID='FWRD'|
+This operation is performed in \verb|simplelmto_denmatphitochi| 
+
+\begin{eqnarray}
+\hat{\rho}&=&\sum_n|\psi_n\rangle f_n\langle\psi_n|
+\approx
+\begin{cases}
+\sum_{\alpha,\beta}|\phi_\alpha\rangle 
+\rho^{\varphi}_{\alpha,\beta}\langle\phi_\beta|
+\\
+\sum_{\alpha,\beta}|\chi_\alpha\rangle 
+\rho^{\chi}_{\alpha,\beta}\langle\chi_\beta|
+\end{cases}
+\end{eqnarray}
+where
+\begin{eqnarray}
+\rho^{\varphi}_{\alpha,\beta}
+&\defas&\langle{p}_\alpha|\hat{\rho}|p_\beta\rangle
+=\langle\tilde{p}_\alpha|\tilde{\psi}_n\rangle f_n
+\langle\tilde{\psi}_n|\tilde{p}_\beta\rangle
+\\
+\rho^{\chi}_{\alpha,\beta}
+&\defas&\langle\pi_\alpha|\hat{\rho}|\pi_\beta\rangle
+=\sum_{\gamma,\delta}
+\langle\pi_\alpha|\phi_\gamma\rangle\rho^{\varphi}_{\gamma,\delta}
+\langle\phi_\delta|\pi_\beta\rangle
+\end{eqnarray}
 
 The derivatives are correspondingly derived as 
 \begin{eqnarray}
-dE&=&\sum_{\alpha,\beta}\underbrace{\frac{dE}{d\rho_{\alpha,\beta}}}
-_{=:h_{\beta,\alpha}}d\rho_{\alpha,\beta}
+dE
+&=&\sum_{\alpha,\beta}\underbrace{\frac{dE}{d\rho^{\chi}_{\alpha,\beta}}}
+_{=:h^{\chi}_{\beta,\alpha}}d\rho^{\chi}_{\alpha,\beta}
 \nonumber\\
-&=&\sum_{\alpha,\beta}h_{\beta,\alpha}
-\Bigl[
-\sum_n\langle\pi_\alpha|d\psi_n\rangle f_n\langle\psi_n|\pi_\beta\rangle
-+\sum_n\langle\pi_\alpha|\psi_n\rangle df_n\langle\psi_n|\pi_\beta\rangle
-+\sum_n\langle\pi_\alpha|\psi_n\rangle f_n\langle{d}\psi_n|\pi_\beta\rangle
-\Bigr]
-\nonumber\\
-&=&\sum_n\sum_{\alpha}
-f_n
-\underbrace{\sum_{\beta}
-\langle\psi_n|\pi_\beta\rangle h_{\beta,\alpha}}_{HTBC^\dagger_{n,\alpha}}
-\langle\pi_\alpha|d\psi_n\rangle 
+%
+%
+&=&\sum_{\alpha,\beta}
+\underbrace{\frac{dE}{d\rho^{\chi}_{\alpha,\beta}}}
+_{=:h^{\chi}_{\beta,\alpha}}
+\sum_{\gamma,\delta}
+\biggl(
+\Bigl(d\langle\pi_\alpha|\phi_\gamma\rangle\Bigr)
+\rho^{\varphi}_{\gamma,\delta}
+\langle\phi_\delta|\pi_\beta\rangle
 +
-\sum_n\sum_{\beta}
-\langle{d}\psi_n|\pi_\beta\rangle 
-\underbrace{\sum_{\alpha}h_{\beta,\alpha} \langle\pi_\alpha|\psi_n\rangle}_{HTBC_{\beta,n}} f_n
+\langle\pi_\alpha|\phi_\gamma\rangle
+d\rho^{\varphi}_{\gamma,\delta}
+\langle\phi_\delta|\pi_\beta\rangle
++
+\langle\pi_\alpha|\phi_\gamma\rangle
+\rho^{\varphi}_{\gamma,\delta}
+\Bigl(d\langle\phi_\delta|\pi_\beta\rangle\Bigr)
+\biggr)
+\nonumber\\
+%
+%
+&=&
+\sum_{\gamma,\delta}
+\underbrace{\biggl(
+\sum_{\alpha,\beta}
+\langle\phi_\delta|\pi_\beta\rangle
+\underbrace{\frac{dE}{d\rho^{\chi}_{\alpha,\beta}}}
+_{=:h^{\chi}_{\beta,\alpha}}
+\langle\pi_\alpha|\phi_\gamma\rangle
+\biggr)}_{h^{\varphi}_{\delta,\gamma}}
+d\rho^{\varphi}_{\gamma,\delta}
 \nonumber\\
 &&+
-\sum_n\sum_{\beta}
-\langle\psi_n|\pi_\beta\rangle 
-\underbrace{\sum_{\alpha}h_{\beta,\alpha} \langle\pi_\alpha|\psi_n\rangle}_{HTBC_{\beta,n}} df_n
-\nonumber\\
-&=&\sum_n\sum_{\gamma}
-f_n
-\underbrace{\sum_{\alpha}
-\underbrace{\sum_{\beta}
-\langle\psi_n|\pi_\beta\rangle h_{\beta,\alpha}}_{HTBC^\dagger_{n,\alpha}}
-M_{\alpha,\gamma}}_{HPROJ^\dagger_{n,\gamma}}
-\langle\tilde{p}_\gamma|d\tilde{\psi}_n\rangle 
+\sum_{\alpha,\beta,\gamma,\delta}
+\rho^{\varphi}_{\gamma,\delta}
+\langle\phi_\delta|\pi_\beta\rangle
+\underbrace{\frac{dE}{d\rho^{\chi}_{\alpha,\beta}}}
+_{=:h^{\chi}_{\beta,\alpha}}
+\Bigl(d\langle\pi_\alpha|\phi_\gamma\rangle\Bigr)
 +
-\sum_n\sum_{\gamma}
-\langle{d}\tilde{\psi}_n|\tilde{p}_\gamma\rangle 
-\underbrace{
-\sum_{\beta}M^\dagger_{\gamma,\beta}
-\underbrace{\sum_{\alpha}h_{\beta,\alpha} \langle\pi_\alpha|\psi_n\rangle}_{HTBC_{\beta,n}}}_{HPROJ_{\gamma,n}} f_n
+\sum_{\alpha,\beta,\gamma,\delta}
+\underbrace{\frac{dE}{d\rho^{\chi}_{\alpha,\beta}}}
+_{=:h^{\chi}_{\beta,\alpha}}
+\langle\pi_\alpha|\phi_\gamma\rangle
+\rho^{\varphi}_{\gamma,\delta}
+\Bigl(d\langle\phi_\delta|\pi_\beta\rangle\Bigr)
+\nonumber\\
+%
+%
+&=&
+\sum_{\gamma,\delta}
+h^{\varphi}_{\delta,\gamma}d\rho^{\varphi}_{\gamma,\delta}
+\nonumber\\
+&&+
+\sum_{\alpha,\beta,\gamma,\delta}
+\rho^{\varphi}_{\gamma,\delta}
+\langle\phi_\delta|\pi_\beta\rangle
+\underbrace{\frac{dE}{d\rho^{\chi}_{\alpha,\beta}}}
+_{=:h^{\chi}_{\beta,\alpha}}
+\Bigl(d\langle\pi_\alpha|\phi_\gamma\rangle\Bigr)
++
+\sum_{\alpha,\beta,\gamma,\delta}
+\underbrace{\frac{dE}{d\rho^{\chi}_{\alpha,\beta}}}
+_{=:h^{\chi}_{\beta,\alpha}}
+\langle\pi_\alpha|\phi_\gamma\rangle
+\rho^{\varphi}_{\gamma,\delta}
+\Bigl(d\langle\phi_\delta|\pi_\beta\rangle\Bigr)
+\nonumber\\
+%
+%
+&=&
+\sum_{\gamma,\delta}
+h^{\varphi}_{\delta,\gamma}d\rho^{\varphi}_{\gamma,\delta}
++
+\sum_{j=1}^{3M} 
+\underbrace{2\Re\biggl\lbrace
+\sum_{\alpha,\beta,\gamma,\delta}
+\rho^{\varphi}_{\gamma,\delta}
+\langle\phi_\delta|\pi_\beta\rangle
+h^{\chi}_{\beta,\alpha}
+\frac{d\langle\pi_\alpha|\phi_\gamma\rangle}{dR_j}
+\biggr\rbrace}_{-F^{S}_j} dR_j
+\nonumber\\
+%
+%
+&=&
+\sum_{\gamma,\delta}
+h^{\varphi}_{\delta,\gamma}d\rho^{\varphi}_{\gamma,\delta}
+-\sum_{j=1}^{3M} F^{S}_j dR_j
+\end{eqnarray}
+where
+\begin{eqnarray}
+h^{\varphi}_{\beta,\alpha}
+&\defas&\sum_{\alpha,\beta}
+\langle\phi_\delta|\pi_\beta\rangle
+\frac{dE}{d\rho^{\chi}_{\alpha,\beta}}
+\nonumber\\
+%
+%
+h^{\varphi}_{\delta,\gamma}
+&\defas&
+\sum_{\alpha,\beta}
+\langle\phi_\delta|\pi_\beta\rangle
+h^{\chi}_{\beta,\alpha}
+\langle\pi_\alpha|\phi_\gamma\rangle
+\nonumber\\
+%
+%
+F^{S}_j&\defas&
+-2\Re\biggl\lbrace
+\sum_{\alpha,\beta,\gamma,\delta}
+\rho^{\varphi}_{\gamma,\delta}
+\langle\phi_\delta|\pi_\beta\rangle
+h^{\chi}_{\beta,\alpha}
+\frac{d\langle\pi_\alpha|\phi_\gamma\rangle}{dR_j}
+\biggr\rbrace
+\end{eqnarray}
+
+
+%====================================================================
+\section{Approximations}
+%====================================================================
+The key to efficiency is to limit the multicenter
+expansions. ThereforeI introduce a number of approximations.
+
+All multicenter expansions in the total energy are linearized in the
+offsite terms.
+
+%====================================================================
+\subsection{Limitation of off-center terms to NDDO and 31}
+%====================================================================
+
+%====================================================================
+\subsection{Transformation between local-orbital 
+and partial-wave expansions}
+%====================================================================
+Given the transformation matrix elements $\langle\pi|\phi\rangle$ and
+its derivatives with respect to atomic positions, we limit the
+multi-center expansion of the density matrix: We include only terms
+which are
+\begin{itemize}
+\item at most quadratic in the offsite terms of
+  $\langle\pi|\phi\rangle$ and $\mat{\rho}^{\varphi}$
+\item Furthermore, \textcolor{blue}{terms which are quadratic in the off-site
+  $\langle\pi|\phi\rangle$ terms are excluded}
+\end{itemize}
+
+%====================================================================
+\subsection{Transform of the density matrix from partial waves 
+to local orbitals}
+%====================================================================
+The following describes the terms, where ``forward'' and ``back'' as
+well as ``offsite'' exclude onsite terms.
+\begin{eqnarray}
+\underbrace{\rho^{\chi}_{\alpha,\beta}}_{\text{onsite}}
+&=& 
+\sum_{\gamma,\delta}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{onsite}}
+\underbrace{\rho^{\varphi}_{\gamma,\delta}}_{\text{onsite}}
+\underbrace{\langle\phi_\delta|\pi_\beta\rangle}_{\text{onsite}}
 \nonumber\\
 &+&
-\sum_ndf_n\sum_{\gamma}
-\langle\tilde{\psi}_n|\tilde{p}_\gamma\rangle 
+\sum_{\gamma,\delta}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{onsite}}
+\underbrace{\rho^{\varphi}_{\gamma,\delta}}_{\text{forward}}
+\underbrace{\langle\phi_\delta|\pi_\beta\rangle}_{\text{back}}
++
+\textcolor{blue}{\overbrace{
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{forward}}
+\underbrace{\rho^{\varphi}_{\gamma,\delta}}_{\text{onsite}}
+\underbrace{\langle\phi_\delta|\pi_\beta\rangle}_{\text{back}}
+}^{\text{not included}}}
++
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{forward}}
+\underbrace{\rho^{\varphi}_{\gamma,\delta}}_{\text{back}}
+\underbrace{\langle\phi_\delta|\pi_\beta\rangle}_{\text{onsite}}
+\nonumber\\
+%
+%
+\underbrace{\rho^{\chi}_{\alpha,\beta}}_{\text{offsite}}
+&=& 
+\sum_{\gamma,\delta}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{offsite}}
+\underbrace{\rho^{\varphi}_{\gamma,\delta}}_{\text{onsite}}
+\underbrace{\langle\phi_\delta|\pi_\beta\rangle}_{\text{onsite}}
++
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{onsite}}
+\underbrace{\rho^{\varphi}_{\gamma,\delta}}_{\text{offsite}}
+\underbrace{\langle\phi_\delta|\pi_\beta\rangle}_{\text{onsite}}
++
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{onsite}}
+\underbrace{\rho^{\varphi}_{\gamma,\delta}}_{\text{onsite}}
+\underbrace{\langle\phi_\delta|\pi_\beta\rangle}_{\text{offsite}}
+\end{eqnarray}
+
+%====================================================================
+\subsection{Hamiltonian and forces}
+%====================================================================
+
+Forces and the Hamiltonian $h^{\varphi}$ are obtained from the first
+variation of the total energy.
+\begin{eqnarray}
+dE&=&
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{onsite}}
+\underbrace{d\rho^{\chi}_{\alpha,\beta}}_{\text{onsite}}
++
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{offsite}}
+\underbrace{d\rho^{\chi}_{\alpha,\beta}}_{\text{offsite}}
+\nonumber\\
+%
+%
+%
+&=&
+\biggl\lbrace
+\underbrace{\langle\phi_\delta|\pi_\beta\rangle}_{\text{onsite}}
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{onsite}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{onsite}}
++
+\textcolor{blue}{\overbrace{
+\underbrace{\langle\phi_\delta|\pi_\beta\rangle}_{\text{back}}
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{onsite}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{forward}}
+}^{\text{not included}}}
++
+\underbrace{\langle\phi_\delta|\pi_\beta\rangle}_{\text{onsite}}
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{forward}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{back}}
+\nonumber\\
+&&+
+\underbrace{\langle\phi_\delta|\pi_\beta\rangle}_{\text{forward}}
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{back}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{onsite}}
+\biggr\rbrace
+\underbrace{d\rho^{\varphi}_{\gamma,\delta}}_{\text{onsite}}
++
+\biggl\lbrace
+\underbrace{\langle\phi_\delta|\pi_\beta\rangle}_{\text{offsite}}
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{onsite}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{onsite}}
++
+\underbrace{\langle\phi_\delta|\pi_\beta\rangle}_{\text{onsite}}
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{onsite}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{offsite}}
+\nonumber\\
+&&+
+\underbrace{\langle\phi_\delta|\pi_\beta\rangle}_{\text{onsite}}
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{offsite}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{onsite}}
+%% +
+%% \underbrace{\langle\phi_\delta|\pi_\beta\rangle}_{\text{offsite}}
+%% \underbrace{h^{\chi}_{\beta,\alpha}}_{\text{onsite}}
+%% \underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{onsite}}
+\biggr\rbrace
+\underbrace{d\rho^{\varphi}_{\gamma,\delta}}_{\text{offsite}}
++
+\sum_j2\Re\Biggl[\biggl\lbrace
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{onsite}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{onsite}}
+\underbrace{\rho^{\varphi}_{\gamma,\delta}}_{\text{onsite}}
+\nonumber\\
+&&+
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{onsite}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{forward}}
+\underbrace{\rho^{\varphi}_{\gamma,\delta}}_{\text{back}}
++
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{forward}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{back}}
+\underbrace{\rho^{\varphi}_{\gamma,\delta}}_{\text{onsite}}
++
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{forward}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{onsite}}
+\underbrace{\rho^{\varphi}_{\gamma,\delta}}_{\text{back}}
+%
+\biggr\rbrace 
+\underbrace{\frac{\langle\phi_\delta|\pi_\beta\rangle}{dR_j}}_{\text{onsite}}
+\nonumber\\
+&&+
+\sum_j\biggl\lbrace
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{onsite}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{onsite}}
+\underbrace{\rho^{\varphi}_{\gamma,\delta}}_{\text{back}}
++
+\textcolor{blue}{\overbrace{
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{onsite}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{back}}
+\underbrace{\rho^{\varphi}_{\gamma,\delta}}_{\text{onsite}}
+}^{\text{not included}}}
++
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{back}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{onsite}}
+\underbrace{\rho^{\varphi}_{\gamma,\delta}}_{\text{onsite}}
+%
+\biggr\rbrace 
 \underbrace{
-\sum_{\beta}M^\dagger_{\gamma,\beta}
-\underbrace{\sum_{\alpha}h_{\beta,\alpha} \langle\pi_\alpha|\psi_n\rangle}_{HTBC_{\beta,n}}}_{HPROJ_{\gamma,n}} 
-\end{eqnarray}
-
-Thus, we first define the Hamiltonian $\mat{h}$ (HAMIL) 
-\begin{eqnarray}
-\underbrace{h_{\alpha,\beta}}_{HAMIL}&=&\frac{dE}{\rho_{\beta,\alpha}}
+\frac{\langle\phi_\delta|\pi_\beta\rangle}{dR_j}
+}_{\text{forward}}
+\Biggr]
+dR_j
 \nonumber\\
-HTBC_{\beta,n}&=&
-\sum_\alpha \underbrace{h_{\beta,\alpha}}_{HAMIL}
-\underbrace{\langle\tilde{\pi}_\alpha|\tilde{\psi}_n\rangle}_{TBC_{\alpha,n}}
+\end{eqnarray}
+
+Thus we obtain the Hamiltonian and forces as
+\begin{eqnarray}
+h^{\varphi}_{\gamma,\delta}
+&=&\frac{dE}{d\rho^{\varphi}_{\delta,\gamma}}
+=\left(\frac{dE}{d\rho^{\varphi}}\right)^\dagger_{\gamma,\delta}
+=\frac{dE}{d\rho^{\varphi}_{\gamma,\delta}}
 \nonumber\\
-HPROJ_{\gamma,n}&=&\sum_\beta M^\dagger_{\gamma,\beta}\cdot HTBC_{\beta,n}
+\underbrace{h^{\varphi}_{\gamma,\delta}}_{\text{onsite}}
+&=&
+\underbrace{\langle\phi_\delta|\pi_\beta\rangle}_{\text{onsite}}
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{onsite}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{onsite}}
++
+\textcolor{blue}{\overbrace{
+\underbrace{\langle\phi_\delta|\pi_\beta\rangle}_{\text{back}}
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{onsite}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{forward}}
+}^{\text{not included}}}
++
+\underbrace{\langle\phi_\delta|\pi_\beta\rangle}_{\text{onsite}}
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{forward}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{back}}
+\nonumber\\
+&&+
+\underbrace{\langle\phi_\delta|\pi_\beta\rangle}_{\text{forward}}
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{back}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{onsite}}
+\nonumber\\
+%
+%
+%
+\underbrace{h^{\varphi}_{\gamma,\delta}}_{\text{offsite}}
+&=&
+\underbrace{\langle\phi_\delta|\pi_\beta\rangle}_{\text{offsite}}
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{onsite}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{onsite}}
++
+\underbrace{\langle\phi_\delta|\pi_\beta\rangle}_{\text{onsite}}
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{onsite}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{offsite}}
++
+\underbrace{\langle\phi_\delta|\pi_\beta\rangle}_{\text{onsite}}
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{offsite}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{onsite}}
+\nonumber\\
+%
+%
+%
+-F_j&=&
+2\Re\Biggl[\biggl\lbrace
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{onsite}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{onsite}}
+\underbrace{\rho^{\varphi}_{\gamma,\delta}}_{\text{onsite}}
+\nonumber\\
+&&+
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{onsite}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{forward}}
+\underbrace{\rho^{\varphi}_{\gamma,\delta}}_{\text{back}}
++
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{forward}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{back}}
+\underbrace{\rho^{\varphi}_{\gamma,\delta}}_{\text{onsite}}
++
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{forward}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{onsite}}
+\underbrace{\rho^{\varphi}_{\gamma,\delta}}_{\text{back}}
+%
+\biggr\rbrace 
+\underbrace{\frac{\langle\phi_\delta|\pi_\beta\rangle}{dR_j}}_{\text{onsite}}
+\nonumber\\
+&&+
+\sum_j\biggl\lbrace
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{onsite}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{onsite}}
+\underbrace{\rho^{\varphi}_{\gamma,\delta}}_{\text{back}}
++
+\textcolor{blue}{\overbrace{
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{onsite}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{back}}
+\underbrace{\rho^{\varphi}_{\gamma,\delta}}_{\text{onsite}}
+}^{\text{not included}}}
++
+\underbrace{h^{\chi}_{\beta,\alpha}}_{\text{back}}
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{onsite}}
+\underbrace{\rho^{\varphi}_{\gamma,\delta}}_{\text{onsite}}
+%
+\biggr\rbrace 
+\underbrace{
+\frac{\langle\phi_\delta|\pi_\beta\rangle}{dR_j}
+}_{\text{forward}}
+\Biggr]
+\nonumber\\
 \end{eqnarray}
 
-This operation is performed in
-\verb|lmto$projtontbo| with \verb|ID='BACK'|.
+the hamiltonian $h^{\varphi}$ is calculated in
+\verb|SIMPLELMTO_DENMATPHITOCHI2| with \verb|ID='back'|.
+
+Using the linearized form of $\langle\pi|\phi\rangle$ in the structure
+constants, the onsite terms of $d\langle\pi|\phi\rangle/dR$ vanish.
+The forces are calculated in the routine \verb|SIMPLELMTO_FORCEPHITOCHI|.
 
 
-Then the forces on the wave functions 
+
+%====================================================================
+\subsection{Linearization of the transformation 
+in the structure constants}
+%====================================================================
+To linear order in the structure constants, I obtain the projector as
 \begin{eqnarray}
-\sum_{\gamma}
-\frac{1}{f_n}\frac{\delta \Delta E}{\delta\langle\psi_n|}
-=|\tilde{p}_\gamma\rangle HPROJ_{\gamma,n}
-\end{eqnarray}
-The forces acting on the occupations are, as usual, determined as
-\begin{eqnarray}
-\frac{\partial E}{\partial f_n}=\langle\psi_n|
+\langle\pi|
+&=& 
+\biggl\lbrace
+\langle\phi^H|\theta_\Omega|\phi^H\rangle
+-\mat{c}^\dagger\mat{S}\langle\phi^J|\theta_\Omega|\phi^H\rangle
+-\langle\phi^H|\theta_\Omega|\phi^J\rangle\mat{S}^\dagger\mat{c}
++\mat{c}^\dagger\mat{S}\langle\phi^J|\theta_\Omega
+|\phi^J\rangle\mat{S}^\dagger\mat{c}
+\biggr\rbrace^{-1}
+\nonumber\\
+%
+&&\times\Bigl(\langle\phi^H|p\rangle
+-\mat{c}^\dagger\mat{S}\langle\phi^J|p\rangle\Bigr)
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle{p}|
+\nonumber\\
+%
+%
+%
+&\approx& 
+\biggl\lbrace
+\Bigl(\langle\phi^H|\theta_\Omega|\phi^H\rangle\Bigr)^{-1}
+-
+\Bigl(\langle\phi^H|\theta_\Omega|\phi^H\rangle\Bigr)^{-1}
+\Bigl(
+-\mat{c}^\dagger\mat{S}\langle\phi^J|\theta_\Omega|\phi^H\rangle
+-\langle\phi^H|\theta_\Omega|\phi^J\rangle\mat{S}^\dagger\mat{c}
+\Bigr)
+\Bigl(\langle\phi^H|\theta_\Omega|\phi^H\rangle\Bigr)^{-1}
+\biggr\rbrace
+\nonumber\\
+%
+&&\times
+\Bigl(
+\langle\phi^H|p\rangle-\mat{c}^\dagger\mat{S}\langle\phi^J|p\rangle
+\Bigr)
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle{p}|
+\nonumber\\
+%
+%
+%
+&\approx& 
+\Bigl(\langle\phi^H|\theta_\Omega|\phi^H\rangle\Bigr)^{-1}
+\biggl\lbrace
+\langle\phi^H|p\rangle
+-
+\mat{c}^\dagger\mat{S}
 \biggl[
-\frac{1}{f_n}\frac{\delta E}{\delta\langle\psi_n|}
-\biggr]
+\langle\phi^J|p\rangle
+-
+\langle\phi^J|\theta_\Omega|\phi^H\rangle
+\Bigl(\langle\phi^H|\theta_\Omega|\phi^H\rangle\Bigr)^{-1}
+\langle\phi^H|p\rangle\biggr]
+\nonumber\\
+&&+\langle\phi^H|\theta_\Omega|\phi^J\rangle\mat{S}^\dagger\mat{c}
+\Bigl(\langle\phi^H|\theta_\Omega|\phi^H\rangle\Bigr)^{-1}
+\langle\phi^H|p\rangle
+\biggr\rbrace
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle{p}|
 \end{eqnarray}
+
+
+We define the quantity
+\begin{eqnarray}
+\langle\pi|=\langle\pi|\phi\rangle\langle{p}|
+\end{eqnarray}
+
+The following variables are constructed in \verb|SIMPLELMTO_DEMATPHITOCHI2|.
+(translated from code)
+\begin{eqnarray}
+\text{PHIHHOV:} && 
+\langle\phi^H|\theta_\Omega|\phi^H\rangle
+=\langle\phi^H|p\rangle
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle{p}|\phi^H\rangle
+\nonumber\\
+%
+\text{PHIHHOVINV:} && \langle\phi^H|\theta_\Omega|\phi^H\rangle^{-1}
+\nonumber\\
+%
+\text{PHIHTOV:} && \langle\phi^H|\theta_\Omega|\phi^T\rangle
+=\langle\phi^H|p\rangle
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle{p}|\phi^T\rangle
+\nonumber\\
+%
+\langle\pi|\phi\rangle&=&
+\langle\phi^H|\theta_\Omega|\phi^H\rangle^{-1}
+\biggl[
+\langle\tilde{\phi}^H|\tilde{p}\rangle
+\biggr] \langle\phi|\theta_\Omega|\phi\rangle
+\qquad\text{for $R_\alpha=R_\beta$}
+\nonumber\\
+%
+%
+\langle\pi|\phi\rangle&=&
+\langle\phi^H|\theta_\Omega|\phi^H\rangle^{-1}
+\biggl[
+\mat{c}^\dagger\mat{S}
+\Bigl(
+\langle{p}|\phi^T\rangle
+-\langle{p}|\phi^H\rangle
+\langle\phi^H|\theta_\Omega|\phi^H\rangle^{-1}
+\langle\phi^H|\theta_\Omega|\phi^T\rangle\Bigr)^\dagger
+\nonumber\\
+&&+
+\langle\phi^H|\theta_\Omega|\phi^T\rangle\mat{S}^\dagger\mat{c}
+\langle\phi^H|\theta_\Omega|\phi^H\rangle^{-1}
+\langle\phi^H|{p}\rangle
+\biggr] \langle\phi|\theta_\Omega|\phi\rangle
+\qquad\text{for $R_\alpha\neq R_\beta$}
+\end{eqnarray}
+
+
+%====================================================================
+\section{Expressions}
+%====================================================================
+\textcolor{blue}{This section is too code specific and should be
+  somewhere else}
+
+
+\begin{eqnarray}
+\langle{p}_\alpha|\chi_\beta\rangle&=&
+\langle{p}_\alpha|\phi^H_\beta\rangle
+-
+\sum_{\gamma,\delta}
+\langle{p}_\alpha|\phi^T_{\gamma}\rangle 
+\underbrace{S^\dagger_{R_\gamma,L_\gamma,R_\delta,L_\delta}
+}_{S^*_{R_\delta,L_\delta,R_\gamma,L_\gamma}}
+c_{\delta,\beta}
+\nonumber\\
+%
+\langle{\chi}_\alpha|p_\beta\rangle&=&
+\langle\phi^H_\alpha|p_\beta\rangle
+-
+\sum_{\gamma,\delta}
+c^\dagger_{\alpha,\delta}
+S_{R_\delta,L_\delta,R_\gamma,L_\gamma}
+\langle\phi^T_\gamma|p_{\beta}\rangle 
+\end{eqnarray}
+
+
+\begin{eqnarray}
+\langle\pi|&=& 
+\biggl\lbrace
+\langle\phi^H|\theta_\Omega|\phi^H\rangle
+-\mat{c}^\dagger\mat{S}\langle\phi^J|\theta_\Omega|\phi^H\rangle
+-\langle\phi^H|\theta_\Omega|\phi^J\rangle\mat{S}^\dagger\mat{c}
++\mat{c}^\dagger\mat{S}\langle\phi^J|\theta_\Omega
+|\phi^J\rangle\mat{S}^\dagger\mat{c}
+\biggr\rbrace^{-1}
+\nonumber\\
+%
+&&\times\Bigl(\langle\phi^H|p\rangle
+-\mat{c}^\dagger\mat{S}\langle\phi^J|p\rangle\Bigr)
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle{p}|
+\end{eqnarray}
+where I used the short-hand notation
+\begin{eqnarray}
+\langle\phi^H|\theta_\Omega|\phi^H\rangle&=&
+\langle\tilde{\phi}^H|\tilde{p}\rangle
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle\tilde{p}|\tilde{\phi}^H\rangle
+ \nonumber\\
+%
+%
+\langle\phi^H|\theta_\Omega|\phi^J\rangle
+&=&
+\langle\tilde{\phi}^H|\tilde{p}\rangle
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle\tilde{p}|\tilde{\phi}^J\rangle
+\nonumber\\
+%
+%
+\langle\phi^J|\theta_\Omega|\phi^J\rangle
+&=&
+\langle\tilde{\phi}^J|\tilde{p}\rangle
+\langle\phi|\theta_\Omega|\phi\rangle
+\langle\tilde{p}|\tilde{\phi}^J\rangle
+\end{eqnarray}
+
+
+The following variables are calculated in \verb|SIMPLELMTO_MAKECHI1|
+and supplied by the variable-sttructure \verb|potpar| in the
+\verb|simplelmto_module|.
+
+\begin{eqnarray}
+\text{AEPHIH:}\qquad&&   \langle\vec{r}|\phi^H\rangle
+\nonumber\\
+\text{AEPHIT:}\qquad &&  \langle\vec{r}|\phi^T\rangle
+=\langle\vec{r}|\phi^J\rangle
+\nonumber\\
+\text{AECHI:}\qquad&&   \langle\vec{r}|\chi\rangle
+\nonumber\\
+\text{PROPHIH:}\qquad&&   \langle\tilde{p}|\tilde{\phi}^H\rangle
+\nonumber\\
+\text{PROPHIT:}\qquad&&   \langle\tilde{p}|\tilde{\phi}^T\rangle
+\nonumber\\
+\text{PHIOV:}\qquad&&   \langle\phi|\theta_\Omega|\phi\rangle
+\nonumber\\
+\text{CMAT:}\qquad&&    |\chi_\beta\rangle
+\leftarrow |K_\beta\rangle c_{\alpha,\beta}
+\end{eqnarray}
+The partial-wave overlap $\langle\phi|\theta_\Omega|\phi\rangle$ is
+calculated by integration up to the ASA radius. The latter is defined
+in the present code as the covalent radius of the element scaled up by
+the ratio between between the radii of volume filling and touching 
+spheres.
 
 
 %====================================================================
@@ -1747,385 +2338,21 @@ of so rapidly, that they are almost zero at the nuclear site of the
 neighboring atoms.
 
 
-%=======================================================================
-\section{Local orbitals}
-%=======================================================================
-Local orbitals are augmented Hankelfunctions
-\begin{eqnarray}
-|\chi_\gamma\rangle&=&
-\sum_\alpha \biggl\lbrace
-\underbrace{
-|\phi^{K}_{\alpha}\rangle+ |K^{\notin\Omega_\alpha}_\alpha\rangle
-}_{\text{R-independent}}
-\underbrace{
--\sum_{\beta}
-\biggl(|\phi^J_{\beta}\rangle -|J_{\beta}\rangle\biggr)
-S^\dagger_{R_\beta,L_\beta,R_\alpha,L_\alpha}}_{\text{R-dependent and small}}
-\biggr\rbrace c_{\alpha,\gamma}
-\nonumber\\
-&=&\sum_\alpha \biggl\lbrace
-|\phi^{K}_{\alpha}\rangle
--\sum_{\beta}
-|\phi^J_{\beta}\rangle S^\dagger_{R_\beta,L_\beta,R_\alpha,L_\alpha}
-+ |K^{I}_\alpha\rangle
-\biggr\rbrace c_{\alpha,\gamma}
-\end{eqnarray}
-Here, $|\phi^K_\alpha\rangle$ is a superposition of partial waves,
-which match at the augmentation radius to $|K_\alpha\rangle$, and
-which are set to zero outside the augmentation region.
-$|K^{\notin\Omega}_\alpha\rangle$ is the Hankelfunction at site
-$R_\alpha$ and angular momentum $L_\alpha$, which is nonzero only
-outside its central augmentation region.
-\begin{eqnarray}
-|K^I_\alpha\rangle= |K^{\notin\Omega_\alpha}_\alpha\rangle-
--\sum_{\beta}
-\biggl(|\phi^J_{\beta}\rangle -|J_{\beta}\rangle\biggr)
-S^\dagger_{R_\beta,L_\beta,R_\alpha,L_\alpha}
-\end{eqnarray}
-
-
-A suitable definition for $\mat{c}$ is a matrix that produces
-orthonormal states for an isolated atom. Thus, it is an onsite matrix.
-It is constructed by a onsite-Gram-Schmidt decomposition.
-
-
-We introduce head and tail functions defined as
-\begin{eqnarray}
-|\phi^H_\alpha\rangle&=&\sum_{\beta; R_\beta=R_\alpha}
-|\phi^K_\beta\rangle c_{\beta,\alpha}
-\nonumber\\
-|\phi^T_\alpha\rangle&=&|\phi^J_\alpha\rangle
-\end{eqnarray}
-so that
-\begin{eqnarray}
-|\chi_\gamma\rangle&=&
-|\phi^{H}_{\gamma}\rangle
--\sum_{\alpha,\beta}
-|\phi^J_{\beta}\rangle S^\dagger_{R_\beta,L_\beta,R_\alpha,L_\alpha}
-c_{\alpha,\gamma}
-+\sum_\alpha |K^{I}_\alpha\rangle c_{\alpha,\gamma}
-\end{eqnarray}
 
 
 
 
-
-
-%=======================================================================
+%=====================================================================
 \section{Projector functions}
-%=======================================================================
-%=======================================================================
-\subsection{Fitting}
-%=======================================================================
-The projections are determined such that the square deviation between
-the original wave functions and the local orbital representation is
-minimized. The mean square deviation is approximated by the partial
-wave expansions in the augmentation regions.
-\begin{eqnarray}
-F(\vec{q})\defas \Bigl(\langle\tilde{\psi}|-q\langle\tilde{\chi}|\Bigr)
-\Bigl(|\tilde{p}\rangle\langle\phi|\theta_\Omega|\phi\rangle\langle\tilde{p}|\Bigr)
-\Bigl(|\tilde{\psi}\rangle-|\tilde{\chi}\rangle q\Bigr)\stackrel{!}{=}\text{min}
-\end{eqnarray}
-
-\begin{eqnarray}
-\frac{dF}{dq^*}&=&-\langle\tilde{\chi}|\tilde{p}\rangle
-\langle\phi|\theta_\Omega|\phi\rangle
-\Bigl(
-\langle\tilde{p}|\tilde{\psi}\rangle-\langle\tilde{p}|\chi\rangle q\Bigr)
-\stackrel{!}{=}0
-\nonumber\\
-%
-%
-%
-&&\langle\tilde{\chi}|\tilde{p}\rangle
-\langle\phi|\theta_\Omega|\phi\rangle
-\langle\tilde{p}|\tilde{\psi}\rangle
-=
-\langle\tilde{\chi}|\tilde{p}\rangle
-\langle\phi|\theta_\Omega|\phi\rangle
-\langle\tilde{p}|\tilde\chi\rangle q
-\nonumber\\
-%
-%
-%
-q&=&\Bigl(\langle\tilde{\chi}|\tilde{p}\rangle
-\langle\phi|\theta_\Omega|\phi\rangle
-\langle\tilde{p}|\tilde{\chi}\rangle\Bigr)^{-1}
-\langle\tilde{\chi}|\tilde{p}\rangle
-\langle\phi|\theta_\Omega|\phi\rangle
-\langle\tilde{p}|\tilde{\psi}\rangle
-\nonumber\\
-%
-%
-%
-\langle\tilde{\pi}|&=&
-\Bigl(\langle\tilde{\chi}|\tilde{p}\rangle
-\langle\phi|\theta_\Omega|\phi\rangle
-\langle\tilde{p}|\tilde{\chi}\rangle\Bigr)^{-1}
-\langle\tilde{\chi}|\tilde{p}\rangle
-\langle\phi|\theta_\Omega|\phi\rangle
-\langle\tilde{p}|
-\label{eq:orbitalprojector}
-\end{eqnarray}
+%=====================================================================
 
 
-%=======================================================================
-\subsubsection{Projection}
-%=======================================================================
-Here, I show that the fitting procedure described above is identical to
-a projection, with the integration limited to the partial wave
-expansion in the augmentation regions.
-\begin{eqnarray}
-\hat{P}^\chi|\Psi\rangle
-&=&|\chi\rangle\Bigl(\langle\chi|\chi\rangle\Bigr)^{-1}
-\langle\chi|\Psi\rangle
-\nonumber\\
-%
-%
-&\approx&|\chi\rangle\Bigl(\langle\chi|
-\Bigl(\sum_R \theta_{\Omega_R}\Bigr)
-|\chi\rangle\Bigr)^{-1}
-\langle\chi|\Bigl(\sum_R \theta_{\Omega_R}\Bigr)|\Psi\rangle
-\nonumber\\
-%
-%
-&\approx&|\chi\rangle\Bigl(\langle\tilde{\chi}|
-\Bigl(
-|\tilde{p}\rangle\langle\phi|\theta_{\Omega}|\phi\rangle\langle\tilde{p}|
-\Bigr)
-|\tilde{\chi}\rangle\Bigr)^{-1}
-\langle\tilde{\chi}|
-\Bigl(
-|\tilde{p}\rangle\langle\phi|\theta_{\Omega}|\phi\rangle\langle\tilde{p}|
-\Bigr)|\tilde{\Psi}\rangle
-\end{eqnarray}
-Thus, I obtain the identical form for the projector function as found
-above in \eq{eq:orbitalprojector} for the fitting.
-\begin{eqnarray}
-\langle\tilde{\pi}|&=&\Bigl(\langle\tilde{\chi}|\tilde{p}\rangle
-\langle\phi|\theta_\Omega|\phi\rangle
-\langle\tilde{p}|\tilde{\chi}\rangle\Bigr)^{-1}
-\langle\tilde{\chi}|\tilde{p}\rangle
-\langle\phi|\theta_\Omega|\phi\rangle
-\langle\tilde{p}|
-\end{eqnarray}
 
 
-%=======================================================================
-\section{Expressions}
-%=======================================================================
 
-\begin{eqnarray}
-\langle{p}_\alpha|\chi_\beta\rangle&=&
-\langle{p}_\alpha|\phi^H_\beta\rangle
--
-\sum_{\gamma,\delta}
-\langle{p}_\alpha|\phi^T_{\gamma}\rangle 
-\underbrace{S^\dagger_{R_\gamma,L_\gamma,R_\delta,L_\delta}
-}_{S^*_{R_\delta,L_\delta,R_\gamma,L_\gamma}}
-c_{\delta,\beta}
-\nonumber\\
-%
-\langle{\chi}_\alpha|p_\beta\rangle&=&
-\langle\phi^H_\alpha|p_\beta\rangle
--
-\sum_{\gamma,\delta}
-c^\dagger_{\alpha,\delta}
-S_{R_\delta,L_\delta,R_\gamma,L_\gamma}
-\langle\phi^T_\gamma|p_{\beta}\rangle 
-\end{eqnarray}
-
-
-\begin{eqnarray}
-\langle\pi|&=& 
-\biggl\lbrace
-\langle\phi^H|\theta_\Omega|\phi^H\rangle
--\mat{c}^\dagger\mat{S}\langle\phi^J|\theta_\Omega|\phi^H\rangle
--\langle\phi^H|\theta_\Omega|\phi^J\rangle\mat{S}^\dagger\mat{c}
-+\mat{c}^\dagger\mat{S}\langle\phi^J|\theta_\Omega
-|\phi^J\rangle\mat{S}^\dagger\mat{c}
-\biggr\rbrace^{-1}
-\nonumber\\
-%
-&&\times\Bigl(\langle\phi^H|p\rangle
--\mat{c}^\dagger\mat{S}\langle\phi^J|p\rangle\Bigr)
-\langle\phi|\theta_\Omega|\phi\rangle
-\langle{p}|
-\end{eqnarray}
-where I used the short-hand notation
-\begin{eqnarray}
-\langle\phi^H|\theta_\Omega|\phi^H\rangle&=&
-\langle\tilde{\phi}^H|\tilde{p}\rangle
-\langle\phi|\theta_\Omega|\phi\rangle
-\langle\tilde{p}|\tilde{\phi}^H\rangle
- \nonumber\\
-%
-%
-\langle\phi^H|\theta_\Omega|\phi^J\rangle
-&=&
-\langle\tilde{\phi}^H|\tilde{p}\rangle
-\langle\phi|\theta_\Omega|\phi\rangle
-\langle\tilde{p}|\tilde{\phi}^J\rangle
-\nonumber\\
-%
-%
-\langle\phi^J|\theta_\Omega|\phi^J\rangle
-&=&
-\langle\tilde{\phi}^J|\tilde{p}\rangle
-\langle\phi|\theta_\Omega|\phi\rangle
-\langle\tilde{p}|\tilde{\phi}^J\rangle
-\end{eqnarray}
-
-
-The following variables are calculated in and supplied by
-\verb|SIMPLELMTO_MAKECHI1|
-\begin{eqnarray}
-\text{AEPHIH:}\qquad&&   \langle\vec{r}|\phi^H\rangle
-\nonumber\\
-\text{AEPHIT:}\qquad &&  \langle\vec{r}|\phi^T\rangle
-=\langle\vec{r}|\phi^J\rangle
-\nonumber\\
-\text{AECHI:}\qquad&&   \langle\vec{r}|\chi\rangle
-\nonumber\\
-\text{PROPHIH:}\qquad&&   \langle\tilde{p}|\tilde{\phi}^H\rangle
-\nonumber\\
-\text{PROPHIT:}\qquad&&   \langle\tilde{p}|\tilde{\phi}^T\rangle
-\nonumber\\
-\text{PHIOV:}\qquad&&   \langle\phi|\theta_\Omega|\phi\rangle
-\nonumber\\
-\text{CMAT:}\qquad&&    |\chi_\beta\rangle
-\leftarrow |K_\beta\rangle c_{\alpha,\beta}
-\end{eqnarray}
-The partial-wave overlap $\langle\phi|\theta_\Omega|\phi\rangle$ is
-calculated by integration up to the ASA radius. The latter is defined
-in the present code as the covalent radius of the element scaled up by
-the ratio between between the radii of volume filling and touching 
-spheres.
-
-%=======================================================================
-\subsection{Linear approximation in structure constants}
-%=======================================================================
-To linear order in the structure constants, I obtain the projector as
-\begin{eqnarray}
-\langle\pi|
-&=& 
-\biggl\lbrace
-\langle\phi^H|\theta_\Omega|\phi^H\rangle
--\mat{c}^\dagger\mat{S}\langle\phi^J|\theta_\Omega|\phi^H\rangle
--\langle\phi^H|\theta_\Omega|\phi^J\rangle\mat{S}^\dagger\mat{c}
-+\mat{c}^\dagger\mat{S}\langle\phi^J|\theta_\Omega
-|\phi^J\rangle\mat{S}^\dagger\mat{c}
-\biggr\rbrace^{-1}
-\nonumber\\
-%
-&&\times\Bigl(\langle\phi^H|p\rangle
--\mat{c}^\dagger\mat{S}\langle\phi^J|p\rangle\Bigr)
-\langle\phi|\theta_\Omega|\phi\rangle
-\langle{p}|
-\nonumber\\
-%
-%
-%
-&\approx& 
-\biggl\lbrace
-\Bigl(\langle\phi^H|\theta_\Omega|\phi^H\rangle\Bigr)^{-1}
--
-\Bigl(\langle\phi^H|\theta_\Omega|\phi^H\rangle\Bigr)^{-1}
-\Bigl(
--\mat{c}^\dagger\mat{S}\langle\phi^J|\theta_\Omega|\phi^H\rangle
--\langle\phi^H|\theta_\Omega|\phi^J\rangle\mat{S}^\dagger\mat{c}
-\Bigr)
-\Bigl(\langle\phi^H|\theta_\Omega|\phi^H\rangle\Bigr)^{-1}
-\biggr\rbrace
-\nonumber\\
-%
-&&\times
-\Bigl(
-\langle\phi^H|p\rangle-\mat{c}^\dagger\mat{S}\langle\phi^J|p\rangle
-\Bigr)
-\langle\phi|\theta_\Omega|\phi\rangle
-\langle{p}|
-\nonumber\\
-%
-%
-%
-&\approx& 
-\Bigl(\langle\phi^H|\theta_\Omega|\phi^H\rangle\Bigr)^{-1}
-\biggl\lbrace
-\langle\phi^H|p\rangle
--
-\mat{c}^\dagger\mat{S}
-\biggl[
-\langle\phi^J|p\rangle
--
-\langle\phi^J|\theta_\Omega|\phi^H\rangle
-\Bigl(\langle\phi^H|\theta_\Omega|\phi^H\rangle\Bigr)^{-1}
-\langle\phi^H|p\rangle\biggr]
-\nonumber\\
-&&+\langle\phi^H|\theta_\Omega|\phi^J\rangle\mat{S}^\dagger\mat{c}
-\Bigl(\langle\phi^H|\theta_\Omega|\phi^H\rangle\Bigr)^{-1}
-\langle\phi^H|p\rangle
-\biggr\rbrace
-\langle\phi|\theta_\Omega|\phi\rangle
-\langle{p}|
-\end{eqnarray}
-
-
-We define the quantity
-\begin{eqnarray}
-\langle\pi|=\langle\pi|\phi\rangle\langle{p}|
-\end{eqnarray}
-
-The following variables are constructed in \verb|SIMPLELMTO_DEMATPHITOCHI2|.
-(translated from code)
-\begin{eqnarray}
-\text{PHIHHOV:} && 
-\langle\phi^H|\theta_\Omega|\phi^H\rangle
-=\langle\phi^H|p\rangle
-\langle\phi|\theta_\Omega|\phi\rangle
-\langle{p}|\phi^H\rangle
-\nonumber\\
-%
-\text{PHIHHOVINV:} && \langle\phi^H|\theta_\Omega|\phi^H\rangle^{-1}
-\nonumber\\
-%
-\text{PHIHTOV:} && \langle\phi^H|\theta_\Omega|\phi^T\rangle
-=\langle\phi^H|p\rangle
-\langle\phi|\theta_\Omega|\phi\rangle
-\langle{p}|\phi^T\rangle
-\nonumber\\
-%
-\langle\pi|\phi\rangle&=&
-\langle\phi^H|\theta_\Omega|\phi^H\rangle^{-1}
-\biggl[
-\langle\tilde{\phi}^H|\tilde{p}\rangle
-\biggr] \langle\phi|\theta_\Omega|\phi\rangle
-\qquad\text{for $R_\alpha=R_\beta$}
-\nonumber\\
-%
-%
-\langle\pi|\phi\rangle&=&
-\langle\phi^H|\theta_\Omega|\phi^H\rangle^{-1}
-\biggl[
-\mat{c}^\dagger\mat{S}
-\Bigl(
-\langle{p}|\phi^T\rangle
--\langle{p}|\phi^H\rangle
-\langle\phi^H|\theta_\Omega|\phi^H\rangle^{-1}
-\langle\phi^H|\theta_\Omega|\phi^T\rangle\Bigr)^\dagger
-\nonumber\\
-&&+
-\langle\phi^H|\theta_\Omega|\phi^T\rangle\mat{S}^\dagger\mat{c}
-\langle\phi^H|\theta_\Omega|\phi^H\rangle^{-1}
-\langle\phi^H|{p}\rangle
-\biggr] \langle\phi|\theta_\Omega|\phi\rangle
-\qquad\text{for $R_\alpha\neq R_\beta$}
-\end{eqnarray}
-
-
-%=======================================================================
+%=====================================================================
 \subsubsection{Density matrix}
-%=======================================================================
+%=====================================================================
 Here, we use the expression for $\langle\phi|\pi\rangle$, which is
 approximated by the linear terms in the structure constants to
 evaluate the density matrix in the local orbitals. Consistent with the
