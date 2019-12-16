@@ -7103,10 +7103,109 @@ V(d)&=&
 
 
 %=====================================================================
+\chapter{Screening length}
+%=====================================================================
+In the random-phase approximation of the free electron gas the coulomb
+interaction in the exchange energy is replaced by a Yukawa potential.
+\begin{eqnarray}
+v_{\text{Yukawa}}(\vec{r})
+=\frac{e^2}{4\pi\epsilon_0|\vec{r}|}
+\e{-\lambda|\vec{r}|}
+\end{eqnarray}
+In Fourier space the Yukawa potential 
+\begin{eqnarray}
+v_{\text{Yukawa}}(\vec{r})=\int \frac{d^3G}{(2\pi)^3}\;
+  \frac{e^2}{4\pi\epsilon_0}\frac{4\pi}{G^2+\lambda^2}
+\end{eqnarray}
+
+The potential can also be expressed in terms of a $G$-dependent
+dielectric constant.
+\begin{eqnarray}
+\epsilon_r^{-1}(\vec{G})=\frac{\vec{G}^2}{\vec{G}^2+\lambda^2}
+\end{eqnarray}
+
+This can be compared with the slide ``An analogy between GW anmd
+hybrid functionals'' in
+\url{https://www.nersc.gov/assets/Uploads/VASP-lecture-RPA.pdf}
+
+I am using one data pair ($\epsilon_r^{-1}=0.5$ for $G=2$~$\AA^{-1}$)
+to arrive at $\lambda=2 a_0^{-1}$ or $r_{screen}=0.5$~$a_0$.
+
+
+
+
+
+%=====================================================================
+\subsubsection{HSE06}
+%=====================================================================
+The HSE06 functional is the prototypical range-separated hybrid
+density functional. A fortran implementation can be be found in the
+Thesis of Jochen Heyd, which can be found on the internet.  (Caution:
+In the HSE03 functional different screening parameters have been used
+for the Fock term and the subtraction of the PBE exchange.)
+
+(See in \url{Codes/Holefunction/src/hsfx.f90})
+
+Krukau\cite{krukau06_jcp125_224106} finds that energies depend little
+on the range, if the range for the double counting and the screened
+Fock term are similar in the range $5~a_B<r_{screen}<\infty$. This
+indicates that it is important to include the first nearest and
+next-nearest neighbor shells.
+
+Krukau\cite{krukau06_jcp125_224106} shows in his table VIII that band
+gaps become better with increasing range, and that this improvement
+depends on the fock admixture, while it is fairly independent of the
+range in the double counting.
+
+
+This suggests that we should use the same $\alpha_{Fock}=0.25$ as
+HSE06 to get the correct band gaps. The screening length can be chosen
+smaller. \textcolor{red}{Our double counting term is not consistent
+  the off-site terms and differs from that of HSE06.}
+
+
+
+%=====================================================================
+\subsubsection{Test for Si}
+%=====================================================================
+
+\begin{center}
+\includegraphics[width=0.5\linewidth]{Figs/sitests1}
+\end{center}
+Band gap of silicon as function of (top) the Hartree Fock weight, (2)
+the screening length in \AA and (bottom)the cutoff radius for the
+neighborlist. The standard values are 0.125 for the Hartree-Fock
+weight, 3~\AA for the screening length and 3~$r_{cov}$=3.33~\AA for
+the radius of the neighbor list. PBE0r (local terms only) black
+spheres, PBE0r+NDDO red squares, PBE0r+NDDO+31 (blue diamonds) and
+PBE0r+31 (green triangles).
+
+\begin{itemize}
+\item PBE0r: with increasing $\alpha_{fock}$, the s-bands are shifted
+  down in energy.  The $ss\sigma$ hopping seems to be reduced (The
+  band width of s-band is narrower).  The conduction band has a lot of
+  s-character. Thus the s-band shifts downward with increasing
+  Fock-weight.
+%
+\item 31: The $ss\sigma$ hopping is drastically increased.(band width
+  of s-band is larger)
+%
+\item NDDO for $\alpha_{fock}>0.1$ develops ghost states
+\end{itemize}
+
+I changed $K2=-1$ so that the tails of the local orbital have a
+kinetic energy of 1~Ry=0.5~H. The screening length has been set to
+$3~\AA$ and the cutoff radius has been set to three times the sum of
+covalent radii, i.e. 6~\AA.
+
+
+
+
+
+%=====================================================================
 \chapter{Changelog, Bugfixes}
 %=====================================================================
 \begin{itemize}
-%
 \item the core-valence exchange contribution differs from the old
   version, because it also includes the projection on the phidot
   functions.

@@ -2476,7 +2476,8 @@ v_{L_\rho}^{j,f}(\vec{r})&=&\int d^3r'\;
 {4\pi\epsilon_0|\vec{r}-\vec{r'}|}
 \end{eqnarray*}
 The potential has a pure $L_\rho$ character and is obtained using
-RADIAL\$POISSON.
+RADIAL\$POISSON. A description is given in
+appendix~\ref{sec:radialpoisson} on p.~\pageref{sec:radialpoisson}.
 
 Furthermore we used the identity
 \begin{eqnarray*}
@@ -2572,7 +2573,7 @@ v_{L_\rho}(|\vec{r}|)&=&
 \phi_j(|\vec{r''}|)f(|\vec{r''}|)Y_{L_\rho}(\vec{r''})\Bigr]
 \end{eqnarray*}
 
-The routine radial\$poisson solves
+The routine \verb|radial$poisson| solves
 \begin{eqnarray*}
 v(\vec{r})&=&\int d^3r'\;\frac{e^2\rho(\vec{r'})}{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
 \\
@@ -2589,6 +2590,9 @@ v(\vec{r})
 \delta(|\vec{r}|-|\vec{r'}|)\Bigr]
 \int d^3r^{''}\;\frac{e^2\rho_L(|\vec{r''}|)Y_L(\vec{r''})}{4\pi\epsilon_0|\vec{r'}-\vec{r''}|}
 \end{eqnarray*}
+A description of \verb|radial$poisson| is given in
+appendix~\ref{sec:radialpoisson} on p.~\pageref{sec:radialpoisson}.
+
 
 \item Finally we obtain the radial part of the result as
 \begin{eqnarray*}
@@ -6155,6 +6159,92 @@ states.
 %====================================================================
 \chapter{Radial differential equations}
 %====================================================================
+%====================================================================
+\section{Radial Poisson equation}
+\label{sec:radialpoisson}
+%====================================================================
+The radial Poisson equation\footnote{The Poisson equation is
+  $\vec{\nabla^2}\Phi(\vec{r})=-\frac{1}{\epsilon_0}\rho(\vec{r})$.
+  The charge density is $\rho(\vec{r})=-en(\vec{r})$ and the
+  electrostatic potential is $-e\Phi(\vec{r})=v(\vec{r})$.  Thus
+  $\nabla^2 v(\vec{r})=-\frac{e^2}{\epsilon_0}n(\vec{r})$.}  is solved
+\footnote{$\vec{\nabla}^2\frac{1}{|\vec{r}|}=-4\pi\delta(\vec{r})$}
+with \verb|radial$poisson|.
+\begin{eqnarray}
+v(\vec{r})=\int d^3r'\frac{e^2n(\vec{r'})}{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+\qquad\Leftrightarrow\qquad
+\nabla^2v(\vec{r})=-\frac{e^2}{\epsilon_0}n(\vec{r})
+\end{eqnarray}
+
+Electron density $n(\vec{r})$ and electron-potential $v(\vec{r})$ are
+expressed in a real-spherical-harmonics expansion.
+\begin{eqnarray}
+n(\vec{r})=\sum_{L} n_{L}(|\vec{r}|) Y_L(\vec{r})
+\qquad\text{and}\qquad
+v(\vec{r})=\sum_{L} v_{L}(|\vec{r}|) Y_L(\vec{r})
+\end{eqnarray}
+
+The spherical harmonics obey the eigenvalue equations
+\begin{eqnarray}
+\hat{\vec{L}}^2Y_L(\vec{r})&=& \hbar^2\ell(\ell+1)Y_L(\vec{r})
+\end{eqnarray}
+where
+$\vec{L}=\vec{r}\times\vec{p}=-i\hbar(\vec{r}\times\vec{\nabla})$ is
+the angular momentum.
+
+We use the following identity, which is valid except for the origin.
+(see $\Phi$SX:Elektrodynamik, section \textit{``Poissongleichung in
+  Kugelfl\"achenfunktionen''})
+\begin{eqnarray}
+\vec{\nabla}^2 
+&\stackrel{r\neq0}{=}&
+\Bigl[\frac{1}{|\vec{r}|}\partial_r^2|\vec{r}|
++\frac{1}{|\vec{r}|^2 }
+(\underbrace{\vec{r}\times\vec{\nabla}}_{\frac{i}{\hbar}\vec{L}})^2
+\Bigr] 
+\nonumber\\
+\vec{\nabla}^2 Y_L(\vec{r})f(r)
+&\stackrel{r\neq0}{=}&
+Y_L(\vec{r})\biggl(\frac{1}{|\vec{r}|}\partial_r^2|\vec{r}|
+-\frac{\ell(\ell+1)}{|\vec{r}|^2}
+\biggr)f(r)
+\end{eqnarray}
+where $r:=|\vec{r}|$ and $r\partial_r=\vec{r}\vec{\nabla}$.
+
+\begin{eqnarray}
+v_L(r)=\frac{4\pi}{2\ell+1}
+\int_0^rdr'\;{r'}^2\Bigl(
+\theta(r-r')\frac{(r')^\ell}{r^{\ell+1}}
++\theta(r'-r)\frac{{r}^\ell}{{(r')}^{\ell+1}}\Bigr)n_L(r')
+\end{eqnarray}
+
+%====================================================================
+\subsection{Implementation}
+%====================================================================
+The potential for a given angular momentum can be obtained using only
+two integrations:  We calculate
+\begin{eqnarray}
+a_L(r)=\int_0^rdr'\;(r')^{\ell+2}n(r')
+\qquad\text{and}\qquad
+b_L(r)=\int_0^rdr'\;(r')^{-\ell+1}n(r')
+\end{eqnarray}
+so that
+\begin{eqnarray}
+v_L(r)=\frac{4\pi}{2\ell+1}
+\Bigl(
+a_L(r)r^{-\ell-1}-\bigl(b(r)-b(\infty)\bigr)r^\ell\Bigr)
+\end{eqnarray}
+
+In practice, the value $b(\infty)$ is replaced by the value at the
+outermost grid point $r_X$ of the radial grid. This implies
+\begin{eqnarray}
+v_L(r_X)=\frac{4\pi}{2\ell+1}\frac{Q_L}{r^{\ell+1}}
+\qquad\text{with the Multipole}\qquad
+Q_L=\int_0^{r_X} dr'\;(r')^{\ell+2}n_L(r')
+\end{eqnarray}
+
+
+
 %====================================================================
 \section{Radial PAW Schr\"odinger equation}
 %====================================================================

@@ -26,7 +26,7 @@
 #  Br has been taken from Cl.
 #
 
-  !SPECIES   NAME='H_'  NPRO=1 0 0LRHOX=2 M=2. RAD/RCOV=1.19
+  !SPECIES   NAME='H_'  NPRO=1 0 0 LRHOX=2 M=2. RAD/RCOV=1.19
     !NTBO    NOFL=1 0 CV=T LHFWEIGHT=0.100
              TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4
     !END 
