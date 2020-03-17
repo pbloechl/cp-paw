@@ -217,6 +217,7 @@ $S^\dagger_{\beta,\alpha}$ are the expansion constants for an
 off-center expansion of solid spherical Hankel functions\index{Hankel
   function} $|K_{\alpha}^\infty\rangle$ into \textbf{solid Bessel
   functions}\index{Bessel function} $|J^\Omega_{\beta}\rangle$.
+\begin{myshadowminipage}{Envelope function and Structure constants}
 \begin{eqnarray}
 |K_{\alpha}^\infty\rangle=|K^\Omega_{\alpha}\rangle
 -\sum_{\beta}|J^\Omega_{\beta}\rangle S^\dagger_{\beta,\alpha}
@@ -224,6 +225,7 @@ off-center expansion of solid spherical Hankel functions\index{Hankel
 \end{eqnarray}
 The index $\alpha$ denotes here an atomic site $R$ and a set of
 angular momenta $L=(\ell,m)$.
+\end{myshadowminipage}
 
 The superscript $\infty$ denotes that the function extends over all
 space, a superscript $\Omega$ denotes that the function is truncated
@@ -269,7 +271,12 @@ S_{RL,R'L'}=S_{R'L',RL}
 This is, however, not true for each angular-momentum block individually,
 i.e. in general we have $S_{RL,R'L'}\neq S_{R,L',R'L}$.
 
-
+The structure constants are evaluated by
+\begin{verbatim}
+LM1X=(L1X+1)**2
+LM2X=(L2X+1)**2
+CALL LMTO$STRUCTURECONSTANTS(R2-R1,K2,L1X,L2X,S(:LM1X,:LM2X))
+\end{verbatim}
 
 %====================================================================
 \subsection{Gradient of structure constants}
@@ -308,6 +315,7 @@ I used
 %=======================================================================
 \subsection{Local orbitals}
 %=======================================================================
+\begin{myshadowminipage}{Local orbitals}
 Local orbitals are augmented Hankelfunctions
 \begin{eqnarray}
 |\chi_\gamma\rangle&=&
@@ -328,6 +336,7 @@ S^\dagger_{R_\beta,L_\beta,R_\alpha,L_\alpha}}_{\text{R-dependent and small}}
 + |K^{I}_\alpha\rangle
 \biggr\rbrace c_{\alpha,\gamma}
 \end{eqnarray}
+\end{myshadowminipage}
 Here, $|\phi^K_\alpha\rangle$ is a superposition of partial waves,
 which match at the augmentation radius to $|K_\alpha\rangle$, and
 which are set to zero outside the augmentation region.
@@ -357,12 +366,36 @@ We introduce head and tail functions defined as
 \end{eqnarray}
 so that
 \begin{eqnarray}
-|\chi_\gamma\rangle&=&
+|\chi_\gamma\rangle
+&=&
 |\phi^{H}_{\gamma}\rangle
 -\sum_{\alpha,\beta}
 |\phi^J_{\beta}\rangle S^\dagger_{R_\beta,L_\beta,R_\alpha,L_\alpha}
 c_{\alpha,\gamma}
 +\sum_\alpha |K^{I}_\alpha\rangle c_{\alpha,\gamma}
+\nonumber\\
+&=&
+|\phi^{H}_{\gamma}\rangle
++
+\sum_\alpha\underbrace{
+\biggl(
+|K^{I}_\alpha\rangle 
+-\sum_{\beta}
+|J^\Omega_{\beta}\rangle S^\dagger_{R_\beta,L_\beta,R_\alpha,L_\alpha}
+\biggr)
+}_{\text{Hankelfunction with central sphere cut out}}
+c_{\alpha,\gamma}
+\nonumber\\
+&&\hspace{2cm}\underbrace{
+-\sum_{\alpha,\beta}
+\biggl(
+|\phi^J_{\beta}\rangle 
+-|J_{\beta}\rangle 
+\biggr)
+S^\dagger_{R_\beta,L_\beta,R_\alpha,L_\alpha}
+c_{\alpha,\gamma}
+}_{\text{small correction}}
+\label{eq:deflocalorbital}
 \end{eqnarray}
 
 
@@ -442,7 +475,7 @@ needed later, have the form
 \subsection{Select phi and phidot}
 %===============================================================================
 
-For each value of $\alpha$ a set of $\phi$ and $\dot{phi}$ partial
+For each value of $\alpha$ a set of $\phi$ and $\dot{\phi}$ partial
 waves need to be selected. Let us consider one site and one specific
 angular momentum. There is a number $n^\phi_\ell$ of partial waves
 plus one energy derivative function of the highest partial wave.
@@ -470,13 +503,79 @@ preserved.
 
 
 
+%===============================================================================
+\subsection{Coding: simplelmto\_makechi1}
+%===============================================================================
+The local orbitals are constructed in \verb|simplelmto_makechi1|.
+\eq{eq:deflocalorbital} is used with the terms ``small correction''
+ignored. They can later be integrated using local integrations.
+
+The node-less partial waves are matched to the Hankel and Bessel
+functions. Then the differences of the all-electron and pseudo partial
+waves are added to the composite nodeless function.
+\textcolor{blue}{The following equation is only a
+  sketch. Need to find a proper notation.}
+\begin{eqnarray}
+|\phi^{K,AE}\rangle
+=|\phi^{K,NL}\rangle+\Bigl(|\phi^{AE}\rangle-|\phi^{NL}\rangle\Bigr)
+\nonumber\\
+|\phi^{K,PS}\rangle
+=|\phi^{K,NL}\rangle+\Bigl(|\phi^{PS}\rangle-|\phi^{NL}\rangle\Bigr)
+\end{eqnarray}
+This ensures that all partial waves are differentiable, and eventially
+become identical at large radii.
+
+
+
+
+The nodeless head an tail functions are constructed such that they are 
+\begin{eqnarray}
+\langle\vec{r}|\phi^H\rangle&=&
+\begin{cases}
+\sum_\beta 
+\langle\vec{r}|\phi^K_\beta\rangle c_{\beta,\alpha}
+&\text{for $\vec{r}\in\Omega_\beta$}\\
+\sum_\beta \langle\vec{r}|K^\infty_\beta\rangle c_{\beta,\alpha}
+&\text{for $\vec{r}\notin\Omega_\beta$}\\
+\end{cases}
+\nonumber\\
+\langle\vec{r}|\phi^T\rangle&=&
+\begin{cases}
+\langle\vec{r}|\phi^J_\beta\rangle 
+&\text{for $\vec{r}\in\Omega_\beta$}\\
+\langle\vec{r}|J^\infty_\beta\rangle 
+&\text{for $\vec{r}\notin\Omega_\beta$}\\
+\end{cases}
+\end{eqnarray}
+
+
+
+The local orbitals are onsite orthonormal, i.e.
+\begin{eqnarray}
+\langle\chi_\alpha|\chi_\beta\rangle=\delta_{\alpha,\beta}
+\qquad\text{for $R_\alpha=R_\beta$}
+\end{eqnarray}
+
+
+
+
+The projections are calculated on the radial grids as
+\begin{eqnarray}
+\langle\tilde{p}_\alpha|\tilde{\phi}^H_\beta\rangle
+\qquad\text{and}\quad
+\langle\tilde{p}_\alpha|\tilde{\phi}^J_\beta\rangle
+\end{eqnarray}
+This accounts for cases where the projector function reached out of
+the augmentation sphere.
+
+
 %====================================================================
 \section{Coefficients of the tight-binding orbital}
 %====================================================================
 
 
 %=======================================================================
-\subsection{Fitting vs. projection}
+\subsection{Equivalence of fitting and projection}
 %=======================================================================
 In this section I show that fitting and projection lead to the same
 result, if the integrations are limited to the partial wave
@@ -494,9 +593,16 @@ minimized. The mean square deviation is approximated by the partial
 wave expansions in the augmentation regions.
 \begin{eqnarray}
 F(\vec{q})\defas \Bigl(\langle\tilde{\psi}|-q\langle\tilde{\chi}|\Bigr)
+\underbrace{
 \Bigl(|\tilde{p}\rangle\langle\phi|\theta_\Omega|\phi\rangle\langle\tilde{p}|\Bigr)
+}_{\approx\theta_\Omega}
 \Bigl(|\tilde{\psi}\rangle-|\tilde{\chi}\rangle q\Bigr)\stackrel{!}{=}\text{min}
 \end{eqnarray}
+where $\theta_\Omega$ is a function that is unity within the
+augmentation spheres. It acts only between partial waves centered in
+the samel augmentation sphere.
+
+
 
 \begin{eqnarray}
 \frac{dF}{dq^*}&=&-\langle\tilde{\chi}|\tilde{p}\rangle
@@ -536,7 +642,7 @@ q&=&\Bigl(\langle\tilde{\chi}|\tilde{p}\rangle
 \langle\tilde{\chi}|\tilde{p}\rangle
 \langle\phi|\theta_\Omega|\phi\rangle
 \langle\tilde{p}|
-\label{eq:orbitalprojector}
+\label{eq:orbitalprojectorbyfit}
 \end{eqnarray}
 
 
@@ -579,8 +685,12 @@ above in \eq{eq:orbitalprojector} for the fitting.
 \langle\tilde{\chi}|\tilde{p}\rangle
 \langle\phi|\theta_\Omega|\phi\rangle
 \langle\tilde{p}|
+\label{eq:orbitalprojectorbyprojection}
 \end{eqnarray}
 
+Thus the projectors obtained by fitting,
+\eq{eq:orbitalprojectorbyfit}, and by projection,
+\eq{eq:orbitalprojectorbyprojection}, are identical.
 
 %====================================================================
 \subsection{Local-orbital projection (Explicit derivation)}
@@ -686,8 +796,8 @@ q_\beta=
 \nonumber\\
 \end{eqnarray}
 
-
 This allows one to write the wave function in the form
+\begin{myshadowminipage}{Local-orbital projector}
 \begin{eqnarray}
 |\psi_n\rangle\approx
 \sum_\alpha|\chi_\alpha\rangle\langle\tilde{\pi}_\alpha|\tilde{\psi}_n\rangle
@@ -715,6 +825,7 @@ with
 \langle\tilde{p}_\gamma|
 \label{eq:pitilde}
 \end{eqnarray}
+\end{myshadowminipage}
 
 This expression works also if the number of local orbitals
 $|\chi_\alpha\rangle$ is smaller than the number of projector
@@ -726,7 +837,9 @@ that this expression needs to be evaluated in a Bloch representation.
 \section{Transformation of density matrix and Hamiltonian}
 %====================================================================
 In the previous section, I derived in \eq{eq:pitilde} a relation
-between orbital and partial wave projector functions.
+between orbital and partial wave projector functions. Here, the
+expressions for density matrix and Hamiltonian will be derived,
+assuming no further approximations.
 \begin{eqnarray}
 \langle\tilde{\pi}_\alpha|\tilde{\psi}_n\rangle
 &=&\sum_\beta 
@@ -760,6 +873,18 @@ where
 \langle\pi_\alpha|\phi_\gamma\rangle\rho^{\varphi}_{\gamma,\delta}
 \langle\phi_\delta|\pi_\beta\rangle
 \end{eqnarray}
+
+
+The density matrix in the partial wave expansion is evaluated in k-space
+\begin{eqnarray}
+\rho^{\varphi}_{\alpha,\vec{0},\beta,\vec{t}}
+=\frac{1}{\sum_k}\sum_k\sum_{n=1}^{nb}
+\langle\tilde{p}_{\alpha,0}|\psi_{n,k}\rangle f_{n,k}
+\langle\psi_{n,k}|\tilde{p}_{\beta,\vec{0}}\rangle\e{i\vec{k}\vec{t}}
+\end{eqnarray}
+
+
+
 
 The derivatives are correspondingly derived as 
 \begin{eqnarray}
@@ -891,28 +1016,21 @@ h^{\chi}_{\beta,\alpha}
 \section{Approximations}
 %====================================================================
 The key to efficiency is to limit the multicenter
-expansions. ThereforeI introduce a number of approximations.
+expansions. Therefore, I introduce a number of approximations.
 
-All multicenter expansions in the total energy are linearized in the
-offsite terms.
-
-%====================================================================
-\subsection{Limitation of off-center terms to NDDO and 31}
-%====================================================================
-
-%====================================================================
-\subsection{Transformation between local-orbital 
-and partial-wave expansions}
-%====================================================================
 Given the transformation matrix elements $\langle\pi|\phi\rangle$ and
 its derivatives with respect to atomic positions, we limit the
 multi-center expansion of the density matrix: We include only terms
 which are
 \begin{itemize}
-\item at most quadratic in the offsite terms of
-  $\langle\pi|\phi\rangle$ and $\mat{\rho}^{\varphi}$
-\item Furthermore, \textcolor{blue}{terms which are quadratic in the off-site
-  $\langle\pi|\phi\rangle$ terms are excluded}
+\item $\rho^\chi$ contains at most quadratic in the offsite terms of
+  $\langle\pi|\phi\rangle$ and $\mat{\rho}^{\varphi}$ 
+\item Furthermore, \textcolor{blue}{terms in $\rho^\chi$, which are
+  quadratic in the off-site $\langle\pi|\phi\rangle$ terms are
+  excluded}
+\item For $\langle\pi|\phi\rangle$, only terms linear in the structure
+  constants are considered. (This approximation will be described
+  later.)
 \end{itemize}
 
 %====================================================================
@@ -921,6 +1039,27 @@ to local orbitals}
 %====================================================================
 The following describes the terms, where ``forward'' and ``back'' as
 well as ``offsite'' exclude onsite terms.
+
+
+To be specific
+\begin{eqnarray}
+\underbrace{\langle\pi_\alpha|\phi_\beta\rangle}_{\text{onsite}}
+&\defas&
+\langle\pi_\alpha|\phi_\beta\rangle\delta_{R_\alpha,R_\beta}
+\nonumber\\
+\underbrace{\langle\pi_\alpha|\phi_\beta\rangle}_{\text{offsite}}
+&\defas&
+\langle\pi_\alpha|\phi_\beta\rangle(1-\delta_{R_\alpha,R_\beta})
+\end{eqnarray}
+I also use the terms ``forward'' and ``back'' as variants of
+``offsite'' terms. 
+
+
+
+Now, I decompose the density matrix into terms that are limited to
+onsite terms and those involving all terms touchin a pair of sites.
+The terms quadratic in the off-site terms of
+$\langle\pi|\phi\rangle$ are marked in blue. 
 \begin{eqnarray}
 \underbrace{\rho^{\chi}_{\alpha,\beta}}_{\text{onsite}}
 &=& 
@@ -961,7 +1100,20 @@ well as ``offsite'' exclude onsite terms.
 \underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{onsite}}
 \underbrace{\rho^{\varphi}_{\gamma,\delta}}_{\text{onsite}}
 \underbrace{\langle\phi_\delta|\pi_\beta\rangle}_{\text{offsite}}
+\nonumber\\
+&+&
+\textcolor{blue}{
+\overbrace{
+\underbrace{\langle\pi_\alpha|\phi_\gamma\rangle}_{\text{forward}}
+\underbrace{\rho^{\varphi}_{\gamma,\delta}}_{\text{back}}
+\underbrace{\langle\phi_\delta|\pi_\beta\rangle}_{\text{forward}}
+}^{\text{not included}}}
 \end{eqnarray}
+
+\textcolor{blue}{Notice! The forward-back-forward is not yet carried
+  through in the following.}
+
+
 
 %====================================================================
 \subsection{Hamiltonian and forces}
@@ -3475,81 +3627,6 @@ LMTO$ETOT(LMNXX_,NDIMD_,NAT_,DENMAT_,DH_)
       CALL LMTO_CLEANDENMAT_NEW()
 \end{verbatim}
 
-%=======================================================================
-\section{New code}
-%=======================================================================
-%=======================================================================
-\subsection{Determine off-site density matrix in partial-wave representation}
-%=======================================================================
-With a routine derived from \verb|LMTO_NTBODENMAT_NEW|, I determine
-the density matrix in terms of partial-wave projector functions.
-
-\begin{eqnarray}
-\rho_{\alpha,\vec{0},\beta,\vec{t}}
-=\frac{1}{\sum_k}\sum_k\sum_{n=1}^{nb}
-\langle\tilde{p}_{\alpha,0}|\psi_{n,k}\rangle f_{n,k}
-\langle\psi_{n,k}|\tilde{p}_{\beta,\vec{0}}\rangle\e{i\vec{k}\vec{t}}
-\end{eqnarray}
-
-There is a data type for matrices represented by a neighborlist.
-The third dimension describes the spin indices.\footnote{
-\begin{itemize}
-\item non spin-polarized, $N3=1$.
-\item spin polarized, $N3=2$. The two matrices are $\sigma=\uparrow,\downarrow$
-\item non-collinear, $N3=3$. The three matrices are the projections
-  onto $S_x,S_y,S_z$.
-\end{itemize}
-} 
-\begin{verbatim}
-TYPE NGBRMAT_TYPE
-  INTEGER(4)      :: IAT1  ! FIRST ATOM (LINKED TO THE LEFT INDEX OF MAT)
-  INTEGER(4)      :: IAT2  ! SECOND ATOM (LINKED TO THE RIGHT INDEX OF MAT)
-  INTEGER(4)      :: IT(3) ! LATTICE TRANSLATIONS TO BE ADDED TO ATOM 2
-  INTEGER(4)      :: N1    ! RIGHT DIMENSION OF MAT
-  INTEGER(4)      :: N2    ! LEFT DIMENSION OF MAT
-  INTEGER(4)      :: N3    ! THIRD DIMENSION OF MAT
-  REAL(8),POINTER :: MAT(:,:,:)  !(N1,N2,N3)
-END TYPE NGBRMAT_TYPE
-\end{verbatim}
-In a closed-packed sphere packing there are 12 nearest neighbors.
-
-%=======================================================================
-\subsection{Density matrix in orbital representation}
-%=======================================================================
-The orbital projections are evaluated using an onsite transformation
-\begin{eqnarray}
-\langle\tilde{\pi}_\alpha|=\sum_{j\in R_\alpha} c_{\alpha,j}\langle\tilde{p}_j|
-\quad\text{with}\quad
-\langle\tilde{\pi}_\alpha|\tilde{\chi}_\beta\rangle
-=\sum_{j\in R_\alpha} c_{\alpha,j}\langle\tilde{p}_j|\tilde{\chi}_\beta\rangle
-\end{eqnarray}
-When the orbitals are frozen, the matrix $\mat{c}$ is calculated once
-and for all with singular value decomposition. (Note that $\mat{c}$ is
-not square.
-
-The restriction to onsite terms requires that the orbitals fall off
-with distance sufficiently fast, that the offsite terms of
-$\langle\tilde{p}_j|\tilde\chi_\alpha\rangle$ are neglegible.
-
-%=======================================================================
-\subsection{Bare structure constants}
-%=======================================================================
-
-\begin{verbatim}
-LM1X=(L1X+1)**2
-LM2X=(L2X+1)**2
-CALL LMTO$STRUCTURECONSTANTS(R2-R1,K2,L1X,L2X,S(:LM1X,:LM2X))
-\end{verbatim}
-
-
-
-%=======================================================================
-\subsection{Routine radial\$helmholtz}
-%=======================================================================
-The routine \verb|radial\$helmholtz| shall act like
-\verb|radial\$poisson| but with a Yukawa potential.
-
-
 
 %===============================================================================
 \newpage
@@ -5509,6 +5586,152 @@ D_{z,\alpha,\beta}
 \partial_r v_{L,\gamma,\delta}^{sr}(\vec{R}-\vec{R'})
 \nonumber\\
 \end{eqnarray}
+
+%=======================================================================
+\chapter{Rotation of the density matrix}
+%=======================================================================
+
+%=======================================================================
+\section{Rotation matrix}
+%=======================================================================
+Consider the interatomic vector connecting two atoms
+\begin{eqnarray}
+\vec{q}\defas\vec{R}_2+\vec{t}-\vec{R}_1
+\end{eqnarray}
+
+Our goal is to transform the density matrix into a coordinate system,
+in which the interatomic vector points along the new z-axis.
+\begin{eqnarray}
+\vec{e}_z|\vec{q}|=\mat{\mathcal{R}}\vec{q}
+\end{eqnarray}
+
+The rotation matrix is evaluated from the interatomic distance vector
+and another arbitrary vector $\vec{a}$. This vector should not be the
+coordinate vector $\vec{e}_j$ with the smallest projection on
+$\vec{Q}$, to avoid a divide-by-zero.
+
+Then we construct 
+\begin{eqnarray}
+\vec{y}_{1}&=&\vec{y}_2\times\vec{y}_3
+=(\vec{a}\times\vec{q})\times\vec{q}
+=\vec{q}\times(\vec{q}\times\vec{a})
+\nonumber\\
+&=&\vec{q}(\vec{a}\vec{q})-\vec{a}(\vec{q}^2)
+\nonumber\\
+\vec{y}_{2}&=&\vec{a}\times\vec{q}
+\nonumber\\
+\vec{y}_3&=&\vec{q}
+\label{eq:rotationdefyvectors}
+\end{eqnarray}
+
+The three vectors are mutually orthogonal, and can be used, after
+normalization, to set up the rotation matrix.
+\begin{eqnarray}
+\mat{\mathcal{R}}=\sum_j \frac{1}{\sqrt{\vec{y}_j^2}}\vec{e}_j\otimes\vec{y}_j
+\qquad\text{with $|\vec{a}|=1$}
+\end{eqnarray}
+This construction does not exclude an additional inversion.
+
+\begin{eqnarray}
+\mathcal{R}_{\alpha,\beta}=\vec{e}_\alpha\mat{\mathcal{R}}\vec{e}_\beta
+=\sum_j \frac{1}{\sqrt{\vec{y}_j^2}}
+(\vec{e}_\alpha\vec{e}_j)(\vec{y}_j\vec{e}_\beta)
+= \frac{(\vec{y}_\alpha\vec{e}_\beta)}{\sqrt{\vec{y}_\alpha^2}}
+= \frac{y_{\beta,\alpha}}{\sqrt{\vec{y}_\alpha^2}}
+\end{eqnarray}
+
+The inverse, respectively the transpose, matrix is
+\begin{eqnarray}
+\mat{\mathcal{R}}^{\dagger}
+=\sum_j \frac{1}{\sqrt{\vec{y}_j^2}}\vec{y}_j\otimes\vec{e}_j
+\end{eqnarray}
+
+%=======================================================================
+\section{Gradient of the rotation matrix}
+%=======================================================================
+I work out the gradient of the rotation matrix $\mat{\mathcal{R}}$
+with resprect to the interatomic distance vector. What is actually
+required is
+\begin{eqnarray}
+\frac{\partial\mat{\mathcal{R}}}{\partial q_n}
+\mat{\mathcal{R}}^\dagger
+\end{eqnarray}
+
+The rotation matrix was expressed in terms if the vectors $\vec{y}_j$
+from \eq{eq:rotationdefyvectors}. Let me calculate their derivatives.
+I will use the identity $\partial\vec{q}/\partial{q}_n=\vec{e}_n$.
+\begin{eqnarray}
+\frac{\partial\vec{y}_1}{\partial{q}_n}
+&=&
+\frac{\partial}{\partial{q}_n}
+\biggl[
+\vec{q}(\vec{a}\vec{q})-\vec{a}(\vec{q}^2)
+\biggr]
+=\vec{e}_n(\vec{a}\vec{q})+\vec{q}(\vec{a}\vec{e}_n)
+-\vec{a}(2\vec{q}\vec{e}_n)
+\nonumber\\
+%
+%
+\frac{\partial\vec{y}_2}{\partial{q}_n}
+&=&\frac{\partial}{\partial{q}_n}\vec{a}\times\vec{q}
+=\vec{a}\times\vec{e}_n
+\nonumber\\
+%
+%
+\frac{\partial\vec{y}_3}{\partial{q}_n}
+&=&\frac{\partial}{\partial{q}_n}\vec{q}
+=\vec{e}_n
+\end{eqnarray}
+
+In the next step, I normalize the vectors $\vec{y}_j$
+\begin{eqnarray}
+\vec{z}_j\defas\vec{y}_j\frac{1}{\sqrt{\vec{y}_j^2}}
+\end{eqnarray}
+with derivatives
+\begin{eqnarray}
+\frac{\partial\vec{z}_j}{\partial q_n}
+&=&
+\frac{\partial\vec{y}_j}{dq_n}\frac{1}{\sqrt{\vec{y}_j^2}}
++
+\vec{y}_j\left[-\frac{1}{2}(\vec{y}_j^2)^{-\frac{3}{2}}
+\left(2\vec{y}_j\frac{\partial\vec{y}_j}{dq_n}\right)\right]
+%
+%
+=
+\frac{1}{\sqrt{\vec{y}_j^2}}
+\biggl\{
+\frac{\partial\vec{y}_j}{dq_n}
+-
+\vec{y}_j\frac{\vec{y}_j\frac{\partial\vec{y}_j}{dq_n}}{\vec{y}_j^2}
+\biggr\}
+\end{eqnarray}
+
+This is inserted into the equation obtained previously
+\begin{eqnarray}
+\left(
+\frac{\partial\mat{\mathcal{R}}}{\partial q_n}\mat{\mathcal{R}}^\dagger
+\right)_{i,j}
+&=&
+\sum_k
+\frac{\partial\mathcal{R}_{i,k}}{\partial q_n}\mat{\mathcal{R}}^\dagger_{k,j}
+=
+\sum_k
+\frac{\partial\mathcal{R}_{i,k}}{\partial q_n}\mat{\mathcal{R}}_{j,k}
+=
+\sum_k
+\frac{\partial{z}_{k,i}}{\partial q_n}z_{k,j}
+\nonumber\\
+&=&
+\frac{\partial\vec{z}_i}{\partial q_n}\vec{z}_{j}
+\nonumber\\
+\end{eqnarray}
+
+
+%=======================================================================
+\section{................}
+%=======================================================================
+
+
 
 %=======================================================================
 \chapter{Interpolation of U-tensor matrix elements}
