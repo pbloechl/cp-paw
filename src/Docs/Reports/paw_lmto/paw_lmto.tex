@@ -5591,9 +5591,6 @@ D_{z,\alpha,\beta}
 \chapter{Rotation of the density matrix}
 %=======================================================================
 
-%=======================================================================
-\section{Rotation matrix}
-%=======================================================================
 Consider the interatomic vector connecting two atoms
 \begin{eqnarray}
 \vec{q}\defas\vec{R}_2+\vec{t}-\vec{R}_1
@@ -5602,8 +5599,158 @@ Consider the interatomic vector connecting two atoms
 Our goal is to transform the density matrix into a coordinate system,
 in which the interatomic vector points along the new z-axis.
 \begin{eqnarray}
+\vec{q}'=\vec{e}_z|\vec{q}|=\mat{\mathcal{R}}\vec{q}
+\end{eqnarray}
+
+%=======================================================================
+\subsection{Active and passive rotation}
+%=======================================================================
+%=======================================================================
+\subsubsection{Active rotation}
+%=======================================================================
+Consider a rotation $\mat{\mathcal{R}}$ which transforms the vector
+$\vec{q}$ into $\vec{q'}$ so that $\vec{q'}||\vec{e}_z$.
+
+The coordinates $q'_j$ of the new vector $\mat{\mathcal{R}}\vec{q}$ are
+\begin{eqnarray}
+q'_j=\vec{e}_j\vec{q'}
+=\vec{e}_j\mat{\mathcal{R}}\vec{q}
+=\vec{e}_j\mat{\mathcal{R}}
+\underbrace{\sum_k\vec{e}_k\otimes\vec{e}_k}_{\mat{1}}
+\vec{q}
+=\sum_k
+\underbrace{\vec{e}_j\mat{\mathcal{R}}\vec{e}_k}_{\mathcal{R}_{j,k}}
+\underbrace{\vec{e}_k\vec{q}}_{q_k}
+=\sum_kR_{j,k} q_k
+\end{eqnarray}
+where 
+\begin{eqnarray}
+\mathcal{R}_{i,j}\defas\vec{e}_i\mat{\mathcal{R}}\vec{e}_j
+\end{eqnarray}
+
+
+%=======================================================================
+\subsubsection{Passive rotation}
+%=======================================================================
+The problem at hand is a passive rotation, that is, we want to
+represent the same vector $\vec{q}$ in a new coordinate system.  The
+new coordinate system shall be chosen such that the new coordinates
+have only a z-component. 
+
+Let me denote the new coordinate vectors by $\vec{E}_j$. I avoid the notation
+with primes, because this would imply a forward rotation of the unit
+vectors. The transformation of the coordinate axes shall satisfy
+\begin{eqnarray}
+\vec{E}_j\vec{q}=\vec{e}_j\vec{q'}
+\end{eqnarray}
+where $\vec{q'}$ is the result of the active rotation, which turns the
+vector $\vec{q}$ into the z-direction.
+\begin{eqnarray}
+\vec{E}_j\vec{q}=\vec{e}_j\vec{q'}=\vec{e}_j\mat{\mathcal{R}}\vec{q}
+\Leftarrow\quad \vec{E}_j
+=\vec{e}_j\mat{\mathcal{R}}
+=\mat{\mathcal{R}}^\dagger \vec{e}_j
+\end{eqnarray}
+
+Thus the vector $\vec{q}$ can be represented as
+\begin{eqnarray}
+\vec{q}=\sum_j\vec{e}_j q_j=\sum_j\vec{E}_j q'_j
+\quad\text{with $q'_j=\sum_k\mathcal{R}_{j,k}q_k$}
+\end{eqnarray}
+
+The rotation matrix can be represented in two ways, namely as
+\begin{eqnarray}
+\vec{e}_i\vec{e'}_j
+=\vec{e}_i\left(\mat{\mathcal{R}}\vec{e}_j\right)
+=\vec{e}_i\mat{\mathcal{R}}\vec{e}_j
+=\mathcal{R}_{i,j}
+=\left(\mat{\mathcal{R}}^\dagger\vec{e}_i\right)\vec{e}_j
+=\vec{E_i}\vec{e}_j
+\end{eqnarray}
+
+The rotation can be expressed as
+\begin{eqnarray}
+\mat{\mathcal{R}}
+&=&\mat{\mathcal{R}}\sum_j \vec{e}_j\otimes\vec{e}_j
+=\sum_j \vec{e'}_j\otimes\vec{e}_j
+\nonumber\\
+\mat{\mathcal{R}}
+&=&\mat{\mathcal{R}}\sum_j \vec{E}_j\otimes\vec{E}_j
+\stackrel{\mat{\mathcal{R}}\mat{\mathcal{R}}^\dagger=\mat{1}}{=}
+\sum_j \vec{e}_j\otimes\vec{E}_j
+\end{eqnarray}
+
+Using the same symbol for the rotated vector $\vec{e'}_j$ under active
+rotation and the new coordinate vectors $\vec{E}_j$ of the passive
+rotation, is a source of errors. On the level of the coordinates the
+active and the passive transformation do the same, so that I can use
+one matrix, namely $\mathcal{R}_{ij}$. However, the physical
+transformation of the vector $\vec{q}$ in the active transformation
+and that of the coordinate vectors $\vec{e}_j$ in the passive
+transformation are inverses of each other.
+
+
+%=======================================================================
+\subsubsection{Transformation of the of the wave-function components}
+%=======================================================================
+A wave function is expressed in local orbitals in terms of
+real spherical harmonics
+\begin{eqnarray}
+\langle\vec{r}|\psi\rangle=\sum_L\langle\vec{r}|\chi_L\rangle c_L
+\end{eqnarray}
+
+The intention is to express the wave function in a new basis
+$|\bar{\chi}_L\rangle$, for which
+\begin{eqnarray}
+\langle\vec{q}|\bar{\chi}_L\rangle=
+\langle|\vec{q}|\vec{e}_z|\chi\rangle
+\langle\mat{\mathcal{R}}\vec{q}\chi\rangle
+\qquad\Leftarrow\qquad
+\langle\vec{r}|\bar{\chi}_L\rangle=\langle\mat{\mathcal{R}}\vec{r}|\chi\rangle
+\end{eqnarray}
+
+
+\begin{eqnarray}
+|\psi\rangle
+&=&\left(\sum_{L}|\bar{\chi}_L\rangle\langle\bar{\pi}_L|\right)
+\left(\sum_{L'}|{\chi}_{L'}\rangle\langle{\pi}_{L'}|\right)
+|\psi\rangle
+\nonumber\\
+&=&\sum_{L}|\bar{\chi}_L\rangle
+\left(
+\underbrace{\sum_{L'}
+\overbrace{
+\langle\bar{\pi}_L|{\chi}_{L'}\rangle
+}^{\mat{\mathcal{R}}_{L,L'}}
+\overbrace{\langle{\pi}_{L'}|\psi\rangle}^{\bar{c}_{L'}}
+}_{\bar{c}_L}
+\right)
+\nonumber\\
+\mathcal{R}_{L,L'}&=&
+\langle\bar{\pi}_L|\chi_{L'}\rangle
+=\int d^3r\; \langle\bar{\pi}_L|\vec{r}\rangle
+\langle\vec{r}|\chi_{L'}\rangle
+=\int d^3r\; \langle\pi_L|\mat{\mathcal{R}}\vec{r}\rangle
+\langle\vec{r}|\chi_{L'}\rangle
+\end{eqnarray}
+The transformation matrix $\mathcal{R}_{L,L'}$ is evaluated in
+\verb|SPHERICAL$ROTATEYLMWDER(LMX,ROT,YLMROT)| or
+\verb|SPHERICAL$ROTATEYLMWDER(LMX,N,ROT,DRO,YLMROT,DYLMROT)|.  It
+takes as input the rotation matrix \verb|ROT|, respectively its
+derivatives \verb|DROT|, obtained from
+\verb|SPHERICAL$AXISUROT(DR,ROT,DROT)|.
+
+
+
+%=======================================================================
+\section{Rotation matrix}
+%=======================================================================
+The rotation matrix for a vector $\vec{q}$ which satisfies
+\begin{eqnarray}
 \vec{e}_z|\vec{q}|=\mat{\mathcal{R}}\vec{q}
 \end{eqnarray}
+is determinned in \verb|SPHERICAL$AXISUROT(DR,U,DU)|.
+
 
 The rotation matrix is evaluated from the interatomic distance vector
 and another arbitrary vector $\vec{a}$. This vector should not be the
