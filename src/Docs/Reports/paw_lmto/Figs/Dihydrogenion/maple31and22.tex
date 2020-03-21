@@ -1,0 +1,202 @@
+%% Created by Maple 2018.2, Mac OS X
+%% Source Worksheet: maple31and22.mw
+%% Generated: Sat Mar 21 14:56:31 CET 2020
+\documentclass{article}
+\usepackage{maplestd2e}
+\def\emptyline{\vspace{12pt}}
+\begin{document}
+\pagestyle{empty}
+\DefineParaStyle{Maple Bullet Item}
+\DefineParaStyle{Maple Heading 1}
+\DefineParaStyle{Maple Warning}
+\DefineParaStyle{Maple Heading 4}
+\DefineParaStyle{Maple Heading 2}
+\DefineParaStyle{Maple Heading 3}
+\DefineParaStyle{Maple Dash Item}
+\DefineParaStyle{Maple Error}
+\DefineParaStyle{Maple Title}
+\DefineParaStyle{Maple Text Output}
+\DefineParaStyle{Maple Normal}
+\DefineCharStyle{Maple 2D Output}
+\DefineCharStyle{Maple 2D Input}
+\DefineCharStyle{Maple Maple Input}
+\DefineCharStyle{Maple 2D Math}
+\DefineCharStyle{Maple Hyperlink}
+\begin{Maple Normal}{
+\begin{Maple Normal}{
+\mapleinline{inert}{2d}{g := proc (x) options operator, arrow, function_assign; 1-(x+1)*exp(-2*x) end proc; "_noterminate"}{\[\displaystyle \]}
+}\end{Maple Normal}
+}\end{Maple Normal}
+\begin{maplegroup}
+\begin{Maple Normal}{
+\mapleinline{inert}{2d}{g := proc (x) options operator, arrow, function_assign; 1-(x+1)*exp(-2*x) end proc; "_noterminate"}{\[\displaystyle \]}
+}\end{Maple Normal}
+\mapleresult
+\begin{maplelatex}
+\mapleinline{inert}{2d}{g := proc (x) options operator, arrow; 1-(x+1)*exp(-2*x) end proc; "_noterminate"}{\[\displaystyle \]}
+\end{maplelatex}
+\end{maplegroup}
+\begin{Maple Normal}{
+\begin{Maple Normal}{
+\mapleinline{inert}{2d}{y := proc (n, x) options operator, arrow, function_assign; -(1+x*n)*exp(-x*n)/n^2 end proc; "_noterminate"}{\[\displaystyle \]}
+}\end{Maple Normal}
+}\end{Maple Normal}
+\begin{maplegroup}
+\begin{Maple Normal}{
+\mapleinline{inert}{2d}{y := proc (n, x) options operator, arrow, function_assign; -(1+x*n)*exp(-x*n)/n^2 end proc; "_noterminate"}{\[\displaystyle \]}
+}\end{Maple Normal}
+\mapleresult
+\begin{maplelatex}
+\mapleinline{inert}{2d}{y := proc (n, x) options operator, arrow; -(1+x*n)*exp(-x*n)/n^2 end proc; "_noterminate"}{\[\displaystyle \]}
+\end{maplelatex}
+\end{maplegroup}
+\begin{Maple Normal}{
+\begin{Maple Normal}{
+\mapleinline{inert}{2d}{h := proc (n, z, x) options operator, arrow, function_assign; g(x)*exp(-(2-n)*x)*(y(n, x+z)-y(n, z-x)) end proc; "_noterminate"}{\[\displaystyle \]}
+}\end{Maple Normal}
+}\end{Maple Normal}
+\begin{maplegroup}
+\begin{Maple Normal}{
+\mapleinline{inert}{2d}{h := proc (n, z, x) options operator, arrow, function_assign; g(x)*exp(-(2-n)*x)*(y(n, x+z)-y(n, z-x)) end proc; "_noterminate"}{\[\displaystyle \]}
+}\end{Maple Normal}
+\mapleresult
+\begin{maplelatex}
+\mapleinline{inert}{2d}{h := proc (n, z, x) options operator, arrow; g(x)*exp(-(2-n)*x)*(y(n, x+z)-y(n, z-x)) end proc; "_noterminate"}{\[\displaystyle \]}
+\end{maplelatex}
+\end{maplegroup}
+\begin{Maple Normal}{
+\begin{Maple Normal}{
+\mapleinline{inert}{2d}{k := proc (n, z, x) options operator, arrow, function_assign; g(x)*exp(-(2-n)*x)*(y(n, x+z)-y(n, x-z)) end proc; "_noterminate"}{\[\displaystyle \]}
+}\end{Maple Normal}
+}\end{Maple Normal}
+\begin{maplegroup}
+\begin{Maple Normal}{
+\mapleinline{inert}{2d}{k := proc (n, z, x) options operator, arrow, function_assign; g(x)*exp(-(2-n)*x)*(y(n, x+z)-y(n, x-z)) end proc; "_noterminate"}{\[\displaystyle \]}
+}\end{Maple Normal}
+\mapleresult
+\begin{maplelatex}
+\mapleinline{inert}{2d}{k := proc (n, z, x) options operator, arrow; g(x)*exp(-(2-n)*x)*(y(n, x+z)-y(n, x-z)) end proc; "_noterminate"}{\[\displaystyle \]}
+\end{maplelatex}
+\end{maplegroup}
+\begin{Maple Normal}{
+\begin{Maple Normal}{
+\mapleinline{inert}{2d}{q := proc (n, z) options operator, arrow, function_assign; -2*(int(h(n, z, x), x = 0 .. z)+int(k(n, z, x), x = z .. infinity))/z end proc; "_noterminate"}{\[\displaystyle \]}
+}\end{Maple Normal}
+}\end{Maple Normal}
+\begin{maplegroup}
+\begin{Maple Normal}{
+\mapleinline{inert}{2d}{q := proc (n, z) options operator, arrow, function_assign; -2*(int(h(n, z, x), x = 0 .. z)+int(k(n, z, x), x = z .. infinity))/z end proc; "_noterminate"}{\[\displaystyle \]}
+}\end{Maple Normal}
+\mapleresult
+\begin{maplelatex}
+\mapleinline{inert}{2d}{q := proc (n, z) options operator, arrow; -(2*(int(h(n, z, x), x = 0 .. z))+2*(int(k(n, z, x), x = z .. infinity)))/z end proc; "_noterminate"}{\[\displaystyle \]}
+\end{maplelatex}
+\end{maplegroup}
+\begin{Maple Normal}{
+\begin{Maple Normal}{
+\mapleinline{inert}{2d}{}{\[\displaystyle \]}
+}\end{Maple Normal}
+}\end{Maple Normal}
+\begin{Maple Normal}{
+\begin{Maple Normal}{
+\mapleinline{inert}{2d}{int(h(2, z, x), x = 0 .. z); "_noterminate"}{\[\displaystyle \]}
+}\end{Maple Normal}
+}\end{Maple Normal}
+\begin{maplegroup}
+\begin{Maple Normal}{
+\mapleinline{inert}{2d}{int(h(2, z, x), x = 0 .. z); "_noterminate"}{\[\displaystyle \]}
+}\end{Maple Normal}
+\mapleresult
+\begin{maplelatex}
+\mapleinline{inert}{2d}{-(1/96)*(8*z^3*exp(4*z)-24*exp(6*z)+36*z^2*exp(4*z)+57*z*exp(4*z)+36*exp(4*z)-48*exp(2*z)*z-24*exp(2*z)+24*z^2+39*z+12)*exp(-6*z); "_noterminate"}{\[\displaystyle \]}
+\end{maplelatex}
+\end{maplegroup}
+\begin{maplegroup}
+\mapleresult
+\end{maplegroup}
+\begin{Maple Normal}{
+\begin{Maple Normal}{
+\mapleinline{inert}{2d}{int(k(2, z, x), x = z .. infinity); "_noterminate"}{\[\displaystyle \]}
+}\end{Maple Normal}
+}\end{Maple Normal}
+\begin{maplegroup}
+\begin{Maple Normal}{
+\mapleinline{inert}{2d}{int(k(2, z, x), x = z .. infinity); "_noterminate"}{\[\displaystyle \]}
+}\end{Maple Normal}
+\mapleresult
+\begin{maplelatex}
+\mapleinline{inert}{2d}{-(1/32)*(-8*exp(6*z)+3*z*exp(4*z)+4*exp(4*z)+16*exp(2*z)*z+8*exp(2*z)-8*z^2-13*z-4)*exp(-6*z); "_noterminate"}{\[\displaystyle \]}
+\end{maplelatex}
+\end{maplegroup}
+\begin{Maple Normal}{
+\begin{Maple Normal}{
+\mapleinline{inert}{2d}{2*(int(h(1, z, x), x = 0 .. z)+int(k(1, z, x), x = z .. infinity))/z; "_noterminate"}{\[\displaystyle \]}
+}\end{Maple Normal}
+}\end{Maple Normal}
+\begin{maplegroup}
+\begin{Maple Normal}{
+\mapleinline{inert}{2d}{2*(int(h(1, z, x), x = 0 .. z)+int(k(1, z, x), x = z .. infinity))/z; "_noterminate"}{\[\displaystyle \]}
+}\end{Maple Normal}
+\mapleresult
+\begin{maplelatex}
+\mapleinline{inert}{2d}{2*((1/32)*(16*z^2*exp(4*z)+2*z*exp(4*z)-19*exp(4*z)+40*exp(2*z)*z+32*exp(2*z)-16*z^2-30*z-13)*exp(-5*z)+(1/32)*(24*exp(4*z)-42*exp(2*z)*z-37*exp(2*z)+16*z^2+30*z+13)*exp(-5*z))/z; "_noterminate"}{\[\displaystyle \]}
+\end{maplelatex}
+\end{maplegroup}
+\begin{Maple Normal}{
+\begin{Maple Normal}{
+\mapleinline{inert}{2d}{Typesetting:-mover(Typesetting:-mo("&rarr;", executable = "true", font_style_name = "2D Math", mathvariant = "normal", fence = "false", separator = "false", stretchy = "true", symmetric = "false", largeop = "false", movablelimits = "false", accent = "false", lspace = "0.2777778em", rspace = "0.2777778em"), Typesetting:-mtext("simplify, size 2/z*(1/32*(16*z^2*exp(4*z)+2*z*exp(4*z)-19*exp(4*z)+40*exp(2*z)*z+32*exp(2*z)-16*z^2-30*z-13)*exp(-5*z)+1/32*(24*exp(4*z)-42*exp(2*z)*z-37*exp(2*z)+16*z^2+30*z+13)*exp(-5*z))", executable = "true", font_style_name = "2D Math", mathvariant = "normal"), accent = "false")}{\[\displaystyle \Mapleoverset{}{\rightarrow }\]}
+}\end{Maple Normal}
+}\end{Maple Normal}
+\begin{maplegroup}
+\mapleresult
+\begin{maplelatex}
+\mapleinline{inert}{2d}{(1/16)*(exp(-5*z)*(16*z^2+2*z+5)*exp(4*z)-2*(z+5/2)*exp(-5*z)*exp(2*z))/z; "_noterminate"}{\[\displaystyle \]}
+\end{maplelatex}
+\end{maplegroup}
+\begin{Maple Normal}{
+\begin{Maple Normal}{
+\mapleinline{inert}{2d}{}{\[\displaystyle \]}
+\mapleinline{inert}{2d}{}{\[\displaystyle \]}
+}\end{Maple Normal}
+}\end{Maple Normal}
+\begin{Maple Normal}{
+\begin{Maple Normal}{
+\mapleinline{inert}{2d}{}{\[\displaystyle \]}
+}\end{Maple Normal}
+}\end{Maple Normal}
+\begin{Maple Normal}{
+\begin{Maple Normal}{
+\mapleinline{inert}{2d}{}{\[\displaystyle \]}
+}\end{Maple Normal}
+}\end{Maple Normal}
+\begin{Maple Normal}{
+\begin{Maple Normal}{
+\mapleinline{inert}{2d}{2*(int(h(2, z, x), x = 0 .. z)+int(k(2, z, x), x = z .. infinity))/z; "_noterminate"}{\[\displaystyle \]}
+}\end{Maple Normal}
+}\end{Maple Normal}
+\begin{maplegroup}
+\begin{Maple Normal}{
+\mapleinline{inert}{2d}{2*(int(h(2, z, x), x = 0 .. z)+int(k(2, z, x), x = z .. infinity))/z; "_noterminate"}{\[\displaystyle \]}
+}\end{Maple Normal}
+\mapleresult
+\begin{maplelatex}
+\mapleinline{inert}{2d}{2*(-(1/96)*(8*z^3*exp(4*z)-24*exp(6*z)+36*z^2*exp(4*z)+57*z*exp(4*z)+36*exp(4*z)-48*exp(2*z)*z-24*exp(2*z)+24*z^2+39*z+12)*exp(-6*z)-(1/32)*(-8*exp(6*z)+3*z*exp(4*z)+4*exp(4*z)+16*exp(2*z)*z+8*exp(2*z)-8*z^2-13*z-4)*exp(-6*z))/z; "_noterminate"}{\[\displaystyle \]}
+\end{maplelatex}
+\end{maplegroup}
+\begin{Maple Normal}{
+\begin{Maple Normal}{
+\mapleinline{inert}{2d}{Typesetting:-mover(Typesetting:-mo("&rarr;", executable = "true", font_style_name = "2D Math", mathvariant = "normal", fence = "false", separator = "false", stretchy = "true", symmetric = "false", largeop = "false", movablelimits = "false", accent = "false", lspace = "0.2777778em", rspace = "0.2777778em"), Typesetting:-mtext("simplify, size 2/z*(-1/96*(8*z^3*exp(4*z)-24*exp(6*z)+36*z^2*exp(4*z)+57*z*exp(4*z)+36*exp(4*z)-48*exp(2*z)*z-24*exp(2*z)+24*z^2+39*z+12)*exp(-6*z)-1/32*(-8*exp(6*z)+3*z*exp(4*z)+4*exp(4*z)+16*exp(2*z)*z+8*exp(2*z)-8*z^2-13*z-4)*exp(-6*z))", executable = "true", font_style_name = "2D Math", mathvariant = "normal"), accent = "false")}{\[\displaystyle \Mapleoverset{}{\rightarrow }\]}
+}\end{Maple Normal}
+}\end{Maple Normal}
+\begin{maplegroup}
+\mapleresult
+\begin{maplelatex}
+\mapleinline{inert}{2d}{-(1/6)*((z^3+(9/2)*z^2+(33/4)*z+6)*exp(4*z)-6*exp(6*z))*exp(-6*z)/z; "_noterminate"}{\[\displaystyle \]}
+\end{maplelatex}
+\end{maplegroup}
+\begin{Maple Normal}{
+\begin{Maple Normal}{
+\mapleinline{inert}{2d}{}{\[\displaystyle \]}
+}\end{Maple Normal}
+}\end{Maple Normal}
+\end{document}

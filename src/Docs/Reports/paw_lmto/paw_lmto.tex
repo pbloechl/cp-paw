@@ -5921,6 +5921,637 @@ y(d_k)
 
 
 \appendix
+%===================================================================
+\chapter{Exact Benchmark systems}
+%===================================================================
+Here I consider exact systems that can be described analytically.
+Usually these are one-electron systems, for which Hartree and exchange
+energies cancel exactly. They can nevertheless be used as benchmark.
+
+
+%===================================================================
+\section{Hydrogen atom}
+\label{sec:exacthatom}
+%===================================================================
+Let me first summarize the exact results for the energies related to
+the hydrogen atom
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\hline
+$E_{tot}$         & $E_{kin}$       & $E_{pot}$ & $\epsilon_{1s}$  \\
+\hline
+$-\frac{1}{2}$~H & $\frac{1}{2}$~H & -1~H     & $-\frac{1}{2}$~H \\
+-13.606~eV & 13.606~eV & -27.211~eV & -13.606~eV \\
+\hline
+\hline
+ $\epsilon_{2s}-\epsilon_{1s}$ & $E_{self}+E{pot}$ & $E_{self}$ & $E_X$ \\
+\hline
+ $\frac{3}{8}$~H              & -11/16~H=-0.6875~H & 5/16~H=+0.3125~H & -5/16~H=-0.3125~H\\
+ 10.204~eV & -18.707~eV & 8.503~eV &-8.503~eV\\
+\hline
+\hline
+\end{tabular}
+\end{center}
+Here, $E_{self}$ is the electrostatic self energy of the electron
+density. $E_{self}+E_{pot}$ is the Hartree energy including
+electron-electron and electron-proton interactions. The energies in eV
+are approximate.
+
+
+The wave functions $\psi(\vec{r})$ of the hydrogen atom and its
+electron density $n(\vec{r})$ are\footnote{The wave functions of the
+  hydrogen atom are taken from $\Phi$SX: Quantum Physics. The Coulomb
+  potential of the charge density is obtained with the Help of
+  Eq.~5.42 of PhiSX:Elektrodynamik. Furthermore, the following
+  equations from Bronstein are used:
+\begin{eqnarray}
+\int_0^x dx\; x\e{ax}= \e{ax}\left(\frac{x}{a}-\frac{1}{a^2}\right)
+\qquad\text{Bronstein p.61 Sec. 1.1.3.3 Eq.448} \nonumber\\ \int_0^x
+dx\; x^2\e{ax}=
+\e{ax}\left(\frac{x^2}{a}-\frac{2x}{a^2}+\frac{2}{a^3}\right)
+\qquad\text{Bronstein p.61 Sec. 1.1.3.3 Eq.449}
+\end{eqnarray}
+\begin{eqnarray}
+\int_0^\infty dx x^n\e{-ax}=\frac{n!}{a^{n+1}} \qquad\text{Bronstein p65 Sec.~1.1.3.4 Eq.1}
+\end{eqnarray}
+} 
+\begin{eqnarray}
+\psi(\vec{r})&=&\frac{1}{\sqrt{\pi a_0^3}}\e{-|\vec{r}|/a_0}
+\nonumber\\
+n(\vec{r})&=&\frac{1}{\pi a_0^3}\e{-2|\vec{r}|/a_0}
+\end{eqnarray}
+
+The Coulomb potential of the electronic charge density can be
+evaluated using the radial Green's function of the Poisson
+equation. (see $\Phi$SX: Klassische Mechanik.)
+\begin{eqnarray}
+v(\vec{r})
+&=&\frac{e^2}{4\pi\epsilon_0} 4\pi\biggl[ \frac{1}{|\vec{r}|}\int_0^{|\vec{r}|}dr'\; (r')^2 n(r')+\int_{|\vec{r}|}^\infty dr'\; r' n(r')\biggr]
+\nonumber\\
+&=&\frac{e^2}{4\pi\epsilon_0} 4\pi \frac{1}{\pi a_0^3} \biggl[ \frac{1}{|\vec{r}|}\int_0^{|\vec{r}|}dr'\; (r')^2\e{-2r'/a_0}+\int_{|\vec{r}|}^\infty dr'\; r' \e{-2r'/a_0}\biggr]
+\nonumber\\
+&=&\frac{e^2}{4\pi\epsilon_0} 4\pi \frac{1}{\pi a_0^3}
+\biggl\lbrace
+ \frac{1}{|\vec{r}|} \frac{a_0^3}{4}\left[1-\left(2\left(\frac{r}{a_0}\right)^2  +2\left(\frac{r}{a_0}\right)  +1\right)\e{-2r/a_0}\right]
++\frac{a_0^3}{4}\frac{1}{a_0} \left(2\frac{r}{a_0}+1\right)\e{-2r/a_0}
+\biggr\rbrace
+\nonumber\\
+&=&\frac{e^2}{4\pi\epsilon_0} 
+\biggl\lbrace
+ \frac{1}{|\vec{r}|} \left[1-\left(2\left(\frac{r}{a_0}\right)^2  +2\left(\frac{r}{a_0}\right)  +1\right)\e{-2r/a_0}\right]
++\frac{1}{r} \left(2\left(\frac{r}{a_0}\right)^2+\left(\frac{r}{a_0}\right)\right)\e{-2r/a_0}
+\biggr\rbrace
+\nonumber\\
+&=&\frac{e^2}{4\pi\epsilon_0|\vec{r}|} 
+\biggl\lbrace
+  \left[1-\left(\left(\frac{r}{a_0}\right)  +1\right)\e{-2r/a_0}\right]
+\biggr\rbrace
+\label{eq:potentialfromelectronshatom}
+\end{eqnarray}
+
+The potential at the origin can be used to evaluate the interaction
+energy between nucleus and electron density, i.e. the
+external-potential energy.
+\begin{eqnarray}
+v(r=0)&=&\frac{e^2}{4\pi\epsilon_0a_0} 
+\nonumber\\
+E_{e-nuc}&=&-\frac{e^2}{4\pi\epsilon_0} \int d^3r \frac{n(r)}{r}=-\frac{e^2}{4\pi\epsilon_0a_0} 
+\end{eqnarray}
+
+The self energy is the Coulomb interaction energy of the electron
+density with itself. This energy is cancelled by the exchange
+energy. Thus, the self energy can be used to obtain, independently,
+the Hartree energy and the exchange energy.
+\begin{eqnarray}
+E_{self}&=&\frac{1}{2}\int d^3r\;n(\vec{r})v(\vec{r})
+\nonumber\\
+&=&\frac{1}{2}\left(\frac{1}{\pi a_0^3}\right) \left(\frac{e^2}{4\pi\epsilon_0}\right)  4\pi 
+\int_0^\infty dr\;r^2 \e{-2r/a_0} \frac{1}{r}  \left[1-\left(\left(\frac{r}{a_0}\right)  +1\right)\e{-2r/a_0}\right]
+\nonumber\\
+&=&\frac{1}{2}\left(\frac{1}{\pi a_0^3}\right)\left(\frac{e^2}{4\pi\epsilon_0}\right)  4\pi 
+a_0^2\int_0^\infty dx\;x \e{-2x} \left[1-\left(x+1\right)\e{-2x}\right]
+\nonumber\\
+&=&\frac{1}{2}\frac{1}{\pi a_0^3} \frac{e^2}{4\pi\epsilon_0a_0}  4\pi 
+a_0^3  \int_0^\infty dx\;  \left[x\e{-2x}-x^2\e{-4x}-x\e{-4x}\right]
+\nonumber\\
+&=&2 \underbrace{\frac{e^2}{4\pi\epsilon_0a_0}}_{1H}  
+ \underbrace{\left[\frac{1!}{2^2}-\frac{2!}{4^3}-\frac{1!}{4^2}\right]}_{1/4-1/32-1/16=(8-1-2)/32=5/32}
+\nonumber\\
+&=&\frac{5}{16} \frac{e^2}{4\pi\epsilon_0a_0}=0.3125~H\qquad \textit{(exact)}
+\end{eqnarray}
+
+The energy $E_{e-nuc}$ is the complete electrostatic energy including
+Hartree energy $E_{pot}+E_{self}$ and exchange energy $E_X$. This
+tells us that $E_X=-E_{self}$ This result for the exchange energy
+$E_X=-0.3125$ is also given in [P.M.W. Gill and J.A. Pople, Phys Rev. A
+  47, 2383 (1993)]\cite{gill93_pra47_2383}.
+
+%===================================================================
+\section{Dihydrogen cation}
+\label{sec:exacth2plus}
+%===================================================================
+The $H_2^+$ ion is another one-electron system. It will not be treated
+exactly, but rather in the basisset of the wave functions of atomic
+hydrogen. The goal of this is to benchmark the matrix elements for the
+off-site exchange.
+
+%=======================================================================
+\subsection{Two-center integral of spherical functions}
+%=======================================================================
+The integrations of interest are of the form of a two-center integral
+of two spherical functions with centers that are separated by the
+distance $d$.
+\begin{eqnarray}
+\langle{f}|g\rangle&=&\int d^3r\;f(|\vec{r}|)g(|\vec{e}_zd-\vec{r}|)
+\nonumber\\
+&=&\int_0^\infty dr\;r^2\int_0^{2\pi} d\phi\; \int_0^{\pi}d\theta\sin(\theta)
+f(r) g(\sqrt{(d-r\cos(\theta))^2+(r\sin(\theta))^2})
+\nonumber\\
+&=&2\pi\int_0^\infty dr\;r^2 f(r)\int_0^{\pi}d\theta\sin(\theta)
+g(\sqrt{d^2-2dr\cos(\theta))+r^2})
+\nonumber\\
+&=&2\pi\int_0^\infty dr\;r^2 f(r)\frac{1}{dr}\int_{|d-r|}^{|d+r|}dy\;yg(y)
+\nonumber\\
+&=&\frac{2\pi}{d}
+\int_0^\infty dr\;r f(r)\int_{|d-r|}^{|d+r|}dy\;y g(y)
+\nonumber\\
+&=&\frac{2\pi}{d}
+\left[
+\int_0^d dr\;r f(r)\int_{d-r}^{r+d}dy\;y g(y)
++\int_d^\infty dr\;r f(r)\int_{r-d}^{r+d}dy\;y g(y)
+\right]
+\end{eqnarray}
+
+We used
+\begin{eqnarray}
+y(\theta)=\sqrt{d^2-2dr \cos(\theta)+r^2}
+\qquad\Rightarrow \qquad dy=\frac{1}{2y} 2dr\sin(\theta)d\theta
+\nonumber\\
+y(\theta=0)=|d-r|\qquad\text{and}\qquad y(\theta=\pi)=d+r
+\end{eqnarray}
+
+%=======================================================================
+\subsection{Overlap}
+%=======================================================================
+Let me  evaluate the overlap of two hydrogen orbitals
+\begin{eqnarray}
+S(d)&=&
+\frac{1}{\pi a_0^3}
+\int d^3r
+\e{-|\vec{r}|/a_0} \e{-|\vec{r}-\vec{e}_zd|/a_0}
+\nonumber\\
+&=&\frac{1}{\pi}
+\int d^3x
+\e{-|\vec{x}|} \e{-|\vec{x}-\vec{e}_z\frac{d}{a_0}|}
+\end{eqnarray}
+
+
+With the undetermined integrals
+\begin{eqnarray}
+\int dx\; x\e{-ax}&=&-\frac{ax+1}{a^2}\e{-ax}
+\nonumber\\
+\int dx\; x^2\e{-ax}&=&-\frac{(ax)^2+2ax+2}{a^3}\e{-ax}
+\nonumber\\
+\int dx\; x^n\e{-ax}&=&\frac{-n!}{a^{n+1}}\e{-ax}
+\sum_{j=0}^n \frac{1}{j!}(ax)^j
+\end{eqnarray}
+from Bronstein, I obtain, with $z\defas\frac{d}{a_0}$
+\begin{eqnarray}
+S(d=za_0)
+&=&\frac{2}{z}
+\left[
+\int_0^{z} dx\;x \e{-x}\int_{z-x}^{x+z}dy\;y \e{-y}
++\int_{z}^\infty dx\;x \e{-x}\int_{x-z}^{x+z}dy\;y \e{-y}
+\right]
+\nonumber\\
+%
+%
+%
+&=&\frac{2}{z}
+\biggl\lbrace
+\int_0^{z} dx\;x \e{-x}
+\biggl[-(1+y)\e{-y}\biggr]_{z-x}^{x+z}
++\int_{z}^\infty dx\;x \e{-x}
+\biggl[-(1+y)\e{-y}\biggr]_{x-z}^{x+z}
+\biggr\rbrace
+\nonumber\\
+%
+%
+%
+&=&\frac{2}{z}
+\biggl\lbrace
+\int_0^{z} dx\;x \e{-x}
+\biggl[
+-\left(1+x+z\right)\e{-(x+z)}
++\left(1+z-x\right)\e{-(z-x)}
+\biggr]
+\nonumber\\
+&&\hspace{0.2cm}
++\int_{z}^\infty dx\;x \e{-x}
+\biggl[
+-\left(1+x+z\right)\e{-(x+z)}
++\left(1+x-z\right)\e{-(x-z)}
+\biggr]
+\biggr\rbrace
+\nonumber\\
+%
+%
+%
+&=&\frac{2}{z}
+\biggl\lbrace
+\e{-z}\int_0^{z} dx\;
+\biggl[
+-\left(1+z\right)x\e{-2x}-x^2\e{-2x}
++\left(1-z\right)x+x^2
+\biggr]
+\nonumber\\
+&&\hspace{1.cm}
++\int_{z}^\infty dx\; 
+\biggl[
+\Bigl(\e{+z}\left(1-z\right)-\e{-z}\left(1+z\right)\Bigr)x\e{-2x}
++\Bigl(\e{+z}-\e{-z}\Bigr)x^2\e{-2x}
+\biggr]
+\biggr\rbrace
+\nonumber\\
+%
+%
+%
+&=&\frac{2}{z}
+\biggl\lbrace
+\e{-z}
+\biggl[
+-\left(1+z\right)\frac{-2x-1}{4}\e{-2x}
+-\frac{(-2x)^2-2(-2x)+2}{-8}\e{-2x}
++\frac{1+z}{2}x^2
+-\frac{1}{3}x^3
+\biggr]_0^{z}
+\nonumber\\
+&&
++
+\biggl[
+\Bigl(\e{+z}\left(1-z\right)-\e{-z}\left(1+z\right)\Bigr)
+\frac{-2x-1}{4}\e{-2x}
++\Bigl(\e{+z}-\e{-z}\Bigr)\frac{(-2x)^2-2(-2x)+2}{-8}\e{-2x}
+\biggr]_{z}^\infty 
+\biggr\rbrace
+\nonumber\\
+%
+%
+%
+&=&\frac{2}{z}
+\biggl\lbrace
+\e{-z}
+\biggl[
+\left(1+z\right)\frac{2z+1}{4}\e{-2z}
+-\frac{2z^2+2z+1}{4}\e{-2z}
++\frac{1+z}{2}z^2
+-\frac{1}{3}z^3
++\left(1+z\right)\frac{-1}{4}
+-\frac{1}{4}
+\biggr]
+\nonumber\\
+&&
+-
+\biggl[
+\Bigl(\e{+z}\left(1-z\right)-\e{-z}\left(1+z\right)\Bigr)
+\frac{-2z-1}{4}\e{-2z}
++\Bigl(\e{+z}-\e{-z}\Bigr)\frac{2z^2+2z+1}{-4}\e{-2z}
+\biggr]
+\biggr\rbrace
+\nonumber\\
+%
+%
+%
+&=&
+\Bigl(\frac{1}{3}z^2+z+1\Bigr)\e{-z}
+\end{eqnarray}
+
+Thus, the overlap matrix element of two hydrogen 1s-orbitals is
+\begin{myshadowminipage}{Overlap of two hydrogen 1s orbitals}
+\begin{eqnarray}
+S(d)=
+\left[\frac{1}{3}\left(\frac{d}{a_0}\right)^2
++\left(\frac{d}{a_0}\right)+1\right]\e{-z}
+\end{eqnarray}
+\end{myshadowminipage}
+
+%=======================================================================
+
+%=======================================================================
+Coulomb integral
+\begin{eqnarray}
+J=\frac{e^2}{4\pi\epsilon_0d}
+-\int d^3r\;\psi_{1s}(\vec{r})\psi_{1s}(\vec{r})\frac{e^2}{4\pi\epsilon_0|\vec{r}-\vec{e}_zd|}
+=\left(1+\frac{1}{d}\right)\e{-2d/a_0}
+\end{eqnarray}
+
+Resonance integral
+\begin{eqnarray}
+K=\frac{e^2S(d)}{4\pi\epsilon_0d}
+-\int d^3r\;
+\frac{e^2\psi_{1s}(\vec{r}-\vec{e}_zd)\psi_{1s}(\vec{r})}
+{4\pi\epsilon_0|\vec{r}-\vec{e}_zd|}
+=\frac{e^2}{4\pi\epsilon_0}
+\left(\frac{a_0}{d}-\frac{2}{3}\frac{d}{a_0}\right)\e{-d/a_0}
+\end{eqnarray}
+
+\begin{eqnarray}
+31&=&
+\int d^3r\int d^3r'\;
+\frac{e^2\psi^2(\vec{r})\psi(\vec{r'})\psi(\vec{r'}-\vec{e}_zd)}
+{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+=\int d^3r\;\Bigl(v_{1}(\vec{r})\psi(\vec{r})\Bigr) \psi(\vec{r}-\vec{e}_zd)
+\nonumber\\
+22&=&
+\int d^3r\int d^3r'\;\frac{e^2\psi^2(\vec{r})\psi^2(\vec{r'}-\vec{e}_zd)}
+{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+=\int d^3r\;v_{1}(\vec{r})\psi^2(\vec{r'}-\vec{e}_zd)
+\end{eqnarray}
+The Coulomb potential from the electrons of one hydrogen atom is
+\eq{eq:potentialfromelectronshatom}
+\begin{eqnarray}
+v_{1}(\vec{r})&=&\frac{e^2}{4\pi\epsilon_0|\vec{r}|}
+\left[1-\left(1+\frac{r}{a_0}\right)\e{-2r/a_0}\right]
+\end{eqnarray}
+
+
+Both integrations are of a similar form, namely $31=I(3,1)$ and
+$22=I(2,2)$ with
+\begin{eqnarray}
+\frac{e^2}{4\pi\epsilon_0 a_0}I_{2+m,n}(d=za_0)
+&\defas&
+\int d^3r\;v_{1}(\vec{r})
+\psi_{1s}^{n}(\vec{r})\psi_{1s}^{m}(\vec{r}-\vec{e}_zd)
+\nonumber\\
+%
+%
+%
+&=&
+\frac{e^2}{4\pi\epsilon_0 a_0}\frac{1}{\pi a_0^3}
+\int d^3r\;\frac{a_0}{|\vec{r}|}
+\left[1-\left(1+\frac{|\vec{r}|}{a_0}\right)\e{-2\frac{|\vec{r}|}{a_0}}\right]
+\e{-m\frac{|\vec{r}|}{a_0}}\e{-n\frac{|\vec{r}-\vec{e}_zd|}{a_0}}
+\nonumber\\
+%
+%
+%
+&=&
+\frac{e^2}{4\pi\epsilon_0 a_0}\frac{1}{\pi}
+\int d^3r\;\frac{1}{|\vec{x}|}
+\left[1-\left(1+|\vec{x}|\right)\e{-2|\vec{x}|}\right]
+\e{-m|\vec{r}|}\e{-n|\vec{x}-\vec{e}_z z|}
+\end{eqnarray}
+with $z=d/a_0$.
+
+\begin{eqnarray}
+I_{4-n,n}(z)&=&\frac{1}{\pi}
+\int d^3r\;\frac{1}{|\vec{x}|}
+\left[1-\left(1+|\vec{x}|\right)\e{-2|\vec{x}|}\right]
+\e{-(2-n)|\vec{r}|}\e{-n|\vec{x}-\vec{e}_z z|}
+\nonumber\\
+%
+%
+%
+&=&\frac{1}{\pi}\frac{2\pi}{z}
+\biggl\lbrace
+\int_0^z dx\; x
+\underbrace{
+\frac{1}{x}\left[1-\left(1+x\right)\e{-2x}\right]\e{-(2-n)x}
+}_{f(x)}
+\int_{z-x}^{x+z}dy\; y\underbrace{\e{-ny}}_{g(y)}
+\nonumber\\
+&&+\int_z^\infty dx\; x
+\underbrace{
+\frac{1}{x}\left[1-\left(1+x\right)\e{-2x}\right]\e{-(2-n)x}
+}_{f(x)}
+\int_{x-z}^{x+z}dy\; y\underbrace{\e{-ny}}_{g(y)}
+\biggr\rbrace
+\nonumber\\
+%
+%
+%
+&=&\frac{2}{z}
+\biggl\lbrace
+\int_0^z dx\;
+\left[1-\left(1+x\right)\e{-2x}\right]\e{-(2-n)x}
+\biggl[\frac{-ny-1}{n^2}\e{-ny}\biggr]_{z-x}^{x+z}
+\nonumber\\
+&&+\int_z^\infty dx\; 
+\left[1-\left(1+x\right)\e{-2x}\right]\e{-(2-n)x}
+\biggl[\frac{-ny-1}{n^2}\e{-ny}\biggr]_{x-z}^{x+z}
+\biggr\rbrace
+\nonumber\\
+%
+%
+%
+&=&\frac{-2}{n^2z}
+\biggl\lbrace
+\int_0^z dx\;
+\left[1-\left(1+x\right)\e{-2x}\right]\e{-(2-n)x}
+\nonumber\\
+&&\hspace{2cm}
+\times\biggl[(1+n(z+x))\e{-nz}\e{-nx}
+-(1+nz-nx)\e{-nz}\e{+nx}\biggr]
+\nonumber\\
+&&\hspace{0.5cm}+\int_z^\infty dx\; 
+\left[1-\left(1+x\right)\e{-2x}\right]\e{-(2-n)x}
+\nonumber\\
+&&\hspace{2cm}
+\times\biggl[(1+nz+nx)\e{-nz}
+-(1-nz+nx)\e{+nz}
+\biggr]\e{-nx}
+\biggr\rbrace
+\nonumber\\
+%
+%
+%
+&=&\frac{-2}{n^2z}
+\biggl\lbrace
+\int_0^z dx\;
+\left[1-\left(1+x\right)\e{-2x}\right]
+\nonumber\\
+&&\hspace{2cm}
+\times\e{-nz}\biggl[(1+nz+nx)\e{-2x}-(1+nz-nx)\e{-(2-2n)x}\biggr]
+\nonumber\\
+&&\hspace{0.5cm}+\int_z^\infty dx\; 
+\left[1-\left(1+x\right)\e{-2x}\right]
+\nonumber\\
+&&\hspace{2cm}
+\times\biggl[
+\Bigl((1+nz+nx)\e{-nz}-(1-nz+nx)\e{+nz}\Bigr)
+\biggr]\e{-2x}
+\biggr\rbrace
+\nonumber\\
+\end{eqnarray}
+
+\begin{eqnarray}
+I_{22}
+&=&\frac{-2}{4z}
+\biggl\lbrace
+\int_0^z dx\;
+\left[1-\left(1+x\right)\e{-2x}\right]
+\nonumber\\
+&&\hspace{2cm}
+\times\e{-2z}\biggl[(1+2z+2x)\e{-2x}-(1+2z-2x)\e{+2x}\biggr]
+\nonumber\\
+&&\hspace{0.5cm}+\int_z^\infty dx\; 
+\left[1-\left(1+x\right)\e{-2x}\right]
+\nonumber\\
+&&\hspace{2cm}
+\times\biggl[
+\Bigl((1+2z+2x)\e{-2z}-(1-2z+2x)\e{+2z}\Bigr)
+\biggr]\e{-2x}
+\biggr\rbrace
+\nonumber\\
+%
+%
+%
+&=&\frac{-1}{2z}
+\biggl\lbrace
+\int_0^z dx\;\e{-2z}\biggl[(1+2z+2x)\e{-2x}-(1+2z-2x)\e{+2x}\biggr]
+\nonumber\\
+&&\hspace{0.5cm}
++\int_z^\infty dx\; 
+\biggl[\Bigl((1+2z+2x)\e{-2z}-(1-2z+2x)\e{+2z}\Bigr)\biggr]\e{-2x}
+\nonumber\\
+%
+&&-
+\int_0^z dx\;
+\e{-2z}\biggl[(1+2z+2x)\e{-4x}-(1+2z-2x)\biggr]
+\nonumber\\
+&&\hspace{0.5cm}-\int_z^\infty dx\; 
+\biggl[\Bigl((1+2z+2x)\e{-2z}-(1-2z+2x)\e{+2z}\Bigr)\biggr]\e{-4x}
+\nonumber\\
+%
+&&-
+\int_0^z dx\;
+\e{-2z}\biggl[(1+2z+2x)\e{-4x}-(1+2z-2x)\biggr]x
+\nonumber\\
+&&\hspace{0.5cm}-\int_z^\infty dx\; 
+\biggl[\Bigl((1+2z+2x)\e{-2z}-(1-2z+2x)\e{+2z}\Bigr)\biggr]x\e{-4x}
+\biggr\rbrace
+\nonumber\\
+%
+%
+%
+&=&\frac{-1}{2z}
+\biggl\lbrace
+\biggl[\left(\frac{1+2z}{-2}-2\frac{1+2x}{4}\right)\e{-2(x+z)}
+-\Bigl(\frac{1+2z}{+2}+2\frac{1-2x}{4}\Bigr)\e{+2(x-z)}\biggr]_0^z
+\nonumber\\
+&&\hspace{0.5cm}
++\left[
+\left(\frac{1+2z}{-2}-2\frac{2x+1}{4}\right)\e{-2(x+z)}
+-\left(\frac{1-2z}{2}+2\frac{1-2x}{4}\right)\e{+2(z-x)}\Bigr)
+\right]_z^\infty
+\nonumber\\
+%
+&&-
+\left[\left(\frac{1+2z}{-4}-2\frac{1+4x}{16}\right)\e{-4x-2z}
+-\left(x+2xz-x^2\right)\e{-2z}\right]_0^z
+\nonumber\\
+&&\hspace{0.5cm}
+-
+\left[\left(\frac{1+2z}{-4}-2\frac{1+4x}{16}\right)\e{-2z-4x}
+-\left(\frac{1-2z}{-4}-2\frac{1+4x}{16}\right)\e{+2z-4x}
+\right]_z^\infty
+\nonumber\\
+%
+&&-
+\left[
+ \left(\frac{(1+2z)(1+4z)}{16}+2\frac{16x^2+8x+2}{(-4)^3}\right)\e{-4x-2z}
+-\left(\frac{1+2z}{2}x^2-\frac{2}{3}x^3\right)\e{-2z}\right]_0^z
+\nonumber\\
+&&-
+\biggl[
+ \left(-\frac{(1+2z)(1+4x)}{16}+2\frac{16x^2+8x+2}{-4^3}\right)\e{-2z-4x}
+\nonumber\\
+&&\hspace{2cm}
+-\left(-\frac{(1-2z)(1+4x)}{16}+2\frac{16x^2+8x+2}{-4^3}\right)\e{+2z-4x}
+\biggr]_z^\infty
+\biggr\rbrace
+\end{eqnarray}
+This calculation is not finished. I am continuing with the Result from Maple.
+
+
+
+
+
+Maple:
+\begin{eqnarray}
+I(3,1)
+&=&
+\Bigl(z^2+\frac{1}{8}z+\frac{5}{16}\Bigr)\frac{1}{z}\e{-z}
+-\Bigl(\frac{1}{8}z+\frac{5}{16}\Bigr)\frac{1}{z}\e{-3z}
+\nonumber\\
+&=&
+z\e{-z}+
+\Bigl(\frac{1}{8}z+\frac{5}{16}\Bigr)\frac{1}{z}\left(\e{-z}-\e{-3z}\right)
+\nonumber\\
+I(2,2)
+&=&
+\frac{1}{z}-\Bigl(\frac{1}{6}z^3+\frac{3}{4}z^2+\frac{11}{8}z+1\Bigr)\frac{1}{z}\e{-2z}
+\end{eqnarray}
+
+\begin{itemize}
+\item Both terms approach at short distances 
+\begin{eqnarray}
+I_{33}(z)&=&\frac{5}{8}+O(x^2)
+\nonumber\\
+I_{22}(z)&=&\frac{5}{8}+O(x^2)
+\end{eqnarray}
+The limit $x\rightarrow0$ is equal to the onsite U-tensor, becausem in
+this limit, all four orbitals are centered on a single site. The
+electrostatic self energy $E_{self}$ of the hydrogen atom calculated
+above is $5/16$, which is $\frac{1}{2}U$.
+%
+\item at long distances the integrals approach
+\begin{eqnarray}
+I_{22}(z)&\stackrel{z\rightarrow\infty}{\rightarrow}&\frac{1}{z}
+\nonumber\\
+I_{33}(z)&\stackrel{z\rightarrow\infty}{\rightarrow}&ze^{-z}
+\end{eqnarray}
+\end{itemize}
+
+In order to remove the long-ranged part, I subtracted the multipole
+expansion of the 22 term. This, however, introduces singularities of
+the remaining term at the origin. A better strategy would be to
+replace 1/r by
+\begin{eqnarray}
+\frac{1}{z}&\rightarrow&
+\frac{1}{z}-\left(1-\frac{1}{2}(\lambda z)^2\right)\frac{\e{-\lambda z}}{z}\cdot
+\nonumber\\
+\frac{1}{z^2}&\rightarrow&\frac{1}{z^2}-
+\left(1+(\lambda z)-\frac{1}{3}\lambda^2\right)\frac{\e{-\lambda z}}{z^2}
+\nonumber\\
+\frac{1}{z^3}&\rightarrow&\frac{1}{z^3}-
+\left(1+(\lambda z)+\frac{1}{2}\lambda^2-\frac{1}{8}(\lambda x)^4\right)\frac{\e{-\lambda z}}{z^3}
+\nonumber\\
+\e{-\lambda z}&\rightarrow&(1+\lambda z)\e{-\lambda z}
+\end{eqnarray}
+
+For a finite screening we need to multiply the right hand sie with
+$(1+\gamma z)\e{-\gamma z}$, so that the slope at the origin remains
+zero.
+\begin{eqnarray}
+\frac{1}{z}\e{-\gamma z}&\rightarrow&
+\left(
+\frac{1}{z}
+-\left(1-\frac{1}{2}((\lambda+\gamma) z)^2\right)\frac{\e{-\lambda z}}{z}\cdot
+\right)\e{-\gamma z}
+\nonumber\\
+\frac{1}{z^2}&\rightarrow&\frac{1}{z^2}-
+\left(1+(\lambda z)-\frac{1}{3}\lambda^2\right)\frac{\e{-\lambda z}}{z^2}
+\nonumber\\
+\frac{1}{z^3}&\rightarrow&\frac{1}{z^3}-
+\left(1+(\lambda z)+\frac{1}{2}\lambda^2-\frac{1}{8}(\lambda x)^4\right)\frac{\e{-\lambda z}}{z^3}
+\nonumber\\
+\e{-\lambda z}&\rightarrow&(1+\lambda z)\e{-\lambda z}
+\end{eqnarray}
+
+
+
 %=======================================================================
 \chapter{Definition of solid Hankel functions}
 \label{app:solidhankel}
