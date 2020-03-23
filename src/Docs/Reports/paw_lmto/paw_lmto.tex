@@ -37,20 +37,22 @@ http://www.pt.tu-clausthal.de/atp/}
 %====================================================================
 \chapter{Notes}
 %====================================================================
-%% \begin{itemize}
-%% \item The variable \verb|RAUG| must be large enough to enclose the
-%%   semi-core states, because the decay of the envelope function is
-%%   usually much too slow for them. 
-%% %
-%% \end{itemize}
-
-%====================================================================
-\section{Tests}
-%====================================================================
 \begin{itemize}
-\item is the dynamics energy conserving with fixed positions?
+\item The variable \verb|RAUG| must be large enough to enclose the
+  semi-core states, because the decay of the envelope function is
+  usually much too slow for them. 
 %
+\item The interpolation of the matrix elements on the distance grid
+  must be investigated mor thoroughly. It is not clear why Gauss
+  oscillation occur beyond the interpolation grid when the decay
+  length is set too large. Tests have been done for the hydrogen
+  atomic orbital but not for general orbitals.
+%
+\item \textcolor{red}{\textbf{The double counting term seems to work
+    ok for the local exchange, but there is not such term for the
+    non-local terms.!!!}}
 \end{itemize}
+
 
 %====================================================================
 \section{Fixes}
@@ -2380,12 +2382,186 @@ bare Hankel function is considered.
 \chapter{Benchmarks}
 %=======================================================================
 %=======================================================================
+\section{Hydrogen}
+%=======================================================================
+The hydrogen atom and the dihydrogen cation in a basisset of hydrogen
+orbitals, many of the integrals can be calculated analytically.  The
+analytical results are in the appendix in section~\ref{sec:exacthatom}
+and the off-site matrix elements are in
+section~\ref{sec:hoffsitematrixelements} The energies are then
+composed in section~\ref{sec:exacth2plus}.
+
+\begin{enumerate}
+\item In order to test the calculations of the integrals, the local
+  orbital is overwritten by the exact atomic orbital of hydrogen in
+  \verb|simplelmto_makechi1| by setting the parameter
+  \verb|TH1S=.true.|.
+%
+\item in \verb|simplelmto_offxint| the parameters for the distance
+  grid are changed to \verb|NDIS=100,dsmn=0.01d0,dsmx=10.d0|.
+%
+\item \verb|SIMPLELMTO_OFFSITEOVERLAPSETUP| is tested as follows:
+    \begin{itemize}
+    \item I set \verb|TPR=.true.|, which writes the integrals into the
+      file XOV.DAT and terminates after writing.
+    \item run the code for a hydrogen atom or molecule with NPRO=1 and
+      offsite exchange on.
+    \item inspect the file \verb|XOV.DAT| and compare with analytical
+      result. 
+\begin{center}
+\includegraphics[width=0.4\textwidth]{Figs/Dihydrogenion/xovofr}
+\end{center}
+    \end{itemize}
+%
+\item \verb|SIMPLELMTO_OFFSITEX22SETUP| is tested as follows:
+  \begin{itemize}
+    \item I set \verb|TPR=.true.|, which writes the integrals into the
+      file X22.DAT and terminates after writing.
+    \item Switch the long-range correction off by selecting
+      \verb|TOFF=.true.| in \verb|SIMPLELMTO_EXPLDISF|
+    \item run the code for a hydrogen atom or molecule with NPRO=1 and
+      offsite exchange on.
+    \item inspect the file \verb|X22.DAT| and compare with analytical
+      result. 
+\begin{center}
+\includegraphics[width=0.4\textwidth]{Figs/Dihydrogenion/x22ofr}
+\includegraphics[width=0.4\textwidth]{Figs/Dihydrogenion/x22ofrcorr}
+\end{center}
+The graph shows (left) the 22-matrix element and (right) the 22
+matrix element with the long-range part subtracted. Also shown is
+(red,dash-dotted) the function $\pm d^{-1}$ and (blue,dashed)
+$\e{-2r/a_0}$. The green spheres are the analytic result.
+
+    The numeric data are divided by $4\pi$ before printing.  the
+    agreement is good only when this factor is included.  This factor
+    is in order as shown by the U-matrix elements in
+    \verb|simplelmto_offsitexeval|, described below.
+
+    The agreement of analytic and with the code is perfect.
+    \item undo the changes made for the test of
+      \verb|SIMPLELMTO_OFFSITEX22SETUP|.
+  \end{itemize}
+%
+\item \verb|SIMPLELMTO_OFFSITEX31SETUP| is tested as follows:
+  \begin{itemize}
+    \item I set \verb|TPR=.true.|, which writes the integrals into the
+      file X22.DAT and terminates after writing.
+    \item run the code for a hydrogen atom or molecule with NPRO=1 and
+      offsite exchange on.
+    \item inspect the file \verb|X31.DAT| and compare with analytical
+      result. I find precise agreement.
+    \item undo the changes made for the test of
+      \verb|SIMPLELMTO_OFFSITEX31SETUP|
+\begin{center}
+\includegraphics[width=0.4\textwidth]{Figs/Dihydrogenion/x31ofr}
+\end{center}
+The graph shows the 31-matrix element.  The green spheres are the
+analytic result.
+
+    The numeric data are divided by $4\pi$ before printing.  the
+    agreement is good only when this factor is included. This factor
+    is in order as shown by the U-matrix elements in
+    \verb|simplelmto_offsitexeval|, described below.
+
+    The agreement of analytic and with the code is perfect. The matrix
+    elements do not fall off to zero upt to 5~$a_0$.
+  \end{itemize}
+%
+\item The fitting of the data with interpolating data as described in
+  section~{sec:interpolation4center} is performed in
+  \verb|simplelmto_offsitexconvert|.
+
+  This fitting is critical. I find strong Gauss oscillations, when the
+  decay length becomes 0.5~$a_0$ or longer. 
+\begin{verbatim}
+INTEGER(4),PARAMETER :: NDIS=25  !#(DISTANCE GRID POINTS)
+REAL(8)   ,PARAMETER :: DSMN=0.01D0,DSMX=8.D0 !PARMS FOR DISTANCE GRID
+                        !DISTANCE GRID WILL BE SCALED BY RCOV1+RCOV2 
+INTEGER(4),PARAMETER :: NF=10  !#(FIT FUNCTIONS 1<NF<NDIS!)
+REAL(8)   ,PARAMETER :: DCAYMN=0.01D0,DCAYMX=0.3D0 !PARMS FOR FIT FUNCTION
+\end{verbatim}
+%
+\item We test in \verb|simplelmto_offsitexeval| the accuracy of the
+  interpolation and whether all factors are correct for the U-tensor
+  and overlap matrix elements.  Print statements are introduced right
+  after \verb|SIMPLELMTO_OFFSITEOVERLAP|,
+  \verb|SIMPLELMTO_OFFSITEX22U| and \verb|SIMPLELMTO_OFFSITEX31U| two
+  write the distance and the matrix element.  
+
+The grid for the interpolation is defined in \verb|simplelmto_offxint|
+as
+\begin{verbatim}
+INTEGER(4),PARAMETER :: NDIS=25  !#(DISTANCE GRID POINTS)
+REAL(8)   ,PARAMETER :: DSMN=0.01D0,DSMX=8.D0 !PARMS FOR DISTANCE GRID
+INTEGER(4),PARAMETER :: NF=10  !#(FIT FUNCTIONS 1<NF<NDIS!)
+REAL(8)   ,PARAMETER :: DCAYMN=0.01D0,DCAYMX=0.3D0 !PARMS FOR FIT FUNCTIONS
+\end{verbatim}
+
+The matrix elements for the distance of $1.7007533934015353 a_0$ are
+compared with the analytic results for hydrogen.
+\begin{center}
+\begin{tabular}{lccc}
+\hline
+        & code & analytic & relative error\\
+\hline
+overlap & 0.66909903193483400 &  0.6690200686  & $10^{-4}$\\
+I22     & 0.46359781572577707 &  0.4639919717  & $8\times10^{-4}$\\
+I31     & 0.36493908697317334 &  0.3649471777  & $2\times 10^{-5}$\\
+\hline
+\end{tabular}
+\end{center}
+%
+\item In the structure file, I set \verb|LHFWEIGHT=1.| to obtain the
+  results similar to a full exchange calculation. (See also
+  section~\ref{sec:exacth2plus} for the dihydrogen cation at its
+  equilibrium distance.)
+
+
+The atomic distance is $1.7007533934015353 a_0$.
+\begin{center}
+\begin{tabular}{lcc}
+onsite charge per site   &  0.48233 & 0.29957\\
+onsite exchange per site & -0.03635 & \\
+double counting per site &  0.03936 & \\
+offsite charge           &  0.64543 & 0.400846\\
+offsite exchange         & -0.22371 & \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{eqnarray}
+|\psi\rangle
+&=&\left(|\chi_1\rangle+|chi_2\rangle\right)\frac{1}{\sqrt{2+2S}}
+=\left(|\chi_1\rangle+|chi_2\rangle\right) c
+\nonumber\\
+c&=&0.5473362632
+\nonumber\\
+S&=& 0.6690200686
+\nonumber\\
+d&=&1.7007533934015353 a_0
+\nonumber\\
+\frac{n_{onsite}}{sites}&=&c^2=\frac{1}{2+2S}=0.299576985
+\nonumber\\
+n_{offsite}&=&2c^2S=\frac{2S}{2+2S}=0.4008460301
+\nonumber\\
+E_{X,onsite}&=&U_{onsite}\rho_{11}\rho_{11}
+\nonumber\\
+E_{X,31}&=&\frac{1}{2}
+\left(I_{31}\rho_{11}\rho_{12}+I_{31}\rho_{22}\rho_{21}\right)
+\nonumber\\
+E_{X,22}&=&\frac{1}{2}
+\left(I_{22}\rho_{12}\rho_{21}+I_{22}\rho_{21}\rho_{12}\right)
+\end{eqnarray}
+where $S$ is the offsite overlap, $d$ is the interatomic distance.
+\end{enumerate}
+
+%=======================================================================
 \section{Silicon}
 %=======================================================================
 The files are in \url{~/Tree/Projects/SetupTests/Si}.
 
 I performed calculation for a silicon crystal. We used a mixing of the
-lcoal exchange of $\alpha_X=0.1$. The local basiset included one
+local exchange of $\alpha_X=0.1$. The local basiset included one
 s-type and one p-type tight-binding function.
 
 The following dependencies have been explored:
@@ -4028,6 +4204,87 @@ and \verb|SPFUNCTION$MODHANKEL(L,K*X,Y,DYDX)|(ABRAMOWITZ 10.2.4)
 %=======================================================================
 
 %=======================================================================
+\section{Interpolation of the four-center integrals}
+\label{sec:interpolation4center}
+%=======================================================================
+In order to make the code fasst. The four-center integrals are mapped
+onto a distance grid, with the distance pointing in the $z$-direction.
+
+The functions to be interpolated have the property that their slope a
+the origibn vanishes, and that they fall off exponentially. Therefore,
+the fit functions are chosen as
+\begin{eqnarray}
+g_j(x)=(1+\lambda_j x)\e{-\lambda_j x}
+\end{eqnarray}
+
+
+The least-square fit in the distance grid minimizes
+\begin{eqnarray}
+I[\{c_j\}]\defas \int dx\;\Bigl(f(x)-\sum_j g_j(x) c_j\Bigr)^2
+\end{eqnarray}
+so that
+\begin{eqnarray}
+\frac{\partial I}{\partial c_j}= 2
+\left[\left(\int dx\; g_k(x)g_j(x)\right) c_j
+-\left(g_k(x) f(x)\right)\right]\stackrel{!}{=}0
+\end{eqnarray}
+
+The integration is performed on a distance grid, which is necessarily
+finite. One consence is that the fit function may produce maxima
+beyond the distance grid. Because of this we augment the overlap
+integral of two fit functions by an analytic integral from the maximum
+grid point to infinity.
+\begin{eqnarray}
+&&\int_{x_{max}}^\infty dx\; g_k(x)g_j(x)
+\nonumber\\
+&=&
+\int_{x_{max}}^\infty dx\; 
+\Bigl(1+(\lambda_j+\lambda_k)x+\lambda_j\lambda_kx^2\Bigr)
+\e{-(\lambda_j+\lambda_k)x}
+\nonumber\\
+&=&
+\frac{1}{\lambda_1+\lambda_2}
+\int_{y_{max}}^\infty dy\; 
+\Bigl(1+y+
+\underbrace{\frac{\lambda_j\lambda_k}{(\lambda_j+\lambda_k)^2}}_{:=K}y^2\Bigr)
+\e{-y}
+\nonumber\\
+&\eqrel{eq:formulapowerexponential}{=}&
+\frac{1}{\lambda_1+\lambda_2}
+\left[\left(-1-(1+y)-K(y^2+2y+2)y^2\right)\e{-y}\right]_{y_{max}}^\infty
+\nonumber\\
+&=&
+\frac{1}{\lambda_1+\lambda_2}
+\left[-\left(2+y+K(y^2+2y+2)\right)\e{-y}\right]_{y_{max}}^\infty
+\nonumber\\
+&=&
+\frac{1}{\lambda_1+\lambda_2}
+\left(2+y_{max}+K(y_{max}^2+2y_{max}+2)\right)\e{-y_{max}}
+\nonumber\\
+&&\qquad
+\text{with $y_{max}=(\lambda_j+\lambda_k)x_{max}$ and
+$K=\frac{\lambda_j\lambda_k}{(\lambda_j+\lambda_k)^2}$}
+\end{eqnarray}
+I do not include such an extension in the integral
+$\int_{x_{max}}^\infty dx\;g_k(x)f(x)$, which is the same as treating
+$f(x)=0$ for $x>x_{max}$.
+
+Instead of the integral, I use a sum over grid points. That is, there
+is a factor $x_{max}/N_x$ for the integrals up to $x_{max}$
+missing. Rather than scaling the integrations, I divide the integral
+beyond $x_{max}$ by the same factor.
+
+
+The fit produces Gauss oscillations beyond the grid, if the largest
+decay constant is larger than $\lambda=0.4 (r_{cov,1}+r_{cov,2})$.
+
+
+Remark: The fit functions, that is the distribution of the decay
+constants, need to be investigated further to obtain the maximum
+flexibilit=y,
+
+
+%=======================================================================
 \section{Exchange energy and U-tensor}
 %=======================================================================
 The exchange energy with a screened interaction has the form
@@ -4275,7 +4532,7 @@ Q \delta(\vec{r}-\vec{R})
 +\ldots
 \end{eqnarray}
 The multipole representation of the density is a density that vanishes
-everywhere else than a point, but produces the same multipole
+everywhere except for a point, while it produces the same multipole
 expansion of the potential as the original density.
 
 The long-ranged potential $v^{lr}(\vec{r})$ is the potential created
@@ -4308,6 +4565,7 @@ Y_{p_i}(\vec{r}-\vec{R'})
 %=======================================================================
 \subsection{Long-range expansion of the energy}
 %=======================================================================
+Consider the electrostatic interaction of two multipole expansions
 \begin{eqnarray}
 E^{lr}
 &=&\int d^3r\int d^3r'\;P_1(\vec{r})w(|\vec{r}-\vec{r'}|)P_2(\vec{r'})
@@ -5880,46 +6138,6 @@ This is inserted into the equation obtained previously
 
 
 
-%=======================================================================
-\chapter{Interpolation of U-tensor matrix elements}
-%=======================================================================
-
-In the first iteration, the U-tensor matrix elements are calculated on
-a distance grid. Then a superposition of exponentials is fitted to the
-data points.
-\begin{eqnarray}
-y(r)=\sum_{j=1}^{N_f} B_j\e{-\lambda_jr}
-\end{eqnarray}
-
-The mean square deviation between data-points and fit is $Z(\vec{B})$
-\begin{eqnarray}
-Z&=&\sum_{j=1}^{N_d} \biggl( y(d_j)-\sum_{m=1}^{N_f}B_m\e{-\lambda_m d_j}\Bigr)^2
-\nonumber\\
-\frac{dZ}{dB_n}&=&
--2\sum_{j=1}^{N_d} \biggl( y(d_j)-\sum_{m=1}^{N_f}B_m\e{-\lambda_m d_j}\Bigr)
-\e{-\lambda_n d_j}\Bigr)\stackrel{!}{=}0
-\nonumber\\
-0&=&
-\biggl(\sum_{j=1}^{N_d} y(d_j) \e{-\lambda_n d_j}\biggr)
--
-\sum_{m=1}^{N_f}
-\biggl(\sum_{j=1}^{N_d} \e{-(\lambda_n+\lambda_m) d_j}\biggr)B_m
-\nonumber\\
-B_m&=&\sum_{n=1}^{N_f}
-\biggl(\sum_{j=1}^{N_d} \e{-(\lambda_n+\lambda_m) d_j}\biggr)^{-1}_{m,n}
-\biggl(\sum_{j=1}^{N_d} y(d_j) \e{-\lambda_n d_j}\biggr)
-\nonumber\\
-&=&
-\sum_{k=1}^{N_d} 
-\biggl[
-\sum_{n=1}^{N_f}
-\biggl(\sum_{j=1}^{N_d} \e{-(\lambda_n+\lambda_m) d_j}\biggr)^{-1}_{m,n}
-\Bigl(\e{-\lambda_n d_k}\Bigr)_{n,k}\biggr]_{m,k}
-y(d_k) 
-\end{eqnarray}
-
-
-
 \appendix
 %===================================================================
 \chapter{Exact Benchmark systems}
@@ -6039,6 +6257,13 @@ a_0^3  \int_0^\infty dx\;  \left[x\e{-2x}-x^2\e{-4x}-x\e{-4x}\right]
  \underbrace{\left[\frac{1!}{2^2}-\frac{2!}{4^3}-\frac{1!}{4^2}\right]}_{1/4-1/32-1/16=(8-1-2)/32=5/32}
 \nonumber\\
 &=&\frac{5}{16} \frac{e^2}{4\pi\epsilon_0a_0}=0.3125~H\qquad \textit{(exact)}
+\label{eq:hatomeself}
+\end{eqnarray}
+
+The U-tensor is twice the self energy, \eq{eq:hatomeself}, i.e.
+\begin{eqnarray}
+U=2E_{self}=2 E_X=\frac{5}{8}\frac{e^2}{4\pi\epsilon_0 a_0}
+\label{eq:hatomonsiteU}
 \end{eqnarray}
 
 The energy $E_{e-nuc}$ is the complete electrostatic energy including
@@ -6047,15 +6272,10 @@ tells us that $E_X=-E_{self}$ This result for the exchange energy
 $E_X=-0.3125$ is also given in [P.M.W. Gill and J.A. Pople, Phys Rev. A
   47, 2383 (1993)]\cite{gill93_pra47_2383}.
 
-%===================================================================
-\section{Dihydrogen cation}
-\label{sec:exacth2plus}
-%===================================================================
-The $H_2^+$ ion is another one-electron system. It will not be treated
-exactly, but rather in the basisset of the wave functions of atomic
-hydrogen. The goal of this is to benchmark the matrix elements for the
-off-site exchange.
-
+%=======================================================================
+\section{Off-site matrix elements of dihydrogen}
+\label{sec:hoffsitematrixelements}
+%=======================================================================
 %=======================================================================
 \subsection{Two-center integral of spherical functions}
 %=======================================================================
@@ -6109,12 +6329,15 @@ S(d)&=&
 
 With the undetermined integrals
 \begin{eqnarray}
+\int dx\; \e{-ax}&=&-\frac{1}{a}\e{-ax}
+\nonumber\\
 \int dx\; x\e{-ax}&=&-\frac{ax+1}{a^2}\e{-ax}
 \nonumber\\
 \int dx\; x^2\e{-ax}&=&-\frac{(ax)^2+2ax+2}{a^3}\e{-ax}
 \nonumber\\
 \int dx\; x^n\e{-ax}&=&\frac{-n!}{a^{n+1}}\e{-ax}
 \sum_{j=0}^n \frac{1}{j!}(ax)^j
+\label{eq:formulapowerexponential}
 \end{eqnarray}
 from Bronstein, I obtain, with $z\defas\frac{d}{a_0}$
 \begin{eqnarray}
@@ -6232,7 +6455,7 @@ Thus, the overlap matrix element of two hydrogen 1s-orbitals is
 \begin{eqnarray}
 S(d)=
 \left[\frac{1}{3}\left(\frac{d}{a_0}\right)^2
-+\left(\frac{d}{a_0}\right)+1\right]\e{-z}
++\left(\frac{d}{a_0}\right)+1\right]\e{-\frac{d}{a_0}}
 \end{eqnarray}
 \end{myshadowminipage}
 
@@ -6474,13 +6697,9 @@ I_{22}
 \end{eqnarray}
 This calculation is not finished. I am continuing with the Result from Maple.
 
-
-
-
-
 Maple:
 \begin{eqnarray}
-I(3,1)
+I_{31}(z)
 &=&
 \Bigl(z^2+\frac{1}{8}z+\frac{5}{16}\Bigr)\frac{1}{z}\e{-z}
 -\Bigl(\frac{1}{8}z+\frac{5}{16}\Bigr)\frac{1}{z}\e{-3z}
@@ -6489,10 +6708,34 @@ I(3,1)
 z\e{-z}+
 \Bigl(\frac{1}{8}z+\frac{5}{16}\Bigr)\frac{1}{z}\left(\e{-z}-\e{-3z}\right)
 \nonumber\\
-I(2,2)
+I_{22}
 &=&
-\frac{1}{z}-\Bigl(\frac{1}{6}z^3+\frac{3}{4}z^2+\frac{11}{8}z+1\Bigr)\frac{1}{z}\e{-2z}
+\frac{1}{z}-\Bigl(\frac{1}{6}z^3
++\frac{3}{4}z^2+\frac{11}{8}z+1\Bigr)\frac{1}{z}\e{-2z}
 \end{eqnarray}
+
+
+
+\begin{myshadowminipage}{Offsite U-tensor matrix elements}
+The offsite U-tensor matrix elements $U_{31}=W_{1,1,1,2}$ and
+$U_{22}=W_{1,2,1,2}$ are
+\begin{eqnarray}
+U_{31}(d=za_0)
+&=&\frac{e^2}{4\pi\epsilon_0a_0}I_{31}
+=\frac{e^2}{4\pi\epsilon_0a_0}
+\left[
+z\e{-z}+
+\Bigl(\frac{1}{8}z+\frac{5}{16}\Bigr)\frac{1}{z}\left(\e{-z}-\e{-3z}\right)
+\right]
+\nonumber\\
+U_{22}(d=za_0)
+&=&\frac{e^2}{4\pi\epsilon_0a_0}I_{22}
+=\frac{e^2}{4\pi\epsilon_0a_0}
+\left[\frac{1}{z}-\Bigl(\frac{1}{6}z^3+\frac{3}{4}z^2
++\frac{11}{8}z+1\Bigr)\frac{1}{z}\e{-2z}
+\right]
+\end{eqnarray}
+\end{myshadowminipage}
 
 \begin{itemize}
 \item Both terms approach at short distances 
@@ -6523,10 +6766,11 @@ replace 1/r by
 \frac{1}{z}-\left(1-\frac{1}{2}(\lambda z)^2\right)\frac{\e{-\lambda z}}{z}\cdot
 \nonumber\\
 \frac{1}{z^2}&\rightarrow&\frac{1}{z^2}-
-\left(1+(\lambda z)-\frac{1}{3}\lambda^2\right)\frac{\e{-\lambda z}}{z^2}
+\left(1+(\lambda z)-\frac{1}{3}(\lambda z)^3\right)\frac{\e{-\lambda z}}{z^2}
 \nonumber\\
 \frac{1}{z^3}&\rightarrow&\frac{1}{z^3}-
-\left(1+(\lambda z)+\frac{1}{2}\lambda^2-\frac{1}{8}(\lambda x)^4\right)\frac{\e{-\lambda z}}{z^3}
+\left(1+(\lambda z)+\frac{1}{2}(\lambda z)^2 
+-\frac{1}{8}(\lambda z)^4\right)\frac{\e{-\lambda z}}{z^3}
 \nonumber\\
 \e{-\lambda z}&\rightarrow&(1+\lambda z)\e{-\lambda z}
 \end{eqnarray}
@@ -6549,6 +6793,114 @@ zero.
 \nonumber\\
 \e{-\lambda z}&\rightarrow&(1+\lambda z)\e{-\lambda z}
 \end{eqnarray}
+
+%===================================================================
+\section{Dihydrogen cation}
+\label{sec:exacth2plus}
+%===================================================================
+The $H_2^+$ ion is another one-electron system. It will not be treated
+exactly, but rather in the basisset of the wave functions of atomic
+hydrogen. The goal of this is to benchmark the matrix elements for the
+off-site exchange.
+
+With the knowledge of the matrix elements the individual contributions
+of the dihydrogen cation can be calculated in the basis of atomic
+orbitals.
+
+Data are in \url{Testsimplelmto/Calc/H2cation}
+
+
+The wave function is
+\begin{eqnarray}
+|\psi\rangle=
+|\chi_1\rangle c_1+|\chi_1\rangle c_2
+=\left(|\chi_1\rangle+|\chi_1\rangle\right)\frac{1}{\sqrt{2+2S}}
+\end{eqnarray}
+where $S=\langle\chi_1|\chi_2\rangle$ is the offsite overlap matrix
+element.
+
+Thus the density matrix elements all have the same value
+\begin{eqnarray}
+\rho_{\alpha,\beta}=c_\alpha c_\beta=\frac{1}{2+2S}
+\end{eqnarray}
+
+The number of electrons on a single site $N_{on,i}$ and that $N_{off}$
+in the off-site terms is thus
+\begin{eqnarray}
+N_{on,i}&=& c_\alpha^2=\frac{1}{2+2S}
+\nonumber\\
+N_{off}&=& c_{1}S c_2 S+c_2Sc_1=\frac{2S}{2+2S}
+\nonumber\\
+1&=&N_{on,1}+N_{on,1}+N_{off}
+\end{eqnarray}
+
+The onsite Hartree and the onsite exchange  energy is
+\begin{eqnarray}
+E_{H,on,i}&=& \frac{1}{2} U_{1111}\rho_{11}\rho_{11}
+\eqrel{eq:hatomonsiteU}{=}\frac{1}{2}\frac{5}{8}\frac{1}{(2+2S)^2}
+=\frac{5}{16}\frac{1}{(2+2S)^2}
+\nonumber\\
+E_{X,on,i}&=&-E_{H,on,i}
+\end{eqnarray}
+
+The energy related to the offsite exchange terms are
+\begin{eqnarray}
+E_{X,22}&=&-\frac{1}{2}
+\sum_{R\neq R'}\sum_{\alpha,\gamma\in R} \sum_{\beta,\delta\in R} 
+W_{\alpha,\beta,\gamma,\delta}
+\rho_{\delta,\alpha}\rho_{\gamma,\beta}
+\nonumber\\
+&=&-\frac{1}{2}\Bigl(W_{1,2,1,2}\rho_{2,1}\rho_{1,2}
++W_{2,1,2,1}\rho_{2,1}\rho_{1,2}\Bigr)
+=-\frac{U_{22}}{(2+2S)^2}
+\nonumber\\
+E_{X,31}&=&-\frac{1}{2}
+\sum_{R\neq R'} 4\sum_{\alpha,\beta,\gamma\in R} \sum_{\delta\in R'} 
+W_{\alpha,\beta,\gamma,\delta}
+\rho_{\delta,\alpha}\rho_{\gamma,\beta}
+\nonumber\\
+&=&-\frac{1}{2}4\Bigl(W_{1,1,1,2}\rho_{2,1}\rho_{1,1}
++W_{2,2,2,1}\rho_{1,2}\rho_{2,2}\Bigr)
+=-\frac{4U_{31}}{(2+2S)^2}
+\end{eqnarray}
+
+
+The following data have been calculated using the exact atomic
+orbitals for the hybrid correction. The lattice constant has been
+relaxed with the PBE functional for $E_{PW}$=30~Ry and
+$c_{dual}=2$. The eneergies and matrix elements have been obtained for
+$E_{PW}$=50~Ry and $c_{dual}=4$.
+\begin{center}
+\begin{tabular}{|l|r|r|r|}
+\hline
+         & PBE  &PAW-HF  &analytic HF  \\
+\hline
+$d_0$    & 1.133~\AA & =  & =\\
+$E_{tot}$ &  -0.6982656~H & -0.860456~H & \\
+$E_{kin}$ &   0.599825~H &  0.599825~H & \\
+$E_{H}$   &  -0.966203~H & -0.966203~H & \\
+$E_{xc}$  &  -0.331888~H & -0.331888~H & \\
+$\Delta E_{X}$ & 0        & -0.162191~H &\\
+$\Delta E_{kin\psi}$ & 0   &  0.014980~H & \\
+$q_{on}/2$          &  ?   & 0.31971 & 0.322838 \\
+$q_{off}$           &  ?   & 0.35090 & 0.354322 \\
+$q_{on}+q_{off}$     &  ?   & 0.99034 & 1.  \\
+$\epsilon_b$ & -18.488~eV & -28.138~eV & \\
+$\epsilon_a$ & -8.476~eV  & -5.727~eV &  \\
+\hline
+$E_{X,on}/2$   & -- &  -0.03194~H & -0.032570~H\\
+$E_{DC,on}/2$  &    &   0.02962~H & \\
+$E_{X,off} $   & -- &  -0.15755~H & -0.160616~H\\
+$E_{X,on+off} $ & -- &  -0.22143~H & -0.225757~H\\
+$E_{X,22} $    & -- &               & -0.042615~H\\
+$E_{X,31} $    & -- &               & -0.118001~H\\
+$U_{on}$       &    &              & 0.625000~H\\ 
+$U_{22}$       &    &  +0.409187~H & 0.408878~H\\ 
+$U_{31}$       &    &   0.283071~H & 0.283045~H\\ 
+$S$           &    &   0.548777~H  & 0.548761~H\\
+\hline
+\end{tabular}
+\end{center}
 
 
 
