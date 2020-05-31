@@ -1905,8 +1905,532 @@ E_{xc}^{\hat{W}_R}=\sum_{a,b,c,d}\int d^3r\;
 {n^\chi(\vec{r})}
 \end{eqnarray}
 
+%====================================================================
+\section{Suppress charge fluctuations}
+%====================================================================
+This is not yet implemented!
+
+%====================================================================
+\subsection{Concept}
+%====================================================================
+The concept goes back to an analysis in $\Phi$SX: Advanced Solid State
+Theory, chapter 2: \textit{Weakly interacting electrons}, in the
+section on mean-field approximation.
+
+In order to explore the errors introduced by the mean-field
+approximation, let me write down the interaction energy for a general
+many-particle wave function $|\Psi\rangle$. 
+\begin{eqnarray}
+|\Psi\rangle=\sum_{\vec{\sigma}}|\vec{\sigma}\rangle c_{\vec{\sigma}}
+\label{eq:hfmpwf1}
+\end{eqnarray}
+
+The occupations $f_m$ can be written as expectation value of the
+occupation numbers, if the wave function is expressed in terms of
+its natural orbitals
+\begin{eqnarray}
+f_n:=\sum_{\vec{\sigma}} c^*_{\vec{\sigma}}c_{\vec{\sigma}}\; \sigma_n
+\end{eqnarray}
+
+In the interaction energy, we can single out a sum over Slater
+determinants. Let me introduce the probability $P_{\vec{\sigma}}\defas
+c^*_{\vec{\sigma}}c_{\vec{\sigma}}$ for the system to be in Slater
+determinant $|\vec{\sigma}\rangle$. 
+
+In $\Phi$SX: Advanced Solid State Theory, I calculated the expectation
+value for a many-particle wave function, respectively an ensemble of
+them.
+\begin{eqnarray}
+\langle\Psi|\hat{W}|\Psi\rangle
+&\eqrel{eq:hfmpwf1}{=}&
+\sum_{\vec{\sigma}}
+\underbrace{
+c^*_{\vec{\sigma}}c_{\vec{\sigma}}}_{P_{\vec{\sigma}}}
+\langle\vec{\sigma}|\hat{W}|\vec{\sigma}\rangle 
++ \sum_{\vec{\sigma}\neq\vec\sigma'}c^*_{\vec{\sigma}}c_{\vec{\sigma'}}
+\langle\vec{\sigma}|\hat{W}|\vec{\sigma'}\rangle 
+\nonumber\\
+%
+%
+&\eqrel{eq:slaterexpecttwoparticle}{=}&
+\frac{1}{2}\sum_{m,n=1}^\infty
+\biggl[f_mf_n+
+\underbrace{
+\Bigl(\sum_{\vec{\sigma}} P_{\vec{\sigma}} \sigma_{m}\sigma_n\Bigr)
+}_{\text{double occupancy}}
+-
+\underbrace{
+\Bigl(\sum_{\vec{\sigma}} P_{\vec{\sigma}} \sigma_{m}\Bigr)
+}_{f_m}
+\underbrace{
+\Bigl(\sum_{\vec{\sigma'}} P_{\vec{\sigma'}} {\sigma'}_{n}\Bigr)
+}_{f_n}
+\biggr]
+\nonumber\\
+&&\times\Bigl(\langle\varphi_m,\varphi_n|\hat{W}|\varphi_m,\varphi_n\rangle 
+-\langle\varphi_m,\varphi_n|\hat{W}|\varphi_n,\varphi_m\rangle 
+\Bigr)
++ \sum_{\vec{\sigma}\neq\vec\sigma'}c^*_{\vec{\sigma}}c_{\vec{\sigma'}}
+\langle\vec{\sigma}|\hat{W}|\vec{\sigma'}\rangle 
+\nonumber\\
+%
+%
+&\eqrel{eq:etotslaterdeterminantwithdenmat}{=}&
+\underbrace{
+\frac{1}{2}
+\int d^3r\int d^3r'\;\frac{e^2n(\vec{r})n(\vec{r'})}
+{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+}_{E_H}
+\underbrace{-
+\frac{1}{2}
+\int d^4x\int d^4x'\;\frac{e^2\rho^{(1)}(\vec{x},\vec{x'})\rho^{(1)}(\vec{x'},\vec{x})}{4\pi\epsilon_0|\vec{r}-\vec{r'}|}
+}_{E_X}
+\nonumber\\
+&&+
+\frac{1}{2}\sum_{m,n=1}^\infty
+\biggl(\underbrace{
+\sum_{\vec{\sigma}} P_{\vec{\sigma}}(\sigma_m-f_m)(\sigma_n-f_n)
+}_{\left(\sum_{\vec{\sigma}} P_{\vec{\sigma}} \sigma_{m}\sigma_n\right)-f_mf_n}
+\biggr)
+\Bigl(\langle\varphi_m,\varphi_n|\hat{W}|\varphi_m,\varphi_n\rangle 
+-\langle\varphi_m,\varphi_n|\hat{W}|\varphi_n,\varphi_m\rangle 
+\Bigr)
+\nonumber\\
+&&+ \sum_{\vec{\sigma}\neq\vec\sigma'}c^*_{\vec{\sigma}}c_{\vec{\sigma'}}
+\langle\vec{\sigma}|\hat{W}|\vec{\sigma'}\rangle 
+\label{eq:byondmfinteraction}
+\end{eqnarray}
+
+The first line corresponds to the normal usage of the Hartree-Fock
+method in the spirit of the hybrid functionals.
+
+The last term is an intrinsic many-particle term, which is not
+considered in the correction discussed here.
+
+The second line is a correction over the mean-field Hartree-Fock
+approximation, which would make the result identical to an ensemble of
+Slater determinants.
+
+The correction can be written as density-matrix functional
+\begin{eqnarray}
+\Delta{E}[\hat{\rho}^{(1)}]&=&\min_{P_{\vec{\sigma}}}
+\stat_{\lambda,\vec{\gamma}}
+\frac{1}{2}\sum_{m,n=1}^\infty
+\biggl(\underbrace{
+\sum_{\vec{\sigma}} P_{\vec{\sigma}}(\sigma_m-f_m)(\sigma_n-f_n)
+}_{\left(\sum_{\vec{\sigma}} P_{\vec{\sigma}} \sigma_{m}\sigma_n\right)-f_mf_n}
+\biggr)
+\Bigl(\langle\varphi_m,\varphi_n|\hat{W}|\varphi_m,\varphi_n\rangle 
+-\langle\varphi_m,\varphi_n|\hat{W}|\varphi_n,\varphi_m\rangle 
+\Bigr)
+\nonumber\\
+&&-\lambda\Bigl(\sum_{\vec{\sigma}}P_{\vec{\sigma}}-1\Bigr)
+-\sum_{\alpha}\gamma_n\Bigl(\sum_{\vec{\sigma}}P_{\vec{\sigma}}\sigma_n-f_n\Bigr)
+\end{eqnarray}
+where $f_n$ and $\varphi_n\rangle$ are the eigenvalues and eigenstates
+of the one-particle reduced density matrix. 
+
+Including such a correction corresponds to the change from a
+mean-field approximation to an ensemble of Slater determinants in a
+common one-particle basisset.
+\begin{itemize}
+\item For an ensemble of Slater determinants, the total energy should
+  change linearly between different particle numbers.
+%
+\item The spectral function should be calculated as an the weighted
+  spectra for an ensemble of Slater determinants.
+  \begin{eqnarray}
+    \hat{A}(\epsilon)=\sum_{\vec{\sigma}}P_{\vec{\sigma}} a_{\vec{\sigma}}(\epsilon)
+  \end{eqnarray}
+  where $a_{\vec{\sigma}}(\epsilon)$ is the spectrum of the
+  Fockoperator of the Slater determinant $|\vec{\sigma}\rangle$. The
+  spectra naturally exhibit featers like upper and lower Hubbard
+  bands.
+\end{itemize}
 
 
+
+%=====================================================================
+\subsection{Pair-approximation:} 
+%=====================================================================
+
+Rather than optimizing the complete vector $\hat{P}_{\vec{\sigma}}$ I
+optimize the probabilities $P_{\sigma_1,\sigma_2}$ for each pair of
+states individually. 
+
+\textbf{Caution! This term is probably no mor invariant under unitary
+  transformation of occupied orbitals! Check!}
+
+
+
+\begin{eqnarray}
+\sum_{\sigma_1,\sigma_2}P_{\sigma_1,\sigma_2}&=&1
+\nonumber\\
+\sum_{\sigma_1,\sigma_2}P_{\sigma_1,\sigma_2}\sigma_1&=&f_1
+\nonumber\\
+\sum_{\sigma_1,\sigma_2}P_{\sigma_1,\sigma_2}\sigma_2&=&f_2
+\nonumber\\
+\sum_{\sigma_1,\sigma_2}P_{\sigma_1,\sigma_2}\sigma_1\sigma_2&=&d_{12}
+\end{eqnarray}
+$d_{12}$ is the double occupancy of the two orbitals. It is the only
+unconstrained degree of freedom, an this is the quantity t be
+minimized.
+
+\begin{eqnarray}
+P_{1,1}&=& d_{12}
+\nonumber\\
+P_{1,0}+P_{1,1}&=& f_1\qquad\Rightarrow\qquad P_{1,0}=f_1-d_{1,2}
+\nonumber\\
+P_{0,1}+P_{1,1}&=& f_2 \qquad\Rightarrow\qquad P_{0,1}=f_2-d_{1,2}
+\nonumber\\
+P_{0,0}+P_{0,1}+P_{1,0}+P_{1,1}&=& 1
+\qquad\Rightarrow\qquad P_{0,0}=1+d_{12}-(f_1+f_2)
+\end{eqnarray}
+The allowed values for the double occupancy are restricted by the
+requirement that the probabilities are positive.
+\begin{eqnarray}
+\max(0,f_1+f_2-1)\le d_{12} \le \min(f_1,f_2)
+\end{eqnarray}
+
+The optimum value is the smalled double occupancy, namely
+\begin{eqnarray}
+d_{12}^{\text{opt}}=\max(0,f_1+f_2-1)
+\end{eqnarray}
+
+The correction obtains the approximate form
+\begin{eqnarray}
+\Delta{E}[\hat{\rho}^{(1)}]
+&=&
+\frac{1}{2}\sum_{m,n=1}^\infty
+\biggl(\max(0,f_n+f_m-1)-f_nf_m\biggr)
+\Bigl(\langle\varphi_m,\varphi_n|\hat{W}|\varphi_m,\varphi_n\rangle 
+-\langle\varphi_m,\varphi_n|\hat{W}|\varphi_n,\varphi_m\rangle 
+\Bigr)
+\nonumber\\
+&=&
+\frac{1}{2}
+\sum_{\alpha,\beta,\gamma,\delta} 
+\Bigl(W_{\alpha,\beta,\gamma,\delta}-W_{\alpha,\beta,\delta,\gamma}\Bigr)
+\nonumber\\
+&&\times\sum_{m,n=1}^\infty
+\langle\pi_\gamma|\varphi_n\rangle\langle\varphi_n|\pi_\alpha\rangle
+\langle\pi_\delta|\varphi_m\rangle\langle\varphi_m|\pi_\beta\rangle
+\biggl(\max(0,f_n+f_m-1)-f_nf_m\biggr)
+\nonumber\\
+\end{eqnarray}
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=0.7\linewidth]{Figs/suppressfluctuations}
+\end{center}
+\caption{\label{fig:suppressfluctuations} 
+Function $B(f_1,f_2)=\max(0,f_1+f_2-1)-f_1f_2$ as function of occupations.}
+\end{figure}
+
+The function $\max(0,f_n+f_m-1)-f_nf_m$ is shown in
+figure~\ref{fig:suppressfluctuations}. Using the correction ontop of
+the mean-field expression makes sense, because the correction vanishes
+for orbitals, that are either completely filled or completely empty. It
+is thus limited to states having fractional occupations. 
+
+It seems that the correction favors states with fractional
+occupations: The minimum is at $f_n=f_m=\frac{1}{2}$. It furthermore
+introduces a \textbf{derivative discontinuity} for electron pairs with
+one electron in total.
+
+
+The most important derivative is
+\begin{eqnarray}
+\frac{d}{df_n}\biggl(\max(0,f_n+f_m-1)-f_nf_m\biggr)
+&=&\begin{cases}
+-f_m &\text{for $f_n+f_m<1$}\\
+1-f_m &\text{for $f_n+f_m>1$}\\
+\end{cases}
+\nonumber\\
+&=&
+-f_m+\theta(f_n+f_m-1)
+\end{eqnarray}
+where $\theta(x)$ is the Heaviside step function.  The correction
+shifts the states down, if the orbital is less than half filled and up
+it is more than half filled. In any case, the electron states are
+moved away from the Fermi level. The down shift compensates the
+erroneous upshift with occupation in the mean-field approximation.
+
+
+
+
+%=====================================================================
+\subsubsection{Derivatives with respect to the density matrix:}
+%=====================================================================
+
+\begin{eqnarray}
+0&=&\hat{\rho}|\varphi_n\rangle-|\varphi_n\rangle f_n
+\nonumber\\
+0&=&\Bigl(\delta\hat{\rho}-\delta{f}_n\Bigr)|\varphi_n\rangle
++
+\Bigl(\hat{\rho}-f_n\Bigr)|\delta\varphi_n\rangle 
+\nonumber\\
+0&=&\sum_m|\varphi_m\rangle\langle\varphi_m|
+\biggl[
+\delta\hat{\rho}-\delta{f}_n|\varphi_n\rangle
++\Bigl(\hat{\rho}-f_n\Bigr)|\delta\varphi_n\rangle 
+\biggr]
+\nonumber\\
+%
+&=&\sum_m|\varphi_m\rangle
+\langle\varphi_m|
+\Bigl(\delta\hat{\rho}-\delta{f}_n\Bigr)|\varphi_n\rangle
++
+\sum_m|\varphi_m\rangle\langle\varphi_m|
+\Bigl(\hat{\rho}-f_n\Bigr)|\delta\varphi_n\rangle 
+\nonumber\\
+%
+%
+&=&\sum_m|\varphi_m\rangle
+\langle\varphi_m|
+\Bigl(\delta\hat{\rho}-\delta{f}_n\Bigr)|\varphi_n\rangle
++
+\sum_m|\varphi_m\rangle\langle\varphi_m|\delta\varphi_n\rangle 
+\Big(f_m-f_n\Bigr)
+\nonumber\\
+\delta{f}_n&=&\langle\varphi_n|\delta\hat{\rho}|\varphi_n\rangle
+\nonumber\\
+|\delta\varphi_n\rangle&=&\sum_{m:m\neq n}
+|\varphi_m\rangle
+\frac{\langle\varphi_m|\delta\hat{\rho}|\varphi_n\rangle}{f_n-f_m}
+\end{eqnarray}
+
+\begin{eqnarray}
+dE
+&=&
+\sum_{\alpha,n}
+\frac{dE}{d\langle\pi_\alpha|\varphi_n\rangle}
+\langle\pi_\alpha|\delta\varphi_n\rangle
++\sum_{\alpha,n}
+\frac{dE}{d\langle\varphi_n|\pi_\alpha\rangle}
+\langle\delta\varphi_n|\pi_\alpha\rangle
++\sum_n\frac{dE}{d f_n}\delta{f}_n
+\nonumber\\
+&=&
+\sum_{\alpha,n}
+\frac{dE}{d\langle\pi_\alpha|\varphi_n\rangle}
+\sum_{m\neq n}
+\langle\pi_\alpha|\varphi_m\rangle
+\frac{\langle\varphi_m|\delta\hat{\rho}|\varphi_n\rangle}{f_n-f_m}
++c.c.
+\nonumber\\
+&&+\sum_n\frac{dE}{d f_n}\langle\varphi_n|\delta\hat{\rho}|\varphi_n\rangle
+\nonumber\\
+&=&
+\sum_{n,m;n\neq m}
+\Bigl(\sum_{\alpha,}
+\frac{dE}{d\langle\pi_\alpha|\varphi_n\rangle}
+\langle\pi_\alpha|\varphi_m\rangle\Bigr)
+\frac{\langle\varphi_m|\delta\hat{\rho}|\varphi_n\rangle}{f_n-f_m}
++c.c.
+\nonumber\\
+&&+\sum_n\frac{dE}{d f_n}\langle\varphi_n|\delta\hat{\rho}|\varphi_n\rangle
+\nonumber\\
+%
+%
+\frac{dE}{d\hat{\rho}^{(1)}}
+&=&
+\sum_{m,n}|\varphi_n\rangle
+\left(\sum_{\alpha}\frac{dE}{d\langle\pi_\alpha|\varphi_n\rangle}
+\langle\pi_\alpha|\varphi_m\rangle\right)
+\frac{1-\delta_{n,m}}{f_n-f_m}
+\langle\varphi_m|
+\nonumber\\
+&&+
+\left[\sum_{m, n}|\varphi_n\rangle
+\left(\sum_{\alpha}\frac{dE}{d\langle\pi_\alpha|\varphi_n\rangle}
+\langle\pi_\alpha|\varphi_m\rangle\right)
+\frac{1-\delta_{n,m}}{f_n-f_m}
+\langle\varphi_m|\right]^{\dagger}
+\nonumber\\
+&&+
+\sum_{m,n}|\varphi_m\rangle\frac{dE}{df_n}\delta_{m,n}\langle\varphi_n|
+\nonumber\\
+&=&\sum_{m,n}|\varphi_m\rangle\bigl(Q_{m,n}+Q^{\dagger}_{m,n}\bigr)
+\langle\varphi_n|
+\end{eqnarray}
+with
+\begin{eqnarray}
+Q_{n,m}=\left(\sum_{\alpha}\frac{dE}{d\langle\pi_\alpha|\varphi_n\rangle}
+\langle\pi_\alpha|\varphi_m\rangle\right)
+\frac{1-\delta_{n,m}}{f_n-f_m}
++\frac{1}{2}\frac{dE}{df_n}\delta_{m,n}
+\end{eqnarray}
+
+The derivative of the energy with respect to the density matrix is the
+potential.
+\begin{eqnarray}
+\hat{v}=\frac{dE}{d\hat{\rho}^{(1)}}
+\end{eqnarray}
+
+
+%=====================================================================
+\subsubsection{Potential:}
+%=====================================================================
+
+\begin{eqnarray}
+&&d\biggl[
+\sum_{m,n=1}^\infty
+\langle\pi_\gamma|\varphi_n\rangle\langle\varphi_n|\pi_\alpha\rangle
+\langle\pi_\delta|\varphi_m\rangle\langle\varphi_m|\pi_\beta\rangle
+\biggl(\max(0,f_n+f_m-1)-f_nf_m\biggr)\biggr]
+\nonumber\\
+\end{eqnarray}
+
+\begin{eqnarray}
+\Delta{E}[\hat{\rho}^{(1)}]
+&=&
+\frac{1}{2}
+\sum_{\alpha,\beta,\gamma,\delta} 
+\Bigl(W_{\alpha,\beta,\gamma,\delta}-W_{\alpha,\beta,\delta,\gamma}\Bigr)
+\nonumber\\
+&&\times\sum_{m,n=1}^\infty
+\langle\pi_\gamma|\varphi_n\rangle\langle\varphi_n|\pi_\alpha\rangle
+\langle\pi_\delta|\varphi_m\rangle\langle\varphi_m|\pi_\beta\rangle
+\biggl(\max(0,f_n+f_m-1)-f_nf_m\biggr)
+\nonumber\\
+\end{eqnarray}
+
+\begin{eqnarray}
+\frac{d\Delta{E}}{d\langle\pi_s|\varphi_k\rangle}
+&=&
+\frac{1}{2}
+\sum_{\alpha,\beta,\gamma,\delta} 
+\Bigl(W_{\alpha,\beta,\gamma,\delta}-W_{\alpha,\beta,\delta,\gamma}\Bigr)
+\sum_{m,n=1}^\infty\biggl(\max(0,f_n+f_m-1)-f_nf_m\biggr)
+\nonumber\\
+&\times&
+\biggl\lbrace
+\delta_{\gamma,s}\delta_{n,k}
+\langle\varphi_n|\pi_\alpha\rangle
+\langle\pi_\delta|\varphi_m\rangle\langle\varphi_m|\pi_\beta\rangle
++
+\langle\pi_\gamma|\varphi_n\rangle\langle\varphi_n|\pi_\alpha\rangle
+\delta_{\delta,s}\delta_{m,k}\langle\varphi_m|\pi_\beta\rangle
+\biggr\rbrace
+\nonumber\\
+&=&
+\frac{1}{2}
+\sum_{\alpha,\beta,\gamma,\delta} 
+\Bigl(W_{\alpha,\beta,\gamma,\delta}-W_{\alpha,\beta,\delta,\gamma}\Bigr)
+\sum_{m,n=1}^\infty\biggl(\max(0,f_n+f_m-1)-f_nf_m\biggr)
+\nonumber\\
+&\times&
+\biggl\lbrace
+2\delta_{\gamma,s}\delta_{n,k}
+\langle\varphi_n|\pi_\alpha\rangle
+\langle\pi_\delta|\varphi_m\rangle\langle\varphi_m|\pi_\beta\rangle
+\biggr\rbrace
+\nonumber\\
+\end{eqnarray}
+
+\begin{eqnarray}
+\sum_{s}\frac{d\Delta{E}}{d\langle\pi_s|\varphi_k\rangle}
+\langle\pi_s|\varphi_\ell\rangle
+&=&
+\frac{1}{2}
+\sum_{\alpha,\beta,\gamma,\delta} 
+\Bigl(W_{\alpha,\beta,\gamma,\delta}-W_{\alpha,\beta,\delta,\gamma}\Bigr)
+\sum_{m,n=1}^\infty\biggl(\max(0,f_n+f_m-1)-f_nf_m\biggr)
+\nonumber\\
+&\times&
+\biggl\lbrace
+2\delta_{n,k}
+\langle\pi_\gamma|\varphi_\ell\rangle
+\langle\varphi_n|\pi_\alpha\rangle
+\langle\pi_\delta|\varphi_m\rangle\langle\varphi_m|\pi_\beta\rangle
+\biggr\rbrace
+\nonumber\\
+&=&
+\frac{1}{2}
+\sum_{\alpha,\beta,\gamma,\delta} 
+\Bigl(W_{\alpha,\beta,\gamma,\delta}-W_{\alpha,\beta,\delta,\gamma}\Bigr)
+\sum_{m=1}^\infty\biggl(\max(0,f_k+f_m-1)-f_kf_m\biggr)
+\nonumber\\
+&\times&
+\biggl\lbrace
+2
+\langle\pi_\gamma|\varphi_\ell\rangle
+\langle\varphi_k|\pi_\alpha\rangle
+\langle\pi_\delta|\varphi_m\rangle\langle\varphi_m|\pi_\beta\rangle
+\biggr\rbrace
+\nonumber\\
+\end{eqnarray}
+
+
+\begin{eqnarray}
+\sum_{s}\frac{d\Delta{E}}{d\langle\pi_s|\varphi_n\rangle}
+\langle\pi_s|\varphi_m\rangle
+&=&
+\frac{1}{2}
+\sum_{\alpha,\beta,\gamma,\delta} 
+\Bigl(W_{\alpha,\beta,\gamma,\delta}-W_{\alpha,\beta,\delta,\gamma}\Bigr)
+\sum_{p=1}^\infty\biggl(\max(0,f_n+f_p-1)-f_nf_p\biggr)
+\nonumber\\
+&\times&
+\biggl\lbrace
+2
+\langle\pi_\gamma|\varphi_m\rangle
+\langle\varphi_n|\pi_\alpha\rangle
+\langle\pi_\delta|\varphi_p\rangle\langle\varphi_p|\pi_\beta\rangle
+\biggr\rbrace
+\nonumber\\
+\end{eqnarray}
+
+\begin{eqnarray}
+Q_{n,m}&=&
+\left(
+\sum_{s}\frac{d\Delta{E}}{d\langle\pi_s|\varphi_n\rangle}
+\langle\pi_s|\varphi_m\rangle
+\right)
+\frac{1-\delta_{n,m}}{f_n-f_m}
++\frac{1}{2}\frac{dE}{df_n}\delta_{m,n}
+\nonumber\\
+&=&
+\frac{1}{2}
+\sum_{\alpha,\beta,\gamma,\delta} 
+\Bigl(W_{\alpha,\beta,\gamma,\delta}-W_{\alpha,\beta,\delta,\gamma}\Bigr)
+\times
+\sum_{p=1}^\infty
+\langle\pi_\gamma|\varphi_m\rangle
+\langle\varphi_n|\pi_\alpha\rangle
+\langle\pi_\delta|\varphi_p\rangle\langle\varphi_p|\pi_\beta\rangle
+\nonumber\\
+&\times&
+\biggl\lbrace
+2\biggl(\max(0,f_n+f_p-1)-f_nf_p\biggr)
+\frac{1-\delta_{n,m}}{f_n-f_m}
++\delta_{m,n}
+\underbrace{\biggl(-f_p\theta(1-f_n-f_p)+(1-f_p)\theta(f_n+f_p-1)\biggr)
+}_{-f_p+\theta(f_n+f_p-1)}
+\biggr\rbrace
+\nonumber\\
+&=&
+\sum_{\alpha,\gamma} 
+\langle\varphi_n|\pi_\alpha\rangle
+\sum_{p=1}^\infty
+\underbrace{\left(
+\sum_{\beta,\delta} 
+\langle\varphi_p|\pi_\beta\rangle
+\Bigl(W_{\alpha,\beta,\gamma,\delta}-W_{\alpha,\beta,\delta,\gamma}\Bigr)
+\langle\pi_\delta|\varphi_p\rangle
+\right)}_{K_{\alpha,\gamma,p}}
+\nonumber\\
+&\times&
+\biggl\lbrace
+\biggl(\max(0,f_n+f_p-1)-f_nf_p\biggr)
+\frac{1-\delta_{n,m}}{f_n-f_m}
++\frac{1}{2}
+\delta_{m,n}\Bigl(-f_p+\theta(f_n+f_p-1)\Bigr)
+\biggr\rbrace
+\langle\pi_\gamma|\varphi_m\rangle
+\nonumber\\
+\end{eqnarray}
 
 %====================================================================
 \chapter{Description of Subroutines}
@@ -6365,6 +6889,105 @@ This is inserted into the equation obtained previously
 
 \appendix
 %===================================================================
+\chapter{Becke Roussel exchange hole}
+%===================================================================
+
+%===================================================================
+\subsubsection{Eq. A7 odf Becke03\_jcp119\_2972}
+%===================================================================
+
+\begin{eqnarray}
+B(x)=\frac{1}{x^2}(x-2)\left(\e{x}-1-x/2\right)
+\end{eqnarray}
+
+\begin{eqnarray}
+B_{appr}(x)=
+\begin{cases}
+\e{-1/x-1/2} &\text{for $x<x_1$}\\
+\e{x-2.13} &\text{for $x>x_1$}\\
+\end{cases}
+\end{eqnarray}
+The coefficient  2.13 is obtained graphically by trial and error.
+
+The inverse function is approximated by
+\begin{eqnarray}
+B^{inv}_{appr}(y)=
+\begin{cases}
+-1/(y+\frac{1}{2} &\text{for $y<y_1$}\\
+a+bxy+cx^2+dx^3+ex^4+fx^5 &\text{for $y_1<x<y_1$}\\
+2.13+ln(y) &\text{for $y>y_1$}\\
+\end{cases}
+\end{eqnarray}
+
+The coefficients $a$ and $b$ are determined from value and slope of
+$B(x)$ at $x=2$, namely $B(2)=0$ and
+$\partial_x|_{x=2}B=\frac{1}{4}(\e{2}-2)$
+\begin{eqnarray}
+a&=&2
+\nonumber\\
+b&=&\frac{4}{e^2-2}
+\end{eqnarray}
+
+Next, I set $e$ and $f$ to zero and determine a preliminary $\bar{c}$
+by matching the values at $y_1$ and $y_2$ and $\bar{d}$.
+\begin{eqnarray}
+Q_1&\defas&\frac{-\frac{1}{y1}-a-by_1}{y_1^2}=\bar{c}+\bar{d}y_1
+\nonumber\\
+Q_2&\defas& \frac{2.13+ln(y_2)-a-by_2}{y_2^2}=\bar{c}+\bar{d}y_2
+\end{eqnarray}
+
+\begin{eqnarray}
+\bar{d}&=&\frac{Q_2-Q_1}{y_2-y_1}
+\nonumber\\
+\bar{c}&=&\frac{1}{2}\left(Q_1+Q_2-b(y_1+y_2\right)
+\end{eqnarray}
+
+Now, I adjust the slopes
+\begin{eqnarray}
+g(y)&=&a+by+\bar{c}y^2+\bar{d}y^3+ y^2(y-y_1)(y-y_2)(u+vy)
+\nonumber\\
+&=&a+by+\left(\bar{c}+uy_1y_2\right)y^2
++\left(\bar{d}-u(y_1+y_2)+vy_1y_2\right)y^3
++\left(u-v(y_1+y_2)\right)
++uy^4
+\nonumber\\
+g'(y_1)&=&b+2\bar{c}y_1+\bar{d}y_1^2+y_1^2(y_1-y_2)(u+vy_1)
+\stackrel{!}=\frac{1}{(y_1+\frac{1}{2})^2}
+\nonumber\\
+g'(y_2)&=&b+2\bar{c}y_2+\bar{d}y_2^2+y_2^2(y_2-y_1)(u+vy_2)
+\stackrel{!}=\frac{1}{y_2}
+\end{eqnarray}
+
+\begin{eqnarray}
+u+vy_1&=&\frac{b+2\bar{c}y_1+\bar{d}y_1^2-\frac{1}{(y_1+\frac{1}{2})^2}}
+{y_1^2(y_1-y_2)}\defas K_1
+\nonumber\\
+u+vy_2&=&\frac{b+2\bar{c}y_2+\bar{d}y_2^2
+-\frac{1}{y_2}}{y_2^2(y_2-y_1)}\defas K_2
+\nonumber\\
+\left(\begin{array}{cc} 1 & y_1\\1& y_2\end{array}\right)
+\left(\begin{array}{c} u \\v\end{array}\right)
+&=&
+\left(\begin{array}{c} K_1\\K_2\end{array}\right)
+\nonumber\\
+\left(\begin{array}{c} u \\v\end{array}\right)
+&=&
+\frac{1}{y_2-y_1}\left(\begin{array}{cc} y_2 & -y_1\\-1& 1\end{array}\right)
+\left(\begin{array}{c} K_1\\K_2\end{array}\right)
+\left(\begin{array}{c} 
+\frac{y_2K_1-y_1K_2}{y_2-y_1}\\
+\frac{K_2-K_1}{y_2-y_1}
+\end{array}\right)
+\end{eqnarray}
+
+A good value for $y_1$ is $y_1=-1.85$. The value for $y_2$ need to be
+adjusted carefully to obtain a smooth interpolation.
+
+implemented in \url{Tree/Codes/Holefunction/src/bahmannhole2.f90}
+as \verb|genbeckerousell_xofy|.
+
+
+%===================================================================
 \chapter{Exact Benchmark systems}
 %===================================================================
 Here I consider exact systems that can be described analytically.
@@ -6376,6 +6999,11 @@ energies cancel exactly. They can nevertheless be used as benchmark.
 \section{Hydrogen atom}
 \label{sec:exacthatom}
 %===================================================================
+\editor{Caution! The section for the hydrogen atom and the molecule
+  habe been included in the lecture notes for $\Phi$SX:Advanced Solid
+  State Theory on May 11, 2020. The PAW tests at the end are not
+  included in the lecture notes.}
+
 Let me first summarize the exact results for the energies related to
 the hydrogen atom
 \begin{center}

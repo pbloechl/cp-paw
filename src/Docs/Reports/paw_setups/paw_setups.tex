@@ -86,33 +86,35 @@ p&=&\frac{dE}{dV}=-\frac{dE_{tot}}{dE_{PW}}\frac{dE_{PW}}{da}\frac{da}{dV}
 %====================================================================
 \chapter{Purpose and theoretical background}
 %====================================================================
-The nodeless construction is proposed by Bl\"ochl and
-F\"orst\cite{bloechl12_arxiv1210_5937}.
 
 %====================================================================
-\section{Nodeless constructiuon}
+\section{Nodeless construction}
 %====================================================================
+The nodeless construction is proposed by Bl\"ochl and
+F\"orst\cite{bloechl12_arxiv1210_5937}.  The present description
+combines a few concepts from the earlier derivation.
+
+
 %====================================================================
-\subsection{Basic definitions}
-%====================================================================
-%====================================================================
-\subsubsection{Energy-dependent partial waves}
+\subsection{Energy-dependent partial waves}
 %====================================================================
 Let us consider a spherical one-particle Hamiltonian $\hat{h}$. We
 construct energy-dependent partial waves by radially integrating the
-radial Schr\"odinger equation 
+radial Schr\"odinger equation outward 
 \begin{eqnarray}
 (\hat{h}-\epsilon)|\phi_{ref}(\epsilon)\rangle=0
 \end{eqnarray}
-outward with the boundary
+with the boundary
 conditions 
 \begin{eqnarray}
 \lim_{|\vec{r}|\rightarrow0}\frac{\phi_{ref}(\epsilon,\vec{r})}
 {|\vec{r}|^\ell Y_{\ell,m}(\vec{r})}=1
 \end{eqnarray}
-at the origin. That is, the radial parts of all partial wave behave at
-the origin like $r^\ell$. We use the subscript $ref$ to distinguish it
-from the partial waves introduced later, which differ by an
+at the origin. That is, the radial parts\footnote{The partial waves
+  are obtained from the radial parts by multiplication with the
+  corresponding real spherical harmonic.} of all partial wave behave
+at the origin like $r^\ell$. We use the subscript ``$ref$'' to distinguish
+it from the partial waves introduced later, which differ by an
 energy-dependent scale factor.
 
 The only difference to the common construction is that we do not
@@ -121,27 +123,110 @@ conditions at the origin. That is, we effectively shrink the
 normalization sphere to zero.
 
 %====================================================================
-\subsubsection{Node-less bound states}
+\subsection{Node-reduced energy-dependent partial waves}
 %====================================================================
-We define\cite{bloechl12_arxiv1210_5937} a sequence of
-\textbf{node-less bound states}\index{node-less bound states}
-$|u_n\rangle$. The node-less bound state are constructed sequentially
-by
+Consider an arbitrary sequence $\{\epsilon_n; n>0\}$ of energies.
+
+For a Hamiltonian $\hat{h}$, define the sequence of energy-dependent,
+\textbf{node-reduced partial waves}\index{node-reduced partial waves}
+ $|q_n(\epsilon)\rangle$ by the following
+recursion
 \begin{eqnarray}
-(\hat{h}-\epsilon_n)|u_n\rangle=-|u_{n-1}\rangle
-\,.
-\label{eq:nodelesseq}
+(\hat{h}-\epsilon)|q_n(\epsilon)\rangle=-|q_{n-1}(\epsilon_{n-1})\rangle
 \end{eqnarray}
-The first wave function, $|u_1\rangle$ is the lowest bound state of
-the Hamiltonian. The other wave functions are obtained by radially
-integrating the Schr\"odinger equation outward, starting with
-vanishing value and derivative, so that
+The sequence starts with
+$|q_1(\epsilon)\rangle=|\phi_{ref}(\epsilon)\rangle$ defined above.
+The boundary condition for $n>1$ is that $q_n(\epsilon,\vec{r})$
+vanishes at the origin.
+
+Let me define 
 \begin{eqnarray}
-\lim_{\vec{r}\rightarrow0}\frac{\langle\vec{r}|u_n\rangle}{|\vec{r}|^{\ell+1}}=0
-\qquad\text{for $n>1$}
+|u_n\rangle\defas|q_n(\epsilon_n)\rangle
+\end{eqnarray}
+which I will call in the following \textbf{nodeless partial
+  waves}\index{nodeless partial waves}.
+
+The energy-dependent partial wave can be reconstructed with the ansatz
+\begin{eqnarray}
+|\phi_{ref}(\epsilon)\rangle=
+\biggl\lbrace |q_n(\epsilon)\rangle
++\sum_{j=1}^{n-1}|u_j\rangle c_j\biggr\rbrace K
 \end{eqnarray}
 
+ 
+Let me determine the coefficients by insertion into the Schr\"odinger
+equation
+\begin{eqnarray}
+(\hat{h}-\epsilon)|\phi_{ref}(\epsilon)\rangle\frac{1}{K}
+&=&
+(\hat{h}-\epsilon)
+|q_n(\epsilon)\rangle
++\sum_{j=1}^{n-1}(\hat{h}-\epsilon_j)|u_j\rangle c_j
++\sum_{j=1}^{n-1}(\epsilon_j-\epsilon)|u_j\rangle c_j
+\nonumber\\
+&=&
+-|u_{n-1}\rangle
+-\sum_{j=1}^{n-1}|u_{j-1}\rangle c_j
++\sum_{j=1}^{n-1}|u_j\rangle(\epsilon_j-\epsilon) c_j
+\nonumber\\
+&=&
+-|u_{n-1}\rangle
+-\sum_{j=0}^{n-2}|u_{j}\rangle c_{j+1}
++\sum_{j=1}^{n-1}|u_j\rangle(\epsilon_j-\epsilon) c_j
+\nonumber\\
+&=&
+|u_{n-1}\rangle\Bigl(-1+(\epsilon_{n-1}-\epsilon) c_{n-1}\Bigr)
+\nonumber\\
+&+&\sum_{j=0}^{n-2}|u_{j}\rangle 
+\Bigl(-c_{j+1}+(\epsilon_j-\epsilon) c_j\Bigr)
+-\underbrace{|u_0\rangle}_{=|\zero\rangle} c_1
+\stackrel{!}{=}0
+\end{eqnarray}
+The requirement that the inhomogeneity vanishes, yields
+\begin{eqnarray}
+c_j=\prod_{k=j}^{n-1}\frac{1}{\epsilon_k-\epsilon}\;.
+\end{eqnarray}
 
+The initial conditions at the origin require that the coefficient of
+$|u_1\rangle$ in $|\phi_{ref}(\epsilon)\rangle$ is equal to one, i.e.
+\begin{eqnarray}
+K=c_1^{-1}=\prod_{k=1}^{n-1}(\epsilon_k-\epsilon)\;.
+\end{eqnarray}
+
+\begin{myshadowminipage}{energy dependent partial waves in terms of node-reduced partial waves}
+
+The energy-dependent partial wave $|\phi_n(\epsilon)\rangle$ which
+obeys the Schr\"odinger equation
+$(\hat{h}-\epsilon)|\phi_n(\epsilon)\rangle=0$, can be expressed as
+\begin{eqnarray}
+|\phi_{ref}(\epsilon)\rangle
+&=&|q_n(\epsilon)\rangle \prod_{k=1}^{n-1}(\epsilon_k-\epsilon)
++\sum_{j=1}^{n-1}|u_j\rangle \prod_{k=1}^{j-1}(\epsilon_k-\epsilon)
+\label{eq:energydependentpartialwavefromnodeless}\\
+&=&\biggl(
+|q_n(\epsilon)\rangle 
++\sum_{j=1}^{n-1}|u_j\rangle \prod_{k=j}^{n-1}\frac{1}{\epsilon_k-\epsilon}
+\biggr)\prod_{k=1}^{n-1}(\epsilon_k-\epsilon)
+\end{eqnarray}
+with
+\begin{eqnarray}
+|u_n\rangle&\defas&|q_n(\epsilon_n)\rangle
+\nonumber\\
+|u_0\rangle&\defas&0
+\nonumber\\
+(\hat{h}-\epsilon)|q_n(\epsilon)\rangle&=&-|u_{n-1}\rangle
+\nonumber\\
+\lim_{|\vec{r}|\rightarrow0}
+\frac{q_n(\epsilon,r)}{|\vec{r}|^\ell Y_{\ell,m}(\vec{r})}
+&=&\delta_{n,1}
+\end{eqnarray}
+Partial waves $|\phi_n(\epsilon)\rangle$ with different indices $n$
+differ only by a factor.
+\end{myshadowminipage}
+
+%====================================================================
+\subsection{Node-reduced partial waves near the origin}
+%====================================================================
 The node-less wave functions $|u_n\rangle$ do not have any nodes, but
 look like Slater orbitals, in the sense that they grow at the origin
 as a power and that they decay exponentially at large distance. Their
@@ -154,205 +239,702 @@ u_{n}(\vec{r})
 \end{eqnarray}
 where $Y_{\ell,m}$ is a real spherical harmonics.
 
-The n lowest node-less wave functions span the same Hilbert space as
-the n lowest true wave functions. The all-electron wave functions can
-be recovered from the node-less wave functions
-via\cite{bloechl12_arxiv1210_5937}
-\begin{eqnarray}
-|\phi_{ref,n}\rangle=\sum_{m=1}^n|u_m\rangle \prod_{j=1}^{m-1}(\epsilon_j-\epsilon_n)
-=\biggl[\sum_{m=1}^n|u_m\rangle 
-\prod_{j=m}^{n-1}\frac{1}{(\epsilon_j-\epsilon_n)}
-\biggr]\prod_{k=1}^{n-1}(\epsilon_k-\epsilon_n)
-\end{eqnarray}
+When $n$ increases by one, the partial wave $q_n(\epsilon)$ at the
+origin starts with a power of $r$ increased by two orders.
 
 %====================================================================
-\subsubsection{Node-reduced partial waves}
+\subsection{Energy derivatives}
 %====================================================================
-Secondly, we define \cite{bloechl12_arxiv1210_5937} a sequence of
-energy-dependent \textbf{node-reduced partial waves}
-\index{node-reduced partial wave} $|q_n(\epsilon)\rangle$ through
-\begin{eqnarray}
-(\hat{h}-\epsilon)|q_n(\epsilon)\rangle=-|u_{n-1}\rangle
-\label{eq:defnodereducedpartialwave}
-\end{eqnarray}
-with the boundary conditions
-\begin{eqnarray}
-\lim_{\vec{r}\rightarrow0}
-\frac{\langle\vec{r}|q_n(\epsilon)\rangle}
-{\langle\vec{r}|u_n\rangle}=1
-\qquad\text{for $n>1$}
-\end{eqnarray}
-For each $n$ one obtains one energy-dependent partial wave.
+The following relation provides a means to construct the node-reduced
+partial waves $q_n(\epsilon)$ from $|\phi_n(\epsilon)\rangle$. It
+shows furthermore, that a Taylor expansion in energy can be
+constructed by a sequence with equal energies $\epsilon_n$.
 
-
-The node-reduced wave functions have (typically\footnote{As shown in
-  \cite{bloechl12_arxiv1210_5937}, the nodal theorem fails at high
-  energies, so that the statement is correct for practical purposes,
-  but incorrect in a strict sense.}) $n-1$ nodes less than the true
-wave function. Near the origin, they are very similar to $|u_n\rangle$
-over nearly the entire energy range.
-
-The all-electron partial wave $|\phi(\epsilon)\rangle$ can be
-constructed from the node-reduced partial wave $|q_n(\epsilon)\rangle$
-and the lower node-less bound states $|u_m\rangle$
-as\cite{bloechl12_arxiv1210_5937}
+Consider the following relation
 \begin{eqnarray}
-|\phi_{ref}(\epsilon)\rangle=\biggl[|q_n(\epsilon)\rangle
-+\sum_{m=1}^{n-1}|u_m\rangle\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}
-\biggr]
-\prod_{k=1}^{n-1}(\epsilon_k-\epsilon)
-\label{eq:aephireffromnodereduced}
+|q_{n+1}(\epsilon)\rangle&=&
+\begin{cases}
+-\frac{|q_n(\epsilon)\rangle-|q_n(\epsilon_n)\rangle}
+{\epsilon-\epsilon_n}
+&\text{for $\epsilon\neq\epsilon_n$}\\
+-\partial_\epsilon|q_n(\epsilon)\rangle
+&\text{for $\epsilon=\epsilon_n$}
+\end{cases}
+\label{eq:qnplus1}
 \end{eqnarray}
 
-In practice we focus on the particular node-reduced wave functions,
-for which the nodes of all core states are eliminated, that is for
-which $n=n_c+1$ is the quantum number of the lowest valence (non-core)
-state.
-
-In order to avoid the scale factor
-$\prod_{k=1}^{n-1}(\epsilon_k-\epsilon)$, we introduce a new
-all-electron partial wave $|\phi_n(\epsilon)\rangle$
+Proof:
 \begin{eqnarray}
-|\phi_n(\epsilon)\rangle&\defas&
-|\phi_{ref}(\epsilon)\rangle\frac{1}{\prod_{k=1}^{n-1}(\epsilon_k-\epsilon)}
+(\hat{h}-\epsilon)
+\left[-\frac{|q_n(\epsilon)\rangle-|q_n(\epsilon_n)\rangle}
+{\epsilon-\epsilon_n}\right]
+&=&-\frac{(\hat{h}-\epsilon)|q_n(\epsilon)\rangle-
+(\hat{h}-\epsilon_n)|q_n(\epsilon_n)\rangle
++(\epsilon-\epsilon_n)|q_n(\epsilon_n)\rangle}
+{\epsilon-\epsilon_n}
 \nonumber\\
-&=&|q_n(\epsilon)\rangle
-+\sum_{m=1}^{n-1}|u_m\rangle\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}
-\label{eq:aephifromnodereduced}
+&=&-\frac{|u_{n-1}\rangle-
+|u_{n-1}\rangle
++(\epsilon-\epsilon_n)|q_n(\epsilon_n)\rangle}
+{\epsilon-\epsilon_n}
+\nonumber\\
+\nonumber\\
+&=&-\frac{|u_{n-1}\rangle-
+|u_{n-1}\rangle
++(\epsilon-\epsilon_n)|u_n\rangle}
+{\epsilon-\epsilon_n}
+\nonumber\\
+&=&-|u_n\rangle
 \end{eqnarray}
+This relation shows that the function
+$-(|q_n(\epsilon)\rangle-|q_n(\epsilon_n)\rangle)/(\epsilon-\epsilon_n)$
+is equal to $|q_{n+1}(\epsilon)\rangle$, q.e.d.
 
 %====================================================================
-\subsubsection{Series expansion of the node-reduced partial wave}
+\subsection{Taylor expansion}
 %====================================================================
-Let us now define \cite{bloechl12_arxiv1210_5937} a new sequence of
-nodeless functions for given set of energies $\{\epsilon_{n+j}; j\ge1\}$ via
-\begin{eqnarray}
-(\hat{h}-\epsilon)|\bar{q}_{n}^{(j)}(\epsilon)\rangle&=&
--|\bar{q}_n^{(j-1)}(\epsilon_{n+j-1})\rangle
-\label{eq:qbardiffgl}
-\\
-(\hat{h}-\epsilon)|\bar{q}_{n}^{(0)}(\epsilon)\rangle&=&-|u_{n-1}\rangle 
-\label{eq:qbardiffgl0}
-\end{eqnarray}
-where
-$|\bar{q}_{n}^{(0)}(\epsilon)\rangle=|\bar{q}_{n}(\epsilon)\rangle$
-defined in \eq{eq:defnodereducedpartialwave}. \eq{eq:qbardiffgl0} and
-\eq{eq:qbardiffgl} have great similarity with those of
-the nodeless equations \eq{eq:nodelesseq}.
+Here, I show that the individual terms $|u_{n+j}\rangle$ with $j>0$
+are related to the coefficients of a Taylor expansion for
+$q_n(\epsilon)$ in the energy, if all energies in the sequence with
+$\{\epsilon_j\}$ with $j\ge n$ are identical.
 
-
-The sequence defined by \eq{eq:qbardiffgl} and \eq{eq:qbardiffgl0} can
-be constructed by the recursive equation
+Let me start with the identity \eq{eq:qnplus1} obtained above.
 \begin{eqnarray}
-|\bar{q}_{n}^{(j+1)}(\epsilon)\rangle&=&
-\frac{-1}{\epsilon-\epsilon_{n+j}}
-\Bigl(|\bar{q}_n^{(j)}(\epsilon)\rangle
--|\bar{q}_n^{(j)}(\epsilon_{n+j})\rangle\Bigr)
-\qquad\text{for $\epsilon\ne\epsilon_{n+j}$}
+|q_{n+1}(\epsilon)\rangle
+&\eqrel{eq:qnplus1}{=}&
+-\frac{1}{\epsilon-\epsilon_n}\Bigl(
+|q_n(\epsilon)\rangle-|q_n(\epsilon_n)\rangle\Bigr)
 \nonumber\\
-|\bar{q}_{n}^{(j+1)}(\epsilon_{n+j})\rangle&=&
--\left.\partial_\epsilon\right|_{\epsilon_{n+j}}|\bar{q}_n^{(j)}(\epsilon)\rangle
-\label{eq:recursionqbar}
-\end{eqnarray}
-
-\eq{eq:recursionqbar} is shown recursively: We assume that
-\eq{eq:qbardiffgl} holds for $j$ and show that  \eq{eq:recursionqbar}
-obeys \eq{eq:qbardiffgl} for $j+1$.
-\begin{eqnarray}
-(\hat{h}-\epsilon)|\bar{q}^{(j+1)}_{n}(\epsilon)\rangle
-&\eqrel{eq:recursionqbar}{=}&
-\frac{-1}{\epsilon-\epsilon_{n+j}}
-\Bigl((\hat{h}-\epsilon)|\bar{q}_n^{(j)}(\epsilon)\rangle
--(\hat{h}-\epsilon_{n+j})|\bar{q}_n^{(j)}(\epsilon_{n+j})\rangle
-+(\epsilon-\epsilon_{n+j})|\bar{q}_n^{(j)}(\epsilon_{n+j})\rangle
-\Bigr)
+\Rightarrow\qquad
+\big|q_n(\epsilon)\big\rangle&=&\big|q_n(\epsilon_n)\big\rangle
+-(\epsilon-\epsilon_n)\big|q_{n+1}(\epsilon)\big\rangle
 \nonumber\\
-&\eqrel{eq:qbardiffgl}{=}&
-\frac{-1}{\epsilon-\epsilon_{n+j}}
-\Bigl(
-\underbrace{-|\bar{q}_n^{(j-1)}(\epsilon_{n+j-1})\rangle
-+|\bar{q}_n^{(j-1)}(\epsilon_{n+j-1})\rangle}_{=0}
-+(\epsilon-\epsilon_{n+j})|\bar{q}_n^{(j)}(\epsilon_{n+j})\rangle
-\Bigr)
+&=&\big|q_n(\epsilon_n)\big\rangle
+-(\epsilon-\epsilon_n)
+\Bigl(\big|q_{n+1}(\epsilon_{n+1})\big\rangle
+-(\epsilon-\epsilon_{n+1})
+\big|q_{n+2}(\epsilon)\big\rangle\Bigr)
 \nonumber\\
+&\stackrel{\epsilon_{n+1}=\epsilon_n}{=}&\big|q_n(\epsilon_n)\big\rangle
+-(\epsilon-\epsilon_n)
+\big|q_{n+1}(\epsilon_{n+1})\big\rangle
++(\epsilon-\epsilon_{n})^2
+\big|q_{n+2}(\epsilon)\big\rangle\Bigr)
+\nonumber\\
+%
+%
+&\stackrel{\epsilon_{n+j}=\epsilon_n}{=}&
+(-1)^{j+1}(\epsilon-\epsilon_n)^{j+1}|q_{n+j}(\epsilon)\rangle
++\sum_{k=0}^j (-1)^k(\epsilon-\epsilon_n)^k|u_{n+k}\rangle
+\nonumber\\
+%
+%
 &=&
--|\bar{q}_n^{(j)}(\epsilon_{n+j})\rangle
+\sum_{k=0}^\infty (-1)^k(\epsilon-\epsilon_n)^k|u_{n+k}\rangle
+\qquad\text{for $\epsilon_{n+k}=\epsilon_n$ with $k\ge0$}
 \end{eqnarray}
-which is \eq{eq:qbardiffgl} for the next higher value of $j$. This
-completes the proof that $|q_{n}^{(j)}(\epsilon)\rangle$ defined in
-\eq{eq:qbardiffgl} obeys the recursion \eq{eq:recursionqbar}.
 
-
-From the series defined by \eq{eq:qbardiffgl} and
-\eq{eq:qbardiffgl0}, we can again recover the node-reduced partial
-wave as
+Thus, I obtain the Taylor expansion coefficients as
 \begin{eqnarray}
-|q_n(\epsilon)\rangle&=&|\bar{q}_n^{(0)}(\epsilon)\rangle
-\nonumber\\
-&\eqrel{eq:recursionqbar}{=}&|\bar{q}_n^{(0)}(\epsilon_n)\rangle
-+|\bar{q}_{n}^{(1)}(\epsilon)\rangle(\epsilon_n-\epsilon)
-\nonumber\\
-&\eqrel{eq:recursionqbar}{=}&|\bar{q}_n^{(0)}(\epsilon_n)\rangle
-+|\bar{q}_{n}^{(1)}(\epsilon_{n+1})\rangle(\epsilon_n-\epsilon)
-+|\bar{q}_{n}^{(2)}(\epsilon)\rangle
-(\epsilon_{n+1}-\epsilon)(\epsilon_{n}-\epsilon)
-\nonumber\\
-&=&\biggl(\sum_{k=0}^{j-1}
-|\bar{q}_{n}^{(k)}(\epsilon_{n+k})\rangle
-\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon)\biggr)
-+|\bar{q}_n^{(j)}(\epsilon)\rangle
-\prod_{m=0}^{j-1}(\epsilon_{n+m}-\epsilon)
-\label{eq:qnfromqj}
+|q_{n+j}(\epsilon_n)\rangle=\frac{(-1)^j}{j!}
+\left.\partial_\epsilon^j\right|_{\epsilon_n} q_n(\epsilon)
+\qquad\text{if $\epsilon_k=\epsilon_n$ for $0<k<j$}
 \end{eqnarray}
-In this derivation, no assumptions have been made regarding the
-energies $\epsilon_{n+j}$. The value of $j$ is arbitrary.
 
 
-In the special case that all energies $\epsilon_{n+k}$ are chosen to
-be identical, the series expansion \eq{eq:recursionqbar} produces the
-Taylor-expansion coefficients
+
+
+%====================================================================
+\subsection{Discussion}
+%====================================================================
+The sequence of energy-dependent partial waves $|q_n(\epsilon)\rangle$
+is defined by the hamiltonian $\hat{h}$ and the sequence of energies
+$\epsilon_n$.
+
+We intend to choose the energies as follows: Let $N_c$ be the number
+of core wave functions and $N_v$ the number of valence wave functions.
+\begin{enumerate}
+\item For $n\le N_c+N_v$ the energies are chosen equal to the bound
+  states of the Hamiltonian.
+\item The remaining energy levels, which describe scattering states
+  are chosen identical to the energy $\epsilon_{N_c+N_v}$ of the
+  highest valence state.
+\end{enumerate}
+
+
+
+This choice guarantees 
+\begin{itemize}
+\item that the inhomogeneities for the bound states are themselfes
+  limited to the atomic region. Hence, the $|q_n(\epsilon)\rangle$
+  outside the atomic region is, up to a factor, equal to
+  $|\phi_n(\epsilon)\rangle$.
+\item that the $|q_n(\epsilon)\rangle$ for the scatterning states are the
+  Taylor expansion coefficients of and expansion of the partial wave
+  in terms of energy, analogous to the $\phi,\dot{\phi}$ expansion of
+  the linear methods.
+\end{itemize}
+
+%====================================================================
+\section{Augmentation from node-reduced wave functions}
+%====================================================================
+%====================================================================
+\subsubsection{Pseudization}
+%====================================================================
+We introduce the pseudization on the level of energy-dependent partial
+waves, \eq{eq:energydependentpartialwavefromnodeless}, by replacing the
+core contribution by another, nearly energy-independent function
+$|k(\epsilon)\rangle$
 \begin{eqnarray}
-|\bar{q}_n^{(j)}(\epsilon)\rangle=
-\frac{(-1)^j}{j!}\partial_\epsilon^j|q_n(\epsilon)\rangle
-\label{eq:taylorexpansioncoefficientsqn}
-\end{eqnarray}
-Using all energies equal, \eq{eq:qnfromqj} results in the Taylor
-series with coefficients from \eq{eq:taylorexpansioncoefficientsqn}.
-
-Using instead bound-state energies in sequence, \eq{eq:qbardiffgl} and
-\eq{eq:qbardiffgl0} results in a nodeless construction.
-
-This flexibility can be exploited to set up an expansion with bound
-states and with scattering states. This is important if we wish to
-describe semi-core states, valence states and scattering states on the
-same footing.
-
-From \eq{eq:aephifromnodereduced} and \eq{eq:qnfromqj}, we obtain the
-expression for the full energy-dependent wave function, which holds
-for arbitrary values of $j$.
-\begin{eqnarray}
-|\phi_n(\epsilon)\rangle
+\phi_{AE}(\epsilon)
 &=&
 \underbrace{
-|\bar{q}_n^{(j)}(\epsilon)\rangle
-\left(\prod_{m=0}^{j-1}(\epsilon_{n+m}-\epsilon)\right)
+|q_{N_c+N_v+1}(\epsilon)\rangle\prod_{k=1}^{N_c+N_v}(\epsilon_k-\epsilon)
+}_{\text{scattering}}
 +
-\sum_{k=0}^{j-1}
-|\bar{q}_{n}^{(k)}(\epsilon_{n+k})\rangle
-\left(\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon)\right)
-}_{|q_n(\epsilon)\rangle}
-\nonumber\\
-&+&
 \underbrace{
-\left(\sum_{m=1}^{n-1}|u_m\rangle\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}\right)
-}_{\text{core contribution}}
-\label{eq:phincompletediscreteandcont}
+\sum_{j=N_c+1}^{N_c+N_v}|u_j\rangle \prod_{k=1}^{j-1}(\epsilon_k-\epsilon)
+}_{\text{valence}}
++
+\underbrace{
+\sum_{j=1}^{N_c}|u_j\rangle \prod_{k=1}^{j-1}(\epsilon_k-\epsilon)
+}_{\text{core}}
+ \nonumber\\
+%
+%
+%
+\tilde{\phi}_{PS}(\epsilon)
+&=&
+\underbrace{
+|q_{N_c+N_v+1}(\epsilon)\rangle\prod_{k=1}^{N_c+N_v}(\epsilon_k-\epsilon)
+}_{\text{scattering}}
++
+\underbrace{
+\sum_{j=N_c+1}^{N_c+N_v}|u_j\rangle \prod_{k=1}^{j-1}(\epsilon_k-\epsilon)
+}_{\text{valence}}
++k(\epsilon)\prod_{k=1}^{N_c}(\epsilon_k-\epsilon)
+\label{eq:phiaeandpsofenergy}
+\end{eqnarray}
+Beyond the augmentation region, the function $|k(\epsilon)\rangle$
+should ideally be identical to the contribution of the core states.
+That is, $|k(\epsilon)\rangle$ must be localized in the core region.
+
+
+
+
+%% \begin{eqnarray}
+%% \phi_{AE}(\epsilon)
+%% &=&
+%% \underbrace{
+%% \big|q_{N_C+N_V+1}(\epsilon)\big\rangle
+%% \prod_{m=N_c+1}^{N_c+N_v}(\epsilon_m-\epsilon)
+%% }_{\text{scattering}}
+%% +
+%% \underbrace{
+%% \sum_{j=N_c+1}^{N_c+N_V}\big|u_j\big\rangle \prod_{m=N_c+1}^{j-1}(\epsilon_m-\epsilon)
+%% }_{\text{valence}}
+%% +
+%% \underbrace{
+%% \sum_{j=1}^{N_c}\big|u_j\big\rangle \prod_{k=j}^{N_c}\frac{1}{\epsilon_k-\epsilon}
+%% }_{\text{core}}
+%% \nonumber\\
+%% %
+%% %
+%% %
+%% \tilde{\phi}_{PS}(\epsilon)
+%% &=&
+%% \underbrace{
+%% \big|q_{N_C+N_V+1}(\epsilon)\big\rangle
+%% \prod_{m=N_c+1}^{N_c+N_v}(\epsilon_m-\epsilon)
+%% }_{\text{scattering}}
+%% +
+%% \underbrace{
+%% \sum_{j=N_c+1}^{N_c+N_V}\big|u_j\big\rangle \prod_{m=N_c+1}^{j-1}(\epsilon_m-\epsilon)
+%% }_{\text{valence}}
+%% +k(\epsilon)
+%% \end{eqnarray}
+
+
+\begin{eqnarray}
+|\phi_{AE}(\epsilon)\rangle&=&|\tilde{\phi}_{PS}(\epsilon)\rangle
++\Bigl(|\phi_{AE}(\epsilon)\rangle-|\tilde{\phi}_{PS}(\epsilon)\rangle\Bigr)
+\langle\tilde{p}(\epsilon)|\tilde{\phi}_{PS}(\epsilon)\rangle
+%% \nonumber\\
+%% \Rightarrow\qquad|\phi_{AE}(\epsilon)\rangle-|\tilde{\phi}_{PS}(\epsilon)\rangle
+%% &=&\Bigl(|\phi_{AE}(\epsilon)\rangle-|\tilde{\phi}_{PS}(\epsilon)\rangle\Bigr)
+%% \langle\tilde{p}(\epsilon)|\tilde{\phi}_{PS}(\epsilon)\rangle
+%% \nonumber\\
+%% &=&
+%% \Bigl(\underbrace{
+%% \sum_{j=1}^{N_c}\big|u_j\big\rangle \prod_{k=j}^{N_c}\frac{1}{\epsilon_k-\epsilon}
+%% }_{\text{core}}
+%% -k(\epsilon)\Bigr)
+%% \langle\tilde{p}(\epsilon)|\tilde{\phi}_{PS}(\epsilon)\rangle
+\end{eqnarray}
+We notice that the scattering contribution in the augmentation part
+can be skipped. In the nodeless construction also the valence
+contribution can be skipped
+
+The projection can be constructed such that the bi-orthogonality and
+the closure relations are obeyed.  The closure relation is defined for
+a specified pseudo-potential $\tilde{v}$ ($\hat{t}$ is the kinetic
+energy operator)
+\begin{eqnarray}
+0&=&
+\Bigl(\hat{t}+\hat{\tilde{v}}+|\tilde{p}(\epsilon)\rangle A(\epsilon)\langle\tilde{p}(\epsilon)|-\epsilon\Bigr)|\tilde{\phi}_{PS}(\epsilon)\rangle
+\nonumber\\
+%
+%
+\Bigl(\hat{t}+\hat{\tilde{v}}-\epsilon\Bigr)|\tilde{\phi}_{PS}(\epsilon)\rangle
+&=&-|\tilde{p}(\epsilon)\rangle A(\epsilon)\langle\tilde{p}(\epsilon)|\tilde{\phi}_{PS}(\epsilon)\rangle
+\end{eqnarray}
+This equation tells the shape of the projector function. Its norm is
+defined by the bi-orthogonality relation
+\begin{eqnarray}
+1&=&\langle\tilde{p}(\epsilon)|\tilde{\phi}_{PS}(\epsilon)\rangle
+\end{eqnarray}
+which determines the projector function as
+\begin{eqnarray}
+|\tilde{p}(\epsilon)\rangle&=&
+\Bigl(\hat{t}+\hat{\tilde{v}}-\epsilon\Bigr)|\tilde{\phi}_{PS}(\epsilon)\rangle 
+\Bigl[
+\langle\tilde{\phi}_{PS}(\epsilon)|
+\Bigl(\hat{t}+\hat{\tilde{v}}-\epsilon\Bigr)
+|\tilde{\phi}_{PS}(\epsilon)\rangle 
+\Bigr]^{-1}
+\nonumber\\
 \end{eqnarray}
 
-Interesting is that the energy-dependent function
-$|\bar{q}^{(j)}(\epsilon)\rangle$ does not contribute to the full wave
-function at the energies $\epsilon_{j}$ of the core states and at the
-energies $\epsilon_{n+m}$ with $m<j$.
+Now, I insert the pseudo-partial wave obtained above in
+\eq{eq:phiaeandpsofenergy}
+\begin{eqnarray}
+&&\Bigl(\hat{t}+\hat{\tilde{v}}-\epsilon\Bigr)|\tilde{\phi}_{PS}(\epsilon)\rangle 
+=\Bigl(\hat{h}-\epsilon+(\hat{\tilde{v}}-\hat{v})\Bigr)|\tilde{\phi}_{PS}(\epsilon)\rangle 
+\nonumber\\
+%
+%
+%
+&=&\Bigl(\hat{h}-\epsilon\Bigr)
+\biggl[|\phi_{AE}(\epsilon)\rangle 
+-
+\underbrace{
+\sum_{j=1}^{N_c}\big|u_j\big\rangle 
+\prod_{k=1}^{j-1}(\epsilon_k-\epsilon)
+}_{\text{core}}
++|k(\epsilon)\rangle
+\prod_{k=1}^{N_c}(\epsilon_k-\epsilon)
+\biggr]
++(\hat{\tilde{v}}-\hat{v})|\tilde{\phi}_{PS}(\epsilon)\rangle 
+\nonumber\\
+%
+%
+%
+&=&
+-
+\sum_{j=1}^{N_c}\Bigl(\hat{h}-\epsilon_j\Bigr)\big|u_j\big\rangle 
+\prod_{k=1}^{j-1}(\epsilon_k-\epsilon)
+-
+\sum_{j=1}^{N_c}\Bigl(\epsilon_j-\epsilon\Bigr)\big|u_j\big\rangle 
+\prod_{k=1}^{j-1}(\epsilon_k-\epsilon)
+\nonumber\\
+&&+\Bigl(\hat{h}-\epsilon\Bigr)|k(\epsilon)\rangle
+\prod_{k=1}^{N_c}(\epsilon_k-\epsilon)
++(\hat{\tilde{v}}-\hat{v})|\tilde{\phi}_{PS}(\epsilon)\rangle 
+\nonumber\\
+%
+%
+%
+&=&
+\biggl[
+\sum_{j=1}^{N_c}\big|u_{j-1}\big\rangle 
+\prod_{k=1}^{j-1}(\epsilon_k-\epsilon)
+-
+\sum_{j=1}^{N_c}\big|u_j\big\rangle 
+\prod_{k=1}^{j}(\epsilon_k-\epsilon)
++\Bigl(\hat{h}-\epsilon\Bigr)|k(\epsilon)\rangle
+\prod_{k=1}^{N_c}(\epsilon_k-\epsilon)
+\biggr]
++(\hat{\tilde{v}}-\hat{v})|\tilde{\phi}_{PS}(\epsilon)\rangle 
+\nonumber\\
+%
+%
+%
+&=&
+\biggl[
+\sum_{j=0}^{N_c-1}\big|u_{j}\big\rangle 
+\prod_{k=1}^{j}(\epsilon_k-\epsilon)
+-
+\sum_{j=1}^{N_c}\big|u_j\big\rangle 
+\prod_{k=1}^{j}(\epsilon_k-\epsilon)
++\Bigl(\hat{h}-\epsilon\Bigr)|k(\epsilon)\rangle
+\prod_{k=1}^{N_c}(\epsilon_k-\epsilon)
+\biggr]
++(\hat{\tilde{v}}-\hat{v})|\tilde{\phi}_{PS}(\epsilon)\rangle 
+\nonumber\\
+%
+%
+%
+&=&
+\biggl[
+-
+\big|u_{N_c}\big\rangle 
++\Bigl(\hat{h}-\epsilon\Bigr)|k(\epsilon)\rangle
+\biggr]\prod_{k=1}^{N_c}(\epsilon_k-\epsilon)
++(\hat{\tilde{v}}-\hat{v})|\tilde{\phi}_{PS}(\epsilon)\rangle 
+\nonumber\\
+%
+%
+%
+&=&
+\biggl[
+-
+\big|u_{N_c}\big\rangle 
++\Bigl(\hat{t}+\tilde{v}-\epsilon\Bigr)|k(\epsilon)\rangle
+\biggr]\prod_{k=1}^{N_c}(\epsilon_k-\epsilon)
++(\hat{\tilde{v}}-\hat{v})
+\biggl[\big|\tilde{\phi}_{PS}(\epsilon)\big\rangle 
+-\big|k(\epsilon)\big\rangle
+\prod_{k=1}^{N_c}(\epsilon_k-\epsilon)
+\biggr]
+\nonumber\\
+%
+%
+%
+&=&
+\biggl[
+-
+\big|u_{N_c}\big\rangle 
++\Bigl(\hat{t}+\tilde{v}-\epsilon\Bigr)|k(\epsilon)\rangle
+\biggr]\prod_{k=1}^{N_c}(\epsilon_k-\epsilon)
++(\hat{\tilde{v}}-\hat{v})
+\big|q_{N_c+1}(\epsilon)\big\rangle
+\prod_{k=1}^{N_c}(\epsilon_k-\epsilon)
+\nonumber\\
+%
+%
+%
+&=&
+\biggl[
+-
+\big|u_{N_c}\big\rangle 
++\Bigl(\hat{t}+\tilde{v}-\epsilon\Bigr)\big|k(\epsilon)\big\rangle
++(\hat{\tilde{v}}-\hat{v})
+\big|q_{N_c+1}(\epsilon)\big\rangle
+\biggr]\prod_{k=1}^{N_c}(\epsilon_k-\epsilon)
+\label{eq:energydependentprojectorfunctiona}
+\end{eqnarray}
+This equation establishes a link between $|k(\epsilon)\rangle$, which
+determines the shape of the partial wave, with
+$\Bigl(\hat{t}+\hat{\tilde{v}}-\epsilon\Bigr)|\tilde{\phi}_{PS}(\epsilon)\rangle$,
+which determines the shape of the projector function.
+
+\eq{eq:energydependentprojectorfunctiona} provides guidance on the
+spatial extent of the projector functions. The spatial extent is thus
+determined by
+\begin{itemize}
+\item the range of the deviation of the pseudo-potential from the true
+  potential $\tilde{\hat{v}}-\hat{v}$,
+\item the range of the difference $|k(\epsilon)\rangle$ of the
+  pseudo-partial wave $|\phi^{PS}\rangle$ from node reduced partial
+  wave $|q_{N_c+1}(\epsilon)\rangle$
+\item the range of the node-less partial wave describing the highest
+  core state.
+\end{itemize}
+
+
+Check \url{Codes/AtomicPAW} for an exploration code. (Apr.7, 2020).
+
+%===========================================================
+\subsubsection{Gaussian-shaped projector function}
+%===========================================================
+For example, if we want projector functions that have the shape of
+Gauss function $|g_{\gamma}\rangle$ defined by
+\begin{eqnarray} 
+g_{\gamma}(\vec{r})&=&r^{\ell}\e{-\gamma^2 r^2} Y_{\ell,m}(\vec{r})
+\end{eqnarray}
+we can solve
+\begin{eqnarray}
+\Bigl(\hat{t}+\hat{\tilde{v}}-\epsilon\Bigr)|k(\epsilon)\rangle
+&=&
+\big|u_{N_c}\big\rangle 
+-(\hat{\tilde{v}}-\hat{v})|q_{N_c+1}(\epsilon)\rangle
+-|g_{\gamma}\rangle \lambda(\epsilon) 
+\end{eqnarray}
+where $\lambda(\epsilon)$ is adjusted so that $|k(\epsilon)\rangle$ is
+localized inside the augmentation region for all energies.
+
+\begin{eqnarray}
+\Bigl(\hat{t}+\hat{\tilde{v}}-\epsilon\Bigr)|\tilde{\phi}_{PS}(\epsilon)\rangle
+=-|g_{\gamma}\rangle \lambda(\epsilon) \prod_{k=1}^{N_c}(\epsilon_k-\epsilon)
+\end{eqnarray}
+
+
+\begin{eqnarray}
+|\tilde{p}(\epsilon)\rangle
+&=&
+|g_{\gamma}\rangle \frac{1}{\langle\tilde{\phi}_{PS}(\epsilon)|g_{\gamma}\rangle}
+\end{eqnarray}
+
+
+
+
+\newpage
+
+
+
+
+%% \newpage
+%% %====================================================================
+%% \subsubsection{Node-less bound states}
+%% %====================================================================
+%% We define\cite{bloechl12_arxiv1210_5937} a sequence of
+%% \textbf{node-less bound states}\index{node-less bound states}
+%% $|u_n\rangle$. The node-less bound state are constructed sequentially
+%% by
+%% \begin{eqnarray}
+%% (\hat{h}-\epsilon_n)|u_n\rangle=-|u_{n-1}\rangle
+%% \,.
+%% \label{eq:nodelesseq}
+%% \end{eqnarray}
+%% The energies $\epsilon_n$ are obtained from the natural boundary
+%% conditions of the nodeless bound states $|u_n\rangle$. They are
+%% identical to the eigenstates of $\hat{h}$ as will become evident
+%% below.
+
+%% The first wave function, $|u_1\rangle$ is the lowest bound state of
+%% the Hamiltonian. The other wave functions are obtained by radially
+%% integrating the inhomogeneous Schr\"odinger equation
+%% \eq{eq:nodelesseq} outward, starting with vanishing value and
+%% derivative, so that
+%% \begin{eqnarray}
+%% \lim_{\vec{r}\rightarrow0}\frac{\langle\vec{r}|u_n\rangle}{|\vec{r}|^{\ell+1}}=0
+%% \qquad\text{for $n>1$}
+%% \end{eqnarray}
+
+
+%% The node-less wave functions $|u_n\rangle$ do not have any nodes, but
+%% look like Slater orbitals, in the sense that they grow at the origin
+%% as a power and that they decay exponentially at large distance. Their
+%% behavior at the origin is\cite{bloechl12_arxiv1210_5937}
+%% \begin{eqnarray}
+%% u_{n}(\vec{r})
+%% =\left(\frac{2m_e}{\hbar^2}\right)^{n-1}
+%% \frac{(2\ell+1)!!}{(2\ell-1+2n)!!(2n-2)!!}
+%% |\vec{r}|^{\ell+2(n-1)}Y_{\ell,m}(\vec{r})
+%% \end{eqnarray}
+%% where $Y_{\ell,m}$ is a real spherical harmonics.
+
+%% The n lowest node-less wave functions span the same Hilbert space as
+%% the n lowest true wave functions. The all-electron wave functions can
+%% be recovered from the node-less wave functions
+%% via\cite{bloechl12_arxiv1210_5937}
+%% \begin{eqnarray}
+%% |\phi_{ref,n}\rangle\defas|\phi_{ref}(\epsilon_n)\rangle
+%% =\sum_{m=1}^n|u_m\rangle \prod_{j=1}^{m-1}(\epsilon_j-\epsilon_n)
+%% =\biggl[\sum_{m=1}^n|u_m\rangle 
+%% \prod_{j=m}^{n-1}\frac{1}{(\epsilon_j-\epsilon_n)}
+%% \biggr]\prod_{k=1}^{n-1}(\epsilon_k-\epsilon_n)
+%% \end{eqnarray}
+
+%% %====================================================================
+%% \subsubsection{Node-reduced partial waves}
+%% %====================================================================
+%% Secondly, we define \cite{bloechl12_arxiv1210_5937} a sequence of
+%% energy-dependent \textbf{node-reduced partial waves}
+%% \index{node-reduced partial wave} $|q_n(\epsilon)\rangle$ through
+%% \begin{eqnarray}
+%% (\hat{h}-\epsilon)|q_n(\epsilon)\rangle=-|u_{n-1}\rangle
+%% \label{eq:defnodereducedpartialwave}
+%% \end{eqnarray}
+%% with the boundary conditions
+%% \begin{eqnarray}
+%% \lim_{\vec{r}\rightarrow0}
+%% \frac{\langle\vec{r}|q_n(\epsilon)\rangle}
+%% {\langle\vec{r}|u_n\rangle}=1
+%% \qquad\text{for $n>1$}
+%% \end{eqnarray}
+%% For each $n$ one obtains one energy-dependent, node-reduced partial wave
+%% $|q_n(\epsilon)\rangle$.
+
+
+%% The node-reduced wave functions have (typically\footnote{As shown in
+%%   \cite{bloechl12_arxiv1210_5937}, the nodal theorem fails at high
+%%   energies, so that the statement is correct for practical purposes,
+%%   but incorrect in a strict sense.}) $n-1$ nodes less than the true
+%% wave function. Near the origin, they are very similar to $|u_n\rangle$
+%% over nearly the entire energy range.
+
+%% The all-electron partial wave $|\phi(\epsilon)\rangle$ can be
+%% constructed from the node-reduced partial wave $|q_n(\epsilon)\rangle$
+%% and the lower node-less bound states $|u_m\rangle$
+%% as\cite{bloechl12_arxiv1210_5937}
+%% \begin{eqnarray}
+%% |\phi_{ref}(\epsilon)\rangle=\biggl[|q_n(\epsilon)\rangle
+%% +\sum_{m=1}^{n-1}|u_m\rangle\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}
+%% \biggr]
+%% \prod_{k=1}^{n-1}(\epsilon_k-\epsilon)
+%% \label{eq:aephireffromnodereduced}
+%% \end{eqnarray}
+
+%% In practice, we focus on the particular node-reduced wave functions,
+%% for which the nodes of all core states are eliminated, that is for
+%% which $n=n_c+1$ is the quantum number of the lowest valence (non-core)
+%% state.
+
+%% In order to avoid the scale factor
+%% $\prod_{k=1}^{n-1}(\epsilon_k-\epsilon)$, we introduce a new
+%% all-electron partial wave $|\phi_n(\epsilon)\rangle$
+%% \begin{eqnarray}
+%% |\phi_n(\epsilon)\rangle&\defas&
+%% |\phi_{ref}(\epsilon)\rangle\frac{1}{\prod_{k=1}^{n-1}(\epsilon_k-\epsilon)}
+%% \nonumber\\
+%% &=&|q_n(\epsilon)\rangle
+%% +\sum_{m=1}^{n-1}|u_m\rangle\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}
+%% \label{eq:aephifromnodereduced}
+%% \end{eqnarray}
+
+%% %====================================================================
+%% \subsubsection{Series expansion of the node-reduced partial wave}
+%% %====================================================================
+%% Besides the nodeless states $|u_n\rangle$ and the node-reduced partial
+%% waves $|q_n(\epsilon)\rangle$, let me define a third set of partial
+%% waves.
+
+%% Let us define \cite{bloechl12_arxiv1210_5937} a new sequence of
+%% nodeless functions $|\bar{q}_n^{(j)}\rangle$ for specified set of
+%% energies $\{\epsilon_{n+j}; j\ge1\}$.  The energies in the set need
+%% not to be eigenstates of the Hamiltonian. They may also all be chosen
+%% identical.
+
+%% The sequence of nodeless functions is
+%% \begin{eqnarray}
+%% (\hat{h}-\epsilon)|\bar{q}_{n}^{(j)}(\epsilon)\rangle&=&
+%% -|\bar{q}_n^{(j-1)}(\epsilon_{n+j-1})\rangle
+%% \label{eq:qbardiffgl}
+%% \\
+%% (\hat{h}-\epsilon)|\bar{q}_{n}^{(0)}(\epsilon)\rangle&=&-|u_{n-1}\rangle 
+%% \label{eq:qbardiffgl0}
+%% \end{eqnarray}
+%% where $|\bar{q}_{n}^{(0)}(\epsilon)\rangle=|q_{n}(\epsilon)\rangle$
+%% defined in \eq{eq:defnodereducedpartialwave}. \eq{eq:qbardiffgl0} and
+%% \eq{eq:qbardiffgl} have great similarity with those of the nodeless
+%% equations \eq{eq:nodelesseq}. However, the inhomogenity of the
+%% differential equation need not be a bound function, and the energies
+%% need not be eigenstates of the Hamiltonian.
+
+
+%% The sequence defined by \eq{eq:qbardiffgl} and \eq{eq:qbardiffgl0} can
+%% be constructed by the recursive equation
+%% \begin{eqnarray}
+%% |\bar{q}_{n}^{(j+1)}(\epsilon)\rangle&=&
+%% \frac{-1}{\epsilon-\epsilon_{n+j}}
+%% \Bigl(|\bar{q}_n^{(j)}(\epsilon)\rangle
+%% -|\bar{q}_n^{(j)}(\epsilon_{n+j})\rangle\Bigr)
+%% \qquad\text{for $\epsilon\ne\epsilon_{n+j}$}
+%% \nonumber\\
+%% |\bar{q}_{n}^{(j+1)}(\epsilon_{n+j})\rangle&=&
+%% -\left.\partial_\epsilon\right|_{\epsilon_{n+j}}|\bar{q}_n^{(j)}(\epsilon)\rangle
+%% \label{eq:recursionqbar}
+%% \end{eqnarray}
+
+%% \eq{eq:recursionqbar} is shown recursively: We assume that
+%% \eq{eq:qbardiffgl} holds for $j$ and show that  \eq{eq:recursionqbar}
+%% obeys \eq{eq:qbardiffgl} for $j+1$.
+%% \begin{eqnarray}
+%% (\hat{h}-\epsilon)|\bar{q}^{(j+1)}_{n}(\epsilon)\rangle
+%% &\eqrel{eq:recursionqbar}{=}&
+%% \frac{-1}{\epsilon-\epsilon_{n+j}}
+%% \Bigl((\hat{h}-\epsilon)|\bar{q}_n^{(j)}(\epsilon)\rangle
+%% -(\hat{h}-\epsilon_{n+j})|\bar{q}_n^{(j)}(\epsilon_{n+j})\rangle
+%% +(\epsilon-\epsilon_{n+j})|\bar{q}_n^{(j)}(\epsilon_{n+j})\rangle
+%% \Bigr)
+%% \nonumber\\
+%% &\eqrel{eq:qbardiffgl}{=}&
+%% \frac{-1}{\epsilon-\epsilon_{n+j}}
+%% \Bigl(
+%% \underbrace{-|\bar{q}_n^{(j-1)}(\epsilon_{n+j-1})\rangle
+%% +|\bar{q}_n^{(j-1)}(\epsilon_{n+j-1})\rangle}_{=0}
+%% +(\epsilon-\epsilon_{n+j})|\bar{q}_n^{(j)}(\epsilon_{n+j})\rangle
+%% \Bigr)
+%% \nonumber\\
+%% &=&
+%% -|\bar{q}_n^{(j)}(\epsilon_{n+j})\rangle
+%% \end{eqnarray}
+%% which is \eq{eq:qbardiffgl} for the next higher value of $j$. This
+%% completes the proof that $|q_{n}^{(j)}(\epsilon)\rangle$ defined in
+%% \eq{eq:qbardiffgl} obeys the recursion \eq{eq:recursionqbar}.
+
+
+%% From the series defined by \eq{eq:qbardiffgl} and
+%% \eq{eq:qbardiffgl0}, we can again recover the node-reduced partial
+%% wave as
+%% \begin{eqnarray}
+%% |q_n(\epsilon)\rangle&=&|\bar{q}_n^{(0)}(\epsilon)\rangle
+%% \nonumber\\
+%% &\eqrel{eq:recursionqbar}{=}&|\bar{q}_n^{(0)}(\epsilon_n)\rangle
+%% +|\bar{q}_{n}^{(1)}(\epsilon)\rangle(\epsilon_n-\epsilon)
+%% \nonumber\\
+%% &\eqrel{eq:recursionqbar}{=}&|\bar{q}_n^{(0)}(\epsilon_n)\rangle
+%% +|\bar{q}_{n}^{(1)}(\epsilon_{n+1})\rangle(\epsilon_n-\epsilon)
+%% +|\bar{q}_{n}^{(2)}(\epsilon)\rangle
+%% (\epsilon_{n+1}-\epsilon)(\epsilon_{n}-\epsilon)
+%% \nonumber\\
+%% &=&\biggl(\sum_{k=0}^{j-1}
+%% |\bar{q}_{n}^{(k)}(\epsilon_{n+k})\rangle
+%% \prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon)\biggr)
+%% +|\bar{q}_n^{(j)}(\epsilon)\rangle
+%% \prod_{m=0}^{j-1}(\epsilon_{n+m}-\epsilon)
+%% \label{eq:qnfromqj}
+%% \end{eqnarray}
+%% In this derivation, no assumptions have been made regarding the
+%% energies $\epsilon_{n+j}$. The value of $j$ is arbitrary.
+
+
+%% In the special case that all energies $\epsilon_{n+k}$ are chosen to
+%% be identical, the series expansion \eq{eq:recursionqbar} produces the
+%% Taylor-expansion coefficients
+%% \begin{eqnarray}
+%% |\bar{q}_n^{(j)}(\epsilon)\rangle=
+%% \frac{(-1)^j}{j!}\partial_\epsilon^j|q_n(\epsilon)\rangle
+%% \label{eq:taylorexpansioncoefficientsqn}
+%% \end{eqnarray}
+%% Using all energies equal, \eq{eq:qnfromqj} results in the Taylor
+%% series with coefficients from \eq{eq:taylorexpansioncoefficientsqn}.
+
+%% Using instead bound-state energies in sequence, \eq{eq:qbardiffgl} and
+%% \eq{eq:qbardiffgl0} results in a nodeless construction.
+
+%% This flexibility can be exploited to set up an expansion with bound
+%% states and with scattering states. This is important if we wish to
+%% describe semi-core states, valence states and scattering states on the
+%% same footing.
+
+%% From \eq{eq:aephifromnodereduced} and \eq{eq:qnfromqj}, we obtain the
+%% expression for the full energy-dependent wave function, which holds
+%% for arbitrary values of $j$.
+%% \begin{eqnarray}
+%% |\phi_n(\epsilon)\rangle
+%% &=&
+%% \underbrace{
+%% |\bar{q}_n^{(j)}(\epsilon)\rangle
+%% \left(\prod_{m=0}^{j-1}(\epsilon_{n+m}-\epsilon)\right)
+%% +
+%% \sum_{k=0}^{j-1}
+%% |\bar{q}_{n}^{(k)}(\epsilon_{n+k})\rangle
+%% \left(\prod_{m=0}^{k-1}(\epsilon_{n+m}-\epsilon)\right)
+%% }_{|q_n(\epsilon)\rangle}
+%% \nonumber\\
+%% &+&
+%% \underbrace{
+%% \left(\sum_{m=1}^{n-1}|u_m\rangle\prod_{j=m}^{n-1}\frac{1}{\epsilon_j-\epsilon}\right)
+%% }_{\text{core contribution}}
+%% \label{eq:phincompletediscreteandcont}
+%% \end{eqnarray}
+
+%% Interesting is that the energy-dependent function
+%% $|\bar{q}^{(j)}(\epsilon)\rangle$ does not contribute to the full wave
+%% function at the energies $\epsilon_{j}$ of the core states and at the
+%% energies $\epsilon_{n+m}$ with $m<j$.
 
 
 
