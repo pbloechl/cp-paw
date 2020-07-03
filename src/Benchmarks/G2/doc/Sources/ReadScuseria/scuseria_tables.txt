@@ -1,0 +1,275 @@
+
+TABLE I. Electronic atomization energies for die molecules in the
+exiended G2 sei (Ref. 19). Energies are given in kcal/mol. For ihe
+various methods we Hsl ihe dcviations from experiment
+(dieory-exp.). The empty line in the table marks ihe end of die G2-1
+sei.
+
+Molecule			Exp.	LSD (SVWN5)	PBE	PBEIPBE
+LiH				58	2		-5	-6
+BeH				48	12		7	8
+CH				84	8		0	-1
+CH2-3B1				109	24		5	5
+CH2-1A1				182	21		4	2
+CH3				306	33		4	2
+CH4				420	43		0	-2
+NH				82	13		6	3
+NH2				182	26		7	2
+NH3				297	40		5	-2
+OH				107	17	3	-1
+H20				233	34	2	-6
+HF				142	21	0	-5
+SiH2-1A1			154	12	-6	-7 
+SiH2-3B1			131	16	 1	 1
+SiH3				226	21	-3	-3
+SiH4				324	24	-9	-8
+PH2				153	21	2	0
+PH3				241	29	-2	-3
+SH2				182	25	0	-2
+HCl				107	13	1	-2
+Li2				26	-2	-6	-7
+LiF				139	13	0	-7
+C2H2				404	57	11	0
+C2H4				562	71	9	2
+C2H6				711	84	6	1
+CN				179	40	17	0
+HCN				313	48	13	-2
+co				261	39	9	-6
+HCO				279	55	17	2
+H2CO				376	59	11	-3
+H3COH				513	74	7	-3
+N2				227	38	15	-4
+N2H4				437	79	16	1
+NO				153	46	19	1
+02				118	55	25	4
+H202				268	66	14	-6
+F2				38	39	14	-5
+Co2				392	83	26	1
+Na2				19	1	-1	-3
+Si2				74	19	8	-3
+P2				116	28	6	-5
+S2				98	39	16	8
+Cl2				57	24	10	2
+NaCl				99	5	-3	-5
+SiO				191	33	6	-9
+SC				172	32	7	-4
+SO				122	45	18	3
+ClO				62	40	19	4
+FCl				62	32	11	-2
+Si2H6				533	48	-11	-10
+CH3Cl				395	53	6	1
+CH3SH				473	65	5	0
+HOCl				165	45	11	-2
+S02				253	81	26	-4
+BF3				470	75	12	-3   
+BCl3				325	58	16	7    
+AlF3				425	56	0	-14  
+AlCl3				309	35	2	-2   
+CF4			       482	122	25	0    
+CCl4			       316	86	23	6    
+COS				336	76	25	3    
+CS2				280	68	22	5
+CF20				423	105	28	2
+SiF4				566	88	3	-15
+SiCl4				387	56	4	-3
+N20				270	90	40	3
+ClNO				192	73	34	0
+NF3				209	106	38	2
+PF3				359	84	16	-5
+03				148	92	36	-7
+F2O				94	77	29	-4
+ClF3				126	103	40	3
+C2F4				592	159	42	8
+C2Cl4				471	120	36	12
+CF3CN				645	150	40	2
+CH3CCH_propyne			703	101	19	5
+CH2CCH2_allene			702	106	23	8
+C3H4_cyclopropene		679	108	23	10
+CH3CHCH2_propylene		859	114	15	5
+c3h6_cyclopropane		851	120	18	9
+C3H8_propane			1005	125	10	3
+CH2CHCHCH2_butadiene		1009	144	26	9
+C4H6_2-butyne			100 1	144	25	9
+c4h6i_methylenecyclopropane	990	151	29	14
+c4h6_bicyclobutane		983	155	30	16
+C4H6_cyclobutene		998	150	27	12
+C4H8_cyclobutane		1147	160	21	10
+C4H8_isobutene			1156	156	20	7
+C4H10_transbutane		1299	165	14	5
+C4H10_isobutane			1301	165	13	4
+C5H8_spiropentane		1281	197	36	19
+C6H6_benzene			1362	216	48	24
+CH2F2				439	80	13	-1
+CHF3				462	101	19	-1
+CH2Cl2				370	64	13	4
+CHCl3				344	75	19	6
+CH3NH2_methylamine		581	81	10	0
+CH3CN_methylcyanide		615	92	21	2
+CH3N02_nitromethane		603	142	40	2
+CH3ONO_methylenitrite		601	137	37	0
+CH3SiH3_methylsilane		627	65	-4	-6
+CHOOH_formicacid		503	97	21	-1
+HCOOCH3_methylformate		788	137	26	0
+CH3CONH2_acetamide		867	146	30	6
+C2H4NH_aziridine		719	115	22	8
+NCCN_cyanogen			501	100	38	3
+CH3_2NH_dimethylamine		869	122	15	2
+CH3Ch2NH2_transethylamine	877	122	15	3
+CH2CO_ketene			533	97	27	6
+C2H4o_oxirane			651	108	20	4
+CH3CHO_acetaldehyde		677	103	18	1
+HCOCOH_glyoxal			636	119	29	0
+CH3CH2OH_ethanol		810	116	12	0
+CH3OCH3_dimethylether		799	115	12	-1
+C2H4S_thiooxirane		624	99	17	7
+CH3_2SO_dimethylsulfoxide	853	142	21	2
+CH3CH2SH_ethanthiol		767	106	10	2
+CH3_2SO_dimethylsulphide	766	106	11	2
+CH2CHF				573	93	18	3
+CH3CH2Cl_ethylChloride		691	94	11	3
+CH2CHCl_vinylcloride		542	84	17	5
+CH2CHCN_acrylonitrile		761	121	31	6
+CH3COCH3_acetone		978	145	23	4
+CH3COOH_aceticacid		804	139	26	2
+CH3COF_acetylflouride		707	125	26	3
+CH3COCl3_acetylchloride		669	117	26	5
+CH3CH2CH2C1_propylChloride	985	134	15	5
+CH3_2CHOH_isopropanol		1108	157	16	1
+CH3CH2OCH3_methylethylether	1096	156	17	1
+CH3_3N_trimethylamine		1160	163	18	3
+C4H4O_furan			992	177	41	15
+C4H4S_thiophene			960	166	37	17
+C4HjN_pyrrole			1068	185	44	19
+C5HSN_pyridine			1234	211	52	22
+H2				110	3	-6	-6
+HS				87	13	1	0
+CCH				262	48	14	4
+c2h3-2A'			443	66	15	7
+CH3CO-2a'			581	98	24	6
+H2COH-2A			409	70	13	3
+CH3O-2A'			400	65	13	3
+CH3CH2O-2a"			696	106	18	5
+CH3S-2a'			381	56	9	3
+C2H5-2A'			601	77	11	6
+CH3_2CH-2A'			898	120	17	9
+CH3_3C_tbutylradical		1195	162	22	12
+NO2				228	95	43	5
+
+TABLE III. Experimental and calculated elecironic ionization
+potentials for the G2-I data set (Refs. 17,18, and 20) in eV. For the
+various methods we [ist the deviations from cxperimenl (theory-exp.).
+
+System			Exp.	LSD(SVWNS) PBE	PBE1PBE
+Li			5.39	0.07	0.18	0.17
+Be			9.32	-0.30	-0.32	-0.34
+B			8.30	0.33	0.37	0.34
+C			11.26	0.43	0.28	0.26
+N			14.54	0.48	0.20	0.17
+O			13.61	0.33	0.46	0.25
+F			17.42	0.57	0.26	0.06
+Na			5.14	0.23	0.21	0.14
+Mg			7.65	0.08	-0.03	-0.11
+Al			5.98	0.03	0.07	0.1 i
+Si			8.15	O.OS	0.08	0.07
+P			10.49	0.12	0.00	0.04
+S			10.36	0.13	-0.03	0.04
+Cl			12.97	0.19	0.02	-0.01
+CH,			12.81	-0.1 1	-0.24	-0.22
+NH3			10.23	0.28	0.03	-0.15
+OH			13.05	0.35	0.16	-0.01
+H20			12.69	0.34	-0.03	-0.17
+HF			16.11	0.49	0.03	-0.14
+SiH4			11.08	-0.13	-0.30	-0.20
+PH			10.14	0.19	0.11	0.14
+PH2			9.81	0.19	0.17	0.19
+PH3			9.87	0.11	-0-09	-0.14
+SH			10.37	0.14	0.01	-0.01
+H2S(2B1cation)		10.48	0.14	-0.10	-0.12
+H2S(2A1cation)		12.81	0000	0000	-0.18
+ClH			12.76	0.25	-0.06	-0.07
+C2H2			11.43	0.20	-0.16	-0.25
+C2H4			10.55	0.29	-0.10	-0.23
+co			14.01	0.05	-0.14	-0.08
+N2(2Sigma cation)	15.59	0.07	-0.20	0.18
+N2(2Pi cation)		16.74	0000	0000	-0.16
+02			12.04	0.54	0.38	0.69
+P2			10.54	0.10	-0.16	-0.18
+S2			9.35	0.1 1	0-13	0.29
+Cl2			11.49	-0.17	-0-34	-0.15
+ClF			12.66	-0.09	-0.27	-0.15
+CS			11.34	0.11	-0.03	-0.03
+
+TABLEV. Electron affinities for the G2-1 data set (Refs. 17,18, and
+20) in eV. Deviations from experiment are listed for the various
+approximations (theory-exp.).
+
+System	Exp.	LSD (SVWN5)	PBE	PBE 1 PBE
+C	1.26	0.55	0.29	0.14
+0	1.46	0.55	0.20	-0.14
+F	3.40	0.65	0.14	-0.22
+Si	1.39	0.20	0.07	0.05
+P	0.75	0.22	0.06	0.01
+S	2.08	0.30	0.10	-0.03
+Cl	3.62	0.44	0.09	-0.04
+CH	1.21	0.49	0.28	0.14
+CH2	0.58	0.32	0.11	-0.10
+CH3	0.05	0.29	0.00	-0.22
+NH	0.36	0.33	0.10	-0.18
+NH2	0.73	0.37	0.00	-0.26
+OH	1.81	0.48	0.04	-0.28
+SiH	1.27	0.20	0.11	0.08
+SiH2	1.09	0.21	0.15	0.14
+SiH3	1.36	0.20	-0.01	-0-10
+PH	1.02	0.24	0.02	-0.07
+PH2	1.25	0.23	-0.03	-O-II
+HS	2.35	0.29	-0.04	-0-13
+O2	0.41	0.05	-0.04	-0.16
+NO	-0.01	0.28	0.22	0.14
+CN	3.88	0.15	-0.04	0.01
+PO	1.08	0.21	0.19	0.22
+S2	1.65	-0.02	-0.12	-0.08
+Cl2	2.37	0.12	0.23	0.20
+
+TABLE VII. Electronic proton affinities for the G2 data set (Refs. 17
+and 18) in kcal/mol. For die different methods we list the deviations
+from experiment (theory-exp.).
+
+System	Exp.	LSD (SVWN5)	PBE	PBE 1 PBE
+
+NH3	211	-5	-1	2
+H20	174	-6	-3	-1
+C2H2	156	-2	3	5
+SiH4	159	-10	-2	-2
+PH3	196	-12	-5	-3
+H2S	177	-9	-3	-2
+HC1	140	-6	-1	-1
+
+TABLE VIII bondlengths of diatomics in angstrom (th.-3xp)
+
+System	Exp.	LSD (SVWN5)	PBE	PBE 1 PBE
+
+BeH	1.343	0.019	0.014	0.007
+CH	1.120	0.020	0.017	0.004
+Cl2	1.988	-0.008	0.018	-0.008
+ClF	1.628	0.026	0.026	-0.006
+ClO	1.570	0.014	0.010	-0.012
+CN	1.172	-0.006	0.002	-0.012
+CO	1.I2S	-0.001	0.008	-0.005
+F2	1.412	-0.029	0.000	-0.038
+FH	0.917	0.015	0.013	0.001
+HCl	1.275	0.015	0.012	0.002
+Li2	2.673	0.034	0.054	0.055
+LiF	1.564	-0.004	0.019	0.006
+LiH	1.595	0.016	0.010	0.000
+N2	1.098	-0.003	0.005	-0.008
+Na2	3.079	-0.095	-0.001	0.008
+NaCl	2.361	-0.026	0.014	0.003
+NH	1.036	0.018	0.014	0.002
+NO	1.151	-0.005	0.006	-0.012
+02	1.208	-0.005	0.009	-0.016
+OH	0.971	0.014	0.011	-0.001
+P2	1.893	-0.003	0.011	-0.013
+Si	1.889	0.006	0.022	-0.004
+Cs	1.535	-0.002	0.011	-0.006
+SiO	1.510	0.005	0.019	-0.003
+SO	1.481	0.008	0.023	-0.002

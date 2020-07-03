@@ -1,0 +1,706 @@
+Curtiss etal.: Gausslan-2 theory for molecular energies
+7223
+TABLE II. G l and G2 total energics.*
+TABLE II (continued).
+Molecule	^(01)	A	£0(C2>
+H	-0.50000		-0.50000
+H,	-1.16501	-2.49	-1.16636
+Li	- 7.432 22		- 7.432 22
+Be	- 14.623 37	-0.11	- 14.622 34
+B	- 24.602 79	-0.40	-24.60205
+C	- 37.784 64	-0.82	- 37.784 32
+N	-54.51776	-1.36	-54.51798
+O	- 74.982 04	-2.27	-74.98203
+F	- 99.632 75	-3.49	- 99.632 82
+Na	- 161.846 18		- 161.846 18
+Mg	- 199.646 13	-0.15	- 199.645 14
+AI	- 241.931 67	-0.44	- 241.930 97
+Si	- 288.933 78	-0.61	- 288.933 25
+P	-340.81800	-1.36	-340.81822
+S	- 397.654 93	-2.30	-397.65495
+Cl	-459.67670	-3.36	- 459.676 64
+LiH	- 8.022 28	-1.34	- 8.022 48
+BeH	- 15.19528	-0.77	-15.19491
+BeHj	-15.84426	-1.56	-15.84354
+BH	- 25.234 70	-1.57	- 25.233 99
+BHj	-25.85651	-3.03	- 25.857 26
+BHj	-26.52407	-4.21	- 26.524 86
+CH	- 38.412 20	-2.66	- 38.412 58
+CH^'ß.)	- 39.067 00	-4.28	-39.06900
+CH,(M,)	- 39.057 10	-4.72	- 39.058 40
+CHi	- 39.742 54	-5.97	- 39.745 09
+CH4	- 40.407 72	-7.72	- 40.410 88
+NH	-55.14077	-3.68	- 55.142 17
+NH:	- 55.786 16	-6.28	-55.78902
+NH,	- 56.454 77	-8.44	- 56.458 65
+OH	- 75.642 14	-5.19	-75.64391
+OHj	- 76.328 34	-8.27	-76.33205
+FH	- 100.347 13	-7.44	-100.35001
+NaH	-162.41699	-2.11	- 162.417 96
+MgH	- 200.191 53	-1.44	-200.19183
+MgHj	-200.80404	-2.49	- 200.804 25
+AIH	-242.54670	-1.77	- 242.546 19
+A1H,	-243.11873	-2.51	-243.11896
+AIH,	- 243.753 98	-3.59	- 243.753 95
+SiH	- 289.546 30	-1.98	-289.54600
+SiHjCH,)	-290.16790	-3.23	-290.16771
+SiH2(X)	-290.13013	-2.64	-290.13049
+SiH,	- 290.773 21	-3.73	-290.77351
+SiH4	-291.41881	-4.79	- 291.419 04
+PH	- 341.427 35	-3.36	-341.42843
+PH2	- 342.047 25	-5.30	- 342.049 13
+PH,	- 342.676 54	-7.06	-342.67904
+SH	- 398.285 48	-4.92	-398.28698
+SHj	- 398.927 82	-7.47	- 398.930 73
+CIH	- 460.337 98	-6.75	- 460.340 17
+Li,	- 14.90704	+ 0.14	- 14.905 76
+LiN	-62.01272	+ 0.91	- 62.009 52
+LiO	- 82.540 29	+ 1.31	- 82.535 56
+LiOH	-83.24473	-0.50	- 83.240 67
+LiF	- 107.290 13	+ 1.36	-107.28421
+LiCI	-467,29009	-2.08	- 467.287 61
+BeO	- 89.767 53	-0.67	- 89.763 64
+BcOH	- 90.430 37	-3.42	- 90.429 23
+BeF	- 1 14.468 33	-1.58	-114.46535
+BeS	- 412.397 58	-3.14	-412.39616
+BeCl	_ 474.440 70	-4.07	- 474.440 21
+BÖ	- 99.890 26	-4.40	- 99.889 70
+HBO	- 100.566 37	-5.71	- 100.566 38
+BS	- 422.467 82	-3.61	- 422.466 87
+HBS	-423.14299	-4.37	-423.14166
+BCl	- 484.475 76	-4.57	- 484.474 63
+c,	-75.80402	-4.33	- 75.803 79
+Molecule	*CG1)	A	*(02>
+CjH	- 76.473 45	-4.15	- 76.473 04
+CiHj	-77.18602	-5.42	-77.18574
+CjHj	- 77.738 45	-7.21	-77.73996
+CjH4	-78.41401	-8.76	- 78.415 93
+CjHj	- 78.966 61	- 10.57	-78.97034
+CjHe	- 79.626 56	- 12.32	-79.63090
+CN	- 92.583 36	-3.96	- 92.582 76
+HCN	- 93.285 47	-5.12	- 93.284 89
+H2CNH	- 94.460 95	-9.17	- 94.463 28
+HjCNHj	- 95.662 10	- 12.79	-95.66691
+CO	-113.17722	-5.97	-113.17749
+HCO	-113.69746	-7.07	- 1 13.698 83
+HjCO	-114.33724	-8.48	-114.33888
+H,COH	-115.53059	- 12.28	-115.53489
+CF	- »37.626 79	-5.91	-137.62700
+HCF	- 138.246 05	-7.86	- 138.247 07
+H,CF	- 139.551 26	- 10.93	-139.55421
+CSi	- 326.875 72	-2.84	- 326.875 14
+CP	- 378.798 14	-4.82	- 378.798 40
+HCP	- 379.491 83	-5.64	- 379.491 77
+H2CPH	- 380.690 52	-8.43	- 380.692 1 1
+HjCPH	-381.90231	-11.71	-381.90604
+es	-435.71257	-4.13	- 435.71 1 00
+HjCS	- 436.933 01	-7.52	- 436.933 69
+HjCSH	-438.14532	-11.13	-438.14847
+CC1	- 497.614 33	-5.13	- 497.613 76
+H,ca	- 499.552 04	-9.77	- 499.553 83
+N,	- 109.393 72	-4.59	- 109.392 61
+HjNNHj	-111.67521	- 13.22	-111.68045
+NO	- 129.739 12	-6.53	- 129.739 95
+HNO	- 130.313 89	-8.34	-130.31539
+NF	- 154.271 14	-6.58	- 154.27202
+NSi	- 343.626 48	-3.74	- 343.624 52
+NP	- 395.568 58	-4.25	- 395.567 13
+NS	- 452.344 17	-6.93	- 452.345 40
+o,	-150.14790	-6.02	-150.14822
+HOO	- 150.725 66	-8.91	- 150.72773
+HOOH	-151.36291	- 10.85	- 151.36578
+HOF	- 175.35202	-9.36	- 175.35340
+ONa	-236.93608	+ 1.71	- 236.930 95
+HONa	- 237.623 90	+ 0.87	-237.61847
+OMg	- 274.726 37	+ 0.30	-274.72152
+HOMg	- 275.407 10	-2.56	- 275.405 10
+OSi	- 364.218 92	-2.96	- 364.216 18
+OP	- 416.021 20	-7.25	- 416.022 75
+OPH	- 416.627 99	-7.62	- 416.628 77
+OS	- 472.828 54	-6.65	- 472.829 49
+OC1	- 534.755 75	-7.26	- 534.756 17
+HOC1	- 535.407 52	-9.04	- 535.408 58
+F2	- 199.325 21	-6.74	- 199.323 97
+FNa	- 261.669 29	+ 3.11	-261.66162
+FMg	- 299.448 50	-1.44	- 299.445 38
+FA1	- 341.825 83	- 1.14	- 341.821 27
+FSi	- 388.790 22	-2.48	- 388.787 00
+FSiH,	- 390.645 01	-7.00	- 390.644 03
+FP	-440.61977	-4.54	- 440.618 62
+FS	- 497.418 68	-6.34	- 497.418 18
+FC1	- 559.406 67	-7.97	- 559.406 67
+Na2	- 323.724 10	-0.04	- 323.723 00
+NaCl	-621.68129	-3.49	-621.68022
+MgS	- 597.383 42	-3.05	- 597.381 91
+MgCl	- 659.442 75	-3.08	- 659.441 27
+A1CI	- 701.802 85	-3.03	-701.80018
+Si2	- 577.985 92	-1.26	- 577.983 76
+H,SiSiHj	- 581.668 99	-7.07	- 581.668 08
+SiS	- 686.821 69	-3.22	-686.81921
+SiCl	- 748.771 53	-2.80	- 748.768 63
+Downioaded 25 Feb 2004 to 128.172.1.115. RedisfrfiSitiorf subject tb AP IfcensePor Copyright, see http://jcp.aip.org/lcp/copyright.jsp
+Curtiss et a f.: Gausslan-2 theory for molecular energies
+7225
+TABLEIII. Total atomizalion energies £J>0 (in kcal/mol).
+TABLEIV. lonization Potentials (eV).
+Moleculc                         Gl theory        G2 theory           Expt.'	Gl theory            G2 theory               Expl.*
+LiH                                         56.5                  56.6                  56.0	Li-U*                           5.34                     5.34                    5.39
+BeH                                        45.1                   45.5                  46.9	Be-Be+                         9.44                     9.41                    9.32
+CH                                          80.0                  80.5                  79.9	B-B*                             8.19                     8.20                    8.30
+CH,(JB,)                              177.2                 178.6                 179.6	C-C+                           11.17                    11.18                   11.26
+CH,(M,)                              171.0                 172.0                 170.6	N-N+                          14.47                    14.48                   14.54
+CH,                                       287.4                289.1                 289.2	O-O*                          13.54                    13.52                   13.61
+	F-F*                           17.39                    17.39                   17.42
+	CH, -CH+                   12.68                    12.68                   12.62
+NH                                         77.2                  77.9                  79.0	
+NHj                                       168.4                 170.1                 170.0	NHj-NHj*                  10.17                    10.19                   10.18
+NH,                                      274.2                276.5                 276.7	OH-OH*                     12.97                    12.98                   13.01
+	OH>-*OHa+                   12.60                    12.63                   12.62
+OH                                        100.5                 101.6                 101.3	
+OH,                                       217.3                219.6                219.3	FH-*FH +                     16.07                    16.08                   16.04
+	Na-tNa*                      4.95                    4.95                   5.139
+FH                                         134.5                 136.3                 135.2	Mg-Mg+                       7.68                     7.65                    7.646
+SttMM,)                              146.9                 147.1                 144.4	A1-*AJ*                          5.93                      5.93                    5.984
+SiHjC*,)                              123.2                 123.8                 123.4	Si-Si+                            8.09                      8.10                    8.15
+SiH,                                      213.1                 213.5                 214.0	P-P*                           10.44                    10.44                  10.49
+SiH«                                       304.4                304.8                302.8	S-S*                            10.21                    10.20                   10.36
+PH,                                        143.9                 144.9                 144.7	CI-.C1+                         12.86                    12.85                   12.97
+PH,                                       225.0                226.4                227.4	SiF^-SiH/                   11.02                    11.01                   11.00
+SH,                                        171.1                 173.0                 173.2	PH-PH*                      10.08                    10.09                   10.15
+C1H                                       101.2                 102.6                 102.2	PHj-PH/CH,)            9.71                      9.72                    9.82
+Li,                                           26.7                  25.9                  24.0	PHj-PH/                      9.86                     9.87                    9.87
+UF                                        141.3                 137.5                 137.6	SH-SH +                      10.30                    10.31                   10.37
+HCCH                                387.0               387.2               388.9	SH2 -SHi* ('Ä, )           10.41                    10.43                   10.47
+HjCCHj                                530.1                 531.7                 531.9	SH,-SH,*(X>            12.72                      12.75    '               12.78
+HjCCHj                                663.5                666.6                666.3	C1H-C1H +                   12.71                    12.71                   12.75
+CN                                         176.3                 176.0                 176.6	CjHa-CjHj*               11.44                  11.42                 11.40
+HCN                                     303.1                 302.8                 301.8	CjH^CjH,*                10.59                    10.58                   10.51
+CO                                        257.6                258.0                256.2	CO-CO+                     14.07                    14.01                   14.01
+HCO                                     270.3                 271.4                270.3	N,-.N1*(2Zt>               15.59                    15.56                   15.58
+H,CO                                    358.1                 359.3                 357.2	N! -Na+ (2nB )              16.69                    16.67                   16.70
+H,COH                              479.4               482.3               480.8	Oi-Oz*                         12.16                    12.17                   12.07
+MI                                          224.8                223.8                225.1	P2-P2+                          10.54                    10.54                   10.53
+HjNNH,                               401.4                404.4                405.4	Sj-Si"                            9.28                     9.28                    9.36
+NO                                        150.2                 150.6                150.1	d,-.CV                       11.53                    11.51                   11.50
+Oj                                          115.4                 115.6                 118.0	C1F-C1F*                    12.70                    12.65                   12.66
+HOOH                                  250.3                 252.1                 252.3	SC-SC+                       11.47                    11.42                   11.33
+F,                                            37.5                  36.6                  36.9	
+CO,                                       384.3                 384.6                381.9	1 Experimental references given in Refs. 1 and 2.
+Na,                                          19.8                   19.2                   16.6	
+Si,                                           74.3                  73.6                  74.0	
+P,                                           116.0                 114.7                 116.1	
+S,                                            98.4                  97.4                 100.7	only 1.9 kcal/mol at the Gl level, the change is not äs dra-
+Cl,                                           58.1                   55.8                  57.2	matic. More ionic species are considered in See. IV and sig-
+NaCl                                       99.4                  98.8                  97.5 SiO                                        190.2                 188.8                 190.5	nificant changes due to A, are also found for these species.
+SC                                          171.3                 170.5                 169.5	The addition of the third d function and the second p
+SO                                         120.1                 120.8                 123.5	function to the basis set contributes to improvement in the
+CIO                                         60.9                  61.2                  63.3	atomization energies at the G2 level. The increase in basis set
+C1F                                          60.9                  61.0                  60.3 Si,Hft                                     502.9                 503.0                500.1	size, along with the modification in the higher level correc-
+CH3C1                                   370.6                 372.1                 371.0	tion (HLC), has the largest effect on hydrides of the first-
+CH,SH                                 442.8                445.0                445.1	row compounds. In the majority of cases, the G2 value is in
+HOC)                                     156.1                 156.8                 156.3	better agreement with experiment and contributes to the
+SO,                                        246.6                248.9                 254.0	overall improvement in G2 theory compared to Gl theory.
+	
+' Experimental references are given in Refs. I and 2.	The atomization energies of CzH6 [2.8 kcal/mol too low (Gl) compared toO.3 kcal/mol too high (G2) ], NH3 [2.5
+	kcal/mol too low (Gl ) compared to 0.2 kcal/mol too low
+	(G2)],N2H4 [4.0 kcal/mol too low (G 1) compared to 1.0
+in ionic Systems the polarization extension (2df) on the posi-	kcal/mol too low (G2)],andH2O2 [2.0 kcal/mol too low
+tive center (Li) duplicates some of the contribution of the	(Gl ) compared to 0.2 kcal/mol too low (G2) ] are notable
+diffuse function ( + ) on the negative center (F). This is	for their improved agreement with experiment at the G2
+corrected in G2 theory. The only other ionic species consid-	level. Also, the addition of the third d function is largely
+ered in this set, NaCl, also improves, but since it was off by	responsible for the increase by 2 kcal/mol of the dissociation
+Downioaded 25 Feb 2004 to 128.172.1.115.
+, see http://jcp.aip.org/jcp/copyright.jsp
+Curtiss er a/.: Gausslan-2 ttieory for molecularenergles
+7227
+IV. PREDICTIONS OF ATOMIZATION ENERG1ES OF OTHER COMPOUNDS
+In this section we report the results of applying the G2 procedure to a large number of neutral molecules raost of which have experimental atomization energies with an un-certainty of greater than l kcal/mol. The G2 atomization energies of the 36 molecules in this categoiy, considered in the study on second-row compounds,2 are listed in Table VIH. The G2 results for an additional 43 molecules, not included in the previous studies,1'2 are listed in Table IX. Experimental and G l values of 2D0 are also listed in Tables VIII and IX for comparison with the G2 values. Most of the experimental 2Z>0 values were derived from enthalpies of fonnation (0 K) in the JANAF tables.11
+TABLE VIII. Total atomization energies (in kcal/mol), 2Z>0, for other species studied in Ref. 2.
+TABLE IX. Total atomization energies (in kcal/mol), 2D0, for other species.*
+	Gl theory	G2 theory	Expt.'
+NaH	44.4	45.0	47.2 ± 5
+MgH	28.5	29.3	46 ± 12,30.9 "
+MgH,	99.1	99.8	
+AIH	72.2	72.3	67.0 ± 5, < 70-6"
+AIH,	117.4	118.0	
+AIH,	202.2	202.7	
+SiH	70.6	70.8	68.7, < 70.6"
+PH	68.6	69.2	70.5 ±2C
+HS	81.9	82.8	87.7 ± 1.2,81.7 b
+AlCl	122.0	120.8	119.2,118.1"
+A1F	164.0	161.6	160.0± 1.6,158.9"
+SiS	146.2	145.0	147.4 ±3.0
+PN	146.1	144.9	165.8 ± 1.2,146.6 ± 5.0 b-d
+PO	138.8	139.6	140.7 ±0.9, 141.8 b
+SF	82.2	81.8	81.2 ±2.1
+ClSi	101.1	99.6	88.3 ±3
+MgO	61.6	59.2	80 ± 6,81.4 ö
+LiCl	113.7	112.2	11 3.0 ±3.0
+NaF	119.5	114.6	113.2 ±0.5, 122.9 b
+SiF	140.4	138.6	130.3 ±3, 128.4"
+SiC	98.7	98.9	106.5 ±8, 107.0 b
+SN	107.6	108.2	110.7±6e
+BeCl	88.3	88.6	91.1 ±3, 104.5"
+H,CPH,	501.8	504.2	507.9 '
+HjCPH	368.9	370.0	
+HjCS	309.6	310.3	317.4±2«
+HCP	244.2	244.3	260.9 ± 15 h
+CP	122.7	122.9	121.8 ±2
+HPO	205.8	206.2	198.7 ± 10
+NaOH	185.5	182.1	182.7 ±3
+P,H4	344.7	345.4	338. lr
+SaH,	227.0	227.2	237.0'
+HjSiCI	321.9	321.2	321.8±2h
+H3SiF	363.0	362.7	367.7 ± 5 h
+SiOj	292.5	291.0	297.2 ± 8
+ClOi	114.6	120.2	121.0 ±1.5
+• From JANAF tables (Ref. 11) unless otherwise specified.
+*Refercnce 15.
+CJ. Berkowitz, L. A. Curtiss, S. T. Gibson, J. P. Greene, G. L. Hillhouse, and J. A. Pople, J. Chem. Phys. 84, 375 (1986).
+- K. A. Gingerich, J. Chem. Phys. 73, 2735 (1969).
+<P. O'Hare, J. Chem. Phys. 52, 2992 (1970).
+f Reference 25, estimated.
+"M. Roy and T. B. McMahon, J. Organic Mass Spectrosc. 17, 392 (1982).
+"JANAF lables (Ref. 11), estimated.
+'Reference 26.
+	Öl theoiy	G2 theoiy	Expt.b
+BeH2	138.6	138.8	149.3 c
+BH('2 + )	82.8	82.8	78.2 ±2d
+BHa	159.2	160.1	188.8 ±15.2
+BH3	264.4	265.3	262.3 ± 2.4
+LiN(JS~)	39.4	37.2	70.2 ± 40 c
+LiO (2II)	79.1	76.1	76.6 ± 5
+LiOH('2+)	207.4	204.8	203.8 ± 1.5
+BcOCXM	101.7	99.9	104.2 ± 3
+BeOH (*A ')	203.9	203.8	214.3 ±10
+BeF(22+)	133.2	131.9	136.1 ±2
+BeS('Z*)	74.8	74.6	79.8 ± 15 e
+BÖ (22 + )	191.7	191.8	192.4 ±2
+HBO('2*)	302.2	302.6	291.7 ± 3
+BSt^"1-)	131.8	131.7	140.0 ±4
+HBS('S)	241.8	241.4	239.0 ± 10 e
+BCH'X*)	123.2	123.0	129.4 ± 4
+C,('V)	147.3	147.6	140.95 ± 0.9
+C,H	253.6	253.8	c
+C2HJ	419.9	421.3	e
+C,H,	563.1	565.8	e
+H^CNH	413.2	414.8	
+HjCNH!	539.5	542.5	542.7 ±0.1r
+CF(*II)	131.4	131.7	128.3 ± 2
+HCF ('/<'}	206.2	207.0	210.2 ± 7
+H,CF	397.8	399.8	397.4 ±8
+ccu2rt)	96.0	95.9	80 ±5
+HNOC/n	197.1	197.9	198.7
+NF(32")	75.7	76.1	71.4 ± 8 c
+NSi(22+)	105.9	105.6	130 ±15
+HOO(M')	164.1	165.5	161.1 ±2
+HOF	148.9	149.7	151.9±l«
+ONa ('FD	67.7	64.5	64.3 ± 10
+HONa	185.5	182.1	182.7 ± 3
+HOMgt'S*)	175.0	174.4	184.9 ±9C
+FMg(JS+)	106.4	105.1	109.8 ± 2
+FP(JZ-)	106.1	105.2	I06.1±4.6C
+MgSCX*)	51.7	51.3	<66±16
+MgCH'2-)	75.3	75.0	73.8 ± 10
+PS (2ri)	99.2	98.9	140 ± 25 c
+PCK'S")	75.3	73.6	73.0°
+eis (2rn	65.9	64.1	57.1 ±4e
+cos	331.1	330.5	327.7 ± .2
+CS2	276.4	275.7	273.5 ± .2
+OjC^,)	143.7	143.3	142.2 ± 0.5
+"This table contains additional species that were not considered in Refs. l and 2. Many have significant uncertainties in the experimental values.
+b From JANAF tables (Ref. 11) unless otherwise specified.
+e JANAF tables (Ref. 11), estimated values.
+d See Ref. 4 for more discussion.
+e See Table X.
+rFrom AHJS* in Ref. 25, adjusted to 0 K using scaled HF/6-3 IG* frequen-cies.
+•See Ref. 8 for more discussion.
+The basic conclusions concerning the atomization energies of the molecules in Table VIII which have been made in Ref. 2 from the G l results remained unchanged at the G2 level. Therefore, we will not repeat our discussion of the specific experimental values here except to point out significant differences between G l and G2 theory. The G2 atomization energies of 11 of the 36 molecules in Table VIII differ by more than l kcal/mol from the GI values. Five of these are "ionic" molecules including A1F (decreases by 2.4 kcal/
+Downloaded 25 Feb 2004 to 128.172.1.115.
+, see http://jcp.aip.org/jcp/copyright.jsp
+7228
+Curtjss etal. \ Gausslan-2 theory for molecular energles
+TABLE X. C-H bond dissociation energies at 0 K (in kcal/mol) in C, H„
+n = 2,4,6.
+G l
+G2
+Other theory
+Expt.
+133.4' -.CjHj + H 110.1 T
+133.4	131.5." 129.7,c 130.1" 126-133«
+110.4	109.5e                        98-117"
+100.8	97-100'
+*Reference9.
+bReference22.
+cReference23.
+dRcfercncc24.
+'Range of values quoted in Ref. 19.
+f Reference 3.
+• Range of values quoted in Ref. 27.
+hReference7.
+1 Range of values quoted in Ref. 7.
+mol), MgO (decreases by 2.4 kcal/mol), LiCl (decreases by 1.5 kcal/mol), NaF (decreases by 4.9 kcal/mol), and NaOH (decreases by 3.4 kcal/mol). The G2 values should be more reliable. The decreases are largely due to the correc-tion in G2 theory for the nonadditivity of the diffuse-5^ and 2rf/basis set extensions in Gl theory. The G2 results for these five species are generally in better agreement with ex-periment, and, for MgO and NaF, with previous high level calculations by Bauschlicher etal.12 For NaF there are two experimental numbers: 113.2 kcal/mol (JANAF1') and 122.9 kcal/mol (Huber and Herzberg15). The Gl number of 119.5 kcal/mol is between the two values while the G2 value of 114.6 kcal/mol supports the JANAF value. This is also in agreement with the results of Bauschlicher et al.12 who calculate a value of 115.1 kcal/mol for the dissociation energy of NaF. Two of the 11 molecules are triatomics which have significant contributions from the third d function. These are SiO2 and C1O2. The atomization energy of SiO2 decreases by 1.5 kcal/mol and that of C1O2 increases by 5.6 kcal/mol. The C1O2 atomization energy of 120.2 kcal/mol is now in good agreement with the experimental value of 121.0 ± I.5kcal/raol.TheSiO2 atomization energy of 291.0 kcal/mol is about 6 kcal/mol lower than the experimental value of 297.2 kcal/mol, but this has a large uncertainty of ± 8 kcal/mol. The remaining five molecules that change by more than l kcal/mol all contain second-row atoms and are SiS (decreases by 1.2 kcal/mol ),PN (decreases by 1.2kcal/ mol), ClSi (decreases by 1.5 kcal/mol), SiF (decreases by 1.5 kcal/mol), and H3CPH2 (increases by 2.4 kcal/mol). These changes are due to both corrections (A, and A2) in G2 theory.
+We now turn to the atomization energies of the molecules in Table IX. The changes in the G2 energies compared to the Gl energies in Table IX are similar to those discussed previously for molecules in Tables III and VIII. Significant changes occur for ionic molecules (UN, LiO, LiOH, BeO, BeF, ONa, HONa, FMg) where the nonadditivity correc-tion is important, hydrides (C2H3, C2H3, H2CNH, H3 CNH2, H3 CF, HOO) where the second p function is important, and some second-row molecules (FC1, C1S) where the third d function is important. The G2 values should be
+more reliable for these cases. The G2 values for about three-quarters of the molecules in Table IX are in reasonable agreement with the experimental values. For the remaining one-quarter there is significant disagreement and we com-ment on these cases.
+UN: The JANAF11 value of 70.2 ±40 kcal/mol isesti-mated from dissociation energies of related molecules. The G2 value of 39.4 kcal/mol is much lower and more reliable. BeOH: The G2 atomization energy of BeOH is 203.8 kcal/ mol. This is about 10 kcal/mol lower than the JANAF value of 214.3 kcal from mass spectral data which has a large uncertainty of ± 10 kcal/mol. Bauschlicher et al.13 report a theoretical value of 108.4 kcal/mol for the dissociation energy of the Be-O bond in BeOH. Using the experimental value for the dissociation energy of OH radical in Table II, this corresponds to an atomization energy for BeOH of 209.7 kcal/mol also significantly lower than the experimental value. Hence, our results and those of Bauschlicher et al.13 sug-gest that the experimental atomization energy of BeOH in the JANAF tables is too high by 5-10 kcal/mol. At the Gl and G2 levels of theory BeOH is predicted to be nonlinear, but the energy difference with linear BeOH is very small, 0.4 and 0.2 kcal/mol, respectively.
+HBO: The G2 atomization energy of HBO is 302.6 kcal/ mol. This is about 10 kcal/mol higher in energy than the JANAF value of 291.7 ± l kcal/mol which is derived from mass spectrometric data on DBO. The difference is much larger than is expected of G2 theory which does well on the dissociation energy of BÖ (see Table IX). The disagreement between the G2 result and the mass spectrometric value sug-gests that the latter may be unreliable.
+BS: The G2 dissociation energy of BS is 131.7 kcal/mol. This is about 8 kcal/mol lower than the JANAF value of 140.0 ± 4 kcal/mol derived from mass spectral data. Gay-don14 recommends a value of 118 from spectroscopic data, but this has a very large uncertainty of ± 18 kcal/mol. Since the G2 result for isovalent BÖ is in good agreement with experiment (see Table IX), the G2 value for the D0 of BS should be more reliable than the experimental values.
+Q: The G2 method gives 147.6 kcal/mol for the dissociation energy of the '2g+ ground state of C2. The JANAF tables give a value of 141.0 ± l kcal/mol from a spectroscopic study. However, Huber and Herzberg15 give a value of 143.2 kcal/mol which is the average of two thermochemi-cal values of 142.3 ± 2.5 and 144.1 kcal/mol. Bauschlicher et al.l<> report a theoretical value of 140.9 kcal/mol, but indi-cate that remaining basis set Saturation would increase the value. The G2 value may be too large because the higher level correction may överestimate the basis set deficiency in singlet C2 molecule relative to two triplet carbon atoms. Further study of the dissociation energy of C2 is required, both by experiment and theory, to pin down a more accurate value for its/>0-
+CCl; The G2 value for the dissociation energy of CC1 is 95.9 kcal/mol. This is about 16 kcal/mol higher than the JANAF value of 80 ± 5 kcal/mol which is from chemilu-minescence of flame reactions. However, Gaydon14 recommends a value of 88 ± II kcal/mol based on spectroscopic evidence. The G2 results suggest that both of these values
+J. Chem. Phys.. Vol. 94. No. 11,1 June 1991 Downloaded 25 Feb 2004 to 128.172.1.115. Redistribution subject to Alp license or Copyright, see http://jcp.aip.org/jcp/copyright.jsp
+Curtiss etal.: GaussIan-2 theory for molecularenergles
+7227
+IV. PREDICTIONS OF ATOMIZATION ENERGIES OF OTHER COMPOUNDS
+TABLEIX. Total atomization energies (in kcal/mol), ZZ>0, for other species.'
+In this section we report the results of applying the G2 procedure to a large number of neutral molecules most of				Gl theory            G2 theory	Expl."
+which have experimental atomization energies with an un-certainty of greater than 1 kcal/mol. The G2 atomization energies of the 36 molecules in this category, considered in the study on second-row compounds,2 are listed in Table VIII. The G2 results for an addiüonal 43 molecules» not included in the previous studies,1'2 are listed in Table IX. Experimental and G 1 values of 2Z>0 are also listed in Tables VIII and IX for comparison with the G2 values. Most of the experimental 2Z>0 values were derived from enthalpies of formation (OK) in the JANAF tables.11 TABLE VIII. Total atomization energies (in kcal/mol), ZDot for other species studied in Ref. 2.				BeH,                    138.6                    138.8 BHCZ"-)             82.8                     82.8 BH3                      159.2                    160.1 BH3                     264.4                   265.3 LiN(32")            39.4                     37.2 LiO(zn)               79.1                      76.1 LiOH('2+)       207.4                   204.8 BeO('SM          101.7                     99.9 BeOH(1^')         203.9                   203.8 BeF(z2+)           133.2                    131.9 BeSC'Z4-)            74.8                     74.6 BOfZM            191.7                    191.8 HBO('2+)         302.2                    302.6 BS(22*)             131.8                    131.7 HBS('2)            241.8                    241.4 BC1('2+)           123.2                    123.0 C,('S*)              147.3                    147.6	149.3 c 78.2 ± 2 d 188.8 ±15.2 262.3 ± 2.4 70.2 ± 40 e 76.6 ± 5 203.8 ± 1.5 104.2 ± 3 214.3 ± 10 136.1 ±2 79.8 ± 15 e 192.4 ±2 291.7 ± 3 140.0 ± 4 239.0 ± 10 c 129.4 ±4 140.95 ±0.9
+				CjH                     253.6                   253.8	c
+	Gl theory	G2 theory	Expt.'	CjH,                   419.9                   421.3 CjHj                    563.1                    565.8	c e
+NaH	44.4	45.0	47.2 ± 5	H2CNH              413.2                   414.8	
+MgH	28.5	29.3	46 ± 12,30.9 "	HjCNHi             539.5                    542.5	542.7 ±0.1f
+MgH,	99.1	99.8		CF(3n>               131.4                    131.7	128.3 ± 2
+A1H	72.2	72.3	67.0 ± 5, < 70.6"	HCF('X')          206.2                   207.0	2 10.2 ±7
+AlHj	117.4	118.0		H,CF                  397.8                    399.8	397.4 ±8
+A1H,	202.2	202.7		CCl(2n)                96.0                     95.9	80±5
+SiH	70.6	70.8	68.7, < 70.6"	HNO('^')           197.1                    197.9	198.7
+PH	68.6	69.2	70.5 ±2C	NF(3£-)               75.7                     76.1	71.4 ±8«
+HS	81.9	82.8	87.7 ±1.2,81.7"	NSiCZ-)           105.9                    105.6	130 ±15
+A1C1	122.0	120.8	119.2,118.1"	HOO(Z^")          164.1                    165.5	161.1 ±2
+AIF	164.0	161.6	160.0 ± 1.6,158.9 b	HOF                    148.9                    149.7	151.9±1«
+SiS	146.2	145.0	147.4 ± 3.0	ONa(Jn)              67.7                     64.5	64.3 ± 10
+PN	146.1	144.9	165.8±1.2,146.6±5.0"-d	HONa                185.5                  182.1	182.7 ± 3
+PO	138.8	139.6	140.7 ±0.9, 141.8"	HOMgC'S*)      175.0                    174.4	184.9 ±9e
+SF	82.2	81.8	81.2 ±2.1	FMg(22+)         106.4                    105.1	109.8 ± 2
+ClSi	101.1	99.6	88.3 ± 3	FP(J2-)             106.1                    105.2	106.1±4.6e
+MgO	61.6	59.2	80 ± 6,81.4 "	MgS(l2+)           51.7                     51.3	<66 ± 16
+LiCl	113.7	112.2	11 3.0 ±3.0	MgCUCS*)         75.3                     75.0	73.8 ± 10
+NaF	119.5	114.6	113.2±O.S, 122.9"	PS(zn)                 99.2                     98.9	140 ±25°
+SiF	140.4	138.6	130.3 ±3, 128.4"	PCH'Z-)        75.3              73.6	73.0 e
+SiC	98.7	98.9	106.5 ±8, 107.0"	CISC^H)                65.9                     64.1	57.1 ±4'
+SN	107.6	108.2	110.7 ±6«	COS                     331.1                    330.5	327.7 ± .2
+BeCl	88.3	88.6	91.1 ±3, 104.5"	CS2                      276.4                   275.7	273.5 ± .2
+H,CPH,	501.8	504.2	507.9 f	Oj{%)               143.7                    143.3	142.2 ±0.5
+HfT>V j^rH	368.9	370.0			
+H! CS	309.6	310.3	317.4±2»	"This table contains additional species that were not considered in Refs. 1	
+HCP	244.2	244.3	260.9 ± 15 h	and 2. Many have signiflcant uncertainties in the experimental values.	
+CP	122.7	122.9	121 .8 ±2	b From JANAF tables (Ref. 11) unless otherwise specified.	
+HPO	205.8	206.2	198.7 ± 10	c JANAF tables (Ref. 1 1 ), estimated values.	
+NaOH	185.5	182.1	182.7 ± 3	d See Ref. 4 for more discussion.	
+P, H,	344.7	345.4	338.1 r	'See Table X.	
+SjH,	227.0	227.2	237.0'	rFrom AHJ5" in Ref. 25, adjusted to 0 K using scaied HF/6-3 IG* frequen-	
+HjSiCl	321.9	321.2	321.8 ±2h	cies.	
+HjSiF	363.0	362.7	367.7 ± 5 h	'See Ref. 8 for more discussion.	
+SiOj	292.5	291.0	297.2 ± 8		
+CIO,	114.6	120.2	121.0 ±1.5	The basic conclusions concerning tl	ie atomization ener-
+' From JANAF tables (Ref. 11) unless otherwisc specified. "ReferencelS.
+c J. Berltowitz, L. A. Curtiss, S. T. Gibson, J. P. Greene, G. L. Hillhouse, and J. A. Pople, J. Chem. Phys. 84. 375 (1986). d K. A. Gingerich, J. Chem. Phys. 73, 2735 (1969). eP. O'Hare, J. Chem. Phys. 52, 2992 (1970). f Reference 25, estimated.
+• M. Roy and T. B. McMahon, J. Organic Mass Spectrosc. 17, 392 (1982). b JANAF tables (Ref. 11), estimated. 'Reference 26.
+gies of the molecules in Table VIII which have beer» made in Ref. 2 from the G l results remained unchanged at the G2 level. Therefore, we will not repeat our discussion of the specific experimental values here except to point out signifi-cant differences between G l and G2 theory. The G2 atom-ization energies of 11 of the 36 molecules in Table VIII difier by more than l kcal/mol from the G l values. Five of these are "ionic" molecules including AIF (decreases by 2.4 kcal/
+Downioaded 25 Feb 2004 to 128.172.1.115. ReälsSrllutiofelaj^	see http://jcp.aip.org/jcp/copyright.jsp
+7226
+CurBss et a/.: Gausslan-2 theory for molecular energies
+TABLE V. Electron affinities (in eV).
+	Gl theory	G2 theory	Expt.'
+c	1.19	1.19	1.26
+CH	I.I1	1.13	1.24
+CHj	0.65	0.66	0.65
+CH3	0.01	0.04	0.08
+NH	0.28	0.30	0.38
+NH2	0.74	0.77	0.74
+O	1.41	1.40	1.46
+OH	I.8S	1.87	1.83
+F	3.46	3.48	3.40
+o.	0.47	0.47	0.44
+NO	-0.06	-0.07	0.02
+CN	4.03	3.97	3.82
+Si	1.32	1.35	1.385
+P	0.60	0.64	0.746
+S	1.96	2.00	2.077
+a	3.57	3.60	3.615
+SiH	1.15	1.18	1.277
+SiHz	0.96	0.99	1.124
+SiH,	1.39	1.42	1.44
+PH	0.91	0.96	1.00,1.028
+PH,	1.20	1.25	1.26,1.271
+HS	2.24	2.30	2.314
+PO	1.10	1.04	1.09
+s,	1.64	1.66	1.663
+a	2.26	2.38	2.39
+TABLE VII. Average absolute deviations of Gl and G2 results compared to experiment (fromTables III-VI).'
+'Experimental references given in Refs. l and 2.
+energy of SO2 [from 246.6 (Gl) to 248.9 kcal/rool (G2)]. However, it still remains 5. l kcal/mol below the experimen-tal value. The reason for the remaining discrepancy is un-clear and needs further study. The singlet-triplet energy dif-ferences for CH2 and SiHz are improved somewhat at the G2 level with the triplet stabilized relative to the singlet. For CH2 thedifferenceincreasesfrom 6.2 (Gl) to 6.6kcal/mol (G2), while for SiH2 where the singlet is more Stahle, it decreases from 23.7 (Gl) to 23.3 kcal/mol (G2). The ex-perimental values are 9.0 and 21.0 kcal/mol, respectively. Finally, the dissociation energies of the triplet molecules O2, S2, and SO remain in error by more than 2 kcal/mol at the G2 level with no significant improvement over the G l level. The values for SO and S2 are actually somewhat worse. Hence, this remains another area for further improvement.
+TABLE VI. Proton afflnities (kcal/mol).'
+	Gl theory	G2 theory	Expl."
+NHj	202.7	202.5	202.5
+OHj	163.3	163.1	165.1
+CjHj	152.5	153.6	152.3
+SiH,	152.9	153.0	154
+PH,	186.1	186.2	187.1
+SH2	167.8	167.7	168.8
+OH	132.3	133.0	133.6
+•AtOK,
+b From S. G. Lias, J. F. Liebman, and R. D. Levin, J. Phys. Chem. Ref. Data
+13,695(1984).
+Corrections to 0 K from J. A. Pople and L. A. Curtiss, J. Phys. Chem. 91,
+155 (1987).
+Ave, Abs. Dev.					
+Gl				G2	
+	Species	kcal/mol	eV	kcal/mol	eV
+ZA,	Istrow 2ndrow Ist + 2nd row	1.49 1.71 1.56	0.065 0.074 0.068	0.92 1.47 1.16	0.040 0.064 0.050
+IPo	Ist row 2ndrow Ist + 2nd row	1.27 1.59 1.43	0.055 0.069 0.062	1.13 1.34 1.24	0.049 0.058 0.054
+EA„	Ist row 2ndrow Ist + 2nd row	1.57 1.94 1.75	0.068 0.084 0.076	1.52 1.08 1.29	0.066 0.047 0.056
+PA«	Ist + 2nd row	1.00	0.043	1.04	0.045
+•2jD„ = atomization energy, IP„ = ionization potential, affinity, PA«, = proton affinity.
+= electron
+The absolute average deviations listed in Table VII indi-cate that, for the ionization Potentials of the 37 atoms and molecules in Table IV, the deviation decreases from 0.063 (Gl) toO.OSSeV (G2).For the24 molecules in Table IV the deviationimprovesfrom0.050 (Gl) to0.039eV (G2).The largest change is for the ionization potential of CO which decreases from 14.07 (Gl) to 14.01 eV (G2), in good agree-ment with the experimental value of 14.01 eV. The deviation for G2 theory is <0.1 eV from experiment for all 24 molecules considered. Of the atoms considered in Table IV, only Na, S, and Cl difFer by more than 0. l eV from experiment. As discussed in Ref. 2, the error for Na is due to neglect of inner shell correlation energy.
+The electron affinities (see Table V) calculated at the G2 level improve signincantly with the average absolute deviation decreasing from 0.076 (Gl) to 0.056 eV (G2). Most of the improvement occurs for the electron affinities of the species containing second row atoms [0.084eV (Gl) compared to 0.047 eV (G2) ]. The largest improvements are for CN and C12. For CN the error in the electron affinity is reduced from 0.21 (Gl) to 0.15 eV (G2). The error is further reduced to 0.07 eV if QCISD(T)/6-31G* geome-tries are used instead of MP2 = FU/6-31G* geometries.10 (The MP2 = FU/6-31G* geometry is poor for CN.) For C12 the error decreases from 0.13 (Gl) to 0.01 eV (G2). Much of the improvement in the G2 electron affinities can be traced to the correction for the nonadditivity of the diffuse-sp and 2rf/basis set extensions in the Gl procedure. At the G2 level all of the electron affinities are now within 0.15 eV of experiment. Only four are offby more than 0. l eV. These are CH (0.11 eV too low), CN (0.15 eV too high), P (0.11 eV too low), and SiH2 (0.13 too low).
+The G2 level proton affinities (see Table VI) show little change from the G l level values which were already in good agreement with experiment. All values are within 2 kcal/ mol of the experimental value with an absolute average deviation of 1.04 kcal/mol for 7 species.
+J. Chem. Phys., Vol. 94, No. 11,1 June 1091 Downioaded 25 Feb 2004 to 128.172.1.115. Redistribution subjectto AIP llcense or Copyright, see http://jcp.aip.org/lcp/copyright.jsp
+Curtiss et a/.: Gausslan-2 theory for molecular energies
+7225
+TABLEIII. Total atomization energies 2Z)0 (in kcal/mol).
+TABLEIV. lonization potentials (eV).
+Molecule                         GI thwry        G2 theory           Expt.'	Gl theory            G2 theory               Expl."
+LiH                                         56.5                  56.6                  56.0 BeH                                         45.1                  45.5                  46.9 CH                                          80.0                  80.5                  79.9 CHi('£,)                              177.2                 178.6                 179.6 CH,(1H,)                              171.0                 172.0                 170.6 CHj                                       287.4                289.1                 289.2 CH4                                       391.0                393.2                392.5 NH                                          77.2                  77.9                  79.0 NHj                                       168.4                 170.1                 170.0 NH,                                       274.2                276.5                276.7 OH                                        100.5                 101.6                 101.3 OHj                                       217.3                219.6                219.3 FH                                         134.5                 136.3                 135.2 SiHi(X)                              146.9                 147.1                 144.4 SiHj(JP,)                              123.2                 123.8                 123.4 SiHj                                       213.1                 213.5                214.0 SiH4                                       304.4                304.8                 302.8 PH,                                        143.9                 144.9                 144.7 PH,                                       225.0                226.4                227.4 SHj                                        171.1                 173.0                 173.2 C1H                                        101.2                 102.6                 102.2 Lij                                           26.7                  25.9                  24.0 LiF                                        141.3                 137.5                 137.6 HCCH                                387.0               387.2               388.9 H,CCH,                                530.1                 531.7                531.9 HjCCH,                                663.5                666.6                666.3 CN                                         176.3                 176.0                 176.6 HCN                                     303.1                 302.8                 301.8 CO                                        257,6                258.0                256.2 HCO                                     270.3                271.4                270.3 H,CO                                    358.1                 359.3                 357.2 HjCOH                                 479.4                482.3                480.8 N,                                          224.8                223.8                225.1 H,NNHj                               401.4                404.4                405.4 NO                                        150.2                 150.6                 150.1 Oj                                          115.4                 115.6                 118.0 HOOH                                   250.3                252.1                 252.3 Fj                                            37.5                  36.6                  36.9 CO,                                       384.3                 384.6                381.9 Na2                                          19.8                   19.2                   16.6 Si,                                            74.3                  73.6                  74.0 PI                                           116.0                 114.7                 116.1 S,                                            98.4                  97.4                 100.7 Clj                                           58.1                   55.8                  57.2 NaCl                                       99.4                  98.8                  97.5 SiO                                         190.2                 188.8                 190.5 SC                                          171.3                 170.5                 169.5 SO                                          120.1                 120.8                 123.5 CIO                                         60.9                  61.2                  63.3 C1F                                          60.9                  61.0                  60.3 Si,Hb                                     502.9                 503.0                500.1 CH,C1                                   370.6                372.1                 371.0 CH,SH                                  442.8                445.0                445.1 HOCl                                     156.1                 156.8                 156.3 SO,                                        246.6                248.9                254.0	U-Li+                        5.34                    5.34                   5.39 Be-Be*                         9.44                     9.41                    9.32 B-*B+                            8.19                      8.20                    8.30 C-C*                           11.17                    11.18                   11.26 N-N +                          14.47                    14.48                   14.54 O-»O*                          13.54                    13.52                   13.61 F-»F*                           17.39                    17.39                   17.42 CR. -.CH,*                   12.68                    12.68                   12.62 NH3-*NHj*                  10,17                    10.19                   10.18 OH-*OH+                    12.97                    12.98                   13.01 OH,-OHa+                   12.60                    12.63                   12.62 FH^FH*                     16.07                    16.08                   16.04 Na-*Na*                        4.95                     4.95                    5.139 Mg-Mg*                       7.68                     7.65                    7.646 A1-A1 +                          5.93                      5.93                    5.984 Si-Si"1"                         8.09                    8.10                   8.15 P-P*                           10.44                    10.44                   10.49 S-S +                            10.21                    10.20                   10.36 C1-.C1 +                         12.86                    12.85                   12.97 SiH4-.SüV                  11.02                    11.01                   11.00 PH-*PH +                      10.08                    10.09                   10.15 PHj-PH/C-d,)            9.71                      9.72                    9.82 PH.-.PHi*                     9.86                     9.87                    9.87 SH-.SH +                      10.30                    10.31                   10.37 SHj-SHj-1-^,)           10.41                    10.43                   10.47 SHj-SH/CX)           12.72                    12.75    '              12.78 C1H-C1H*                   12.71                    12.71                   12.75 CjHj-.CjHa*                11.44                    11.42                   11.40 C,H4-.CJH4+                10.59                    10.58                   10.51 CO-+CO +                     14.07                    14.01                   14.01 Na -. N,+ i1?., )               15.59                    1 5.56                   1 5.58 Na-.N3+(2n.)              16.69                    16.67                   16.70 OJ-.QJ*                         12.16                    12.17                   12.07 Pi~P2+                          10.54                    10.54                   10.53 Sj-Sj*                            9.28                      9.28                    9.36 dj-d,*                       11.53                    11.51                   11.50 CIF-C1F*                    12.70                    12.65                   12.66 SC-SC+                       11.47                    11.42                   11.33
+	* Experimental references given in Refs. 1 and 2. only 1.9 kcal/mol at the Gl level, the change is not äs dra-matic. More ionic species are considered in See. IV and sig-niflcant changes due to Aj are also found for these species. The addition of the third d function and the second p function to the basis set contributes to improvement in the atomization energies at the G2 level. The increase in basis set size, along with the modification in the higher level correc-tion (HLC), has the largest efiect on hydrides of the first-row compounds. In the majority of cases, the G2 value is in better agreement with experiment and contributes to the overall improvement in G2 theory compared to Gl theory. The atomization energies of CaHa [2.8 kcal/mol too low (Gl ) compared to 0.3 kcal/mol too high (G2) ] , NH3 [2.5 kcal/mol too low (Gl ) compared to 0.2 kcal/mol too low (G2) ], N2H4 [4.0 kcal/mol too low (Gl ) compared to 1.0 kcal/mol too low (G2)],andH2O2 [2.0 kcal/mol too low (Gl) compared to 0.2 kcal/mol too low (G2)] are notable for their improved agreement with experiment at the G2 level. Also, the addition of the third d function is largely responsible for the increase by 2 kcal/mol of the dissociation
+• Experiments] references are given in Refs. I and 2. in ionic Systems the polarization extension (Idf) on the positive center (Li) duplicates some of the contribution of the diffuse function ( + ) on the negative center (F). This is corrected in G2 theory. The only other ionic species consid-ered in this set, NaCl, also improves, but since it was off by	
+Downloaded 25 Feb 2004 to 128.172.1.115.
+cerfge«b1-$8pyrightl see http://jcp.aip.org/jcp/copyright.jsp
+7224
+Curtiss etal.: Qaussian-2 thaory for molecular energies
+TABLEII(conrinwJ).
+TABLEII (continued).
+Molecule	J%(01)	A	*(02)
+ClSiHj	- 750.623 54	-6.25	- 750.621 81
+P*	-681.82090	-4.10	- 681.819 30
+HjPPH,	-684.18529	-9.57	- 684.186 88
+PS	-738.63102	-5.49	- 738.630 81
+PCI	-800.61462	-3.24	- 800.612 16
+82	-795.46663	-4.19	- 795.465 12
+HSSH	-796.67162	-8.24	- 796.671 87
+C1S	-857.43660	-3.91	- 857.433 67
+ci.	- 919.445 85	-4.33	- 919.442 20
+COi	- 188.361 07	-9.36	- 188.361 31
+cos	-510.94917	-7.95	-510.94800
+es,	-833.53497	-7.70	- 833.533 55
+O3	-225.17516	-9.61	-225.17451
+OjSi	-439.36405	-6.07	-439.36100
+OiS	-548.01192	- 14.06	- 548.015 72
+O2C1	- 609.823 59	- 18.96	- 609.832 29
+Li +	- 7.235 84		- 7.235 84
+Be +	- 14.276 39	...	- 14.276 39
+B +	- 24.301 75	-0.06	- 24.300 67
+C*	-37.37405	-0.54	- 37.373 45
+N*	-53.98600	-1.13	- 53.985 99
+O+-	- 74.484 39	-1.73	- 74.484 98
+F*	- 98.993 62	-2.53	- 98.993 87
+Na +	-161.66423	-0.06	- 161.66429
+Mg +	-199.36402	-0.06	-199.36408
+Al +	- 241.713 79	-0.39	-241.71304
+Si +	-288.63626	-0.53	- 288.635 65
+P +	- 340.434 37	-1.14	- 340.434 37
+S*	- 397.279 56	-1.74	- 397.280 16
+er	- 459.203 84	-2.98	- 459.204 54
+CH/	- 39.941 73	-6.57	- 39.944 88
+NH/	- 56.081 10	-6.42	- 56.084 10
+NH+*	- 56.777 82	-8.14	-56.78140
+OH +	- 75.165 45	-3.85	-75.16702
+OHi*	- 75.865 23	-6.17	- 75.867 98
+OH,+	- 76.588 66	-7.83	- 76.591 93
+FH-	- 99.756 67	-5.63	- 99.758 88
+SiH4+	- 291.013 76	-3.95	- 291.014 29
+SiHs+	-291.66246	-4.96	-291.66286
+PH +	-341.05702	-2.91	- 341.057 65
+PH2+	-341.69049	-4.77	- 341.691 84
+PHj*"	-342.31424	-5.58	-342.31640
+PH,*	- 342.973 17	-7.10	-342.97571
+SH+"	- 397.906 66	-3.54	- 397.907 92
+SH7* (2S, )	-398.54531	-5.53	-398.54742
+SH2* (2/i, )	- 398.460 36	-5.22	- 398.462 16
+SHj*	-399.19521	-7.31	-399.19796
+OH*	-459.87096	-5.36	-459.87290
+C1H2+	- 460.548 82	-7.87	- 460.552 13
+CjHa+	- 76.765 65	-4.89	- 76.765 98
+CjH,*	- 77.429 07	-7.23	-77.43060
+C2H4*	- 78.024-69	-8.26	- 78.027 25
+co+	-112.66023	-6.87	-112.66254
+cs+	-435.29103	-4.94	-435.29141
+N;* (%+ )	-108.82029	-4.90	-108.82063
+N^nj	-108.78024	-4.47	- 108.780 15
+O2+	-149.70094	-5.73	-149.70097
+FC1 +	- 558.939 77	-8.96	- 558.941 89
+Pj+	-681.43345	-2.90	-681.43179
+Si*	- 795.125 70	-4.11	-795.12411
+«V	-919.02169	-4.32	- 919.019 17
+c-	- 37.828 25	-0.95	-37.82806
+o-	- 75.033 85	-2.98	- 75.033 41
+F-	- 99.759 93	-5.32	- 99.760 69
+Si-	-288.98227	-1.91	- 288.983 04
+P-	-340.84018	-3.77	- 340.841 67
+Molecule	*<C1)	A	*(G«
+s-	- 397.726 83	-5.15	- 397.728 56
+Cl~	- 459.807 93	-5.62	-459.80899
+CH-	- 38.452 82	-3.49	-38.45403
+CH,-	-39.09072	-5.99	- 39.093 29
+cnr	-39.74299	-8.05	-39.74648
+NH-	-55.15177	-4.84	-55.15319
+NHa-	-55.81343	-8.56	-55.81743
+OH-	- 75.709 99	-7.33	-75.71276
+SiH-	- 289.588 45	-3.28	-289.58945
+SiHf	- 290.203 07	-4.39	-290.20404
+SiHj	-290.82434	-5.86	- 290.825 64
+PH-	- 341.460 82	-6.23	-341.46363
+PHf	- 342.091 31	-8.20	-342.09495
+SH'	- 398.367 64	-8.51	- 398.371 59
+CN-	- 92.731 58	-2.91	- 92.728 79
+NO-	- 129.736 89	-6.33	- 129.737 52
+Of	-150.16525	-6.95	-150.16536
+OP-	- 416.061 63	-4.98	-416.06091
+Sj"	-795.52697	-5.84	- 795.525 97
+da-	- 919.529 09	-8.41	- 919.529 52
+"Total energies in hartrees; A u in mhartrees. Calculations done using the OAUSSIAN 8g series of Computer programs: M. J. Frisch, M. Head-Gordon, H. B. Schlegel, K. Raghavachari, J. S. Binkley, C. Gonzalez, D. J. Defrees, D. J. Fox, R. A. Whitesides, R. Seeger, C. F. Melius, J. Baker, R. L. Martin, L. R. Kahn, J. J. P. Stewart, E. M. Fluder, S. Topiol, and J. A. Pople (Gaussian, Inc., Pittsburgh, PA, 1988).
+G l energies, the corrections A, and G2 energies for all spe-cies considered in this paper, The G2 energies were comput-ed using Eq. (4). Tables III-VI contain G2 atomization energies, ionization energies, electron affinities, and proton affinities for the species that have well established experi-mental values and were studied with Gl theory in Refs. l and 2. Also included in these tables are the Gl and experi-mental values for comparison. Table VH contains a sum-mary of the average absolute deviations of the theoretical values from experiment. For 125 energies the average absolute deviation at the G2 level is 1.21 kcal/mol compared to 1.53 kcal/mol at the Gl level. We now discuss the specific results.
+Agreement between G2 theory and experiment is im-proved for atomization energies over the agreement with G l theory. The G2 atomization energies have an average absolute deviation of 1.16 kcal/mol, a significant improvement over the deviation of 1.56 kcal/mol at the Gl level. The improvement is especially significant for the first row com-pounds (1.49 to 0.92 kcal/mol). At the G2 level, with the exception of O2 (2.4 kcal/mol too high), H2CO (2,1 kcal/ mol too high), and CO2 (2.7 kcal/mol too high), all of the first-row atomization energies differ from experiment by less than 2 kcal/mol and, with the exception of S2 (3.3 kcal/mol toolow) and SO2 (5.1 kcal/mol too low), all of the second-row compounds differ by less than 3 kcal/mol.
+The most dramatic improvement in atomization energy is that of LiF where the dissociation energy decreases from 141.3 kcal/mol (Gl) to 137.5 kcal/mol (G2). The improvement is due to the large nonadditivity At of the (-f- ) and (2df) basis set expansions (6.83 millihartrees). Apparently,
+J. Chem. Phys.,Vol. 94, No. 11,1 June 1991 Downloaded 25 Fefa 2004 to 128.172.1.115. Redistribution subject to AIP llcense or Copyright, see http://jcp.aip.org/lcp/copyright.jsp
+Curtiss et a/.: Gausslan-2 theory for molecular energies
+7223
+TABLE II. Gl and G2 total energies.1
+TABLE II (continued).
+Molecule	MC.)	A	£i,(G2)
+H	-0.50000		-0.50000
+H,	-1.16501	-2.49	-1.16636
+Li	- 7.432 22		- 7.432 22
+Be	- 14.623 37	-0.11	- 14.622 34
+B	- 24.602 79	-0.40	-24.60205
+C	-37.78464	-0.82	- 37.784 32
+N	-54.51776	-1.36	- 54.517 98
+O	-74.98204	-2.27	-74.98203
+F	- 99.632 75	-3.49	- 99.632 82
+Na	- 161.846 18		- 161.846 18
+Mg	- 199.646 13	-0.15	- 199.645 14
+AI	-241.93167	-0.44	-241.93097
+Si	- 288.933 78	-0.61	- 288.933 25
+P	-340.81800	-1.36	- 340.818 22
+S	-397.65493	-2.30	-397.65495
+Cl	- 459.676 70	-3.36	- 459.676 64
+LiH	- 8.022 28	-1.34	-8.02248
+BeH	-15.19528	-0.77	-15.19491
+BeH,	- 15.844 26	-1.56	-15.84354
+BH	- 25.234 70	-1.57	- 25.233 99
+BH,	-25.856 5 L	-3.03	- 25.857 26
+BHj	-26.52407	-4.21	- 26.524 86
+CH	- 38.412 20	-2.66	- 38.412 58
+CH,(JS,)	- 39.067 00	-4.28	-39.06900
+CJM'X, )	- 39.057 10	-4.72	- 39.058 40
+CHt	- 39.742 54	-5.97	- 39.745 09
+CH4	- 40.407 72	-7.72	- 40.410 88
+NH	-55.14077	-3.68	-55.14217
+NH,	- 55.786 16	-6.28	- 55.789 02
+NHj	- 56.454 77	-8.44	- 56.458 65
+OH	- 75.642 14	-5.19	- 75.643 91
+OH,	- 76.328 34	-8.27	-76.33205
+FH	- 100.347 13	-7.44	-100.35001
+NaH	-162.41699	-2.11	- 162.417 96
+MgH	-200.19153	-1.44	-200.19183
+MgH,	-200.80404	-2.49	- 200.804 25
+AtH	- 242.546 70	-1.77	- 242.546 19
+AlHj	-243.11873	-2.51	-243.11896
+AlHj	- 243.753 98	-3.59	- 243.753 95
+SiH	- 289.546 30	-1.98	-289.54600
+SiH, {'/*,}	-290.16790	-3.23	-290.16771
+SiH,(-'fl, )	-290.13013	-2.64	-290.13049
+SiH,	- 290.773 21	-3.73	- 290.773 51
+SiH,	-291.41881	-4.79	-291.41904
+PH	- 341.427 35	-3.36	-341.42843
+PH,	- 342.047 25	-5.30	- 342.049 13
+PHA	- 342.676 54	-7.06	- 342.679 04
+SH	- 398.285 48	-4.92	- 398.286 98
+SH2	- 398.927 82	-7.47	-398.93073
+OH	- 460.337 98	-6.75	- 460.340 17
+Li,	- 14.907 04	+ 0.14	- 14.905 76
+LiN	- 62.012 72	+ 0.91	- 62.009 52
+LiO	- 82.540 29	+ 1.31	- 82.535 56
+LiOH	- 83.244 73	-0.50	- 83.240 67
+LiF	- 107.290 13	+ 1.36	- 107.28421
+LiCI	-467.29009	-2.08	- 467.287 61
+BeO	- 89.767 53	-0.67	- 89.763 64
+BcOH	- 90.430 37	-3.42	- 90.429 23
+BcF	-114.46833	-1.58	-114.46535
+BeS	-412.39758	-3.14	-412.39616
+BeCl	-474.44070	-4.07	-474.44021
+BÖ	- 99.890 26	-4.40	- 99.889 70
+HBO	- 100.566 37	-5.71	- 100.566 38
+BS	- 422.467 82	-3.61	- 422.466 87
+HBS	-423.14299	-4.37	-423.14166
+BC1	- 484.475 76	-4.57	- 484.474 63
+C'	-75.80402	-4.33	- 75.803 79
+Molecule	ft(GI)	A	£,(02)
+C,H	- 76.473 45	-4.15	-76.47304
+CjH,	-77.18602	-5.42	-77.18574
+CjH,	- 77.738 45	-7.21	- 77.739 96
+CjH4	-78.41401	-8.76	-78.41593
+C.H,	- 78.966 61	- 10.57	- 78.970 34
+CjH,,	- 79.626 56	- 12.32	-79.63090
+CN	- 92.583 36	-3.96	- 92.582 76
+HCN	- 93.285 47	-5.12	- 93.284 89
+HjCNH	- 94.460 95	-9.17	- 94.463 28
+HjCNH,	- 95.662 10	- 12.79	-95.66691
+CO	-113.17722	-5.97	-113.17749
+HCO	-113.69746	-7.07	-113.69883
+H2CO	- 1 14.337 24	-8.48	-114.33888
+HjCOH	-115.53059	- 12.28	- 1 15.534 89
+CF	- 137.626 79	-5.91	- 137.627 00
+HCF	-138.24605	-7.86	- 138.247 07
+H3CF	- 139.551 26	- 10.93	- 139.55421
+CSi	- 326.875 72	-2.84	- 326.875 14
+CP	- 378.798 14	-4.82	- 378.798 40
+HCP	- 379.491 83	-5.64	- 379.491 77
+HjCPH	- 380.690 52	-8.43	- 380.692 1 1
+H,CPH	-381.90231	-11.71	-381.90604
+es	-435.71257	-4.13	- 435.71 1 00
+H, CS	- 436.933 01	-7.52	- 436.933 69
+HjCSH	-438.14532	-11.13	-438.14847
+CC1	- 497.614 33	-5.13	-497.61376
+HjCCl	- 499.552 04	-9.77	-499.55383
+N,	- 109.393 72	-4.59	- 109.392 61
+H,NNH,	-111.67521	- 13.22	-111.68045
+NO	- 129.739 12	-6.53	- 129.739 95
+HNO	- 130.313 89	-8.34	-130.31539
+NF	- 154.271 14	-6.58	- 154.27202
+NSi	-343.62648	-3.74	- 343.624 52
+NP	- 395.568 58	-4.25	- 395.567 13
+NS	- 452.344 17	-6.93	- 452.345 40
+o,	-150.14790	-6.02	-150.14822
+HOO	- 150.725 66	-8.91	- 150.72773
+HOOH	-151.36291	- 10.85	- 151.36578
+HOF	- 175.352 02	-9.36	-175.35340
+ONa	-236.93608	+ 1.71	- 236.930 95
+HONa	- 237.623 90	+ 0.87	-237.61847
+OMg	- 274.726 37	+ 0.30	-274.72152
+HOMg	- 275.407 10	-2.56	- 275.405 10
+OSi	- 364.218 92	-2.96	- 364.216 18
+OP	- 416.021 20	-7.25	- 416.022 75
+OPH	- 416.627 99	-7.62	- 416.628 77
+OS	- 472.828 54	-6.65	- 472.829 49
+OC1	- 534.755 75	-7.26	- 534.756 17
+HOC1	- 535.407 52	-9.04	- 535.408 58
+F2	- 199.325 21	-6.74	- 199.323 97
+FNa	-261.66929	+ 3.11	- 261.661 62
+FMg	- 299.448 50	-1.44	- 299.445 38
+FA1	-341.82583	-1.14	- 341.821 27
+FSi	- 388.790 22	-2.48	- 388.787 00
+FSiHj	-390.64501	-7.00	- 390.644 03
+FP	-440.61977	-4.54	- 440.618 62
+FS	- 497.418 68	-6.34	- 497.418 18
+FC1	- 559.406 67	-7.97	- 559.406 67
+Naj	- 323.724 10	-0.04	- 323.723 00
+NaCl	-621.68129	-3.49	-621.68022
+MgS	- 597.383 42	-3.05	- 597.381 91
+MgCl	- 659.442 75	-3.08	- 659.441 27
+A1C1	- 701.802 85	-3.03	-701.80018
+Si,	- 577.985 92	- 1.26	- 577.983 76
+HjSiSiHj	~ 581.668 99	-7.07	- 581.668 08
+SiS	- 686.821 69	-3.22	-686.81921
+SiCl	- 748.771 53	-2.80	- 748.768 63
+Downioaded 25 Feb 2004 to 128.172.1.115. RedistrnSution sUbject tb AlP Ifcense or Copyright, see http://jcp.aip.org/jcp/copyright.jsp

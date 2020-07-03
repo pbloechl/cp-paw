@@ -1,0 +1,201 @@
+# This set of specieslist has been tested for the G2 database with teh
+# PBE functional at EPW=50 Ry and CDUAL=2 without structure
+# relaxation.  (The structure seems to be optimized already. Tested
+# for SiO) This set yields only few molecules with an error larger
+# than 0.1 eV in the ato,ization energies compared to VASP and GPAW.
+#
+  !SPECIES   NAME='AL'  NPRO=2 2 1 LRHOX=4 RAD/RCOV=1.0
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_AL' EL='AL' ZV= 3.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.75 .75 .75 .75
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=.75 VAL0_X= -1.5 !END
+      !CORE  POW=2. RC/RCOV=.75 !END
+    !END
+  !END
+
+  !SPECIES   NAME='B_'  NPRO=2 2 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_B' EL='B' ZV= 3.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.75 .75 .75 .75
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=.774 VAL0_X= -3.9 !END
+      !CORE  POW=2. RC/RCOV=.774 !END
+    !END
+  !END
+
+  !SPECIES   NAME='BE'  NPRO=2 2 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_BE' EL='BE' ZV= 2.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=1.00 1.00 1.00 1.00
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=1.0 VAL0_X= -1.6 !END
+      !CORE  POW=2. RC/RCOV=1.0 !END
+    !END
+  !END
+
+  !SPECIES   NAME='BR'  NPRO=2 2 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_BR' EL='BR' ZV= 7.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.85 .85 .85 .85
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=.85 VAL0_X= -2.0 !END
+      !CORE  POW=2. RC/RCOV=.85 !END
+    !END
+  !END
+
+  !SPECIES   NAME='C_'  NPRO=2 2 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_C' EL='C' ZV= 4.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.75 0.75 0.75 0.75 
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.75  VAL0_X=-2.7 !END
+      !CORE  POW=2. RC/RCOV=0.75  !END
+    !END
+  !END
+
+  !SPECIES   NAME='CL'  NPRO=2 2 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_CL' EL='CL' ZV= 7.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.75 0.75 0.75 0.75 
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.75 VAL0_X=-3.5 !END
+      !CORE  POW=2. RC/RCOV=0.75  !END
+    !END
+  !END
+
+  !SPECIES   NAME='F_'  NPRO=2 2 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_F' EL='F_' ZV= 7.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.75 0.75 0.75  0.75
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.75 VAL0_X=-3.5 !END
+      !CORE  POW=2. RC/RCOV=0.75  !END
+    !END
+  !END
+
+  !SPECIES   NAME='H_'  NPRO=1 1   LRHOX=4 M=2. RAD/RCOV=1.2
+    !NTBO    NOFL=1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_H' EL='H' ZV= 1.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=1.2 1.2  1.2  1.2 
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=1.2 VAL0_X=-1.6 !END
+      !CORE  POW=2. RC/RCOV=1.2 !END
+    !END
+  !END
+
+  !SPECIES   NAME='LI'  NPRO=1 1   LRHOX=4 RAD/RCOV=1.0
+    !NTBO    NOFL=1 0 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_LI' EL='LI' ZV= 3.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.55 .55 .55  .55 
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=.55 VAL0_X=-0.8 !END
+      !CORE  POW=2. RC/RCOV=.55  !END
+    !END
+  !END
+
+  !SPECIES   NAME='N_'  NPRO=2 2 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_N' EL='N' ZV= 5.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.75 0.75 0.75  0.75
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.75 VAL0_X=-4.3 !END
+      !CORE  POW=2. RC/RCOV=0.75  !END
+    !END
+  !END
+
+  !SPECIES   NAME='NA'  NPRO=1 2 1 LRHOX=4 RAD/RCOV=1.0
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_NA' EL='NA' ZV= 7.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.55 0.55 0.55 0.55
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.55 VAL0_X=-1.1  !END
+      !CORE  POW=2. RC/RCOV=0.55  !END
+    !END
+  !END
+
+  !SPECIES   NAME='O_'  NPRO=2 2 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_O' EL='O' ZV= 6.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=.75 0.75 0.75 0.75
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.75 VAL0_X=-3.8 !END
+      !CORE  POW=2. RC/RCOV=.75 !END
+    !END
+  !END
+
+  !SPECIES   NAME='P_'  NPRO=2 2 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_P' EL='P_' ZV= 5.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.75 0.75 0.75  0.75 
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=.75 VAL0_X=-2.4 !END
+      !CORE  POW=2. RC/RCOV=.75 !END
+    !END
+  !END
+
+  !SPECIES   NAME='S_'  NPRO=2 2 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_S' EL='S_' ZV= 6.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.75 0.75  0.75  0.75
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.75 VAL0_X=-3.3 !END
+      !CORE  POW=2. RC/RCOV=0.75 !END
+    !END
+  !END
+
+  !SPECIES   NAME='SI'  NPRO=2 2 1 LRHOX=4 RAD/RCOV=1.4
+    !NTBO    NOFL=1 1 0 CV=T LHFWEIGHT=0.100
+             TAILLAMBDA=4.0 2.0 RAUG/RCOV=1.2 RTAIL/RCOV=1.4 
+    !END 
+    !AUGMENT ID='MY_NDLSS_SI' EL='SI' ZV= 4.
+             TYPE='NDLSS' RBOX/RCOV=1.2 RCSM/RCOV=.25
+             RCL/RCOV=0.75 0.75 0.75 0.75
+      !GRID  DMIN=1.E-6 DMAX=.15 RMAX=9. !END
+      !POT   POW=3. RC/RCOV=0.75  VAL0_X= -1.8 !END
+      !CORE  POW=2. RC/RCOV=0.75 !END
+    !END
+  !END
+
