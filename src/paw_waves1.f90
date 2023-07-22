@@ -2072,8 +2072,8 @@ CALL ERROR$STOP('WAVES$ETOT')
 !!$         CALL TIMING$CLOCKON('CG')                              !KAESTNERCG
 !!$         CALL CG$STATE_BY_STATE(MAP%NRL,NDIMD,RHO(:,:),CONVPSI,NAT,LMNXX,DH) !KAESTNERCG
 !!$         CALL TIMING$CLOCKOFF('CG')                             !KAESTNERCG
-!!$         TCONV=.FALSE. ! TCONV HAS NOT BEEN SET!!!
-            IF(TCONV) CALL STOPIT$SETL4('STOP',.TRUE.)             !KAESTNERCG
+!!$         TCONV=.FALSE. ! TCONV HAS NOT BEEN SET
+!!$         IF(TCONV) CALL STOPIT$SETL4('STOP',.TRUE.)             !KAESTNERCG
 !!$      END IF                                                    !KAESTNERCG
 !
 !     ==========================================================================

@@ -95,7 +95,8 @@ END MODULE ERROR_MODULE
         MESSAGE(IMESSAGE)='TOO MANY ERROR MESSAGE IN ERROR'
       ELSE 
         WRITE(MESSAGE(IMESSAGE),FMT='("VARIABLE ",A' &
-     &       //'," HAS THE VALUE (",E20.10,",",E20.10,")")')MESSAGE_,C8VAL
+     &       //'," HAS THE VALUE (",E20.10,",",E20.10,")")')MESSAGE_ &
+     &                               ,REAL(C8VAL),AIMAG(C8VAL)
       END IF
       RETURN
       END
@@ -292,7 +293,7 @@ END MODULE ERROR_MODULE
 !     ==========================================================================
 !     == MPI$STOPALL WILL STOP THE EXECUTION ALSO IN THE SCALAR VERSION
 !     ==========================================================================
-      WRITE(*,fmt='(a)')'NORMAL STOP: CALLING MPE$STOPALL TO CLOSE DOWN'
+      WRITE(*,FMT='(A)')'NORMAL STOP: CALLING MPE$STOPALL TO CLOSE DOWN'
       CALL MPE$STOPALL(0) ! BRING DOWN ALL MPI TASKS RELATED TO MPI_WORLD_COMM
 !
 !     ==========================================================================
