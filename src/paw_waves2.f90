@@ -380,6 +380,7 @@ END IF
               CALL WAVES_ORTHO_X_C(NB,OCC(1,IKPT,ISPIN),OOMAT,MAT,OMAT,LAMBDA)
             END IF
           ELSE
+!REMARK: ORTHO_Y_C IS ALSO USED IN WAVES_GRAMSCHMIDT
             CALL WAVES_ORTHO_Y_C(NB,MAT,OMAT,OOMAT,LAMBDA,SMAP)
           END IF
           DEALLOCATE(MAT)
@@ -1048,6 +1049,8 @@ END IF
        COMPLEX(8)            :: WORK(NB,NB)    
        COMPLEX(8)            :: Z(NB)
        INTEGER(4)            :: I,J,K,L,N
+       INTEGER(4)            :: Iter
+       INTEGER(4)            :: niter=1
        COMPLEX(8)            :: CSVAR
        REAL(8)               :: SVAR,SVAR1,SVAR2
        REAL(8)               :: MAXDEV
@@ -1055,10 +1058,13 @@ END IF
        REAL(8)   ,PARAMETER  :: TOL=1.D-10
        INTEGER(4)            :: NU,NU0,IU,JU
        REAL(8)               :: R8SMALL
+INTEGER(4),save :: counter=0
+integer(4),parameter :: nfil1=12001,nfil2=12002,nfil3=12003
 !      *****************************************************************
                              CALL TRACE$PUSH('WAVES_ORTHO_Y_C')
        R8SMALL=TINY(R8SMALL)*1.D+5
        R8SMALL=1.D-10
+counter=counter+1
 !
 !      =================================================================
 !      ==  INITIALIZE                                                 ==
@@ -1074,11 +1080,13 @@ END IF
          A(I,I)=A(I,I)-(1.D0,0.D0)
          ALPHA(I,I)=(1.D0,0.D0)
        ENDDO
+
 !
 !      =================================================================
 !      ==  ORTHOGONALIZATION LOOP                                     ==
 !      =================================================================
 !                            CALL TRACE$PASS('BEFORE ORTHOGONALIZATION LOOP')
+do iter=1,niter
        DO NU=1,NB
          N=MAP(NU)
 !
@@ -1102,6 +1110,29 @@ END IF
            Z(N)=SVAR1
          END IF
          Z(N)=Z(N)/REAL(C(N,N)+R8SMALL,KIND=8)
+
+!!$IF(REAL(C(N,N)).LT.0.D0) THEN
+!!$  CALL ERROR$MSG('C(N,N) IS NEGATIVE')
+!!$  CALL ERROR$I4VAL('N',N)
+!!$  CALL ERROR$C8VAL('C',C(N,N))
+!!$  CALL ERROR$STOP('WAVES_ORTHO_Y_C')
+!!$END IF
+!!$
+!!$SVAR=-REAL(A(N,N))+ABS(B(N,N))**2/REAL(C(N,N))
+!!$IF(SVAR.LT.0.D0) THEN
+!!$  CALL ERROR$MSG('SVAR IS NEGATIVE')
+!!$  CALL ERROR$R8VAL('SVAR',SVAR)
+!!$  CALL ERROR$STOP('WAVES_ORTHO_Y_C')
+!!$END IF
+!!$SVAR=SQRT(SVAR/REAL(C(N,N)))
+!!$SVAR1=ABS(B(N,N))
+!!$IF(SVAR1.GT.R8SMALL) THEN
+!!$  CSVAR=B(N,N)/ABS(B(N,N))
+!!$ELSE
+!!$  CSVAR=(1.D0,0.D0)
+!!$END IF
+!!$Z(N)=-B(N,N)/C(N,N)+CSVAR*CMPLX(SVAR,KIND=8)
+!
 !        == TEST FOR NANS (NAN = NOT A NUMBER)
          IF(SVAR.NE.SVAR) THEN
 PRINT*,'MARKE 1',N,B(N,N),A(N,N),C(N,N)
@@ -1272,6 +1303,22 @@ PRINT*,'A     ',(A(I,I),I=1,NB)
             ENDDO
          END IF
        ENDDO
+enddo !iter
+
+!!$if(counter.eq.1) then
+!!$  open(nfil1,file='rediagx.dat')
+!!$  open(nfil2,file='imdiagx.dat')
+!!$  open(nfil3,file='offdiagx.dat')
+!!$end if
+!!$write(nfil1,*)counter,(real(x(i,i)),i=1,nb)
+!!$write(nfil2,*)counter,(aimag(x(i,i)),i=1,nb)
+!!$do i=1,nb
+!!$  do j=i+1,nb
+!!$    if(abs(x(i,j)).gt.1.d-5.or.abs(x(j,i)).gt.1.d-5) then
+!!$      write(nfil3,*)counter,i,j,x(i,j),x(j,i)
+!!$    end if
+!!$  enddo
+!!$enddo
 !
 !      =================================================================
 !      == TEST ORTHOGONALITY                                          ==
@@ -1301,6 +1348,7 @@ PRINT*,'A     ',(A(I,I),I=1,NB)
          ENDDO
          PRINT*,'MAX. DEVIATION IN ORTHO_Y_C',MAXDEV
        END IF
+
                              CALL TRACE$POP
        RETURN
        CONTAINS
