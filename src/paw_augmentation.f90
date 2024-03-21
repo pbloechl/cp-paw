@@ -256,6 +256,8 @@ END MODULE AUGMENTATION_MODULE
       REAL(8)   ,ALLOCATABLE  :: PSPHI(:,:)
       REAL(8)   ,ALLOCATABLE  :: AECORE(:)
       REAL(8)   ,ALLOCATABLE  :: PSCORE(:)
+      REAL(8)   ,ALLOCATABLE  :: AECOREKIN(:) !AE-CORE KINETIC ENERGY DENSITY
+      REAL(8)   ,ALLOCATABLE  :: PSCOREKIN(:) !PS-CORE KINETIC ENERGY DENSITY
       REAL(8)                 :: RCSM
       REAL(8)   ,ALLOCATABLE  :: VADD(:)
       REAL(8)   ,ALLOCATABLE  :: DOVER(:,:)
@@ -265,8 +267,12 @@ END MODULE AUGMENTATION_MODULE
       REAL(8)                 :: DELTAO(LMNX,LMNX,NDIMD)  ! SOFTCORE CORRECTION TO DO
       REAL(8)   ,ALLOCATABLE  :: DELTARHO(:,:,:)    ! SOFCORE CORRECTION TO DAERHO
       REAL(8)                 :: DECORE
-      REAL(8)   ,ALLOCATABLE  :: AERHO(:,:,:)
-      REAL(8)   ,ALLOCATABLE  :: PSRHO(:,:,:)
+      REAL(8)   ,ALLOCATABLE  :: AERHO(:,:,:)     !(NR,LMRX,NDIMD)
+      REAL(8)   ,ALLOCATABLE  :: PSRHO(:,:,:)     !(NR,LMRX,NDIMD)
+      REAL(8)   ,ALLOCATABLE  :: AERHOKIN(:,:,:)  !(NR,LMRX,NDIMD)
+      REAL(8)   ,ALLOCATABLE  :: PSRHOKIN(:,:,:)  !(NR,LMRX,NDIMD)
+      REAL(8)   ,ALLOCATABLE  :: AEPOTKIN(:,:,:)  !(NR,LMRX,NDIMD)
+      REAL(8)   ,ALLOCATABLE  :: PSPOTKIN(:,:,:)  !(NR,LMRX,NDIMD)
       REAL(8)   ,ALLOCATABLE  :: DATP(:,:,:)
       REAL(8)   ,ALLOCATABLE  :: DWORK1(:)
       INTEGER(4)              :: IDIM,IR
@@ -288,11 +294,17 @@ END MODULE AUGMENTATION_MODULE
       REAL(8)   ,ALLOCATABLE  :: AETOTPOT(:,:,:)
       REAL(8)   ,ALLOCATABLE  :: PSTOTPOT(:,:,:)
       REAL(8)   ,ALLOCATABLE  :: RHO(:,:,:)
+      REAL(8)   ,ALLOCATABLE  :: RHOKIN(:,:,:)
       CHARACTER(32)           :: SOFTCORETYPE
-!     ******************************************************************
+      LOGICAL(4)              :: TRHOKIN     ! USE KINETIC ENERGY DENSITY 
+      REAL(8)                 :: SVAR1,SVAR2
+LOGICAL(4),parameter :: Tmytest=.false.
+!     **************************************************************************
                             CALL TRACE$PUSH('AUGMENTATION$SPHERE')
 !
-!     ==================================================================
+      CALL DFT$GETL4('META',TRHOKIN)
+!
+!     ==========================================================================
 !     ==  COLLECT ATOM-TYPE SPECIFIC INFORMATION FROM SETUP OBJECT    ==
 !     ==================================================================
       CALL SETUP$ISELECT(ISP)
@@ -312,6 +324,12 @@ END MODULE AUGMENTATION_MODULE
       CALL SETUP$GETR8A('AECORE',NR,AECORE)
       ALLOCATE(PSCORE(NR))
       CALL SETUP$GETR8A('PSCORE',NR,PSCORE)
+      IF(TRHOKIN) THEN
+        ALLOCATE(AECOREKIN(NR))                 ! AE-CORE KINETIC ENERGY DENSITY
+        CALL SETUP$GETR8A('AECOREKIN',NR,AECOREKIN) 
+        ALLOCATE(PSCOREKIN(NR))                 ! PS-CORE KINETIC ENERGY DENSITY
+        CALL SETUP$GETR8A('PSCOREKIN',NR,PSCOREKIN)
+      END IF
       CALL SETUP$GETR8('RCSM',RCSM)
       ALLOCATE(VADD(NR))
       CALL SETUP$GETR8A('VADD',NR,VADD)
@@ -374,7 +392,21 @@ END MODULE AUGMENTATION_MODULE
      &                  ,LMNX,DENMAT(1,1,IDIM),LMRX,PSRHO(1,1,IDIM))
       ENDDO
 !     
-!     ================================================================
+!     ==========================================================================
+!     ==  CALCULATE 1-CENTER KINETIC-ENERGY DENSITY                           ==
+!     ==========================================================================
+      IF(TRHOKIN) THEN
+        ALLOCATE(AERHOKIN(NR,LMRX,NDIMD))
+        ALLOCATE(PSRHOKIN(NR,LMRX,NDIMD))
+        DO IDIM=1,NDIMD
+          CALL AUGMENTATION_RHOKIN(GID,NR,LNX,LOX,AEPHI &
+     &                          ,LMNX,DENMAT(1,1,IDIM),LMRX,AERHOKIN(1,1,IDIM))
+          CALL AUGMENTATION_RHOKIN(GID,NR,LNX,LOX,PSPHI &
+     &                          ,LMNX,DENMAT(1,1,IDIM),LMRX,PSRHOKIN(1,1,IDIM))
+        ENDDO
+      END IF
+!     
+!     ==========================================================================
 !     ==  EVALUATE MULTIPOLE MOMENTS                                ==
 !     ================================================================
       CALL AUGMENTATION_QLM(GID,NR,LMRX,AEZ,AECORE,PSCORE,AERHO,PSRHO,QLM)
@@ -420,18 +452,123 @@ END MODULE AUGMENTATION_MODULE
       ALLOCATE(AEXCPOT(NR,LMRX,NDIMD))
       ALLOCATE(PSXCPOT(NR,LMRX,NDIMD))
       ALLOCATE(RHO(NR,LMRX,NDIMD))
-!     == CORE ONLY EXCHANGE ENERGY ===================================
+      IF(TRHOKIN) THEN
+!!$PRINT*,'EKINNL ',EKINNL
+!!$CALL RADIAL$INTEGRAL(GID,NR,R(:)**2*AERHOKIN(:,1,1),SVAR1)
+!!$SVAR1=SVAR1*Y0*4.D0*PI
+!!$PRINT*,'++ AE KINETIC ENERGY FROM AERHOKIN ',SVAR1
+!!$CALL RADIAL$INTEGRAL(GID,NR,R(:)**2*PSRHOKIN(:,1,1),SVAR2)
+!!$SVAR2=SVAR2*Y0*4.D0*PI
+!!$PRINT*,'++ PS KINETIC ENERGY FROM PSRHOKIN ',SVAR2
+!!$PRINT*,'ZERO? ',EKINNL-(SVAR1-SVAR2)
+!!$PRINT*,'NDIMD ',NDIMD
+!!$STOP 'FORCED'
+!
+        ALLOCATE(AEPOTKIN(NR,LMRX,NDIMD))
+        ALLOCATE(PSPOTKIN(NR,LMRX,NDIMD))
+        ALLOCATE(RHOKIN(NR,LMRX,NDIMD))
+      END IF
+!
+!     == CORE ONLY EXCHANGE ENERGY =============================================
+
+
+
+      IF(TRHOKIN) THEN
+        CALL AUGMENTATION_XC_META(GID,NR,1,1,AECORE,AECOREKIN &
+     &                    ,COREEXC,AEXCPOT(:,1,1),AEPOTKIN(:,1,1))
+        AEPOTKIN(:,:,:)=0.D0
+      ELSE
       CALL AUGMENTATION_XC(GID,NR,1,1,AECORE,COREEXC,AEXCPOT(:,1,1))
+      END IF
       AEXCPOT(:,:,:)=0.D0
 !     == AE-EXCHANGE ENERGY AND POTENTIAL ============================
       RHO(:,:,:)=AERHO(:,:,:)
       RHO(:,1,1)=RHO(:,1,1)+AECORE(:)
+      IF(TRHOKIN) THEN
+        RHOKIN(:,:,:)=AERHOKIN(:,:,:)
+        RHOKIN(:,1,1)=RHOKIN(:,1,1)+AECOREKIN(:)
+!the kinetic energy on the first grid point is nonsense
+rhokin(1,:,:)=0.d0 
+        CALL AUGMENTATION_XC_META(GID,NR,LMRX,NDIMD,RHO,RHOKIN &
+     &                           ,AEEXC,AEXCPOT,AEPOTKIN)
+      ELSE
       CALL AUGMENTATION_XC(GID,NR,LMRX,NDIMD,RHO,AEEXC,AEXCPOT)
+      END IF
       AEEXC=AEEXC-COREEXC
-!     == PS-EXCHANGE ENERGY AND POTENTIAL ============================
+
+if(tmytest.and.trhokin) then
+  open(10101,file='aerho.dat')
+  do ir=1,nr
+    write(10101,*)r(ir),rho(ir,:,:)
+  enddo
+  close(10101)
+
+  open(10101,file='aerhokin.dat')
+  do ir=1,nr
+    write(10101,*)r(ir),rhokin(ir,:,:)
+  enddo
+  close(10101)
+
+  open(10101,file='aexcpot.dat')
+  do ir=1,nr
+    write(10101,*)r(ir),aexcpot(ir,:,:)
+  enddo
+  close(10101)
+
+  open(10101,file='aepotkin.dat')
+  do ir=1,nr
+    write(10101,*)r(ir),aepotkin(ir,:,:)
+  enddo
+  close(10101)
+! call error$stop('forced')
+end if
+!     == PS-EXCHANGE ENERGY AND POTENTIAL ======================================
+!     == THE PSEUDO CORE KINETIC ENERGY IS NOT ADDED, WHICH IS CONSISTENT TO ===
+!     == THE PLANE WAVE PART OF THE XC ENERGY, WHERE IT HAS BEEN IGNORED =======
+!     == AS WELL. HOWEVER, AN IMBALANCE BETWEEN AE AND PS ONE-CENTER TERMS =====
+!     == REMAINS ===============================================================
       RHO(:,:,:)=PSRHO(:,:,:)
       RHO(:,1,1)=RHO(:,1,1)+PSCORE(:)
+      IF(TRHOKIN) THEN
+        RHOKIN(:,:,:)=PSRHOKIN(:,:,:)
+rhokin(1,:,:)=0.d0
+        CALL AUGMENTATION_XC_META(GID,NR,LMRX,NDIMD,RHO,RHOKIN &
+     &                    ,PSEXC,PSXCPOT,PSPOTKIN)
+
+
+if(tmytest.and.trhokin) then
+  open(10101,file='psrho.dat')
+  do ir=1,nr
+    write(10101,*)r(ir),rho(ir,:,:)
+  enddo
+  close(10101)
+
+  open(10101,file='psrhokin.dat')
+  do ir=1,nr
+    write(10101,*)r(ir),rhokin(ir,:,:)
+  enddo
+  close(10101)
+
+  open(10101,file='psxcpot.dat')
+  do ir=1,nr
+    write(10101,*)r(ir),psxcpot(ir,:,:)
+  enddo
+  close(10101)
+
+  open(10101,file='pspotkin.dat')
+  do ir=1,nr
+    write(10101,*)r(ir),pspotkin(ir,:,:)
+  enddo
+  close(10101)
+
+  call error$msg('forced stop for testing augmentation_xc_meta')
+  call error$stop('paw_augmentation')
+end if
+
+        DEALLOCATE(RHOKIN)
+      ELSE 
       CALL AUGMENTATION_XC(GID,NR,LMRX,NDIMD,RHO,PSEXC,PSXCPOT)
+      END IF
       DEALLOCATE(RHO)
 !
 !     ================================================================
@@ -537,6 +674,24 @@ END MODULE AUGMENTATION_MODULE
       CALL AUGMENTATION_EXPECT(GID,NR,NDIMD,LNX,LOX,LMNX,LMRX &
      &                        ,AETOTPOT,PSTOTPOT,AEPHI,PSPHI,DATP)
       DATH(:,:,:)=DATH(:,:,:)+CMPLX(DATP(:,:,:),0.D0,KIND=8)
+      IF(TRHOKIN) THEN
+        DO IDIM=1,NDIMD
+          CALL AUGMENTATION_EXPECTKIN(GID,NR,LNX,LOX,AEPHI,LMNX &
+     &                               ,DATP(:,:,IDIM),LMRX,AEPOTKIN)
+        ENDDO
+        DATH(:,:,:)=DATH(:,:,:)+CMPLX(DATP(:,:,:),0.D0,KIND=8)
+        DO IDIM=1,NDIMD
+          CALL AUGMENTATION_EXPECTKIN(GID,NR,LNX,LOX,PSPHI,LMNX &
+     &                               ,DATP(:,:,IDIM),LMRX,PSPOTKIN)
+        ENDDO
+        DATH(:,:,:)=DATH(:,:,:)-CMPLX(DATP(:,:,:),0.D0,KIND=8)
+        DEALLOCATE(AEPOTKIN)
+        DEALLOCATE(PSPOTKIN)
+        DEALLOCATE(AERHOKIN)
+        DEALLOCATE(PSRHOKIN)
+        DEALLOCATE(AECOREKIN)
+        DEALLOCATE(PSCOREKIN)
+      END IF
       DEALLOCATE(DATP)
 !     WRITE(TESTSTRING,FMT='("R8DATH",I2,12(" "))')IAT
 !     CALL STOREIT(TESTSTRING,8*LMNX*LMNX*NSPIN,DATH)
@@ -655,6 +810,240 @@ STOP
       RETURN
       END
 !
+!     ...1.........2.........3.........4.........5.........6.........7.........8
+      SUBROUTINE AUGMENTATION_RHOKIN(GID,NR,LNX,LOX,PHI,LMNXX,DENMAT,LMRX,RHOL)
+!     **************************************************************************
+!     **  DETERMINE ONE-CENTER EXPANSION OF THE  KINETIC ENERGY DENSITY       **
+!     **                                                                      **
+!     ****************************************** P.E. BLOECHL, GOSLAR 2021 *****
+      IMPLICIT NONE
+      INTEGER(4),INTENT(IN) :: GID                       !GRID ID
+      INTEGER(4),INTENT(IN) :: NR                        !#(RADIAL GRID POINTS)
+      INTEGER(4),INTENT(IN) :: LNX                       !#(RADIAL PART. WAVES)
+      INTEGER(4),INTENT(IN) :: LOX(LNX)                  !MAIN ANGULAR MOMENTUM
+      INTEGER(4),INTENT(IN) :: LMNXX
+      INTEGER(4),INTENT(IN) :: LMRX                      !#(DENSITY CONTRIB)
+      COMPLEX(8),INTENT(IN) :: DENMAT(LMNXX,LMNXX)       !DENSITY MATRIX
+      REAL(8)   ,INTENT(IN) :: PHI(NR,LNX)               !PARTIAL WAVES
+      REAL(8)   ,INTENT(OUT):: RHOL(NR,LMRX)             !KINETIC ENERGY DENSITY
+      REAL(8)   ,PARAMETER  :: PI=4.D0*ATAN(1.D0)
+      INTEGER(4)            :: LMN1,LN1,L1,IM1,LMN2,LN2,L2,IM2
+      REAL(8)   ,ALLOCATABLE:: DPHI1(:,:) !(NR,LNX)
+      REAL(8)   ,ALLOCATABLE:: DPHI2(:,:) !(NR,LNX)
+      REAL(8)   ,ALLOCATABLE:: R(:)       !(NR)
+      INTEGER(4)            :: LA,LB,LMA,LMB,LMC,ir
+      INTEGER(4)            :: LM1,LM2,LM3
+      REAL(8)               :: CG1,CG2,CG3     !GAUNT COEFFICIENTS
+      REAL(8)               :: SVAR
+!     **************************************************************************
+!
+!     ==========================================================================
+!     ==  PREPARE DERIVATIVES OF PARTIAL WAVES REQUIRED FOR MOMENTUM CALC     ==
+!     ==  DPHI1=R**L      * D/DR R**(-L)  PHI= (D/DR-    L/R) PHI             ==
+!     ==  DPHI2=R**(-L-1) * D/DR R**(L+1) PHI= (D/DR+(L+1)/R) PHI             ==
+!     ==========================================================================
+      ALLOCATE(DPHI1(NR,LNX))
+      ALLOCATE(DPHI2(NR,LNX))
+      ALLOCATE(R(NR))
+      CALL RADIAL$R(GID,NR,R)
+      DO LN1=1,LNX
+        L1=LOX(LN1)
+        CALL RADIAL$DERIVE(GID,NR,PHI(:,LN1)*R(:)**(-L1) ,DPHI1(:,LN1))
+        CALL RADIAL$DERIVE(GID,NR,PHI(:,LN1)*R(:)**(L1+1),DPHI2(:,LN1))
+!!$        CALL RADIAL$VERLETD1(GID,NR,PHI(:,LN1)*R(:)**(-L1) ,DPHI1(:,LN1))
+!!$        CALL RADIAL$VERLETD1(GID,NR,PHI(:,LN1)*R(:)**(L1+1),DPHI2(:,LN1))
+        DPHI1(:,LN1)=DPHI1(:,LN1)*R(:)**(L1)
+        DPHI2(:,LN1)=DPHI2(:,LN1)*R(:)**(-L1-1)
+      ENDDO
+!!$do ir=1,nr
+!!$if(r(ir).gt.7.9d0) then
+!!$ dphi1(ir,:)=0.d0
+!!$ dphi2(ir,:)=0.d0
+!!$endif
+!!$enddo
+
+!
+!     ==========================================================================
+!     ==  ADD VALENCE CHARGE DENSITY                                          ==
+!     ==========================================================================
+      RHOL(:,:)=0.D0
+      LMN1=0
+      DO LN1=1,LNX
+        L1=LOX(LN1)
+        DO IM1=1,2*L1+1
+          LMN1=LMN1+1
+          LM1=L1**2+IM1
+          LMN2=0
+          DO LN2=1,LNX
+            L2=LOX(LN2)
+            DO IM2=1,2*L2+1
+              LMN2=LMN2+1
+              LM2=L2**2+IM2
+              DO LM3=1,LMRX
+!               ==
+                DO LA=0,L1+1
+                  DO LB=0,L2+1
+                    SVAR=0.D0
+                    DO LMA=LA**2+1,(LA+1)**2
+                      DO LMB=LB**2+1,(LB+1)**2
+                        CALL CLEBSCH(LMA,LMB,LM3,CG3)
+                        DO LMC=2,4  ! FROM GRADIENT
+                          CALL CLEBSCH(LMC,LM1,LMA,CG1)
+                          CALL CLEBSCH(LMC,LM2,LMB,CG2)
+                          SVAR=SVAR+4.D0*PI/3.D0*CG1*CG2*CG3
+                        ENDDO !LMC
+                      ENDDO   !LMB
+                    ENDDO     !LMA
+                    IF(SVAR.EQ.0.D0) CYCLE
+!                   == ASSUMES REAL PARTIAL WAVES ==============================
+                    SVAR=SVAR*REAL(DENMAT(LMN1,LMN2))
+                    IF(LA.EQ.L1-1) THEN
+                      IF(LB.EQ.L2-1) THEN
+                        RHOL(:,LM3)=RHOL(:,LM3)+SVAR*DPHI2(:,LN1)*DPHI2(:,LN2)
+                      ELSE  
+                        RHOL(:,LM3)=RHOL(:,LM3)+SVAR*DPHI2(:,LN1)*DPHI1(:,LN2)
+                      END IF
+                    ELSE
+                      IF(LB.EQ.L2-1) THEN
+                        RHOL(:,LM3)=RHOL(:,LM3)+SVAR*DPHI1(:,LN1)*DPHI2(:,LN2)
+                      ELSE  
+                        RHOL(:,LM3)=RHOL(:,LM3)+SVAR*DPHI1(:,LN1)*DPHI1(:,LN2)
+                      END IF
+                    END IF
+                  ENDDO  !LB
+                ENDDO    !LA
+!               ====  
+              ENDDO !LM3
+            ENDDO   !IM2
+          ENDDO     !LN2
+        ENDDO       !IM1
+      ENDDO         !LN1
+!
+!     ==========================================================================
+!     == ATTACH FACTOR HBAR**2/(2M_E)                                        ==
+!     ==========================================================================
+      RHOL=0.5D0*RHOL
+      RETURN
+      END
+!
+!     ...1.........2.........3.........4.........5.........6.........7.........8
+      SUBROUTINE AUGMENTATION_EXPECTKIN(GID,NR,LNX,LOX,PHI,LMNXX &
+     &                                 ,DATH,LMRX,POTKIN)
+!     **************************************************************************
+!     ** HAMILTONIAN CONTRIBUTION FROM THE KINETIC-ENERGY POTENTIAL           **
+!     **                                                                      **
+!     ** LIKE AUGMENTATION_RHOKIN CALCULATES THE KINETIC-ENERGY DENSITY       **
+!     ** FROM THE DENSITY MATRIX, THIS ROUTINE CONVERTS THE KINETIC-ENERGY    **
+!     ** POTENTIAL INTO A ONE-CENTER HAMILTONIAN.                             **
+!     **                                                                      **
+!     ** THIS ROUTINE CAN PROBABLY BE MADE FASTER BY REARRANGING THE SUMS     **
+!     ****************************************** P.E. BLOECHL, GOSLAR 2021 *****
+      IMPLICIT NONE
+      INTEGER(4),INTENT(IN) :: GID                     !GRID ID
+      INTEGER(4),INTENT(IN) :: NR                      !#(RADIAL GRID POINTS)
+      INTEGER(4),INTENT(IN) :: LNX                     !#(RADIAL PART. WAVES)
+      INTEGER(4),INTENT(IN) :: LOX(LNX)                !MAIN ANGULAR MOMENTUM
+      INTEGER(4),INTENT(IN) :: LMNXX
+      INTEGER(4),INTENT(IN) :: LMRX                    !#(DENSITY CONTRIB)
+      REAL(8)   ,INTENT(OUT):: DATH(LMNXX,LMNXX)       !1CENTER-HAMILTONIAN
+      REAL(8)   ,INTENT(IN) :: PHI(NR,LNX)             !PARTIAL WAVES
+      REAL(8)   ,INTENT(IN) :: POTKIN(NR,LMRX)        !KINETIC ENERGY POTENTIAL
+      REAL(8)   ,PARAMETER  :: PI=4.D0*ATAN(1.D0)
+      INTEGER(4)            :: LMN1,LN1,L1,IM1,LMN2,LN2,L2,IM2
+      REAL(8)   ,ALLOCATABLE:: DPHI1(:,:) !(NR,LNX)
+      REAL(8)   ,ALLOCATABLE:: DPHI2(:,:) !(NR,LNX)
+      REAL(8)   ,ALLOCATABLE:: R(:)       !(NR)
+      REAL(8)   ,ALLOCATABLE:: AUX(:)     !(NR)
+      INTEGER(4)            :: LA,LB,LMA,LMB,LMC
+      INTEGER(4)            :: LM1,LM2,LM3
+      REAL(8)               :: CG1,CG2,CG3     !GAUNT COEFFICIENTS
+      REAL(8)               :: SVAR
+!     **************************************************************************
+!
+!     ==========================================================================
+!     ==  PREPARE DERIVATIVES OF PARTIAL WAVES REQUIRED FOR MOMENTUM CALC     ==
+!     ==  DPHI1=R**L      * D/DR R**(-L)  PHI= (D/DR-    L/R) PHI             ==
+!     ==  DPHI2=R**(-L-1) * D/DR R**(L+1) PHI= (D/DR+(L+1)/R) PHI             ==
+!     ==========================================================================
+      ALLOCATE(DPHI1(NR,LNX))
+      ALLOCATE(DPHI2(NR,LNX))
+      ALLOCATE(R(NR))
+      CALL RADIAL$R(GID,NR,R)
+      DO LN1=1,LNX
+        L1=LOX(LN1)
+        CALL RADIAL$DERIVE(GID,NR,PHI(:,LN1)*R(:)**(-L1) ,DPHI1(:,LN1))
+        CALL RADIAL$DERIVE(GID,NR,PHI(:,LN1)*R(:)**(L1+1),DPHI2(:,LN1))
+        DPHI1(:,LN1)=DPHI1(:,LN1)*R(:)**(L1)
+        DPHI2(:,LN1)=DPHI2(:,LN1)*R(:)**(-L1-1)
+      ENDDO
+!
+!     ==========================================================================
+!     ==  ADD VALENCE CHARGE DENSITY                                          ==
+!     ==========================================================================
+      DATH(:,:)=0.D0
+      ALLOCATE(AUX(NR))
+      LMN1=0
+      DO LN1=1,LNX
+        L1=LOX(LN1)
+        DO IM1=1,2*L1+1
+          LMN1=LMN1+1
+          LM1=L1**2+IM1
+          LMN2=0
+          DO LN2=1,LNX
+            L2=LOX(LN2)
+            DO IM2=1,2*L2+1
+              LMN2=LMN2+1
+              LM2=L2**2+IM2
+              DO LM3=1,LMRX
+!               ==
+                AUX(:)=0.D0
+                DO LA=0,L1+1
+                  DO LB=0,L2+1
+                    SVAR=0.D0
+                    DO LMA=LA**2+1,(LA+1)**2
+                      DO LMB=LB**2+1,(LB+1)**2
+                        CALL CLEBSCH(LMA,LMB,LM3,CG3)
+                        DO LMC=2,4  ! FROM GRADIENT
+                          CALL CLEBSCH(LMC,LM1,LMA,CG1)
+                          CALL CLEBSCH(LMC,LM2,LMB,CG2)
+                          SVAR=SVAR+4.D0*PI/3.D0*CG1*CG2*CG3
+                        ENDDO !LMC
+                      ENDDO   !LMB
+                    ENDDO     !LMA
+                    IF(SVAR.EQ.0.D0) CYCLE
+!                   == ASSUMES REAL PARTIAL WAVES ==============================
+                    IF(LA.EQ.L1-1) THEN
+                      IF(LB.EQ.L2-1) THEN
+                        AUX(:)=AUX(:)+SVAR*DPHI2(:,LN1)*DPHI2(:,LN2)
+                      ELSE  
+                        AUX(:)=AUX(:)+SVAR*DPHI2(:,LN1)*DPHI1(:,LN2)
+                      END IF
+                    ELSE
+                      IF(LB.EQ.L2-1) THEN
+                        AUX(:)=AUX(:)+SVAR*DPHI1(:,LN1)*DPHI2(:,LN2)
+                      ELSE  
+                        AUX(:)=AUX(:)+SVAR*DPHI1(:,LN1)*DPHI1(:,LN2)
+                      END IF
+                END IF
+                  ENDDO  !LB
+                ENDDO    !LA
+                AUX(:)=R(:)**2*AUX(:)*POTKIN(:,LM3)
+                CALL RADIAL$INTEGRAL(GID,NR,AUX,SVAR)
+                DATH(LMN1,LMN2)=DATH(LMN1,LMN2)+SVAR
+!               ====  
+              ENDDO !LM3
+            ENDDO   !IM2
+          ENDDO     !LN2
+        ENDDO       !IM1
+      ENDDO         !LN1
+!
+!     ==========================================================================
+!     == ATTACH FACTOR -HBAR**2/(2M_E)                                        ==
+!     ==========================================================================
+      DATH=-0.5D0*DATH
+      RETURN
+      END
+!
 !     ..................................................................
       SUBROUTINE AUGMENTATION_QLM(GID,NR,LMRX &
      &                           ,AEZ,AECORE,PSCORE,AERHO,PSRHO,QLM)
@@ -692,6 +1081,339 @@ STOP
       DWORK(:)=(AECORE(:)-PSCORE(:))*R(:)**2
       CALL RADIAL$INTEGRAL(GID,NR,DWORK,RES)
       QLM(1)=QLM(1)+RES-AEZ*Y0
+      RETURN
+      END
+!
+!     ...1.........2.........3.........4.........5.........6.........7.........8
+      SUBROUTINE AUGMENTATION_XC_META &
+     &                        (GID,NR,LMRX,NDIMD,RHOIN,RHOKININ,EXC,VXC,POTKIN)
+!     **************************************************************************
+!     **                                                                      **
+!     **  CALCULATES THE EXCHANGE AND CORRELATION ENERGY                      **
+!     **  FOR A DENSITY GIVEN ON A RADIAL LOGARITHMIC GRID                    **
+!     **  TIMES REAL SPHERICAL HARMONICS                                      **
+!     **                                                                      **
+!     **  THE TOTAL ENERGY IS AN EXPANSION ABOUT THE                          **
+!     **  SPHERICAL CONTRIBUTION OF THE DENSITY UP TO QUADRATIC               **
+!     **  ORDER IN THE NON-SPHERICAL CONTRIBUTIONS                            **
+!     **                                                                      **
+!     **  EXC = EXC(XVAL(L=0)*Y0)                                             **
+!     **      + 0.5 * D2[EXC]/D[XVAL(L=0)*Y0]**2 * XVAL(L>0)**2               **
+!     **                                                                      **
+!     **  WHERE XVAL=(/RHOT,RHOS,GRHOT**2,GRHOS**2,GRHOT*GRHOS/)              **
+!     **  IS AN SPHERICAL HARMONICS EXPANSION ON THE RADIAL GRID.             **
+!     **                                                                      **
+!     **  DEPENDECIES:                                                        **
+!     **    DFT                                                               **
+!     **    TIMING                                                            **
+!     **    TRACE                                                             **
+!     **                                                                      **
+!     **  REMARKS: THE GRADIENTS ARE CORRECT ONLY IF DFT SUPPORTS             **
+!     **    THIRD DERIVATIVES OF THE XC-ENERGY                                **
+!     **   - WHEN USING SELFTEST ON THIS ROUTINE, THEN                        **
+!     **     D(EXC)/DRHO(I)=POT(I)*DEX*R(I)**3                                **
+!     **     AND THE VALUES AT LARGE RADII MUST BE SURPRESSED                 **
+!     **                                                                      **
+!     **  REMARK: FOR A COLLINEAR DENSITY THE ROUTINE GIVES DIFFERENT RESULTS **
+!     **          WITH NDIMD=2 AND NDIMD=4 DUE TO THE TAYLOR EXPANSION IN     **
+!     **          ANGULAR MOMENTUM EXPANSIONS                                 **
+!     **                                                                      **
+!     ****************************************** P.E. BLOECHL, 1996 ************
+      IMPLICIT NONE
+      LOGICAL(4),PARAMETER  :: TNS=.TRUE. ! NON-SPHERICAL CONTRIBUTIONS ON
+      INTEGER(4),INTENT(IN) :: GID
+      INTEGER(4),INTENT(IN) :: NR
+      INTEGER(4),INTENT(IN) :: LMRX
+      INTEGER(4),INTENT(IN) :: NDIMD      ! CAN BE 1,2,4
+      REAL(8)   ,INTENT(IN) :: RHOIN(NR,LMRX,NDIMD)
+      REAL(8)   ,INTENT(IN) :: RHOKININ(NR,LMRX,NDIMD)
+      REAL(8)   ,INTENT(OUT):: EXC
+      REAL(8)   ,INTENT(OUT):: VXC(NR,LMRX,NDIMD)
+      REAL(8)   ,INTENT(OUT):: POTKIN(NR,LMRX,NDIMD) !KINETIC ENERGY POTENTIAL
+      REAL(8)   ,PARAMETER  :: PI=4.D0*ATAN(1.D0)
+      REAL(8)   ,PARAMETER  :: Y0=1.D0/SQRT(4.D0*PI)
+      LOGICAL(4),PARAMETER  :: TRHOKIN=.TRUE.
+      LOGICAL(4)            :: TGRA   ! SWITCH FOR GRADIENT CORRECTION
+      INTEGER(4)            :: NSPIN
+      REAL(8)               :: EXC1
+      REAL(8)               :: R(NR)
+      REAL(8)   ,ALLOCATABLE:: RHO(:,:,:)
+      REAL(8)   ,ALLOCATABLE:: RHOKIN(:,:,:)
+      REAL(8)   ,ALLOCATABLE:: GRHO(:,:,:)
+      REAL(8)   ,ALLOCATABLE:: VRHO(:,:,:)
+      REAL(8)   ,ALLOCATABLE:: VGRHO(:,:,:)
+      REAL(8)   ,ALLOCATABLE:: VRHOKIN(:,:,:)
+      REAL(8)               :: VAL7(7),VXC7(7),V2XC7(7,7),V3XC7(7,7,7)
+      REAL(8)               :: XVAL(NR,7,LMRX)
+      REAL(8)               :: XDER(NR,7,LMRX)
+      REAL(8)               :: FOURPI
+      INTEGER(4)            :: IR,L,II,ISPIN,ISPIN1,ISPIN2,I,J
+      INTEGER(4)            :: LM
+      INTEGER(4)            :: IMAX
+      REAL(8)               :: FAC
+      REAL(8)               :: CG0LL
+      REAL(8)               :: WORK(NR)
+      REAL(8)               :: WORK1(NR)
+      REAL(8)               :: WORK2(NR)
+      REAL(8)   ,PARAMETER  :: XX=1.D0  !BUGFIX 160509 XX=0.5->1.0
+!     **************************************************************************
+      CALL TRACE$PUSH('AUGMENTATION_XC')
+      EXC=0.D0
+      VXC(:,:,:)=0.D0
+      POTKIN(:,:,:)=0.D0
+!
+!     ==========================================================================
+!     ==   CALCULATE SOME CONSTANTS NEEDED LATER                              ==
+!     ==========================================================================
+      CALL DFT$GETL4('GC',TGRA)
+      FOURPI=4.D0*PI
+      CG0LL=Y0
+      CALL RADIAL$R(GID,NR,R)
+!
+!     ==========================================================================
+!     ==  OBTAIN SPIN DENSITY                                                 ==
+!     ==========================================================================
+      NSPIN=1
+      IF(NDIMD.GT.1) NSPIN=2
+      ALLOCATE(RHO(NR,LMRX,NSPIN))
+      ALLOCATE(GRHO(NR,LMRX,NSPIN))
+      ALLOCATE(VRHO(NR,LMRX,NSPIN))
+      ALLOCATE(RHOKIN(NR,LMRX,NSPIN))
+      ALLOCATE(VRHOKIN(NR,LMRX,NSPIN))
+      RHO(:,:,1)=RHOIN(:,:,1)
+      IF(TRHOKIN) RHOKIN(:,:,1)=RHOKININ(:,:,1)
+      IF(NDIMD.EQ.2) THEN
+        RHO(:,:,2)=RHOIN(:,:,2)
+        IF(TRHOKIN) RHOKIN(:,:,2)=RHOKININ(:,:,2)
+      ELSE IF(NDIMD.EQ.4) THEN
+!       == HERE WE NEED TO CALCULATE THE ABSOLUTE VALUE OF THE SPIN DENSITY ====
+!       == IN AN ANGULAR MOMENTUM EXPANSION. THIS IS ONLY POSSIBLE APPROXIMATELY
+!       == USING A TAYLOR EXPANSION ABOUT THE SPHERICAL PART OF THE SQUARE =====
+!       == OF THE SPIN DENSITY. ================================================
+        VRHO(:,:,:)=0.D0
+!       == IF 'RHO' IS SELECTED, VRHO AND VXC IS NOT USED. =====================
+        CALL AUGMENTATION_NCOLLTRANS(GID,'RHO',NR,LMRX,RHOIN,RHO,VRHO,VXC)
+        CALL AUGMENTATION_NCOLLTRANS(GID,'RHO',NR,LMRX,RHOKININ,RHOKIN,VRHO,VXC)
+      END IF
+!
+!     == IMAX ALLOWS TO RESTRICT SOME LOOPS (1:7) TO (1:IMAX)
+      IF(TRHOKIN) THEN
+        IF(TGRA) THEN
+          IF(NSPIN.EQ.2) THEN; IMAX=7; ELSE; IMAX=4; END IF
+        ELSE 
+          IF(NSPIN.EQ.2) THEN; IMAX=4; ELSE; IMAX=2; END IF
+        END IF
+      ELSE
+        IF(TGRA) THEN
+          IF(NSPIN.EQ.2) THEN; IMAX=5; ELSE; IMAX=3; END IF
+        ELSE 
+          IF(NSPIN.EQ.2) THEN; IMAX=2; ELSE; IMAX=1; END IF
+        END IF
+      END IF
+!
+!     ==========================================================================
+!     ==  CALCULATE RADIAL GRADIENT OF THE DENSITY                            ==
+!     ==========================================================================
+      CALL TRACE$PASS('BEFORE GRADIENTS')
+      IF(TGRA) THEN
+        GRHO(:,:,:)=0.D0
+        DO ISPIN=1,NSPIN
+          DO LM=1,LMRX
+            CALL RADIAL$DERIVE(GID,NR,RHO(:,LM,ISPIN),GRHO(:,LM,ISPIN))
+          ENDDO
+        ENDDO
+      ELSE
+        GRHO(:,:,:)=0.D0
+      END IF
+!
+!     ==========================================================================
+!     ==  DEFINE VECTOR (RHOT,RHOS,GRHOT**2,GRHOS**2,GRHOT*GRHOS)             ==
+!     ==========================================================================
+      XVAL(:,:,:)=0.D0
+      DO ISPIN=1,NSPIN
+        DO LM=1,LMRX
+          IF(LM.NE.1.AND.(.NOT.TNS)) EXIT ! USED TO RESTORE PREVIOUS STATE
+          XVAL(:,ISPIN,LM)=RHO(:,LM,ISPIN)
+        ENDDO
+      ENDDO
+      IF(TGRA) THEN
+        II=2
+        DO ISPIN1=1,NSPIN          ! THIS LOOP PUTS T,T->3; S,S->4 ;T,S->5
+          DO ISPIN2=ISPIN1,1,-1    ! AND ASSURES CONSISTENCY WITH NSPIN
+            II=II+1
+            DO LM=1,LMRX
+              IF(LM.NE.1.AND.(.NOT.TNS)) EXIT ! USED TO RESTORE PREVIOUS STATE
+              L=INT(SQRT(REAL(LM-1,KIND=8))+1.D-5)
+              FAC=DBLE(L*(L+1))
+              XVAL(:,II,1)=XVAL(:,II,1) &
+        &         +CG0LL*(GRHO(:,LM,ISPIN1)*GRHO(:,LM,ISPIN2) &
+        &                +FAC*RHO(:,LM,ISPIN1)*RHO(:,LM,ISPIN2)/R(:)**2)
+            ENDDO
+            DO LM=2,LMRX 
+              IF(.NOT.TNS) EXIT ! USED TO RESTORE PREVIOUS STATE
+              XVAL(:,II,LM)=XVAL(:,II,LM) &
+        &         +XX*CG0LL*(GRHO(:,1,ISPIN1)*GRHO(:,LM,ISPIN2) &
+        &                      +GRHO(:,LM,ISPIN1)*GRHO(:,1,ISPIN2))
+            ENDDO
+          ENDDO
+        ENDDO
+      END IF
+      IF(TRHOKIN) THEN
+        II=5
+        DO ISPIN=1,NSPIN
+          DO LM=1,LMRX
+            IF(LM.NE.1.AND.(.NOT.TNS)) EXIT ! USED TO RESTORE PREVIOUS STATE
+            XVAL(:,II+ISPIN,LM)=RHOKIN(:,LM,ISPIN)
+          ENDDO
+        ENDDO
+      END IF
+!
+!     ==========================================================================
+!     ==  CALCULATE EXCHANGE ENERGY FOR THE SPHERICAL DENSITY                 ==
+!     ==========================================================================
+      CALL TRACE$PASS('BEFORE DFT')
+      WORK1(:)=0.D0
+      XDER(:,:,:)=0.D0
+      DO IR=1,NR
+!       ==  CYCLE IF THE TOTAL DENSITY VANISHES ================================
+        IF(XVAL(IR,1,1).LE.0.D0) CYCLE
+!       == NOW CALL DFT ROUTINE ================================================
+        VAL7(:)=XVAL(IR,:,1)*Y0
+        CALL DFT3_META(VAL7,EXC1,VXC7,V2XC7,V3XC7)
+!       == NOW CALCULATE ENERGY DENSITY AND DERIVATIVES ========================
+        WORK1(IR)=FOURPI*EXC1
+        XDER(IR,:,1)  =FOURPI*VXC7(:)*Y0
+        DO LM=2,LMRX
+          DO I=1,IMAX        ! IMAX=<5 
+            DO J=1,IMAX
+              WORK1(IR)=WORK1(IR) &
+       &              +0.5D0*XVAL(IR,I,LM)*V2XC7(I,J)*XVAL(IR,J,LM)
+              XDER(IR,:,1)=XDER(IR,:,1) &
+       &              +0.5D0*Y0*XVAL(IR,I,LM)*V3XC7(:,I,J)*XVAL(IR,J,LM)
+              XDER(IR,I,LM)=XDER(IR,I,LM)+0.5D0*V2XC7(I,J)*XVAL(IR,J,LM)
+              XDER(IR,J,LM)=XDER(IR,J,LM)+0.5D0*V2XC7(I,J)*XVAL(IR,I,LM)
+            ENDDO
+          ENDDO
+        ENDDO
+      ENDDO
+      CALL RADIAL$INTEGRAL(GID,NR,WORK1(:)*R(:)**2,EXC)
+!
+!     ==========================================================================
+!     ==  TRANSFORM POTENTIALS FOR SPHERICAL PART                             ==
+!     ==========================================================================
+      ALLOCATE(VGRHO(NR,LMRX,NSPIN))
+      VRHO(:,:,:)=0.D0
+      VGRHO(:,:,:)=0.D0
+      VRHOKIN(:,:,:)=0.D0
+      DO ISPIN=1,NSPIN
+        DO LM=1,LMRX
+          VRHO(:,LM,ISPIN)=XDER(:,ISPIN,LM)
+        ENDDO
+      ENDDO
+      IF(TGRA) THEN
+        II=2
+        DO ISPIN1=1,NSPIN
+          DO ISPIN2=ISPIN1,1,-1
+            II=II+1
+!           == FIRST RESOLVE XVAL(:,II,1) ======================================
+            DO LM=1,LMRX
+              IF(LM.NE.1.AND.(.NOT.TNS)) EXIT ! USED TO RESTORE PREVIOUS STATE
+              L=INT(SQRT(REAL(LM-1,KIND=8))+1.D-5)
+              FAC=REAL(L*(L+1),KIND=8)
+!             == THE FOLLOWING LINES DIVIDE BY ZERO IF R=0. ====================
+!             == THE VALUES ARE OVERWRITTEN AT THE END OF THE ROUTINE... =======
+              VRHO(:,LM,ISPIN1)  =VRHO(:,LM,ISPIN1) &
+      &                 +CG0LL*FAC/R(:)**2*XDER(:,II,1)*RHO(:,LM,ISPIN2)
+              VRHO(:,LM,ISPIN2)  =VRHO(:,LM,ISPIN2) &
+      &                 +CG0LL*FAC/R(:)**2*XDER(:,II,1)*RHO(:,LM,ISPIN1)
+              VGRHO(:,LM,ISPIN1) =VGRHO(:,LM,ISPIN1) &
+      &                 +CG0LL*XDER(:,II,1)*GRHO(:,LM,ISPIN2)
+              VGRHO(:,LM,ISPIN2) =VGRHO(:,LM,ISPIN2) &
+      &                 +CG0LL*XDER(:,II,1)*GRHO(:,LM,ISPIN1)
+            ENDDO
+!           == NOW RESOLVE XVAL(:,II,LM) =======================================
+            DO LM=2,LMRX
+              IF(.NOT.TNS) EXIT ! USED TO RESTORE PREVIOUS STATE
+              VGRHO(:,1,ISPIN1) =VGRHO(:,1,ISPIN1) &
+      &                 +XX*CG0LL*XDER(:,II,LM)*GRHO(:,LM,ISPIN2)
+              VGRHO(:,1,ISPIN2) =VGRHO(:,1,ISPIN2) &
+      &                 +XX*CG0LL*XDER(:,II,LM)*GRHO(:,LM,ISPIN1)
+              VGRHO(:,LM,ISPIN2)=VGRHO(:,LM,ISPIN2) &
+      &                 +XX*CG0LL*XDER(:,II,LM)*GRHO(:,1,ISPIN1)
+              VGRHO(:,LM,ISPIN1)=VGRHO(:,LM,ISPIN1) &
+      &                 +XX*CG0LL*XDER(:,II,LM)*GRHO(:,1,ISPIN2)
+            ENDDO
+          ENDDO
+        ENDDO               
+      END IF
+      IF(TRHOKIN) THEN
+        II=5
+        DO ISPIN=1,NSPIN
+          DO LM=1,LMRX
+            VRHOKIN(:,LM,ISPIN)=XDER(:,II+ISPIN,LM)
+          ENDDO
+        ENDDO
+      END IF
+!
+!     ==========================================================================
+!     ==  TRANSFORM GRADIENT POTENTIAL BACK TO POTENTIALS                     ==
+!     ==  V = V -1/R**2 D/DR [ R**2 VGRHO ]                                   ==
+!     ==  V = V -[2/R VGRHO+ D/DR VGRHO ]                                     ==
+!     ==========================================================================
+      IF(TGRA) THEN
+        DO ISPIN=1,NSPIN
+          DO LM=1,LMRX
+            IF(LM.NE.1.AND.(.NOT.TNS)) EXIT ! USED TO RESTORE PREVIOUS STATE
+!           == FIRST ALTERNATIVE
+!           CALL RADIAL$DERIVE(GID,NR,VGRHO(:,LM,ISPIN),WORK2)   !NOT SO 
+!           WORK1(:)=2.D0/R(:)*VGRHO(:,LM,ISPIN)+WORK2(:)  !GOOD
+!           ==  SECOND ALTERNATIVE APPEARS TO BE MORE ACCURATE
+            WORK2(:)=VGRHO(:,LM,ISPIN)*R(:)**2
+            CALL RADIAL$DERIVE(GID,NR,WORK2,WORK1)
+            WORK1(2:)=WORK1(2:)/R(2:)**2
+            WORK(1)=WORK(2)  ! AVOID DIVIDE BY ZERO
+!           == ALTERNATIVES FINISHED
+            VRHO(:,LM,ISPIN)=VRHO(:,LM,ISPIN)-WORK1(:)
+          ENDDO
+        ENDDO
+      ENDIF
+      DEALLOCATE(VGRHO)
+!
+!     ==========================================================================
+!     ==   CORRECT FOR DIVERGENCE AT THE ORIGIN:                              ==
+!     ==   IF A SHIFTED LOGARITHMIC GRID IS USED THE FIRST GRID POINT         ==
+!     ==   IS MESSED UP BECAUSE OF FACTORS 1/R                                ==
+!     ==========================================================================
+      IF(R(1).LT.1.D-5) THEN
+        VRHO(1,:,:)=VRHO(2,:,:)
+        VRHOKIN(1,:,:)=VRHOKIN(2,:,:)
+      END IF
+!
+!     ==========================================================================
+!     ==  TRANSFORM GRADIENT POTENTIAL BACK TO POTENTIALS                     ==
+!     ==========================================================================
+      VXC(:,:,1)=VRHO(:,:,1)
+      IF(TRHOKIN) POTKIN(:,:,1)=VRHOKIN(:,:,1)
+      IF(NDIMD.EQ.2) THEN
+        VXC(:,:,2)=VRHO(:,:,2)
+        IF(TRHOKIN) POTKIN(:,:,2)=VRHOKIN(:,:,2)
+      ELSE IF(NDIMD.EQ.4) THEN
+        CALL AUGMENTATION_NCOLLTRANS(GID,'POT',NR,LMRX,RHOIN,RHO,VRHO,VXC)
+        IF(TRHOKIN) THEN
+          CALL AUGMENTATION_NCOLLTRANS(GID,'POT',NR,LMRX &
+    &                                 ,RHOKININ,RHOKIN,VRHOKIN,POTKIN)
+        END IF
+      END IF     
+      DEALLOCATE(RHO)
+      DEALLOCATE(GRHO)
+      DEALLOCATE(VRHO)
+!
+!     ==========================================================================
+!     ==  Last fix: apparently there is a sign error which is fixed here      ==
+!     ==  empirically                                                         ==
+!     ==========================================================================
+      potkin=-potkin
+                      CALL TRACE$POP
       RETURN
       END
 !
