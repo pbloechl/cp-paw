@@ -321,7 +321,8 @@
       END
 !
 !     ...1.........2.........3.........4.........5.........6.........7.........8
-      SUBROUTINE POTENTIAL$VOFRHO(NRL,NDIMD,RHO,LMRXX_,NAT_,QLM,VQLM &
+      SUBROUTINE POTENTIAL$VOFRHO(NRL,NDIMD,RHO,TRHOKIN,RHOKIN &
+     &                           ,LMRXX_,NAT_,QLM,VQLM &
      &                           ,R0,FORCE,RBAS,STRESS,RHOB)
 !     **************************************************************************
 !     **  MAIN INTERFACE FOR POTENTIAL OBJECT                                 **
@@ -341,7 +342,9 @@
       REAL(8)   ,INTENT(IN)    :: RBAS(3,3)
       REAL(8)   ,INTENT(OUT)   :: STRESS(3,3)
       REAL(8)   ,INTENT(OUT)   :: RHOB
-      REAL(8)   ,INTENT(INOUT) :: RHO(NRL,NDIMD)
+      REAL(8)   ,INTENT(INOUT) :: RHO(NRL,NDIMD)    !DENSITY/POTENTIAL
+      LOGICAL(4),INTENT(IN)    :: TRHOKIN
+      REAL(8)   ,INTENT(INOUT) :: RHOKIN(NRL,NDIMD) !EKIN DENSITY/POTENTIAL
       INTEGER(4),ALLOCATABLE   :: ISPECIES(:) !(NAT) 
       REAL(8)   ,ALLOCATABLE   :: G2(:)       !(NGL)
       REAL(8)   ,ALLOCATABLE   :: GVEC(:,:)     !(3,NGL)
@@ -351,6 +354,7 @@
       INTEGER(4)               :: ISVAR
       LOGICAL(4)               :: TGRA
       REAL(8)   ,ALLOCATABLE   :: RHOTEMP(:,:)
+      REAL(8)   ,ALLOCATABLE   :: RHOKINTEMP(:,:)
       REAL(8)                  :: SVAR
       REAL(8)   ,ALLOCATABLE   :: VEXT(:)
       REAL(8)   ,ALLOCATABLE   :: FORCEEXT (:,:), STRESSEXT(:,:)
@@ -433,8 +437,19 @@
           RHOTEMP(IR,1)=RHO(IR,1)
           RHOTEMP(IR,2)=SQRT(RHO(IR,2)**2+RHO(IR,3)**2+RHO(IR,4)**2)
         ENDDO
+        IF(TRHOKIN) THEN
+          ALLOCATE(RHOKINTEMP(NRL,2))
+          DO IR=1,NRL
+            RHOKINTEMP(IR,1)=RHO(IR,1)
+            RHOKINTEMP(IR,2)=SQRT(RHOKIN(IR,2)**2+RHOKIN(IR,3)**2 &
+      &                                          +RHOKIN(IR,4)**2)
+          ENDDO
+        ELSE
+          ALLOCATE(RHOKINTEMP(NRL,2))
+        END IF
         CALL POTENTIAL_VOFRHO(LMRXX,NRL,NSP,NAT,ISPECIES,R0,FORCE &
-     &                        ,NR1GLOB,NR1L,NR2,NR3,RHOTEMP,NSPIN,RBAS &
+     &                       ,NR1GLOB,NR1L,NR2,NR3,RHOTEMP,TRHOKIN,RHOKINTEMP &
+     &                       ,NSPIN,RBAS &
      &       ,PSCOREG,DPSCOREG,VBARG,DVBARG,YLMOFG,G0,V0,QLM,VQLM,LMRX &
      &                        ,NGL,GVEC,G2,RHOB,TSTRESS,DG0,DV0,STRESS)
         DO IR=1,NRL
@@ -446,10 +461,24 @@
           RHO(IR,4)=SVAR*RHO(IR,4)
         ENDDO
         DEALLOCATE(RHOTEMP)
+        IF(TRHOKIN) THEN
+          DO IR=1,NRL
+            RHOKIN(IR,1)=RHOKINTEMP(IR,1)
+            SVAR=SQRT(RHOKIN(IR,2)**2+RHOKIN(IR,3)**2+RHOKIN(IR,4)**2)
+            SVAR=RHOKINTEMP(IR,2)/(SVAR+1.D-300)
+            RHOKIN(IR,2)=SVAR*RHOKIN(IR,2)
+            RHOKIN(IR,3)=SVAR*RHOKIN(IR,3)
+            RHOKIN(IR,4)=SVAR*RHOKIN(IR,4)
+          ENDDO
+          DEALLOCATE(RHOKINTEMP)
+        END IF
+!
+!     == COLLINEAR CASE (NDIMD=1 OR 2) =========================================
       ELSE
         NSPIN=NDIMD
         CALL POTENTIAL_VOFRHO(LMRXX,NRL,NSP,NAT,ISPECIES,R0,FORCE &
-     &                            ,NR1GLOB,NR1L,NR2,NR3,RHO,NSPIN,RBAS &
+     &                       ,NR1GLOB,NR1L,NR2,NR3,RHO,TRHOKIN,RHOKIN &
+     &                       ,NSPIN,RBAS &
      &       ,PSCOREG,DPSCOREG,VBARG,DVBARG,YLMOFG,G0,V0,QLM,VQLM,LMRX &
      &                        ,NGL,GVEC,G2,RHOB,TSTRESS,DG0,DV0,STRESS)
       END IF
@@ -486,7 +515,7 @@
 !     ...1.........2.........3.........4.........5.........6.........7.........8
       SUBROUTINE POTENTIAL_VOFRHO(LMRXX,NRL &
      &                    ,NSP,NAT,ISPECIES,TAU0,FION &
-     &                    ,NR1GLOB,NR1,NR2,NR3,RHOE,NDIMD,RBAS &
+     &                    ,NR1GLOB,NR1,NR2,NR3,RHOE,TRHOKIN,RHOKIN,NDIMD,RBAS &
      &         ,PSCORG,DPSCORG,VBARG,DVBARG,YLMOFG,G0,V0,QLM,VQLM,LMRX &
      &                    ,NGL,GVEC,G2,RHOB,TSTRESS,DG0,DV0,STRESS)
 !     **************************************************************************
@@ -520,7 +549,9 @@
       INTEGER(4),INTENT(IN)   :: NR1
       INTEGER(4),INTENT(IN)   :: NR2
       INTEGER(4),INTENT(IN)   :: NR3
-      REAL(8)   ,INTENT(INOUT):: RHOE(NRL,NDIMD)
+      REAL(8)   ,INTENT(INOUT):: RHOE(NRL,NDIMD)   ! PS DENSITY/POTENTIAL
+      LOGICAL(4),INTENT(IN)   :: TRHOKIN   ! RHOKIN PRESENT?
+      REAL(8)   ,INTENT(INOUT):: RHOKIN(NRL,NDIMD) ! PS EKIN DENSITY/POTENTIAL
       REAL(8)   ,INTENT(IN)   :: RBAS(3,3)
       REAL(8)   ,INTENT(IN)   :: PSCORG(NGL,NSP)
       REAL(8)   ,INTENT(IN)   :: DPSCORG(NGL,NSP)
@@ -761,7 +792,7 @@
                            CALL TIMING$CLOCKON('VOFRHO: XC-POTENTIAL')
       EXC=0.D0
       CALL POTENTIAL_XC(TGRA,NSPIN,NRL,NRL,NR1GLOB*NR2*NR3,CELLVOL &
-     &                 ,RHOE,GRHO,EXC,TSTRESS,STRESS1)
+     &                 ,RHOE,GRHO,TRHOKIN,RHOKIN,EXC,TSTRESS,STRESS1)
       STRESST(:,:)=STRESST(:,:)+STRESS1(:,:)
                            CALL TIMING$CLOCKOFF('VOFRHO: XC-POTENTIAL')
 !
@@ -785,7 +816,6 @@
         ENDDO
       ENDDO        
       DEALLOCATE(CWORK)
-
 !
 !     ==================================================================
 !     == SEND POTENTIAL TO OPTICS CODE                                ==
@@ -1335,11 +1365,10 @@
       RETURN
       END
 !
-!     ..................................................................
-      SUBROUTINE POTENTIAL_XC &
-     &     (TGRA,NSPIN,NNRX,NNR,NNRSCAL,CELLVOL,RHO,GRHO,EXC,TSTRESS,STRESS)
-!     ******************************************************************
-!     **                                                              **
+!     ...1.........2.........3.........4.........5.........6.........7.........8
+      SUBROUTINE POTENTIAL_XC(TGRA,NSPIN,NNRX,NNR,NNRSCAL,CELLVOL &
+     &                       ,RHO,GRHO,TRHOKIN,RHOKIN,EXC,TSTRESS,STRESS)
+!     **************************************************************************
 !     **  CALCULATES EXCHANGE AND CORRELATION ENERGY OF THE           **
 !     **  PSEUDO DENSITY                                              **
 !     **                                                              **
@@ -1359,10 +1388,14 @@
       REAL(8)   ,INTENT(IN)   :: CELLVOL      ! VOLUME OF THE UNIT CELL
       REAL(8)   ,INTENT(OUT)  :: EXC          ! EXCHANGE AND CORRELATION ENERGY
       REAL(8)   ,INTENT(INOUT):: RHO(NNRX,NSPIN)
-      REAL(8)   ,INTENT(INOUT):: GRHO(NNR,3,NSPIN) ! GRHO MUST NOT BE USED IF TGRA=.TRUE.
+      REAL(8)   ,INTENT(INOUT):: GRHO(NNR,3,NSPIN) 
+                                          ! GRHO MUST NOT BE USED IF TGRA=.TRUE.
+      LOGICAL(4),INTENT(IN)   :: TRHOKIN
+      REAL(8)   ,INTENT(INOUT):: RHOKIN(NNRX,NSPIN)
       LOGICAL(4),INTENT(IN)   :: TSTRESS
       REAL(8)   ,INTENT(OUT)  :: STRESS(3,3)
-      INTEGER(4),PARAMETER    :: NBLOCK=100    ! BLOCKS THE SUMMATION OVER GRID POINTS
+      INTEGER(4),PARAMETER    :: NBLOCK=100  ! BLOCKS THE SUM OVER GRID POINTS
+      REAL(8)   ,PARAMETER    :: PI=4.D0*ATAN(1.D0)
       LOGICAL(4)              :: TSPIN
       REAL(8)                 :: SXC,SSXC
       INTEGER(4)              :: IR,I,J
@@ -1374,11 +1407,15 @@
       REAL(8)                 :: GRHOT2                 ! |GRAD(RHOT)|**2
       REAL(8)                 :: GRHOS2                 ! |GRAD(RHOS)|**2
       REAL(8)                 :: GRHOST                 ! GRAD(RHOS)*GRAD(RHOT)
+      REAL(8)                 :: TAUT                   ! EKIN DENSITY (TOT)
+      REAL(8)                 :: TAUS                   ! EKIN DENSITY (SPIN)
       REAL(8)                 :: VT                     ! DE/DRHOT
       REAL(8)                 :: VS                     ! DE/DRHOS
       REAL(8)                 :: GVT2                   ! DE/D(GRHOT2)
       REAL(8)                 :: GVS2                   ! DE/D(GRHOS2)
       REAL(8)                 :: GVST                   ! DE/D(GRHOST)
+      REAL(8)                 :: VTAUT                   ! DE/DTAUT
+      REAL(8)                 :: VTAUS                   ! DE/DTAUS
       REAL(8)                 :: SVAR,SVAR1,SVAR2
       REAL(8)                 :: STRESS1(3,3),DIAGSTRESS,DIAGSTRESS1
 !     ******************************************************************
@@ -1433,11 +1470,26 @@
           GRHOS2=0.D0
           GRHOST=0.D0
         END IF
+        IF(TRHOKIN) THEN
+          TAUT=RHOKIN(IR,1) ! TOTAL KINETIC ENERGY DENSITY 
+          IF(TSPIN) THEN
+            TAUS=RHOKIN(IR,NSPIN)  !SPIN COMPONENT OF THE KINETIC ENERGY DENSITY
+          ELSE
+            TAUS=0.D0
+          END IF
+        END IF
 !
 !       ================================================================
 !       == EVALUATE DENSITY FUNCTIONAL                                ==
-!       ================================================================
+!       ========================================================================
+        IF(.NOT.TRHOKIN) THEN
         CALL DFT(RHOT,RHOS,GRHOT2,GRHOS2,GRHOST,EXC1,VT,VS,GVT2,GVS2,GVST)
+        ELSE
+!PRINT*,'MARKE 1 BEFORE CALLING DFT_META',RHOT,RHOS,GRHOT2,GRHOS2,TAUT,TAUS
+          CALL DFT_META(RHOT,RHOS,GRHOT2,GRHOS2,GRHOST,TAUT,TAUS &
+       &              ,EXC1,VT,VS,GVT2,GVS2,GVST,VTAUT,VTAUS)
+!PRINT*,'MARKE 2 AFTER CALLING DFT_META',EXC1
+        END IF
 !
 !       ================================================================
 !       == ADD TO TOTAL ENERGY AND POTENTIAL                          ==
@@ -1460,6 +1512,12 @@
             GRHO(IR,1,1)=GRHO(IR,1,1)+GRHOSX*GVST
             GRHO(IR,2,1)=GRHO(IR,2,1)+GRHOSY*GVST
             GRHO(IR,3,1)=GRHO(IR,3,1)+GRHOSZ*GVST
+          END IF
+        END IF
+        IF(TRHOKIN) THEN
+          RHOKIN(IR,1)=VTAUT
+          IF(TSPIN) THEN
+            RHOKIN(IR,NSPIN)=VTAUS
           END IF
         END IF
 !
@@ -1497,6 +1555,12 @@
               STRESS1(2,3)=STRESS1(2,3)-GRHOSY*GRHOSZ*SVAR1 &
      &                 -(GRHOTY*GRHOSZ+GRHOSY*GRHOTZ)*SVAR2
             END IF
+          END IF
+          IF(TRHOKIN) THEN
+            CALL ERROR$MSG('STRESSES FOR META-GGA NOT IMPLEMENTED YET')
+            CALL ERROR$L4VAL('TRHOKIN',TRHOKIN)
+            CALL ERROR$L4VAL('TSTRESS',TSTRESS)
+            CALL ERROR$STOP('POTENTIAL_XC')
           END IF
         END IF
 !
