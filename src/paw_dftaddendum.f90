@@ -161,10 +161,52 @@ END MODULE NEWDFT_MODULE
       CALL ERROR$STOP('PAWLIBXC$GGA3')
       RETURN
       END
+!
+!     ...1.........2.........3.........4.........5.........6.........7.........8
+      SUBROUTINE PAWLIBXC$MGGA(VAL,EXC,DER)
+      REAL(8)   ,INTENT(IN) :: VAL(7)      ! (RHOT,RHOS,GRHOT2,GRHOS2,GRHOTS 
+                                           !  ,TAUT,TAUS)
+      REAL(8)   ,INTENT(OUT):: EXC         ! 
+      REAL(8)   ,INTENT(OUT):: DER(7)      ! 
+      CALL ERROR$MSG('LIBXC NOT AVAILABLE. INSTALL WITH LIBXC')
+      CALL ERROR$STOP('PAWLIBXC$MGGA')
+      RETURN
+      END
+!
+!     ...1.........2.........3.........4.........5.........6.........7.........8
+      SUBROUTINE PAWLIBXC$MGGA2(VAL,EXC,DER,DER2)
+      REAL(8)   ,INTENT(IN) :: VAL(7)      ! (RHOT,RHOS,GRHOT2,GRHOS2,GRHOTS 
+                                           !  ,TAUT,TAUS)
+      REAL(8)   ,INTENT(OUT):: EXC         ! 
+      REAL(8)   ,INTENT(OUT):: DER(7)      ! 
+      REAL(8)   ,INTENT(OUT):: DER2(7,7)   ! 
+      CALL ERROR$MSG('LIBXC NOT AVAILABLE. INSTALL WITH LIBXC')
+      CALL ERROR$STOP('PAWLIBXC$MGGA2')
+      RETURN
+      END
+!
+!     ...1.........2.........3.........4.........5.........6.........7.........8
+      SUBROUTINE PAWLIBXC$MGGA3(VAL,EXC,DER,DER2,DER3)
+      REAL(8)   ,INTENT(IN) :: VAL(7)      ! (RHOT,RHOS,GRHOT2,GRHOS2,GRHOTS 
+                                           !  ,TAUT,TAUS)
+      REAL(8)   ,INTENT(OUT):: EXC         ! 
+      REAL(8)   ,INTENT(OUT):: DER(7)      ! 
+      REAL(8)   ,INTENT(OUT):: DER2(7,7)   ! 
+      REAL(8)   ,INTENT(OUT):: DER3(7,7,7) ! 
+      CALL ERROR$MSG('LIBXC NOT AVAILABLE. INSTALL WITH LIBXC')
+      CALL ERROR$STOP('PAWLIBXC$MGGA3')
+      RETURN
+      END
 #ELSE
 !
 !     ...1.........2.........3.........4.........5.........6.........7.........8
       MODULE PAWLIBXC_MODULE
+
+!REMARK USE THE LIBXC FUNCTION F_TO_C_STRING(F_STRING) AND
+!C_TO_F_STRING TO CONVERT FORTRAN STRING VARIABLES INTO C-STRING
+!VARIABLES
+
+
 !     **************************************************************************
 !     ** COMMON INFORMATION FOR INTERFACING CP-PAW WITH LIBXC                 **
 !     **                                                                      **
@@ -1225,7 +1267,7 @@ END MODULE NEWDFT_MODULE
      &                          ,XC_FUNC &
      &                          ,NIDX &
      &                          ,XCID
-      use strings_module
+      USE STRINGS_MODULE
       IMPLICIT NONE
       CHARACTER(*),INTENT(IN) :: ID
       INTEGER(4)  ,INTENT(IN) :: LEN
@@ -1527,6 +1569,262 @@ END MODULE NEWDFT_MODULE
      &           ,EXCARR,VRHO,VSIGMA &
      &           ,V2RHO2,V2RHOSIGMA ,V2SIGMA2 &
      &           ,V3RHO3,V3RHO2SIGMA,V3RHOSIGMA2, V3SIGMA3)
+      END SELECT
+
+      EXC=EXCARR(1)
+      DER=0.D0
+      DER2=0.D0
+      DER3=0.D0
+      DER(1:2)=VRHO(:)
+      DER(3:5)=VSIGMA(:)      
+      DER2(1,1)=V2RHO2(1)
+      DER2(1,2)=V2RHO2(2)
+      DER2(2,2)=V2RHO2(3)
+      DER2(1,3)=V2RHOSIGMA(1)
+      DER2(1,4)=V2RHOSIGMA(2)
+      DER2(1,5)=V2RHOSIGMA(3)
+      DER2(2,3)=V2RHOSIGMA(4)
+      DER2(2,4)=V2RHOSIGMA(5)
+      DER2(2,5)=V2RHOSIGMA(6)
+      DER2(3,3)=V2SIGMA2(1)
+      DER2(3,4)=V2SIGMA2(2)
+      DER2(3,5)=V2SIGMA2(3)
+      DER2(4,4)=V2SIGMA2(4)
+      DER2(4,5)=V2SIGMA2(5)
+      DER2(5,5)=V2SIGMA2(6)
+
+      DER3(1,1,1)=V3RHO3(1)
+      DER3(1,1,2)=V3RHO3(2)
+      DER3(1,2,2)=V3RHO3(3)
+      DER3(2,2,2)=V3RHO3(4)
+      DER3(1,1,3)=V3RHO2SIGMA(1)
+      DER3(1,1,4)=V3RHO2SIGMA(2)
+      DER3(1,1,5)=V3RHO2SIGMA(3)
+      DER3(1,2,3)=V3RHO2SIGMA(4)
+      DER3(1,2,4)=V3RHO2SIGMA(5)
+      DER3(1,2,5)=V3RHO2SIGMA(6)
+      DER3(2,2,3)=V3RHO2SIGMA(7)
+      DER3(2,2,4)=V3RHO2SIGMA(8)
+      DER3(2,2,5)=V3RHO2SIGMA(9)
+      DER3(1,3,3)=V3RHOSIGMA2(1)
+      DER3(1,3,4)=V3RHOSIGMA2(2)
+      DER3(1,3,5)=V3RHOSIGMA2(3)
+      DER3(1,4,4)=V3RHOSIGMA2(4)
+      DER3(1,4,5)=V3RHOSIGMA2(5)
+      DER3(1,5,5)=V3RHOSIGMA2(6)
+      DER3(2,3,3)=V3RHOSIGMA2(7)
+      DER3(2,3,4)=V3RHOSIGMA2(8)
+      DER3(2,3,5)=V3RHOSIGMA2(9)
+      DER3(2,4,4)=V3RHOSIGMA2(10)
+      DER3(2,4,5)=V3RHOSIGMA2(11)
+      DER3(2,5,5)=V3RHOSIGMA2(12)
+      DER3(3,3,3)=V3SIGMA3(1)
+      DER3(3,3,4)=V3SIGMA3(2)
+      DER3(3,3,5)=V3SIGMA3(3)
+      DER3(3,4,4)=V3SIGMA3(4)
+      DER3(3,4,5)=V3SIGMA3(5)
+      DER3(3,5,5)=V3SIGMA3(6)
+      DER3(4,4,4)=V3SIGMA3(7)
+      DER3(4,4,5)=V3SIGMA3(8)
+      DER3(4,5,5)=V3SIGMA3(9)
+      DER3(5,5,5)=V3SIGMA3(10)
+!
+!     ==========================================================================
+!     == COMPLETE MATRIX ELEMENTS                                             ==
+!     ==========================================================================
+      DO I2=1,5
+        DO I1=1,I2-1
+          DER2(I2,I1)=DER2(I1,I2)
+        ENDDO
+      ENDDO
+!
+      DO I3=1,5
+        DO I2=1,I3-1
+          DO I1=1,I2-1
+            DER3(I2,I3,I1)=DER3(I1,I2,I3)
+            DER3(I3,I2,I1)=DER3(I1,I2,I3)
+            DER3(I1,I3,I2)=DER3(I1,I2,I3)
+            DER3(I3,I1,I2)=DER3(I1,I2,I3)
+            DER3(I2,I1,I3)=DER3(I1,I2,I3)
+          ENDDO
+        ENDDO
+      ENDDO
+!
+!     ==========================================================================
+!     == TRANSFORM BACK                                                       ==
+!     ==========================================================================
+      DER=MATMUL(DER,MAT)
+      DER2=MATMUL(DER2,MAT)
+      DO I1=1,5
+        DER2(:,I1)=MATMUL(DER2(:,I1),MAT)
+      ENDDO
+      DO I1=1,5
+        DO I2=1,5
+          DER3(I1,I2,:)=MATMUL(DER3(I1,I2,:),MAT)
+        ENDDO
+      ENDDO
+      DO I1=1,5
+        DO I2=1,5
+          DER3(:,I1,I2)=MATMUL(DER3(:,I1,I2),MAT)
+        ENDDO
+      ENDDO
+      DO I1=1,5
+        DO I2=1,5
+          DER3(I1,:,I2)=MATMUL(DER3(I1,:,I2),MAT)
+        ENDDO
+      ENDDO
+      RETURN
+      END
+!
+!     ...1.........2.........3.........4.........5.........6.........7.........8
+      SUBROUTINE PAWLIBXC$MGGA(VAL,EXC,DER)
+      REAL(8)   ,INTENT(IN) :: VAL(9)      ! (RHOT,RHOS,GRHOT2,GRHOS2,GRHOTS 
+                                           !  ,TAUT,TAUS)
+      REAL(8)   ,INTENT(OUT):: EXC         ! 
+      REAL(8)   ,INTENT(OUT):: DER(9)      ! 
+      CALL ERROR$MSG('METAGGA INTERFACE TO LIBXC YET NOT AVAILABLE')
+      CALL ERROR$STOP('PAWLIBXC$MGGA')
+      RETURN
+      END
+!
+!     ...1.........2.........3.........4.........5.........6.........7.........8
+      SUBROUTINE PAWLIBXC$MGGA2(VAL,EXC,DER,DER2)
+      REAL(8)   ,INTENT(IN) :: VAL(9)      ! (RHOT,RHOS,GRHOT2,GRHOS2,GRHOTS 
+                                           !  ,TAUT,TAUS)
+      REAL(8)   ,INTENT(OUT):: EXC         ! 
+      REAL(8)   ,INTENT(OUT):: DER(9)      ! 
+      REAL(8)   ,INTENT(OUT):: DER2(9,9)   ! 
+      CALL ERROR$MSG('METAGGA INTERFACE TO LIBXC YET NOT AVAILABLE')
+      CALL ERROR$STOP('PAWLIBXC$MGGA2')
+      RETURN
+      END
+!
+!     ...1.........2.........3.........4.........5.........6.........7.........8
+      SUBROUTINE PAWLIBXC$MGGA3(VAL,EXC,DER,DER2,DER3)
+      REAL(8)   ,INTENT(IN) :: VAL(9)      ! (RHOT,RHOS,GRHOT2,GRHOS2,GRHOTS 
+                                           !  ,TAUT,TAUS)
+      REAL(8)   ,INTENT(OUT):: EXC         ! 
+      REAL(8)   ,INTENT(OUT):: DER(9)      ! 
+      REAL(8)   ,INTENT(OUT):: DER2(9,9)   ! 
+      REAL(8)   ,INTENT(OUT):: DER3(9,9,9) ! 
+      CALL ERROR$MSG('METAGGA INTERFACE TO LIBXC YET NOT AVAILABLE')
+      CALL ERROR$STOP('PAWLIBXC$MGGA3')
+      RETURN
+      END
+!
+!     ...1.........2.........3.........4.........5.........6.........7.........8
+      SUBROUTINE PAWLIBXC_MGGA3_A(XC_FUNC,VAL,EXC,DER,DER2,DER3)
+!     **************************************************************************
+!     ** DFT3 INTERFACE TO LIBXC CALL FOR THE GGA FAMILY                      **
+!     **************************************************************************
+      USE XC_F03_LIB_M    , ONLY : XC_F03_FUNC_T &               !TYPE
+     &                            ,XC_F03_FUNC_INFO_T &          !TYPE
+     &                            ,XC_F03_LDA_EXC_VXC_FXC_KXC &  !FUNCTION
+     &                            ,XC_F03_GGA_EXC_VXC_FXC_KXC &  !FUNCTION
+     &                            ,XC_F03_MGGA_EXC_VXC_FXC_KXC & !FUNCTION
+     &                            ,XC_F03_FUNC_GET_INFO &        !FUNCTION
+     &                            ,XC_F03_FUNC_INFO_GET_FAMILY & !FUNCTION
+     &                            ,XC_FAMILY_LDA &         !VALUE
+     &                            ,XC_FAMILY_GGA &         !VALUE
+     &                            ,XC_FAMILY_MGGA &        !VALUE
+     &                            ,XC_FAMILY_HYB_GGA &     !VALUE
+     &                            ,XC_FAMILY_HYB_MGGA      !VALUE
+      USE PAWLIBXC_MODULE, ONLY : MAT => MAT_MGGA
+      IMPLICIT NONE
+      TYPE(XC_F03_FUNC_T),INTENT(IN) :: XC_FUNC
+      REAL(8)   ,INTENT(IN) :: VAL(9) !(RHOT,RHOS,GRHOT2,GRHOS2,GRHOTS,TAUT,TAUS)
+      REAL(8)   ,INTENT(OUT):: EXC         ! XC ENERGY DENSITY 
+      REAL(8)   ,INTENT(OUT):: DER(9)      ! FIRST DERIVARIVES OF EXC
+      REAL(8)   ,INTENT(OUT):: DER2(9,9)   ! SECOND DERIVARIVES OF EXC
+      REAL(8)   ,INTENT(OUT):: DER3(9,9,9) ! THIRD DERIVARIVES OF EXC
+      INTEGER(8),PARAMETER  :: NP=1
+      TYPE(XC_F03_FUNC_INFO_T):: XC_INFO
+      REAL(8)               :: EXCARR(1)
+      REAL(8)               :: RHO(2)         
+      REAL(8)               :: SIGMA(3)       
+      REAL(8)               :: VRHO(2)         ! 0,1
+      REAL(8)               :: VSIGMA(3)       ! 0,1,2
+      REAL(8)               :: V2RHO2(3)       ! 00,01,11
+      REAL(8)               :: V2RHOSIGMA(6)   ! 00,01,02,10,11,12
+      REAL(8)               :: V2SIGMA2(6)     ! 00,01,02,11,12,22
+      REAL(8)               :: V3RHO3(4)       ! 000,001,011,111
+      REAL(8)               :: V3RHO2SIGMA(9) 
+    !                          ! 000,001,0002,010,011,012,110,111,112
+      REAL(8)               :: V3RHOSIGMA2(12)
+     !                         ! 000,001,002,011,012,022,100,101,102,111,112,122
+      REAL(8)               :: V3SIGMA3(10)
+                               ! 000,001,002,011,012,022,111,112,122,222
+      REAL(8)               :: V4RHO4(5)
+      REAL(8)               :: V4RHO3SIGMA(12)
+      REAL(8)               :: V4RHO2SIGMA2(15)
+      REAL(8)               :: V4RHOSIGMA3(20)
+      REAL(8)               :: V4SIGMA4(15)
+
+
+      REAL(8)               :: LAPL(1)       
+      REAL(8)               :: TAU(1)       
+      REAL(8)               :: VLAPL(1),VTAU(1) &  
+     &         ,V2RHOLAPL(1),V2RHOTAU(1),V2SIGMALAPL(1) &
+     &         ,V2SIGMATAU(1),V2LAPL2(1),V2LAPLTAU(1),V2TAU2(1) &
+     &         ,V3RHO2LAPL(1),V3RHO2TAU(1),V3RHOSIGMALAPL(1) &
+     &         ,V3RHOSIGMATAU(1),V3RHOLAPL2(1),V3RHOLAPLTAU(1) &
+     &         ,V3RHOTAU2(1),V3SIGMA2LAPL(1),V3SIGMA2TAU(1),V3SIGMALAPL2(1) &
+     &         ,V3SIGMALAPLTAU(1),V3SIGMATAU2(1),V3LAPL3(1),V3LAPL2TAU(1) &
+     &         ,V3LAPLTAU2(1),V3TAU3(1)
+
+
+      INTEGER(4)            :: I1,I2,I3
+      REAL(8)               :: VAL1(9)
+!     **************************************************************************
+
+CALL ERROR$MSG('ROUTINE NOT FINISHED YET')
+! WATCH OUT REGARDING DIMENSIONS IN THE CALLING SEQUENCE. IT IS CALLED
+! WITH A 7-DIMENSIONAL ARRAY RATHER THAN A 9 DIMENSIONAL ARRAY.
+CALL ERROR$STOP('PAWLIBXC_MGGA3_A')
+
+      RHO(1)=0.5D0*(VAL(1)+VAL(2))                 !RHOUP
+      RHO(2)=0.5D0*(VAL(1)-VAL(2))                 !RHODN
+      SIGMA(1)=0.25D0*(VAL(3)+VAL(4)+2.D0*VAL(5))  !GRHOUP*GRHOUP
+      SIGMA(2)=0.25D0*(VAL(3)-VAL(4))              !GRHOUP*GRHODN
+      SIGMA(3)=0.25D0*(VAL(3)+VAL(4)-2.D0*VAL(5))  !GRHODN*GRHODN
+
+!
+!     ==========================================================================
+!     == EVALUATE DENSITY FUNCTIONAL AND DERIVATIVES                          ==
+!     ==========================================================================
+!PRINT*,'BEFORE XC_F03_GGA'
+!PRINT*,'BEFORE XC_F03_GGA_EXC_VXC_FXC_KXC'
+! F03_GGA_EXC_VXC_FXC_KXC?
+
+      XC_INFO=XC_F03_FUNC_GET_INFO(XC_FUNC)
+      SELECT CASE (XC_F03_FUNC_INFO_GET_FAMILY(XC_INFO))
+        CASE(XC_FAMILY_LDA)
+          CALL XC_F03_LDA_EXC_VXC_FXC_KXC(XC_FUNC,NP,RHO &
+     &           ,EXCARR,VRHO,V2RHO2,V3RHO3)
+          VSIGMA=0.D0
+          V2RHOSIGMA=0.D0
+          V2SIGMA2=0.D0
+          V3RHO2SIGMA=0.D0
+          V3RHOSIGMA2=0.D0
+          V3SIGMA3=0.D0
+        CASE(XC_FAMILY_GGA,XC_FAMILY_HYB_GGA)
+          CALL XC_F03_GGA_EXC_VXC_FXC_KXC(XC_FUNC,NP,RHO,SIGMA &
+     &           ,EXCARR,VRHO,VSIGMA &
+     &           ,V2RHO2,V2RHOSIGMA ,V2SIGMA2 &
+     &           ,V3RHO3,V3RHO2SIGMA,V3RHOSIGMA2, V3SIGMA3)
+        CASE(XC_FAMILY_MGGA,XC_FAMILY_HYB_MGGA)
+          CALL XC_F03_MGGA_EXC_VXC_FXC_KXC(XC_FUNC,NP,RHO,SIGMA,LAPL,TAU &
+     &         ,EXCARR &
+     &         ,VRHO,VSIGMA,VLAPL,VTAU       &
+     &         ,V2RHO2,V2RHOSIGMA,V2RHOLAPL,V2RHOTAU,V2SIGMA2,V2SIGMALAPL &
+     &         ,V2SIGMATAU,V2LAPL2,V2LAPLTAU,V2TAU2 &
+     &         ,V3RHO3,V3RHO2SIGMA,V3RHO2LAPL,V3RHO2TAU,V3RHOSIGMA2 &
+     &         ,V3RHOSIGMALAPL,V3RHOSIGMATAU,V3RHOLAPL2,V3RHOLAPLTAU &
+     &         ,V3RHOTAU2,V3SIGMA3,V3SIGMA2LAPL,V3SIGMA2TAU,V3SIGMALAPL2 &
+     &         ,V3SIGMALAPLTAU,V3SIGMATAU2,V3LAPL3,V3LAPL2TAU &
+     &         ,V3LAPLTAU2,V3TAU3)
+
+
       END SELECT
 
       EXC=EXCARR(1)
