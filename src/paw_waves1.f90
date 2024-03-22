@@ -1678,6 +1678,11 @@ REAL(8) :: RBASM(3,3)
       END IF
 !
 !     ==========================================================================
+!     == SWITCH FOR META-GGA (KINETIC ENERGY DENSITY WILL BE CALCULATED)      ==
+!     ==========================================================================
+      CALL DFT$GETL4('META',TRHOKIN)
+!
+!     ==========================================================================
 !     == SWITCHES FOR FORCE AND STRESS CALCULATION                            ==
 !     ==========================================================================
       CALL CELL$GETL4('MOVE',TSTRESS)
@@ -1808,7 +1813,13 @@ END IF
 !     ==========================================================================
       NRL=MAP%NRL
       ALLOCATE(RHO(NRL,NDIMD))
+      IF(TRHOKIN) THEN  ! KINETIC ENERGY DENSITY IS REQUIRED
       ALLOCATE(RHOKIN(NRL,NDIMD))
+      ELSE
+!       == CAUTION!!! AN ARRAY OF SHAPE (1,1) IS PASSED TO A SUBROUTINE THAT ===
+!       == TAKES AB ARRAY OF SHAPE (NRL,NDIMD). IT IS NOT USED THOUGH ==========
+        ALLOCATE(RHOKIN(1,1))
+      END IF
       CALL WAVES$RHO(NRL,NDIMD,RHO,TRHOKIN,RHOKIN)  !<<<<<<<<<<<<<<<<<<<<<<<<<<<
 !
 !     ==========================================================================
@@ -1822,6 +1833,17 @@ IF(1.EQ.0) THEN
   SVAR1=SVAR1*SVAR2
   CALL MPE$COMBINE('MONOMER','+',SVAR1)   !LADUNGSDICHTE EINSAMMELN
   PRINT*,'TOTAL CHARGE IN PSEUDO WAVE FUNCTIONS W/O PSCORE ',SVAR1
+  IF(TRHOKIN) THEN
+    SVAR1=0.D0
+    DO IB=1,NRL
+      SVAR1=SVAR1+RHOKIN(IB,1)
+    ENDDO
+    CALL PLANEWAVE$GETR8('RWEIGHT',SVAR2)
+    SVAR1=SVAR1*SVAR2
+    CALL MPE$COMBINE('MONOMER','+',SVAR1)   !LADUNGSDICHTE EINSAMMELN
+    PRINT*,'TOTAL KINETIC ENERGY IN PSEUDO WAVE FUNCTIONS W/O PSCORE ',SVAR1
+  END IF
+  STOP 'FORCED'
 END IF
 !
 !     ==========================================================================
@@ -1874,7 +1896,7 @@ CALL ERROR$STOP('WAVES$ETOT')
 !     == POTENTIAL (POTENTIAL IS STORED BACK INTO THE DENSITY ARRAY!)         ==
 !     ==========================================================================
       ALLOCATE(VQLM(LMRXX,NAT))
-      CALL WAVES_VOFRHO(NRL,NDIMD,RHO,RHOB,NAT,LMRXX,QLM,VQLM)
+      CALL WAVES_VOFRHO(NRL,NDIMD,RHO,RHOB,TRHOKIN,RHOKIN,NAT,LMRXX,QLM,VQLM)
       DEALLOCATE(QLM)
 
 !      ALLOCATE(FORCET(3,NAT))
@@ -2013,6 +2035,14 @@ CALL ERROR$STOP('WAVES$ETOT')
           RHO(IR,1)=SVAR1+SVAR2
           RHO(IR,2)=SVAR1-SVAR2
         ENDDO
+        IF(TRHOKIN) THEN
+          DO IR=1,NRL
+            SVAR1=RHOKIN(IR,1)
+            SVAR2=RHOKIN(IR,2)
+            RHOKIN(IR,1)=SVAR1+SVAR2
+            RHOKIN(IR,2)=SVAR1-SVAR2
+          ENDDO
+        END IF
         DO IAT=1,NAT
           ISP=MAP%ISP(IAT)
           LMNX=MAP%LMNX(ISP)
@@ -2080,8 +2110,9 @@ CALL ERROR$STOP('WAVES$ETOT')
 !     ==  EVALUATE H*PSI                                                      ==
 !     ==========================================================================
 !PRINT*,'RHO',(SUM(ABS(RHO)).GT.0.D0.OR.SUM(ABS(RHO)).LE.0.D0)
-      CALL WAVES$HPSI(NRL,NDIMD,NAT,LMNXX,RHO,DH)
+      CALL WAVES$HPSI(NRL,NDIMD,NAT,LMNXX,RHO,TRHOKIN,RHOKIN,DH)
       DEALLOCATE(RHO)
+      DEALLOCATE(RHOKIN)
       DEALLOCATE(DH)
       DEALLOCATE(DO)
 !
@@ -2294,7 +2325,8 @@ CALL TIMING$CLOCKOFF('W:EXPECT')
       END
 !
 !     ...1.........2.........3.........4.........5.........6.........7.........8
-      SUBROUTINE WAVES_VOFRHO(NRL,NDIMD,RHO,RHOB,NAT,LMRXX,QLM,VQLM)
+      SUBROUTINE WAVES_VOFRHO(NRL,NDIMD,RHO,RHOB,TRHOKIN,RHOKIN &
+     &                       ,NAT,LMRXX,QLM,VQLM)
 !     **************************************************************************
 !     **                                                                      **
 !     **                                                                      **
@@ -2305,11 +2337,14 @@ CALL TIMING$CLOCKOFF('W:EXPECT')
       INTEGER(4),INTENT(IN)   :: NRL    !#(LOCAL R-SPACE GRID POINTS)
       REAL(8)   ,INTENT(INOUT):: RHO(NRL,NDIMD)  
       REAL(8)   ,INTENT(OUT)  :: RHOB   ! BACKGROUND DENSITY
+      LOGICAL(4),INTENT(IN)   :: TRHOKIN
+      REAL(8)   ,INTENT(INOUT):: RHOKIN(NRL,NDIMD) ! KINETIC ENERGY DENSITY
       INTEGER(4),INTENT(IN)   :: NAT    !#(ATOMS)
       INTEGER(4),INTENT(IN)   :: LMRXX   !#(ANGULAR MOMENTA FOR 1-C DENSITY)
       REAL(8)   ,INTENT(IN)   :: QLM(LMRXX,NAT)  ! MULTIPOLE MOMENTS
       REAL(8)   ,INTENT(OUT)  :: VQLM(LMRXX,NAT) ! "MULTIPOLE" POTENTIALS
       REAL(8)   ,ALLOCATABLE  :: RHO_V(:,:)     ! CHARGE DENSITY
+      REAL(8)   ,ALLOCATABLE  :: RHOKIN_V(:,:)  ! KINETIC ENERGY DENSITY
       REAL(8)                 :: RBAS(3,3)      ! LATTICE VECTORS
       REAL(8)                 :: R(3,NAT)       ! ATOMIC POSITIONS
       REAL(8)                 :: STRESS(3,3)    ! STRESS TENSOR
@@ -2333,6 +2368,14 @@ CALL TIMING$CLOCKOFF('W:EXPECT')
 !     ==========================================================================
       ALLOCATE(RHO_V(NR1L_V*NR2*NR3,NDIMD))
       CALL WAVES_MAPPSITOPOT('PSITOPOT',NR1L,NR1L_V,NR2,NR3,NDIMD,RHO,RHO_V)
+      IF(TRHOKIN) THEN
+        ALLOCATE(RHOKIN_V(NR1L_V*NR2*NR3,NDIMD))
+        CALL WAVES_MAPPSITOPOT('PSITOPOT',NR1L,NR1L_V,NR2,NR3,NDIMD &
+     &                                   ,RHOKIN,RHOKIN_V)
+      ELSE
+        ALLOCATE(RHOKIN_V(NR1L_V*NR2*NR3,NDIMD))  
+        RHOKIN_V=0.D0
+      END IF
 !
 !     ==========================================================================
 !     == CALCULATE POTENTIAL FROM THE CHARGE DENSITY                          ==
@@ -2342,7 +2385,8 @@ CALL TIMING$CLOCKOFF('W:EXPECT')
       FORCE(:,:)=0.D0
       STRESS(:,:)=0.D0
       VQLM(:,:)=0.D0
-      CALL POTENTIAL$VOFRHO(NR1L_V*NR2*NR3,NDIMD,RHO_V,LMRXX,NAT,QLM,VQLM &
+      CALL POTENTIAL$VOFRHO(NR1L_V*NR2*NR3,NDIMD,RHO_V,TRHOKIN,RHOKIN_V &
+     &                     ,LMRXX,NAT,QLM,VQLM &
      &                     ,R,FORCE,RBAS,STRESS,RHOB)
 !
 !     ==========================================================================
@@ -2350,6 +2394,13 @@ CALL TIMING$CLOCKOFF('W:EXPECT')
 !     ==========================================================================
       CALL WAVES_MAPPSITOPOT('POTTOPSI',NR1L,NR1L_V,NR2,NR3,NDIMD,RHO,RHO_V)
       DEALLOCATE(RHO_V)
+      IF(TRHOKIN) THEN
+        CALL WAVES_MAPPSITOPOT('POTTOPSI',NR1L,NR1L_V,NR2,NR3,NDIMD &
+     &                                   ,RHOKIN,RHOKIN_V)
+        DEALLOCATE(RHOKIN_V)
+      ELSE
+        DEALLOCATE(RHOKIN_V)
+      END IF
 !
 !     ==========================================================================
 !     ==  STORE FORCES AND STRESSES BACK TO THE OWNING OBJECTS                ==
@@ -4068,8 +4119,11 @@ END IF
 !     ...1.........2.........3.........4.........5.........6.........7.........8
       SUBROUTINE WAVES$RHO(NRL,NDIMD_,RHO,TRHOKIN,RHOKIN)
 !     **************************************************************************
-!     **  EVALUATES PSEUDO-DENSITY FROM THE ACTUAL PSEUDO WAVE                **
-!     **  FUNCTIONS                                                           **
+!     **  EVALUATES PSEUDO-DENSITY AND THE PSEUDO-KINETIC ENERGY DENSITY      **
+!     **  FROM THE ACTUAL PSEUDO WAVE FUNCTIONS                               **
+!     **                                                                      **
+!     **  THE DENSITY IS RETURNED AS (TOTAL) FOR NDIMD=1, AS (TOTAL,SPIN)     ** 
+!     **  FOR NDIMD=2 AND AS (TOTAL,SPINX,SPINY,SPINZ) FOR NDIMD=3            **
 !     **                                                                      **
 !     **  RHO1 IS MADE ALLOCATABLE, BECAUSE IT IS TOO LARGE FOR THE STACK     **
 !     **                                                                      **
@@ -4106,10 +4160,12 @@ END IF
 !     ==========================================================================
 !     ==  CALCULATE DENSITY                                                   ==
 !     ==========================================================================
-      ALLOCATE(RHO1(NRL,NDIM**2))
-      ALLOCATE(RHOKIN1(NRL,NDIM**2)) 
       RHO(:,:)=0.D0
-      RHOKIN(:,:)=0.D0
+      ALLOCATE(RHO1(NRL,NDIM**2))
+      IF(TRHOKIN) THEN
+        RHOKIN(:,:)=0.D0
+      END IF
+      ALLOCATE(RHOKIN1(NRL,NDIM**2)) 
       DO IKPT=1,NKPTL
         DO ISPIN=1,NSPIN
           CALL WAVES_SELECTWV(IKPT,ISPIN)
@@ -4138,6 +4194,14 @@ END IF
           RHO(IR,1)=SVAR1+SVAR2   ! TOTAL DENSITY
           RHO(IR,2)=SVAR1-SVAR2   ! SPIN DENSITY
         ENDDO
+        IF(TRHOKIN) THEN
+          DO IR=1,NRL
+            SVAR1=RHOKIN(IR,1)
+            SVAR2=RHOKIN(IR,2)
+            RHOKIN(IR,1)=SVAR1+SVAR2   ! TOTAL DENSITY
+            RHOKIN(IR,2)=SVAR1-SVAR2   ! SPIN DENSITY
+          ENDDO
+        END IF
       END IF
                               CALL TIMING$CLOCKOFF('W:RHO')
                               CALL TRACE$POP
@@ -4791,7 +4855,7 @@ RETURN
       END
 !
 !     ...1.........2.........3.........4.........5.........6.........7.........8
-      SUBROUTINE WAVES$HPSI(NRL,NDIMD_,NAT,LMNXX,RHO,DH)
+      SUBROUTINE WAVES$HPSI(NRL,NDIMD_,NAT,LMNXX,RHO,TRHOKIN,RHOKIN,DH)
 !     **************************************************************************
 !     **                                                                      **
 !     **  EVALUATES FORCES FROM THE AUGMENTATION PART                         **
@@ -4806,6 +4870,8 @@ RETURN
       INTEGER(4),INTENT(IN) :: LMNXX
       INTEGER(4),INTENT(IN) :: NAT
       REAL(8)   ,INTENT(IN) :: RHO(NRL,NDIMD_) ! PS-POTENTIAL
+      LOGICAL(4),INTENT(IN) :: TRHOKIN
+      REAL(8)   ,INTENT(IN) :: RHOKIN(NRL,NDIMD_) ! PS-POTENTIAL
       COMPLEX(8),INTENT(IN) :: DH(LMNXX,LMNXX,NDIMD_,NAT)!ONE-CENTER HAMILTONIAN
       INTEGER(4)            :: IKPT,ISPIN
       INTEGER(4)            :: NGL
@@ -4850,7 +4916,7 @@ CALL TIMING$CLOCKON('W:HPSI.VPSI')
 IF(1.EQ.1)THEN !OLD VERSION CHANGE WAS REQUIRED FOR KAESTNERS CONJUGATE GRADIENT
 !===============================================================================
          CALL WAVES_VPSI(GSET,NGL,NDIM,NBH,NRL,THIS%PSI0,RHO(1,ISPIN) &
-     &                   ,THIS%HPSI)
+     &                  ,TRHOKIN,RHOKIN,THIS%HPSI)
 CALL TIMING$CLOCKOFF('W:HPSI.VPSI')
 !
 !         ======================================================================
@@ -4903,8 +4969,9 @@ CALL TIMING$CLOCKOFF('W:HPSI.ADDPROJ')
 !===============================================================================
 ELSE
 !===============================================================================
-         CALL WAVES_HPSI(MAP,GSET,ISPIN,NGL,NDIM,NDIMD,NBH,MAP%NPRO,LMNXX,NAT,NRL&
-     &                  ,THIS%PSI0,RHO(1,ISPIN),R,THIS%PROJ,DH,THIS%HPSI)
+          CALL WAVES_HPSI(MAP,GSET,ISPIN,NGL,NDIM,NDIMD,NBH,MAP%NPRO &
+     &                  ,LMNXX,NAT,NRL,THIS%PSI0,RHO(1,ISPIN),TRHOKIN,RHOKIN &
+     &                  ,R,THIS%PROJ,DH,THIS%HPSI)
 !!LMTO INTERFACE MISSING!!!
 !===============================================================================
 END IF
@@ -4975,7 +5042,7 @@ END IF
 !
 !     ...1.........2.........3.........4.........5.........6.........7.........8
       SUBROUTINE WAVES_HPSI(MAP,GSET,ISPIN,NGL,NDIM,NDIMD,NBH,NPRO,LMNXX,NAT &
-     &                     ,NRL,PSI,POT,R,PROJ,DH,HPSI)
+     &                     ,NRL,PSI,POT,TRHOKIN,POTKIN,R,PROJ,DH,HPSI)
 !     **************************************************************************
 !     **                                                                      **
 !     *******************************************P.E. BLOECHL, (1991)***********
@@ -4995,6 +5062,8 @@ END IF
       INTEGER(4)     ,INTENT(IN) :: NAT
       COMPLEX(8)     ,INTENT(IN) :: PSI(NGL,NDIM,NBH)
       REAL(8)        ,INTENT(IN) :: POT(NRL,NDIM**2) !RHO(1,ISPIN)
+      LOGICAL(4)     ,INTENT(IN) :: TRHOKIN
+      REAL(8)        ,INTENT(IN) :: POTKIN(NRL,NDIM**2) 
       REAL(8)        ,INTENT(IN) :: R(3,NAT)
       COMPLEX(8)     ,INTENT(IN) :: PROJ(NDIM,NBH,NPRO)!(NDIM,NBH,NPRO)<PSPSI|P>
       COMPLEX(8)     ,INTENT(IN) :: DH(LMNXX,LMNXX,NDIMD,NAT)
@@ -5004,7 +5073,7 @@ END IF
       INTEGER(4)                 :: IPRO,IAT,ISP,LMNX
 !     **************************************************************************
 CALL TIMING$CLOCKON('W:HPSI.VPSI')
-      CALL WAVES_VPSI(GSET,NGL,NDIM,NBH,NRL,PSI,POT,HPSI)
+      CALL WAVES_VPSI(GSET,NGL,NDIM,NBH,NRL,PSI,POT,TRHOKIN,POTKIN,HPSI)
 CALL TIMING$CLOCKOFF('W:HPSI.VPSI')
 !
 !     ==========================================================================
@@ -5097,7 +5166,7 @@ CALL TIMING$CLOCKOFF('W:HPSI.ADDPRO')
       END 
 !
 !     ...1.........2.........3.........4.........5.........6.........7.........8
-      SUBROUTINE WAVES_VPSI(GSET,NGL,NDIM,NBH,NRL,PSI,V,HPSI)
+      SUBROUTINE WAVES_VPSI(GSET,NGL,NDIM,NBH,NRL,PSI,V,TRHOKIN,VKIN,HPSI)
 !     **************************************************************************
 !     **                                                                      **
 !     **  EVALUATES H*PSI WITHOUT THE AUGMENTATION PART                       **
@@ -5113,24 +5182,29 @@ CALL TIMING$CLOCKOFF('W:HPSI.ADDPRO')
       INTEGER(4),INTENT(IN)  :: NRL         ! #(R-SPACE POINTS) 
       COMPLEX(8),INTENT(IN)  :: PSI(NGL,NDIM,NBH)  ! PSPSI(0)
       REAL(8)   ,INTENT(IN)  :: V(NRL,NDIM**2) ! PSPOT
+      LOGICAL(4),INTENT(IN)  :: TRHOKIN
+      REAL(8)   ,INTENT(IN)  :: VKIN(NRL,NDIM**2) ! DERIVATIVE WRT. EKIN-DENSITY
       COMPLEX(8),INTENT(OUT) :: HPSI(NGL,NDIM,NBH)     ! PSH|PSPSI>
-      REAL(8)   ,ALLOCATABLE :: G2(:)          ! G**2
-      INTEGER(4)             :: IB,IR,IG,IDIM
+      REAL(8)   ,ALLOCATABLE :: G2(:)          !(NGL)   G**2
+      REAL(8)   ,ALLOCATABLE :: GVEC(:,:)      !(3,NGL) G-VECTOR
+      INTEGER(4)             :: I,IB,IR,IG,IDIM
       REAL(8)   ,ALLOCATABLE :: VUPUP(:),VDNDN(:)
       COMPLEX(8),ALLOCATABLE :: VUPDN(:)
       COMPLEX(8),ALLOCATABLE :: PSIOFR(:,:)
+      COMPLEX(8),ALLOCATABLE :: GPSIOFG(:,:)
       COMPLEX(8)             :: PSIUP,PSIDN
 !     **************************************************************************
 !
 !     ==========================================================================
 !     ==  MULTIPLY WAVE FUNCTIONS WITH THE POTENTIAL                          ==
 !     ==                                                                      ==
-!     ==  THE FFTS ARE DONE FOR EACH WAVE FUNCTION INDIVIUDALLY TO AVOID      ==
+!     ==  THE FFTS ARE DONE FOR EACH WAVE FUNCTION INDIVIDUALLY TO AVOID      ==
 !     ==  A MEMORY SPIKE. THERE MAY BE A LOSS OF SPEED BECAUSE DOING THE      ==
 !     ==  FFTS AND THE MULTIPLICATION IN ONE SHOT WOULD BE MORE EFFICIENT.    ==
 !     ==  IN THE PREVIOUS IMPLEMENTATION THIS HAD NOT BEEN EXPLOITED ANYWAY.  ==
 !     ==========================================================================
       ALLOCATE(PSIOFR(NRL,NDIM))
+!     == NON-SPIN POLARIZED AND COLLINEAR CASE (NDIM=1) ========================
       IF(NDIM.EQ.1) THEN
         DO IB=1,NBH
           CALL PLANEWAVE$FFT('GTOR',NDIM,NGL,PSI(:,:,IB),NRL,PSIOFR)
@@ -5139,6 +5213,29 @@ CALL TIMING$CLOCKOFF('W:HPSI.ADDPRO')
           ENDDO
           CALL PLANEWAVE$FFT('RTOG',NDIM,NGL,HPSI(:,:,IB),NRL,PSIOFR)
         ENDDO
+        IF(TRHOKIN) THEN
+          ALLOCATE(GVEC(3,NGL))
+          CALL PLANEWAVE$GETR8A('GVEC',3*NGL,GVEC)
+          ALLOCATE(GPSIOFG(NGL,NDIM))
+          DO IB=1,NBH
+            DO I=1,3
+              DO IDIM=1,NDIM
+                GPSIOFG(:,IDIM)=GVEC(I,:)*PSI(:,IDIM,IB)
+              ENDDO
+              CALL PLANEWAVE$FFT('GTOR',NDIM,NGL,GPSIOFG,NRL,PSIOFR)
+              DO IR=1,NRL
+                PSIOFR(IR,1)=VKIN(IR,1)*PSIOFR(IR,1)
+              ENDDO
+              CALL PLANEWAVE$FFT('RTOG',NDIM,NGL,GPSIOFG,NRL,PSIOFR)
+              DO IDIM=1,NDIM
+                HPSI(:,IDIM,IB)=HPSI(:,IDIM,IB)+0.5D0*GVEC(I,:)*GPSIOFG(:,IDIM)
+              ENDDO
+            ENDDO
+          ENDDO
+          DEALLOCATE(GVEC)
+        END IF
+!
+!     == NON-COLLINEAR CASE (NDIM=2) ===========================================
       ELSE
         ALLOCATE(VUPUP(NRL))
         ALLOCATE(VDNDN(NRL))
@@ -5158,6 +5255,35 @@ CALL TIMING$CLOCKOFF('W:HPSI.ADDPRO')
           ENDDO
           CALL PLANEWAVE$FFT('RTOG',NDIM,NGL,HPSI(:,:,IB),NRL,PSIOFR)
         ENDDO
+        IF(TRHOKIN) THEN
+          DO IR=1,NRL
+            VUPUP(IR)=VKIN(IR,1)+VKIN(IR,4)
+            VDNDN(IR)=VKIN(IR,1)-VKIN(IR,4)
+            VUPDN(IR)=CMPLX(VKIN(IR,2),-VKIN(IR,3),KIND=8)
+          ENDDO
+          ALLOCATE(GVEC(3,NGL))
+          CALL PLANEWAVE$GETR8A('GVEC',NGL,GVEC)
+          ALLOCATE(GPSIOFG(NGL,NDIM))
+          DO IB=1,NBH
+            DO I=1,3
+              DO IDIM=1,NDIM
+                GPSIOFG(:,IDIM)=GVEC(I,:)*PSI(:,IDIM,IB)
+              ENDDO
+              CALL PLANEWAVE$FFT('GTOR',NDIM,NGL,GPSIOFG,NRL,PSIOFR)
+          DO IR=1,NRL
+            PSIUP=PSIOFR(IR,1)
+            PSIDN=PSIOFR(IR,2)
+            PSIOFR(IR,1)=VUPUP(IR)*PSIUP+      VUPDN(IR) *PSIDN
+            PSIOFR(IR,2)=VDNDN(IR)*PSIDN+CONJG(VUPDN(IR))*PSIUP
+          ENDDO
+              CALL PLANEWAVE$FFT('RTOG',NDIM,NGL,GPSIOFG,NRL,PSIOFR)
+              DO IDIM=1,NDIM
+                HPSI(:,IDIM,IB)=HPSI(:,IDIM,IB)+0.5D0*GVEC(I,:)*GPSIOFG(:,IDIM)
+              ENDDO
+            ENDDO
+        ENDDO
+          DEALLOCATE(GVEC)
+        END IF
         DEALLOCATE(VUPUP)
         DEALLOCATE(VUPDN)
         DEALLOCATE(VDNDN)
@@ -5380,6 +5506,9 @@ CALL TIMING$CLOCKOFF('W:HPSI.ADDPRO')
 !     **  CALCULATE ELECTRON DENSITY RHO IN REAL SPACE                        **
 !     **  IF(TRHOKIN) CALCULATE ALSO KINETIC-ENERGY DENSITY RHOKIN IN R. SPACE**
 !     **                                                                      **
+!     **  REMARK: THE KINETIC ENERGY DENSITY IS EVALUATED AS                  **
+!     **     ONE-HALF TIMES THE SQUARED GRADIENT OF THE WAVE FUNCTION.        **
+!     **                                                                      **
 !     *******************************************P.E. BLOECHL, (1991-2021)******
       IMPLICIT NONE
       INTEGER(4),INTENT(IN)  :: NGL         ! MAX # PLANE WAVES
@@ -5393,14 +5522,14 @@ CALL TIMING$CLOCKOFF('W:HPSI.ADDPRO')
       LOGICAL(4),INTENT(IN)  :: TRHOKIN
       REAL(8)   ,INTENT(OUT) :: RHOKIN(NRL,NDIM**2) ! KINETIC-ENERGY DENSITY
       COMPLEX(8),ALLOCATABLE :: PSIOFR(:,:,:)
-      COMPLEX(8),ALLOCATABLE :: PSIKINOFR(:,:,:)
+      COMPLEX(8),ALLOCATABLE :: GPSIOFR(:,:,:,:)
       COMPLEX(8),ALLOCATABLE :: EI2KR(:)      !(NRL) SQUARED BLOCH PHASE FACTOR
       COMPLEX(8),ALLOCATABLE :: PSI1(:)          !(NRL)
-      REAL(8)   ,ALLOCATABLE :: G2(:)            !(NGL)
-      COMPLEX(8),ALLOCATABLE :: PSIKINOFG(:,:,:) !(NGL,NDIM,NBH)
+      REAL(8)   ,ALLOCATABLE :: GVEC(:,:)        !(3,NGL)
+      COMPLEX(8),ALLOCATABLE :: GPSIOFG(:,:,:,:) !(NGL,NDIM,3,NBH)
       COMPLEX(8)             :: CSVAR
       LOGICAL(4)             :: TINV
-      INTEGER(4)             :: IBH,IR,IDIM
+      INTEGER(4)             :: IBH,IR,IDIM,I
       REAL(8)                :: F1,F2
       REAL(8)                :: RE,IM
       REAL(8)                :: SVAR1,SVAR2
@@ -5431,23 +5560,25 @@ CALL TIMING$CLOCKOFF('W:HPSI.ADDPRO')
       ALLOCATE(PSIOFR(NRL,NDIM,NBH))
       CALL PLANEWAVE$FFT('GTOR',NBH*NDIM,NGL,PSIOFG,NRL,PSIOFR)
 !
-!     == CONSTRUCT <R| 1/2 * G^2 |PSITILDE> ====================================
+!     == CONSTRUCT GPSIOFR = <R| GVEC |PSITILDE> ========================
       IF(TRHOKIN) THEN
-        ALLOCATE(G2(NGL))
-        CALL PLANEWAVE$GETR8A('G2',NGL,G2)
+        ALLOCATE(GVEC(3,NGL))
+        CALL PLANEWAVE$GETR8A('GVEC',3*NGL,GVEC)
 !       == THIS WILL GIVE A SPIKE IN THE MEMORY REQUIREMENT, ===================
 !       == BECAUSE AN ADDITIONAL SET OF WAVE FUNCTIONS IS ALLOCATED ============
 !       == BOTH IN A PLANE WAVE BASIS AND IN REAL SPACE ========================
-        ALLOCATE(PSIKINOFG(NGL,NDIM,NBH))
+        ALLOCATE(GPSIOFG(NGL,NDIM,3,NBH))
         DO IBH=1,NBH
+          DO I=1,3
           DO IDIM=1,NDIM
-            PSIKINOFG(:,IDIM,IBH)=0.5D0*G2(:)*PSIOFG(:,IDIM,IBH)
+              GPSIOFG(:,IDIM,I,IBH)=GVEC(I,:)*PSIOFG(:,IDIM,IBH)
+            ENDDO
           ENDDO
         ENDDO
-        ALLOCATE(PSIKINOFR(NRL,NDIM,NBH))
-        CALL PLANEWAVE$FFT('GTOR',NBH*NDIM,NGL,PSIKINOFG,NRL,PSIKINOFR)
-        DEALLOCATE(PSIKINOFG)
-        DEALLOCATE(G2)
+        ALLOCATE(GPSIOFR(NRL,NDIM,3,NBH))
+        CALL PLANEWAVE$FFT('GTOR',NDIM*3*NBH,NGL,GPSIOFG,NRL,GPSIOFR)
+        DEALLOCATE(GPSIOFG)
+        DEALLOCATE(GVEC)
       END IF
 !
 !     ==========================================================================
@@ -5492,10 +5623,22 @@ CALL TIMING$CLOCKOFF('W:HPSI.ADDPRO')
           DO IR=1,NRL
             RHO(IR,1)=RHO(IR,1)+REAL(PSIOFR(IR,1,IBH)*PSI1(IR),KIND=8)
           ENDDO
+!
+!         == ACCUMULATE KINETIC ENERGY DENSITY =================================
           IF(TRHOKIN) THEN
+            DO I=1,3
+              DO IR=1,NRL
+                PSI1(IR)=SVAR1*CONJG(GPSIOFR(IR,1,I,IBH))
+              ENDDO
+              IF(SVAR2.NE.0.D0) THEN
+                DO IR=1,NRL
+                  PSI1(IR)=PSI1(IR)+SVAR2*GPSIOFR(IR,1,I,IBH)*EI2KR(IR)
+                ENDDO
+              END IF
             DO IR=1,NRL
               RHOKIN(IR,1)=RHOKIN(IR,1) &
-       &                  +REAL(PSIKINOFR(IR,1,IBH)*PSI1(IR),KIND=8)
+       &                    +0.5D0*REAL(GPSIOFR(IR,1,I,IBH)*PSI1(IR),KIND=8)
+              ENDDO
             ENDDO
           END IF
         ENDDO
@@ -5523,14 +5666,17 @@ CALL TIMING$CLOCKOFF('W:HPSI.ADDPRO')
             DO IBH=1,NB
               F1=F(IBH)
               IF(F1.EQ.0.D0) CYCLE
+              DO I=1,3
               DO IR=1,NRL
-                RHO(IR,1)=RHO(IR,1) &
-                         +F1*REAL(PSIOFR(IR,1,IBH)*CONJG(PSIKINOFR(IR,1,IBH)),8)
+                  RHOKIN(IR,1)=RHOKIN(IR,1)+0.5D0*F1 &
+     &                   *REAL(GPSIOFR(IR,1,I,IBH)*CONJG(GPSIOFR(IR,1,I,IBH)),8)
+                ENDDO
               ENDDO
             ENDDO
           END IF
-        ELSE
+!
 !       == SPINOR WAVE FUNCTIONS ===============================================
+        ELSE
           RHO(:,:)=0.D0
           DO IBH=1,NBH
             F1=F(IBH)
@@ -5561,14 +5707,16 @@ CALL TIMING$CLOCKOFF('W:HPSI.ADDPRO')
               F1=F(IBH)
               IF(F1.EQ.0.D0) CYCLE
 !             == REAL(RHO11), REAL(RHO22), RE(RHO12), IM(RHO12) ================
+              DO I=1,3
               DO IR=1,NRL
-                RHOKIN(IR,1)=RHOKIN(IR,1) &
-    &               +F1*REAL(PSIOFR(IR,1,IBH)*CONJG(PSIKINOFR(IR,1,IBH)),KIND=8)
-                RHOKIN(IR,4)=RHOKIN(IR,4) &
-    &               +F1*REAL(PSIOFR(IR,2,IBH)*CONJG(PSIKINOFR(IR,2,IBH)),KIND=8)
-                CSVAR=PSIOFR(IR,1,IBH)*CONJG(PSIKINOFR(IR,2,IBH))
-                RHOKIN(IR,2)=RHOKIN(IR,2)+F1*REAL(CSVAR,KIND=8)
-                RHOKIN(IR,3)=RHOKIN(IR,3)+F1*AIMAG(CSVAR)
+                  RHOKIN(IR,1)=RHOKIN(IR,1)+0.5D0*F1 &
+    &               *REAL(GPSIOFR(IR,1,I,IBH)*CONJG(GPSIOFR(IR,1,I,IBH)),KIND=8)
+                  RHOKIN(IR,4)=RHOKIN(IR,4)+0.5D0*F1 &
+    &               *REAL(GPSIOFR(IR,2,I,IBH)*CONJG(GPSIOFR(IR,2,I,IBH)),KIND=8)
+                  CSVAR=GPSIOFR(IR,1,I,IBH)*CONJG(GPSIOFR(IR,2,I,IBH))
+                  RHOKIN(IR,2)=RHOKIN(IR,2)+0.5D0*F1*REAL(CSVAR,KIND=8)
+                  RHOKIN(IR,3)=RHOKIN(IR,3)+0.5D0*F1*AIMAG(CSVAR)
+                ENDDO
               ENDDO
             ENDDO
 !           == TRANSFORM TO NT,NX,NY,NZ ========================================
@@ -5584,7 +5732,7 @@ CALL TIMING$CLOCKOFF('W:HPSI.ADDPRO')
         ENDIF
       END IF
       DEALLOCATE(PSIOFR)
-      IF(TRHOKIN) DEALLOCATE(PSIKINOFR)
+      IF(TRHOKIN) DEALLOCATE(GPSIOFR)
                                CALL TRACE$POP()
       RETURN
       END
