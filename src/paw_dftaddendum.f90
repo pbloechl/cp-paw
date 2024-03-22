@@ -363,6 +363,116 @@ END MODULE NEWDFT_MODULE
       END
 !
 !     ...1.........2.........3.........4.........5.........6.........7.........8
+      subroutine pawlibxc_a2(n1,vec,tens)
+      implicit none
+      integer(4),intent(in)    :: n1
+      real(8)   ,intent(in)    :: vec((n1*(n1+1))/2)
+      real(8)   ,intent(inout) :: tens(n1,n1)
+      integer(4)               :: ind,i,j
+      ind=0
+      do i=1,n1
+        do j=i,n1
+          ind=ind+1
+          tens(i,j)=vec(ind)
+         enddo
+      enddo
+      return
+      end
+!
+!     ...1.........2.........3.........4.........5.........6.........7.........8
+      subroutine pawlibxc_ab(n1,n2,vec,tens)
+      implicit none
+      integer(4),intent(in)    :: n1,n2
+      real(8)   ,intent(in)    :: vec(n1*n2)
+      real(8)   ,intent(inout) :: tens(n1,n2)
+      integer(4)               :: ind,i,j
+      ind=0
+      do i=1,n1
+        do j=1,n1
+          ind=ind+1
+          tens(i,j)=vec(ind)
+         enddo
+      enddo
+      return
+      end
+!
+!     ...1.........2.........3.........4.........5.........6.........7.........8
+      subroutine pawlibxc_a3(n1,vec,tens)
+      implicit none
+      integer(4),intent(in)    :: n1
+      real(8)   ,intent(in)    :: vec((n1*(n1+1))/2)
+      real(8)   ,intent(inout) :: tens(n1,n1,n1)
+      integer(4)               :: ind,i,j,k
+      ind=0
+      do i=1,n1
+        do j=i,n1
+          do k=j,n1
+            ind=ind+1
+            tens(i,j,k)=vec(ind)
+          enddo
+        enddo
+      enddo
+      return
+      end
+!
+!     ...1.........2.........3.........4.........5.........6.........7.........8
+      subroutine pawlibxc_a2b(n1,n2,vec,tens)
+      implicit none
+      integer(4),intent(in)    :: n1,n2
+      real(8)   ,intent(in)    :: vec((n1*(n1+1))/2*n2)
+      real(8)   ,intent(inout) :: tens(n1,n1,n2)
+      integer(4)               :: ind,i,j,k
+      ind=0
+      do i=1,n1
+        do j=i,n1
+          do k=1,n2
+            ind=ind+1
+            tens(i,j,k)=vec(ind)
+          enddo
+        enddo
+      enddo
+      return
+      end
+!
+!     ...1.........2.........3.........4.........5.........6.........7.........8
+      subroutine pawlibxc_ab2(n1,n2,vec,tens)
+      implicit none
+      integer(4),intent(in)    :: n1,n2
+      real(8)   ,intent(in)    :: vec(n1*(n2*(n2+1))/2)
+      real(8)   ,intent(inout) :: tens(n1,n2,n2)
+      integer(4)               :: ind,i,j,k
+      ind=0
+      do i=1,n1
+        do j=1,n1
+          do k=j,n2
+            ind=ind+1
+            tens(i,j,k)=vec(ind)
+          enddo
+        enddo
+      enddo
+      return
+      end
+!
+!     ...1.........2.........3.........4.........5.........6.........7.........8
+      subroutine pawlibxc_abc(n1,n2,n3,vec,tens)
+      implicit none
+      integer(4),intent(in)    :: n1,n2,n3
+      real(8)   ,intent(in)    :: vec(n1*n2*n3)
+      real(8)   ,intent(inout) :: tens(n1,n2,n3)
+      integer(4)               :: ind,i,j,k
+      ind=0
+      do i=1,n1
+        do j=1,n2
+          do k=1,n3
+            ind=ind+1
+            tens(i,j,k)=vec(ind)
+          enddo
+        enddo
+      enddo
+      return
+      end
+!
+!     ...1.........2.........3.........4.........5.........6.........7.........8
       SUBROUTINE PAWLIBXC_IDLIST()
       USE PAWLIBXC_MODULE, ONLY : XCID
       IMPLICIT NONE
@@ -1539,6 +1649,7 @@ END MODULE NEWDFT_MODULE
       REAL(8)               :: V4SIGMA4(15)
       INTEGER(4)            :: I1,I2,I3
       REAL(8)               :: VAL1(5)
+logical(4),parameter :: mytest=.true.
 !     **************************************************************************
       RHO(1)=0.5D0*(VAL(1)+VAL(2))                 !RHOUP
       RHO(2)=0.5D0*(VAL(1)-VAL(2))                 !RHODN
@@ -1577,6 +1688,19 @@ END MODULE NEWDFT_MODULE
       DER3=0.D0
       DER(1:2)=VRHO(:)
       DER(3:5)=VSIGMA(:)      
+if(mytest) then
+!
+!     == SECOND DERIVATIVES ====================================================
+      CALL pawlibxc_A2(2,V2RHO2,DER2(1:2,1:2))
+      CALL PAWLIBXC_AB(2,3,V2RHOSIGMA,DER2(1:2,3:5))
+      CALL PAWLIBXC_A2(3,V2SIGMA2,DER2(3:5,3:5))
+!
+!     == THIRD DERIVATIVES =====================================================
+      CALL PAWLIBXC_A3(2,V3RHO3,DER3(1:2,1:2,1:2))
+      CALL PAWLIBXC_A2B(2,3,V3RHO2SIGMA,DER3(1:2,1:2,3:5))
+      CALL PAWLIBXC_AB2(2,3,V3RHOSIGMA2,DER3(1:2,3:5,3:5))
+      CALL PAWLIBXC_A3(3,V3SIGMA3,DER3(3:5,3:5,3:5))
+else
       DER2(1,1)=V2RHO2(1)
       DER2(1,2)=V2RHO2(2)
       DER2(2,2)=V2RHO2(3)
@@ -1628,6 +1752,7 @@ END MODULE NEWDFT_MODULE
       DER3(4,4,5)=V3SIGMA3(8)
       DER3(4,5,5)=V3SIGMA3(9)
       DER3(5,5,5)=V3SIGMA3(10)
+end if
 !
 !     ==========================================================================
 !     == COMPLETE MATRIX ELEMENTS                                             ==
@@ -1739,42 +1864,58 @@ END MODULE NEWDFT_MODULE
       REAL(8)   ,INTENT(OUT):: DER3(9,9,9) ! THIRD DERIVARIVES OF EXC
       INTEGER(8),PARAMETER  :: NP=1
       TYPE(XC_F03_FUNC_INFO_T):: XC_INFO
-      REAL(8)               :: EXCARR(1)
-      REAL(8)               :: RHO(2)         
-      REAL(8)               :: SIGMA(3)       
-      REAL(8)               :: VRHO(2)         ! 0,1
-      REAL(8)               :: VSIGMA(3)       ! 0,1,2
-      REAL(8)               :: V2RHO2(3)       ! 00,01,11
-      REAL(8)               :: V2RHOSIGMA(6)   ! 00,01,02,10,11,12
-      REAL(8)               :: V2SIGMA2(6)     ! 00,01,02,11,12,22
-      REAL(8)               :: V3RHO3(4)       ! 000,001,011,111
-      REAL(8)               :: V3RHO2SIGMA(9) 
-    !                          ! 000,001,0002,010,011,012,110,111,112
-      REAL(8)               :: V3RHOSIGMA2(12)
-     !                         ! 000,001,002,011,012,022,100,101,102,111,112,122
-      REAL(8)               :: V3SIGMA3(10)
-                               ! 000,001,002,011,012,022,111,112,122,222
-      REAL(8)               :: V4RHO4(5)
-      REAL(8)               :: V4RHO3SIGMA(12)
-      REAL(8)               :: V4RHO2SIGMA2(15)
-      REAL(8)               :: V4RHOSIGMA3(20)
-      REAL(8)               :: V4SIGMA4(15)
-
-
-      REAL(8)               :: LAPL(1)       
-      REAL(8)               :: TAU(1)       
-      REAL(8)               :: VLAPL(1),VTAU(1) &  
-     &         ,V2RHOLAPL(1),V2RHOTAU(1),V2SIGMALAPL(1) &
-     &         ,V2SIGMATAU(1),V2LAPL2(1),V2LAPLTAU(1),V2TAU2(1) &
-     &         ,V3RHO2LAPL(1),V3RHO2TAU(1),V3RHOSIGMALAPL(1) &
-     &         ,V3RHOSIGMATAU(1),V3RHOLAPL2(1),V3RHOLAPLTAU(1) &
-     &         ,V3RHOTAU2(1),V3SIGMA2LAPL(1),V3SIGMA2TAU(1),V3SIGMALAPL2(1) &
-     &         ,V3SIGMALAPLTAU(1),V3SIGMATAU2(1),V3LAPL3(1),V3LAPL2TAU(1) &
-     &         ,V3LAPLTAU2(1),V3TAU3(1)
-
-
       INTEGER(4)            :: I1,I2,I3
       REAL(8)               :: VAL1(9)
+!     == VALUE =================================================================
+      REAL(8) :: EXCARR(1)
+!     == FIRST DERIVATIVES =====================================================
+      REAL(8) :: RHO(2)          ! 0,1
+      REAL(8) :: SIGMA(3)        ! 0,1,2 
+      REAL(8) :: LAPL(2)         ! 0,1  
+      REAL(8) :: TAU(2)          ! 0,1
+!     == FIRST DERIVATIVES =====================================================
+      REAL(8) :: VRHO(2)         ! 0,1
+      REAL(8) :: VSIGMA(3)       ! 0,1,2
+      REAL(8) :: VLAPL(2)        ! 0,1
+      REAL(8) :: VTAU(2)         ! 0,1
+!     == SECOND DERIVATIVES ====================================================
+      REAL(8) :: V2RHO2(3)       ! 00,01,11
+      REAL(8) :: V2RHOSIGMA(6)   ! 00,01,02,10,11,12
+      REAL(8) :: V2SIGMA2(6)     ! 00,01,02,11,12,22
+      REAL(8) :: V2RHOLAPL(4)    ! 00,01,10,11
+      REAL(8) :: V2RHOTAU(4)     ! 00,01,10,11
+      REAL(8) :: V2SIGMALAPL(6)  ! 00,01,02,10,11,12
+      REAL(8) :: V2SIGMATAU(6)   ! 00,01,02,10,11,12
+      REAL(8) :: V2LAPL2(3)      ! 00,01,11
+      REAL(8) :: V2LAPLTAU(4)    ! 00,01,10,11
+      REAL(8) :: V2TAU2(3)       ! 00,01,11
+!     == THIRD DERIVATIVES =====================================================
+      REAL(8) :: V3RHO3(4)       ! 000,001,011,111
+      REAL(8) :: V3RHO2SIGMA(9)  ! 000,001,0002,010,011,012,110,111,112
+      REAL(8) :: V3RHO2LAPL(6)   ! 000,001,010,011,110,111
+      REAL(8) :: V3RHO2TAU(6)    ! 000,001,010,011,110,111
+      REAL(8) :: V3RHOSIGMA2(12)
+                               ! 000,001,002,011,012,022,100,101,102,111,112,122
+      REAL(8) :: V3RHOSIGMALAPL(12) 
+                               ! 000,001,010,011,020,021,100,101,110,111,120,121
+      REAL(8) :: V3RHOSIGMATAU(12)
+                               ! 000,001,010,011,020,021,100,101,110,111,120,121
+      REAL(8) :: V3RHOLAPL2(6)    ! 000,001,011,100,101,111
+      REAL(8) :: V3RHOLAPLTAU(8)  ! 000,001,010,011,100,101,010,111
+      REAL(8) :: V3RHOTAU2(6)     ! 000,001,011,100,101,111
+      REAL(8) :: V3SIGMA3(10)     ! 000,001,002,011,012,022,111,112,122,222
+      REAL(8) :: V3SIGMA2LAPL(12) 
+                               ! 000,001,010,011,020,021,110,111,120,121,220,221
+      REAL(8) :: V3SIGMA2TAU(12)  
+                               ! 000,001,010,011,020,021,110,111,120,121,220,221
+      REAL(8) :: V3SIGMALAPL2(9)  ! 000,001,011,100,101,111,200,201,211
+      REAL(8) :: V3SIGMALAPLTAU(12)
+                              ! 000,001,010,011,100,101,110,111,200,201,210,211
+      REAL(8) :: V3SIGMATAU2(9)   ! 000,001,011,100,101,111,200,201,211
+      REAL(8) :: V3LAPL3(4)       ! 000,001,011,111
+      REAL(8) :: V3LAPL2TAU(6)    ! 000,010,110,001,011,111
+      REAL(8) :: V3LAPLTAU2(6)    ! 000,001,011,100,101,111
+      REAL(8) :: V3TAU3(4)        ! 000,001,011,111
 !     **************************************************************************
 
 CALL ERROR$MSG('ROUTINE NOT FINISHED YET')
@@ -1782,12 +1923,19 @@ CALL ERROR$MSG('ROUTINE NOT FINISHED YET')
 ! WITH A 7-DIMENSIONAL ARRAY RATHER THAN A 9 DIMENSIONAL ARRAY.
 CALL ERROR$STOP('PAWLIBXC_MGGA3_A')
 
-      RHO(1)=0.5D0*(VAL(1)+VAL(2))                 !RHOUP
-      RHO(2)=0.5D0*(VAL(1)-VAL(2))                 !RHODN
-      SIGMA(1)=0.25D0*(VAL(3)+VAL(4)+2.D0*VAL(5))  !GRHOUP*GRHOUP
-      SIGMA(2)=0.25D0*(VAL(3)-VAL(4))              !GRHOUP*GRHODN
-      SIGMA(3)=0.25D0*(VAL(3)+VAL(4)-2.D0*VAL(5))  !GRHODN*GRHODN
-
+      RHO(1)=0.5D0*(VAL(1)+VAL(2))                 ! RHOUP
+      RHO(2)=0.5D0*(VAL(1)-VAL(2))                 ! RHODN
+      SIGMA(1)=0.25D0*(VAL(3)+VAL(4)+2.D0*VAL(5))  ! GRHOUP*GRHOUP
+      SIGMA(2)=0.25D0*(VAL(3)-VAL(4))              ! GRHOUP*GRHODN
+      SIGMA(3)=0.25D0*(VAL(3)+VAL(4)-2.D0*VAL(5))  ! GRHODN*GRHODN 
+      LAPL(1)=0.5D0*(VAL(6)+VAL(7))                ! DENSITY-LAPLACIAN UP
+      LAPL(2)=0.5D0*(VAL(6)-VAL(7))                ! DENSITY-LAPLACIAN DN
+      TAU(1)=0.5D0*(VAL(8)+VAL(9))                 ! KINETIC-EENERGY-DENSITY UP
+      TAU(2)=0.5D0*(VAL(8)-VAL(9))                 ! KINETIC-EENERGY-DENSITY DN
+!
+!     ==========================================================================
+!     == EVALUATE DENSITY FUNCTIONAL AND DERIVATIVES                          ==
+!     ==========================================================================
 !
 !     ==========================================================================
 !     == EVALUATE DENSITY FUNCTIONAL AND DERIVATIVES                          ==
@@ -1812,6 +1960,31 @@ CALL ERROR$STOP('PAWLIBXC_MGGA3_A')
      &           ,EXCARR,VRHO,VSIGMA &
      &           ,V2RHO2,V2RHOSIGMA ,V2SIGMA2 &
      &           ,V3RHO3,V3RHO2SIGMA,V3RHOSIGMA2, V3SIGMA3)
+          vlapl=0.d0
+          vtau=0.d0
+          v2rholapl=0.d0
+          v2rhotau=0.d0
+          v2sigmalapl=0.d0
+          v2sigmatau=0.d0
+          v2lapl2=0.d0
+          v2lapltau=0.d0
+          v2tau2=0.d0
+          v3rho2lapl=0.d0
+          v3rho2tau=0.d0
+          v3rhosigmalapl=0.d0
+          v3rhosigmatau=0.d0
+          v3rholapl2=0.d0
+          v3rholapltau=0.d0
+          v3rhotau2=0.d0
+          v3sigma2lapl=0.d0
+          v3sigma2tau=0.d0
+          v3sigmalapl2=0.d0
+          v3sigmalapltau=0.d0
+          v3sigmatau2=0.d0
+          v3lapl3=0.d0
+          v3lapl2tau=0.d0
+          v3lapltau2=0.d0
+          v3tau3=0.d0
         CASE(XC_FAMILY_MGGA,XC_FAMILY_HYB_MGGA)
           CALL XC_F03_MGGA_EXC_VXC_FXC_KXC(XC_FUNC,NP,RHO,SIGMA,LAPL,TAU &
      &         ,EXCARR &
@@ -1823,78 +1996,218 @@ CALL ERROR$STOP('PAWLIBXC_MGGA3_A')
      &         ,V3RHOTAU2,V3SIGMA3,V3SIGMA2LAPL,V3SIGMA2TAU,V3SIGMALAPL2 &
      &         ,V3SIGMALAPLTAU,V3SIGMATAU2,V3LAPL3,V3LAPL2TAU &
      &         ,V3LAPLTAU2,V3TAU3)
-
-
       END SELECT
 
       EXC=EXCARR(1)
       DER=0.D0
       DER2=0.D0
       DER3=0.D0
+!
+!     == FIRST DERIVATIVES =====================================================
       DER(1:2)=VRHO(:)
       DER(3:5)=VSIGMA(:)      
-      DER2(1,1)=V2RHO2(1)
-      DER2(1,2)=V2RHO2(2)
-      DER2(2,2)=V2RHO2(3)
-      DER2(1,3)=V2RHOSIGMA(1)
-      DER2(1,4)=V2RHOSIGMA(2)
-      DER2(1,5)=V2RHOSIGMA(3)
-      DER2(2,3)=V2RHOSIGMA(4)
-      DER2(2,4)=V2RHOSIGMA(5)
-      DER2(2,5)=V2RHOSIGMA(6)
-      DER2(3,3)=V2SIGMA2(1)
-      DER2(3,4)=V2SIGMA2(2)
-      DER2(3,5)=V2SIGMA2(3)
-      DER2(4,4)=V2SIGMA2(4)
-      DER2(4,5)=V2SIGMA2(5)
-      DER2(5,5)=V2SIGMA2(6)
+      DER(6:7)=VLAPL(:)
+      DER(8:9)=VTAU(:)
+!
+!     == SECOND DERIVATIVES ====================================================
+      CALL pawlibxc_A2(2,V2RHO2,DER2(1:2,1:2))
+      CALL PAWLIBXC_AB(2,3,V2RHOSIGMA,DER2(1:2,3:5))
+      CALL PAWLIBXC_AB(2,2,V2RHOLAPL,DER2(1:2,6:7))
+      CALL PAWLIBXC_AB(2,2,V2RHOTAU,DER2(1:2,8:9))
+      CALL PAWLIBXC_A2(3,V2SIGMA2,DER2(3:5,3:5))
+      CALL PAWLIBXC_AB(3,2,V2SIGMALAPL,DER2(3:5,6:7))
+      CALL PAWLIBXC_AB(3,2,V2SIGMATAU,DER2(3:5,8:9))
+      CALL PAWLIBXC_A2(2,V2LAPL2,DER2(6:7,6:7))
+      CALL PAWLIBXC_AB(2,2,V2LAPLTAU,DER2(6:7,8:9))
+      CALL PAWLIBXC_A2(2,V2TAU2,DER2(8:9,8:9))
+!
+!     == THIRD DERIVATIVES =====================================================
+      CALL PAWLIBXC_A3(2,V3RHO3,DER3(1:2,1:2,1:2))
+      CALL PAWLIBXC_A2B(2,3,V3RHO2SIGMA,DER3(1:2,1:2,3:5))
+      CALL PAWLIBXC_A2B(2,2,V3RHO2LAPL,DER3(1:2,1:2,6:7))
+      CALL PAWLIBXC_A2B(2,2,V3RHO2TAU,DER3(1:2,1:2,8:9))
+      CALL PAWLIBXC_AB2(2,3,V3RHOSIGMA2,DER3(1:2,3:5,3:5))
+      CALL PAWLIBXC_ABC(2,3,2,V3RHOSIGMALAPL,DER3(1:2,3:5,6:7))
+      CALL PAWLIBXC_ABC(2,3,2,V3RHOSIGMATAU,DER3(1:2,3:5,8:9))
+      CALL PAWLIBXC_AB2(2,2,V3RHOLAPL2,DER3(1:2,6:7,6:7))
+      CALL PAWLIBXC_ABC(2,2,2,V3RHOLAPLTAU,DER3(1:2,6:7,8:9))
+      CALL PAWLIBXC_AB2(2,2,V3RHOTAU2,DER3(1:2,8:9,8:9))
+      CALL PAWLIBXC_A3(3,V3SIGMA3,DER3(3:5,3:5,3:5))
+      CALL PAWLIBXC_A2B(3,2,V3SIGMA2LAPL,DER3(3:5,3:5,6:7))
+      CALL PAWLIBXC_A2B(3,2,V3SIGMA2TAU,DER3(3:5,3:5,8:9))
+      CALL PAWLIBXC_AB2(3,2,V3SIGMALAPL2,DER3(3:5,6:7,6:7))
+      CALL PAWLIBXC_ABC(3,2,2,V3SIGMALAPLTAU,DER3(3:5,6:7,8:9))
+      CALL PAWLIBXC_AB2(3,2,V3SIGMATAU2,DER3(3:5,8:9,8:9))
+      CALL PAWLIBXC_A3(2,V3LAPL3,DER3(6:7,6:7,6:7))
+      CALL PAWLIBXC_A2B(2,2,V3LAPL2TAU,DER3(6:7,6:7,8:9))
+      CALL PAWLIBXC_AB2(2,2,V3LAPLTAU2,DER3(6:7,8:9,8:9))
+      CALL PAWLIBXC_A3(2,V3TAU3,DER3(8:9,8:9,8:9))
 
-      DER3(1,1,1)=V3RHO3(1)
-      DER3(1,1,2)=V3RHO3(2)
-      DER3(1,2,2)=V3RHO3(3)
-      DER3(2,2,2)=V3RHO3(4)
-      DER3(1,1,3)=V3RHO2SIGMA(1)
-      DER3(1,1,4)=V3RHO2SIGMA(2)
-      DER3(1,1,5)=V3RHO2SIGMA(3)
-      DER3(1,2,3)=V3RHO2SIGMA(4)
-      DER3(1,2,4)=V3RHO2SIGMA(5)
-      DER3(1,2,5)=V3RHO2SIGMA(6)
-      DER3(2,2,3)=V3RHO2SIGMA(7)
-      DER3(2,2,4)=V3RHO2SIGMA(8)
-      DER3(2,2,5)=V3RHO2SIGMA(9)
-      DER3(1,3,3)=V3RHOSIGMA2(1)
-      DER3(1,3,4)=V3RHOSIGMA2(2)
-      DER3(1,3,5)=V3RHOSIGMA2(3)
-      DER3(1,4,4)=V3RHOSIGMA2(4)
-      DER3(1,4,5)=V3RHOSIGMA2(5)
-      DER3(1,5,5)=V3RHOSIGMA2(6)
-      DER3(2,3,3)=V3RHOSIGMA2(7)
-      DER3(2,3,4)=V3RHOSIGMA2(8)
-      DER3(2,3,5)=V3RHOSIGMA2(9)
-      DER3(2,4,4)=V3RHOSIGMA2(10)
-      DER3(2,4,5)=V3RHOSIGMA2(11)
-      DER3(2,5,5)=V3RHOSIGMA2(12)
-      DER3(3,3,3)=V3SIGMA3(1)
-      DER3(3,3,4)=V3SIGMA3(2)
-      DER3(3,3,5)=V3SIGMA3(3)
-      DER3(3,4,4)=V3SIGMA3(4)
-      DER3(3,4,5)=V3SIGMA3(5)
-      DER3(3,5,5)=V3SIGMA3(6)
-      DER3(4,4,4)=V3SIGMA3(7)
-      DER3(4,4,5)=V3SIGMA3(8)
-      DER3(4,5,5)=V3SIGMA3(9)
-      DER3(5,5,5)=V3SIGMA3(10)
+
+
+
+
+!!$      DER2(1,1)=V2RHO2(1)
+!!$      DER2(1,2)=V2RHO2(2)
+!!$      DER2(2,2)=V2RHO2(3)
+!!$      DER2(1,3)=V2RHOSIGMA(1)
+!!$      DER2(1,4)=V2RHOSIGMA(2)
+!!$      DER2(1,5)=V2RHOSIGMA(3)
+!!$      DER2(2,3)=V2RHOSIGMA(4)
+!!$      DER2(2,4)=V2RHOSIGMA(5)
+!!$      DER2(2,5)=V2RHOSIGMA(6)
+!!$      DER2(3,3)=V2SIGMA2(1)
+!!$      DER2(3,4)=V2SIGMA2(2)
+!!$      DER2(3,5)=V2SIGMA2(3)
+!!$      DER2(4,4)=V2SIGMA2(4)
+!!$      DER2(4,5)=V2SIGMA2(5)
+!!$      DER2(5,5)=V2SIGMA2(6)
+!!$      DER2(1,6)=V2RHOLAPL(1)      
+!!$      DER2(1,7)=V2RHOLAPL(2)      
+!!$      DER2(2,6)=V2RHOLAPL(3)      
+!!$      DER2(2,7)=V2RHOLAPL(4)      
+!!$      DER2(1,8)=V2RHOTAU(1)      
+!!$      DER2(1,9)=V2RHOTAU(2)      
+!!$      DER2(2,8)=V2RHOTAU(3)      
+!!$      DER2(2,0)=V2RHOTAU(4)      
+!!$      DER2(3,6)=V2SIGMALAPL(1)      
+!!$      DER2(3,7)=V2SIGMALAPL(2)      
+!!$      DER2(4,6)=V2SIGMALAPL(3)      
+!!$      DER2(4,7)=V2SIGMALAPL(4)
+!!$      DER2(5,6)=V2SIGMALAPL(5)      
+!!$      DER2(5,7)=V2SIGMALAPL(6)
+!!$      DER2(3,8)=V2SIGMATAU(1)      
+!!$      DER2(3,9)=V2SIGMATAU(2)      
+!!$      DER2(4,8)=V2SIGMATAU(3)      
+!!$      DER2(4,9)=V2SIGMATAU(4)
+!!$      DER2(5,8)=V2SIGMATAU(5)      
+!!$      DER2(5,9)=V2SIGMATAU(6)
+!!$      DER2(6,6)=V2lapl2(1)
+!!$      DER2(6,7)=V2lapl2(2)
+!!$      DER2(7,7)=V2lapl2(3)
+!!$      DER2(6,8)=V2lapltau(1)
+!!$      DER2(6,9)=V2lapltau(2)
+!!$      DER2(7,8)=V2lapltau(3)
+!!$      DER2(7,9)=V2lapltau(4)
+!!$      DER2(8,8)=V2tau2(1)
+!!$      DER2(8,9)=V2tau2(2)
+!!$      DER2(9,9)=V2tau2(3)
+!!$!     == third derivatives =====================================================
+!!$      DER3(1,1,1)=V3RHO3(1)
+!!$      DER3(1,1,2)=V3RHO3(2)
+!!$      DER3(1,2,2)=V3RHO3(3)
+!!$      DER3(2,2,2)=V3RHO3(4)
+!!$      DER3(1,1,3)=V3RHO2SIGMA(1)
+!!$      DER3(1,1,4)=V3RHO2SIGMA(2)
+!!$      DER3(1,1,5)=V3RHO2SIGMA(3)
+!!$      DER3(1,2,3)=V3RHO2SIGMA(4)
+!!$      DER3(1,2,4)=V3RHO2SIGMA(5)
+!!$      DER3(1,2,5)=V3RHO2SIGMA(6)
+!!$      DER3(2,2,3)=V3RHO2SIGMA(7)
+!!$      DER3(2,2,4)=V3RHO2SIGMA(8)
+!!$      DER3(2,2,5)=V3RHO2SIGMA(9)
+!!$      DER3(1,1,6)=V3RHO2lapl(1)
+!!$      DER3(1,1,7)=V3RHO2lapl(2)
+!!$      DER3(1,2,6)=V3RHO2lapl(3)
+!!$      DER3(1,2,7)=V3RHO2lapl(4)
+!!$      DER3(2,2,6)=V3RHO2lapl(5)
+!!$      DER3(2,2,7)=V3RHO2lapl(6)
+!!$      DER3(1,1,8)=V3RHO2tau(1)
+!!$      DER3(1,1,9)=V3RHO2tau(2)
+!!$      DER3(1,2,8)=V3RHO2tau(3)
+!!$      DER3(1,2,9)=V3RHO2tau(4)
+!!$      DER3(2,2,8)=V3RHO2tau(5)
+!!$      DER3(2,2,9)=V3RHO2tau(6)
+!!$
+!!$      DER3(1,3,3)=V3RHOSIGMA2(1)
+!!$      DER3(1,3,4)=V3RHOSIGMA2(2)
+!!$      DER3(1,3,5)=V3RHOSIGMA2(3)
+!!$      DER3(1,4,4)=V3RHOSIGMA2(4)
+!!$      DER3(1,4,5)=V3RHOSIGMA2(5)
+!!$      DER3(1,5,5)=V3RHOSIGMA2(6)
+!!$      DER3(2,3,3)=V3RHOSIGMA2(7)
+!!$      DER3(2,3,4)=V3RHOSIGMA2(8)
+!!$      DER3(2,3,5)=V3RHOSIGMA2(9)
+!!$      DER3(2,4,4)=V3RHOSIGMA2(10)
+!!$      DER3(2,4,5)=V3RHOSIGMA2(11)
+!!$      DER3(2,5,5)=V3RHOSIGMA2(12)
+!!$      der3(1,3,6)=v3rhosigmalapl(1)
+!!$      der3(1,3,7)=v3rhosigmalapl(2)
+!!$      der3(1,4,6)=v3rhosigmalapl(3)
+!!$      der3(1,4,7)=v3rhosigmalapl(4)
+!!$      der3(1,5,6)=v3rhosigmalapl(5)
+!!$      der3(1,5,7)=v3rhosigmalapl(6)
+!!$      der3(2,3,6)=v3rhosigmalapl(7)
+!!$      der3(2,3,7)=v3rhosigmalapl(8)
+!!$      der3(2,4,6)=v3rhosigmalapl(9)
+!!$      der3(2,4,7)=v3rhosigmalapl(10)
+!!$      der3(2,5,6)=v3rhosigmalapl(11)
+!!$      der3(2,5,7)=v3rhosigmalapl(12)
+!!$      der3(1,3,8)=v3rhosigmatau(1)
+!!$      der3(1,3,9)=v3rhosigmatau(2)
+!!$      der3(1,4,8)=v3rhosigmatau(3)
+!!$      der3(1,4,9)=v3rhosigmatau(4)
+!!$      der3(1,5,8)=v3rhosigmatau(5)
+!!$      der3(1,5,9)=v3rhosigmatau(6)
+!!$      der3(2,3,8)=v3rhosigmatau(7)
+!!$      der3(2,3,9)=v3rhosigmatau(8)
+!!$      der3(2,4,8)=v3rhosigmatau(9)
+!!$      der3(2,4,9)=v3rhosigmatau(10)
+!!$      der3(2,5,8)=v3rhosigmatau(11)
+!!$      der3(2,5,9)=v3rhosigmatau(12)
+!!$      der3(1,6,6)=v3rholapl2(1)
+!!$      der3(1,6,7)=v3rholapl2(2)
+!!$      der3(1,7,7)=v3rholapl2(3)
+!!$      der3(2,6,6)=v3rholapl2(4)
+!!$      der3(2,6,7)=v3rholapl2(5)
+!!$      der3(2,7,7)=v3rholapl2(6)
+!!$      der3(1,6,8)=v3rholapltau(1)
+!!$      der3(1,6,9)=v3rholapltau(2)
+!!$      der3(1,7,8)=v3rholapltau(3)
+!!$      der3(1,7,9)=v3rholapltau(4)
+!!$      der3(2,6,8)=v3rholapltau(5)
+!!$      der3(2,6,9)=v3rholapltau(6)
+!!$      der3(2,7,8)=v3rholapltau(7)
+!!$      der3(2,7,9)=v3rholapltau(8)
+!!$      der3(1,8,8)=v3rhotau2(1)
+!!$      der3(1,8,9)=v3rhotau2(2)
+!!$      der3(1,9,9)=v3rhotau2(3)
+!!$      der3(2,8,8)=v3rhotau2(4)
+!!$      der3(2,8,9)=v3rhotau2(5)
+!!$      der3(2,9,9)=v3rhotau2(6)
+!!$      DER3(3,3,3)=V3SIGMA3(1)
+!!$      DER3(3,3,4)=V3SIGMA3(2)
+!!$      DER3(3,3,5)=V3SIGMA3(3)
+!!$      DER3(3,4,4)=V3SIGMA3(4)
+!!$      DER3(3,4,5)=V3SIGMA3(5)
+!!$      DER3(3,5,5)=V3SIGMA3(6)
+!!$      DER3(4,4,4)=V3SIGMA3(7)
+!!$      DER3(4,4,5)=V3SIGMA3(8)
+!!$      DER3(4,5,5)=V3SIGMA3(9)
+!!$      DER3(5,5,5)=V3SIGMA3(10)
+!!$      DER3(3,3,6)=V3SIGMA2lapl(1)
+!!$      DER3(3,3,7)=V3SIGMA2lapl(2)
+!!$      DER3(3,4,6)=V3SIGMA2lapl(3)
+!!$      DER3(3,4,7)=V3SIGMA2lapl(4)
+!!$      DER3(3,5,6)=V3SIGMA2lapl(5)
+!!$      DER3(3,5,7)=V3SIGMA2lapl(6)
+!!$      DER3(4,4,6)=V3SIGMA2lapl(7)
+!!$      DER3(4,4,7)=V3SIGMA2lapl(8)
+!!$      DER3(4,5,6)=V3SIGMA2lapl(9)
+!!$      DER3(4,5,7)=V3SIGMA2lapl(10)
+!!$      DER3(5,5,6)=V3SIGMA2lapl(11)
+!!$      DER3(5,5,7)=V3SIGMA2lapl(12)
 !
 !     ==========================================================================
 !     == COMPLETE MATRIX ELEMENTS                                             ==
 !     ==========================================================================
-      DO I2=1,5
+      DO I2=1,9
         DO I1=1,I2-1
           DER2(I2,I1)=DER2(I1,I2)
         ENDDO
       ENDDO
 !
-      DO I3=1,5
+      DO I3=1,9
         DO I2=1,I3-1
           DO I1=1,I2-1
             DER3(I2,I3,I1)=DER3(I1,I2,I3)
@@ -1911,21 +2224,21 @@ CALL ERROR$STOP('PAWLIBXC_MGGA3_A')
 !     ==========================================================================
       DER=MATMUL(DER,MAT)
       DER2=MATMUL(DER2,MAT)
-      DO I1=1,5
+      DO I1=1,9
         DER2(:,I1)=MATMUL(DER2(:,I1),MAT)
       ENDDO
-      DO I1=1,5
-        DO I2=1,5
+      DO I1=1,9
+        DO I2=1,9
           DER3(I1,I2,:)=MATMUL(DER3(I1,I2,:),MAT)
         ENDDO
       ENDDO
-      DO I1=1,5
-        DO I2=1,5
+      DO I1=1,9
+        DO I2=1,9
           DER3(:,I1,I2)=MATMUL(DER3(:,I1,I2),MAT)
         ENDDO
       ENDDO
-      DO I1=1,5
-        DO I2=1,5
+      DO I1=1,9
+        DO I2=1,9
           DER3(I1,:,I2)=MATMUL(DER3(I1,:,I2),MAT)
         ENDDO
       ENDDO
