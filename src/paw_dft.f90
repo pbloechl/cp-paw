@@ -657,7 +657,8 @@ MODULE DFT_MODULE
 !     ** E.G. SELECT DENSITY FUNCTIONAL BY NAME                               **
 !     **************************************************************************
       USE DFT_MODULE, ONLY : TLIBXC &
-     &                      ,TGRA
+     &                      ,TGRA &
+     &                      ,TMETA
       IMPLICIT NONE
       CHARACTER(*),INTENT(IN) :: ID
       INTEGER(4)  ,INTENT(IN) :: LEN
@@ -672,6 +673,7 @@ MODULE DFT_MODULE
 !         == THIS IS FOR THE FUNCTIONALS IN LIBXC ==============================
           CALL PAWLIBXC$SETCHA('FUNCTIONAL',LEN,VAL)
           CALL PAWLIBXC$GETL4('GRADIENT',TGRA)
+          CALL PAWLIBXC$GETL4('METAGGA',TMETA)
         ELSE
 !         == THIS IS FOR THE CPPAW INTRINSIC FUNCTIONALS =======================
           IF(LEN.EQ.1) THEN
@@ -789,8 +791,15 @@ MODULE DFT_MODULE
       REAL(8)               :: DEXC(7)
       REAL(8)               :: EXC1
       REAL(8)               :: DEXC1(7)
+      REAL(8)               :: VAL_9(9),DEXC1_9(9)
 !     **************************************************************************
       IF(.NOT.TINI) CALL DFT_INITIALIZE
+
+PRINT*,'RHOT,RHOS,GRHOT2,GRHOS2,GRHOST,TAUT,TAUS'
+PRINT*,RHOT,RHOS,GRHOT2,GRHOS2,GRHOST,TAUT,TAUS
+!!$CALL ERROR$MSG('THIS IS A STOP INTRODUCED FOR TEST PURPSES')
+!!$CALL ERROR$STOP('DFT_META')
+
       EXC=0.D0
       VXCT=0.D0
       VXCS=0.D0
@@ -915,7 +924,15 @@ MODULE DFT_MODULE
         DEXC=0.D0
         EXC1=0.D0
         DEXC1=0.D0
-        CALL PAWLIBXC$MGGA(VAL,EXC1,DEXC1)
+!CAUTION! SWITCHES OFF DEPENDENCE FOR LAPLACIAN!!!
+!CAUTION! MUST NOT BE USED WITH FUNCTIONALS DEPENDIN ON THE LAPLACIAN.
+        VAL_9(1:5)=VAL(1:5)
+        VAL_9(6:7)=0.D0
+        VAL_9(8:9)=VAL(6:7)
+        CALL PAWLIBXC$MGGA(VAL,EXC1,DEXC1_9)
+        DEXC1(1:5)=DEXC1_9(1:5)
+        DEXC1(6:7)=DEXC1_9(8:9)
+!
         EXC            =EXC+EXC1
         DEXC(:7)       =DEXC(:7)       +DEXC1(:7)
       END IF
@@ -1357,6 +1374,7 @@ MODULE DFT_MODULE
       REAL(8)   ,INTENT(OUT):: D3EXC(7,7,7)! D3EXC/(DVAL(I)DVAL(J),DVAL(K))
       REAL(8)               :: VAL(7)
       REAL(8)               :: EXC1,DEXC1(7),D2EXC1(7,7),D3EXC1(7,7,7)
+      REAL(8)               :: VAL_9(9),DEXC1_9(9),D2EXC1_9(9,9),D3EXC1_9(9,9,9)
 !     **************************************************************************
 !
 !     ==========================================================================
@@ -1517,7 +1535,27 @@ MODULE DFT_MODULE
         DEXC1=0.D0
         D2EXC1=0.D0
         D3EXC1=0.D0
+!CAUTION! SWITCHES OFF DEPENDENCE FOR LAPLACIAN!!!
+!CAUTION! MUST NOT BE USED WITH FUNCTIONALS DEPENDIN ON THE LAPLACIAN.
+        VAL_9(1:5)=VAL(1:5)
+        VAL_9(6:7)=0.D0
+        VAL_9(8:9)=VAL(6:7)
         CALL PAWLIBXC$MGGA3(VAL,EXC1,DEXC1,D2EXC1,D3EXC1)
+        DEXC1(1:5)=DEXC1_9(1:5)
+        DEXC1(6:7)=DEXC1_9(8:9)
+        D2EXC1(1:5,1:5)=D2EXC1_9(1:5,1:5)
+        D2EXC1(6:7,1:5)=D2EXC1_9(8:9,1:5)
+        D2EXC1(1:5,6:7)=D2EXC1_9(1:5,8:9)
+        D2EXC1(6:7,6:7)=D2EXC1_9(8:9,8:9)
+        D3EXC1(1:5,1:5,1:5)=D3EXC1_9(1:5,1:5,1:5)
+        D3EXC1(1:5,1:5,6:7)=D3EXC1_9(1:5,1:5,8:9)
+        D3EXC1(1:5,6:7,1:5)=D3EXC1_9(1:5,8:9,1:5)
+        D3EXC1(1:5,6:7,6:7)=D3EXC1_9(1:5,8:9,8:9)
+        D3EXC1(6:7,1:5,1:5)=D3EXC1_9(8:9,1:5,1:5)
+        D3EXC1(6:7,1:5,6:7)=D3EXC1_9(8:9,1:5,8:9)
+        D3EXC1(6:7,6:7,1:5)=D3EXC1_9(8:9,8:9,1:5)
+        D3EXC1(6:7,6:7,6:7)=D3EXC1_9(8:9,8:9,8:9)
+!
         EXC            =EXC+EXC1
         DEXC(:7)       =DEXC(:7)       +DEXC1(:7)
         D2EXC(:7,:7)   =D2EXC(:7,:7)   +D2EXC1(:7,:7)

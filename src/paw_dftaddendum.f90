@@ -1257,6 +1257,32 @@ END MODULE NEWDFT_MODULE
             CALL ERROR$STOP('PAWLIBXC$GETL4')
           END SELECT
         ENDDO
+!
+!     ==========================================================================
+      ELSE IF(ID.EQ.'METAGGA') THEN 
+        IF(NXC.EQ.0) THEN
+          CALL ERROR$MSG('FUNCTIONALS ARE NOT YET SELECTED')
+          CALL ERROR$CHVAL('ID',ID)
+          CALL ERROR$STOP('PAWLIBXC$GETL4')
+        END IF
+        VAL=.FALSE.
+        DO I=1,NXC
+          XC_INFO=XC_F03_FUNC_GET_INFO(XC_FUNC(I))
+          SELECT CASE (XC_F03_FUNC_INFO_GET_FAMILY(XC_INFO))
+          CASE(XC_FAMILY_LDA,XC_FAMILY_HYB_LDA) 
+            VAL=VAL
+          CASE(XC_FAMILY_GGA,XC_FAMILY_HYB_GGA)
+            VAL=val
+          CASE(XC_FAMILY_MGGA,XC_FAMILY_HYB_MGGA)
+            VAL=.TRUE.
+          CASE(XC_FAMILY_UNKNOWN) 
+            CALL ERROR$MSG('XC_FAMILY UNKOWN')
+            CALL ERROR$STOP('PAWLIBXC$GETL4')
+          CASE DEFAULT
+            CALL ERROR$MSG('XC_FAMILY NOT IMPLEMENTED')
+            CALL ERROR$STOP('PAWLIBXC$GETL4')
+          END SELECT
+        ENDDO
       ELSE
         CALL ERROR$MSG('ID NOT RECOGNIZED')
         CALL ERROR$CHVAL('ID',ID)
@@ -1402,7 +1428,8 @@ END MODULE NEWDFT_MODULE
 !         == FORTRAN ROUTINES ARE IN LIBXC/LIBXC-MASTER/SRC/LIBXC_MASTER.F90  ==
 !         == FUNCTIONAL IDS ARE IN LIBXC/LIBXC-MASTER/SRC/LIBXC_INC.F90       ==
 !         ======================================================================
-          IF(+VAL(I)(:7).NE.+'XC_LDA_'.AND.+VAL(I)(:7).NE.+'XC_GGA_') THEN
+          IF(+VAL(I)(:7).NE.+'XC_LDA_'.AND.+VAL(I)(:7).NE.+'XC_GGA_' &
+       &    .AND.+VAL(I)(:7).NE.'XC_MGGA') THEN
             CALL ERROR$MSG('LIBXC SELECTION IS NOT YET SUPPORTED')
             CALL ERROR$CHVAL('SELECTION',TRIM(ADJUSTL(VAL(I))))
             CALL ERROR$MSG('USE SELECTION BEGINNING WITH XC_LDA_ OR XC_GGA_')
@@ -1803,12 +1830,25 @@ END IF
 !
 !     ...1.........2.........3.........4.........5.........6.........7.........8
       SUBROUTINE PAWLIBXC$MGGA(VAL,EXC,DER)
+      USE PAWLIBXC_MODULE, ONLY : NXC &
+     &                           ,XC_FUNC
+      IMPLICIT NONE
       REAL(8)   ,INTENT(IN) :: VAL(9)      ! (RHOT,RHOS,GRHOT2,GRHOS2,GRHOTS 
                                            !  ,TAUT,TAUS)
       REAL(8)   ,INTENT(OUT):: EXC         ! 
       REAL(8)   ,INTENT(OUT):: DER(9)      ! 
-      CALL ERROR$MSG('METAGGA INTERFACE TO LIBXC YET NOT AVAILABLE')
-      CALL ERROR$STOP('PAWLIBXC$MGGA')
+      REAL(8)               :: X_EXC
+      REAL(8)               :: X_DER(9)
+      INTEGER(4)            :: I
+!     **************************************************************************
+      CALL PAWLIBXC_INITIALIZE()
+      EXC=0.D0
+      DER=0.D0
+      DO I=1,NXC
+        CALL PAWLIBXC_MGGA1(XC_FUNC(I),VAL,X_EXC,X_DER)
+        EXC=EXC+X_EXC*VAL(1)
+        DER=DER+X_DER
+      ENDDO
       RETURN
       END
 !
@@ -1826,19 +1866,123 @@ END IF
 !
 !     ...1.........2.........3.........4.........5.........6.........7.........8
       SUBROUTINE PAWLIBXC$MGGA3(VAL,EXC,DER,DER2,DER3)
+      USE PAWLIBXC_MODULE, ONLY : NXC &
+     &                           ,XC_FUNC
+      IMPLICIT NONE
       REAL(8)   ,INTENT(IN) :: VAL(9)      ! (RHOT,RHOS,GRHOT2,GRHOS2,GRHOTS 
                                            !  ,TAUT,TAUS)
       REAL(8)   ,INTENT(OUT):: EXC         ! 
       REAL(8)   ,INTENT(OUT):: DER(9)      ! 
       REAL(8)   ,INTENT(OUT):: DER2(9,9)   ! 
       REAL(8)   ,INTENT(OUT):: DER3(9,9,9) ! 
-      CALL ERROR$MSG('METAGGA INTERFACE TO LIBXC YET NOT AVAILABLE')
-      CALL ERROR$STOP('PAWLIBXC$MGGA3')
+      REAL(8)               :: X_EXC
+      REAL(8)               :: X_DER(9),X_DER2(9,9),X_DER3(9,9,9)
+      INTEGER(4)            :: I
+!     **************************************************************************
+      CALL PAWLIBXC_INITIALIZE()
+      EXC=0.D0
+      DER=0.D0
+      DER2=0.D0
+      DER3=0.D0
+      DO I=1,NXC
+        CALL PAWLIBXC_MGGA3(XC_FUNC(I),VAL,X_EXC,X_DER,X_DER2,X_DER3)
+        EXC=EXC+X_EXC*VAL(1)
+        DER=DER+X_DER
+        DER2=DER2+X_DER2
+        DER3=DER3+X_DER3
+      ENDDO
       RETURN
       END
 !
 !     ...1.........2.........3.........4.........5.........6.........7.........8
-      SUBROUTINE PAWLIBXC_MGGA3_A(XC_FUNC,VAL,EXC,DER,DER2,DER3)
+      SUBROUTINE PAWLIBXC_MGGA1(XC_FUNC,VAL,EXC,DER)
+!     **************************************************************************
+!     ** DFT3 INTERFACE TO LIBXC CALL FOR THE GGA FAMILY                      **
+!     **************************************************************************
+      USE XC_F03_LIB_M    , ONLY : XC_F03_FUNC_T &               !TYPE
+     &                            ,XC_F03_FUNC_INFO_T &          !TYPE
+     &                            ,XC_F03_LDA_EXC_VXC &          !FUNCTION
+     &                            ,XC_F03_GGA_EXC_VXC &          !FUNCTION
+     &                            ,XC_F03_MGGA_EXC_VXC &         !FUNCTION
+     &                            ,XC_F03_FUNC_GET_INFO &        !FUNCTION
+     &                            ,XC_F03_FUNC_INFO_GET_FAMILY & !FUNCTION
+     &                            ,XC_FAMILY_LDA &         !VALUE
+     &                            ,XC_FAMILY_GGA &         !VALUE
+     &                            ,XC_FAMILY_MGGA &        !VALUE
+     &                            ,XC_FAMILY_HYB_GGA &     !VALUE
+     &                            ,XC_FAMILY_HYB_MGGA      !VALUE
+      USE PAWLIBXC_MODULE, ONLY : MAT => MAT_MGGA
+      IMPLICIT NONE
+      TYPE(XC_F03_FUNC_T),INTENT(IN) :: XC_FUNC
+      REAL(8)   ,INTENT(IN) :: VAL(9) !(RHOT,RHOS,GRHOT2,GRHOS2,GRHOTS,TAUT,TAUS)
+      REAL(8)   ,INTENT(OUT):: EXC         ! XC ENERGY DENSITY 
+      REAL(8)   ,INTENT(OUT):: DER(9)      ! FIRST DERIVARIVES OF EXC
+      INTEGER(8),PARAMETER  :: NP=1
+      TYPE(XC_F03_FUNC_INFO_T):: XC_INFO
+!     == VALUE =================================================================
+      REAL(8) :: EXCARR(1)
+!     == FIRST DERIVATIVES =====================================================
+      REAL(8) :: RHO(2)          ! 0,1
+      REAL(8) :: SIGMA(3)        ! 0,1,2 
+      REAL(8) :: LAPL(2)         ! 0,1  
+      REAL(8) :: TAU(2)          ! 0,1
+!     == FIRST DERIVATIVES =====================================================
+      REAL(8) :: VRHO(2)         ! 0,1
+      REAL(8) :: VSIGMA(3)       ! 0,1,2
+      REAL(8) :: VLAPL(2)        ! 0,1
+      REAL(8) :: VTAU(2)         ! 0,1
+!     **************************************************************************
+      RHO(1)=0.5D0*(VAL(1)+VAL(2))                 ! RHOUP
+      RHO(2)=0.5D0*(VAL(1)-VAL(2))                 ! RHODN
+      SIGMA(1)=0.25D0*(VAL(3)+VAL(4)+2.D0*VAL(5))  ! GRHOUP*GRHOUP
+      SIGMA(2)=0.25D0*(VAL(3)-VAL(4))              ! GRHOUP*GRHODN
+      SIGMA(3)=0.25D0*(VAL(3)+VAL(4)-2.D0*VAL(5))  ! GRHODN*GRHODN 
+      LAPL(1)=0.5D0*(VAL(6)+VAL(7))                ! DENSITY-LAPLACIAN UP
+      LAPL(2)=0.5D0*(VAL(6)-VAL(7))                ! DENSITY-LAPLACIAN DN
+      TAU(1)=0.5D0*(VAL(8)+VAL(9))                 ! KINETIC-EENERGY-DENSITY UP
+      TAU(2)=0.5D0*(VAL(8)-VAL(9))                 ! KINETIC-EENERGY-DENSITY DN
+!
+!     ==========================================================================
+!     == EVALUATE DENSITY FUNCTIONAL AND DERIVATIVES                          ==
+!     ==========================================================================
+!PRINT*,'BEFORE XC_F03_GGA'
+!PRINT*,'BEFORE XC_F03_GGA_EXC_VXC_FXC_KXC'
+! F03_GGA_EXC_VXC_FXC_KXC?
+
+      XC_INFO=XC_F03_FUNC_GET_INFO(XC_FUNC)
+      SELECT CASE (XC_F03_FUNC_INFO_GET_FAMILY(XC_INFO))
+        CASE(XC_FAMILY_LDA)
+          CALL XC_F03_LDA_EXC_VXC(XC_FUNC,NP,RHO &
+     &           ,EXCARR,VRHO)
+          VSIGMA=0.D0
+        CASE(XC_FAMILY_GGA,XC_FAMILY_HYB_GGA)
+          CALL XC_F03_GGA_EXC_VXC(XC_FUNC,NP,RHO,SIGMA &
+     &                           ,EXCARR,VRHO,VSIGMA)
+          VLAPL=0.D0
+          VTAU=0.D0
+        CASE(XC_FAMILY_MGGA,XC_FAMILY_HYB_MGGA)
+          CALL XC_F03_MGGA_EXC_VXC(XC_FUNC,NP,RHO,SIGMA,LAPL,TAU &
+     &                            ,EXCARR,VRHO,VSIGMA,VLAPL,VTAU)
+      END SELECT
+
+      EXC=EXCARR(1)
+      DER=0.D0
+!
+!     == FIRST DERIVATIVES =====================================================
+      DER(1:2)=VRHO(:)
+      DER(3:5)=VSIGMA(:)      
+      DER(6:7)=VLAPL(:)
+      DER(8:9)=VTAU(:)
+!
+!     ==========================================================================
+!     == TRANSFORM BACK                                                       ==
+!     ==========================================================================
+      DER=MATMUL(DER,MAT)
+      RETURN
+      END
+!
+!     ...1.........2.........3.........4.........5.........6.........7.........8
+      SUBROUTINE PAWLIBXC_MGGA3(XC_FUNC,VAL,EXC,DER,DER2,DER3)
 !     **************************************************************************
 !     ** DFT3 INTERFACE TO LIBXC CALL FOR THE GGA FAMILY                      **
 !     **************************************************************************
@@ -1857,15 +2001,14 @@ END IF
       USE PAWLIBXC_MODULE, ONLY : MAT => MAT_MGGA
       IMPLICIT NONE
       TYPE(XC_F03_FUNC_T),INTENT(IN) :: XC_FUNC
-      REAL(8)   ,INTENT(IN) :: VAL(9) !(RHOT,RHOS,GRHOT2,GRHOS2,GRHOTS,TAUT,TAUS)
-      REAL(8)   ,INTENT(OUT):: EXC         ! XC ENERGY DENSITY 
-      REAL(8)   ,INTENT(OUT):: DER(9)      ! FIRST DERIVARIVES OF EXC
-      REAL(8)   ,INTENT(OUT):: DER2(9,9)   ! SECOND DERIVARIVES OF EXC
-      REAL(8)   ,INTENT(OUT):: DER3(9,9,9) ! THIRD DERIVARIVES OF EXC
+      REAL(8)  ,INTENT(IN) :: VAL(9) !(RHOT,RHOS,GRHOT2,GRHOS2,GRHOTS,TAUT,TAUS)
+      REAL(8)  ,INTENT(OUT):: EXC         ! XC ENERGY DENSITY 
+      REAL(8)  ,INTENT(OUT):: DER(9)      ! FIRST DERIVARIVES OF EXC
+      REAL(8)  ,INTENT(OUT):: DER2(9,9)   ! SECOND DERIVARIVES OF EXC
+      REAL(8)  ,INTENT(OUT):: DER3(9,9,9) ! THIRD DERIVARIVES OF EXC
       INTEGER(8),PARAMETER  :: NP=1
       TYPE(XC_F03_FUNC_INFO_T):: XC_INFO
       INTEGER(4)            :: I1,I2,I3
-      REAL(8)               :: VAL1(9)
 !     == VALUE =================================================================
       REAL(8) :: EXCARR(1)
 !     == FIRST DERIVATIVES =====================================================
