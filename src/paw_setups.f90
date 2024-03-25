@@ -2939,6 +2939,7 @@ PRINT*,'THIS%SETTING%SO=',THIS%SETTING%SO
     &                   ,ETOT,THIS%ATOM%AEPOT,VFOCK,EOFI,PSI,PSISM)
       CALL TIMING$CLOCKOFF('SCF-ATOM')
       CALL TRACE$PASS('AFTER SCF-ATOM')
+
 !     
 !     ==========================================================================
 !     ==  SELECT CORE, AND REORDER STATES                                     ==
@@ -3001,6 +3002,13 @@ PRINT*,'THIS%SETTING%SO=',THIS%SETTING%SO
 !     == ZV IS OVERWRITTEN BY INFORMATION FROM COREID ==========================
       ZV=AEZ-SUM(THIS%ATOM%FOFI(:NC))  
       THIS%ZV=ZV
+
+
+print*,'mit rout=',rout,'nc=',nc
+CALL SETUPS$COREENERGY(GID,NR,Rout,AEZ,NB,nc,LOFI,FOFI,EOFI,Psi,psism)
+print*,'mit rbox=',rbox
+CALL SETUPS$COREENERGY(GID,NR,RBOX,AEZ,NB,nc,LOFI,FOFI,EOFI,Psi,psism)
+call error$stop('forced in paw_setups')
 !     
 !     ==========================================================================
 !     == CUT OFF TAIL OF THE CORE STATES. BOUND STATES HAVE A NODE AT ROUT,   ==
@@ -3025,12 +3033,18 @@ PRINT*,'THIS%SETTING%SO=',THIS%SETTING%SO
       DEALLOCATE(AUX)
 !     
 !     ==========================================================================
+!     == CALCULATE CORE ENERGY                                                ==
+!     ==========================================================================
+      CALL SETUPS$COREENERGY(GID,NR,RBOX,AEZ,NB,NC,LOFI,FOFI,EOFI,PSI,PSISM)
+!     
+!     ==========================================================================
 !     == REPORT ENERGIES                                                      ==
 !     ==========================================================================
       WRITE(6,FMT='(56("="))')
       WRITE(6,FMT='(56("="),T10," ALL-ELECTRON ATOM CALCULATION ")')
       WRITE(6,FMT='(56("="))')
       WRITE(6,FMT='("TOTAL ENERGY=",F25.7)')ETOT
+!
       WRITE(6,FMT='(4A4,A20,2A10)')"IB","N","L","SO","E","F","#(REM. EL.)"
       SVAR=0.D0
       DO IB=1,NB
@@ -3211,6 +3225,112 @@ CALL TRACE$PASS('AFTER MAKEPARTIALWAVES')
       RETURN
       END
 !
+!     ...1.........2.........3.........4.........5.........6.........7.........8
+      SUBROUTINE SETUPS$COREENERGY(GID,NR,RBOX,AEZ,nb,NC,LOFI,FOFI,EOFI &
+     &                            ,PSI,PSISM)
+      IMPLICIT NONE
+      INTEGER(4),INTENT(IN) :: GID
+      INTEGER(4),INTENT(IN) :: NR
+      REAL(8)   ,INTENT(IN) :: RBOX
+      INTEGER(4),INTENT(IN) :: Nb
+      INTEGER(4),INTENT(IN) :: NC
+      REAL(8)   ,INTENT(IN) :: AEZ
+      INTEGER(4),INTENT(IN) :: LOFI(Nb)
+      REAL(8)   ,INTENT(IN) :: FOFI(Nb)
+      REAL(8)   ,INTENT(IN) :: EOFI(Nb)
+      REAL(8)   ,INTENT(IN) :: PSI(NR,Nb)
+      REAL(8)   ,INTENT(IN) :: PSISM(NR,Nb)
+      REAL(8)   ,PARAMETER  :: PI=4.D0*ATAN(1.D0)
+      REAL(8)   ,PARAMETER  :: Y0=1.D0/SQRT(4.D0*PI)
+      REAL(8)   ,PARAMETER  :: C0LL=Y0        !GAUNT COEFF
+      REAL(8)               :: R(NR)          ! RADIAL GRID
+      REAL(8)               :: RHO(NR)        ! ELECTRON DENSITY
+      REAL(8)               :: TAU(NR)        ! KINETIC ENERGY DENSITY
+      REAL(8)               :: rhoc(NR)       ! CORE ELECTRON DENSITY
+      REAL(8)               :: tauc(NR)       ! CORE KINETIC ENERGY DENSITY
+      REAL(8)               :: pot(NR)
+      REAL(8)               :: taupot(NR)
+      REAL(8)               :: AUX(NR)
+      REAL(8)               :: AUX1(NR)
+      REAL(8)               :: Eh,exc,ekin,eh_c,exc_c,ekin_c
+      REAL(8)               :: ECORE
+      INTEGER(4)            :: IB
+!     **************************************************************************
+      CALL RADIAL$R(GID,NR,R)
+      RHO(:)=0.D0
+      TAU(:)=0.D0
+print*,'fofi ',fofi
+      DO IB=1,NB
+        RHO(:)=RHO(:)+FOFI(IB)*C0LL*( PSI(:,IB)**2+PSISM(:,IB)**2 )
+!
+!       == EVALUATE THE KINETIC ENERGY FROM THE LARGE COMPONENT ==============
+        AUX=0.D0
+        CALL RADIAL$VERLETD1(GID,NR,PsI(:,IB)/R**LOFI(IB),AUX1)
+        AUX1=AUX1*R**LOFI(IB)
+        AUX=AUX+REAL(LOFI(IB)+1,KIND=8)*AUX1**2
+        CALL RADIAL$VERLETD1(GID,NR,PsI(:,IB)*R**(LOFI(IB)+1),AUX1)
+        AUX1=AUX1/R**(LOFI(IB)+1)
+        AUX=AUX+REAL(LOFI(IB),KIND=8)*AUX1**2
+        AUX=0.5D0*AUX/REAL(2*LOFI(IB)+1,KIND=8)
+!       == RELATIVISTIC CORRECTION ===========================================
+        TAU(:)=TAU(:)+FOFI(IB)*C0LL*AUX(:)
+        IF(IB.EQ.NC) THEN
+          RHOC=RHO
+          TAUC=TAU
+        END IF
+      ENDDO
+!!$      CALL ATOMLIB$BOXVOFRHO(GID,NR,RBOX,AEZ,RHOC,TAUC,POT,TAUPOT,EH_C,EXC_C)
+!!$      CALL ATOMLIB$BOXVOFRHO(GID,NR,RBOX,AEZ,RHO,TAU,POT,TAUPOT,EH,EXC)
+!!$CALL SETUP_WRITEPHI('rho.dat',GID,NR,1,rho*y0*4.d0*pi*r**2)
+!!$CALL SETUP_WRITEPHI('rhoc.dat',GID,NR,1,rhoc*y0*4.d0*pi*r**2)
+!!$CALL SETUP_WRITEPHI('rhov.dat',GID,NR,1,(rho-rhoc)*y0*4.d0*pi*r**2)
+!!$CALL SETUP_WRITEPHI('tau.dat',GID,NR,1,tau*y0*4.d0*pi*r**2)
+!!$CALL SETUP_WRITEPHI('tauc.dat',GID,NR,1,tauc*y0*4.d0*pi*r**2)
+!!$CALL SETUP_WRITEPHI('tauv.dat',GID,NR,1,(tau-tauc)*4.d0*pi*y0*r**2)
+
+      CALL ATOMLIB$BOXVOFRHO(GID,NR,RBOX,AEZ,RHOC,POT,EH_C,EXC_C)
+      CALL ATOMLIB$BOXVOFRHO(GID,NR,RBOX,AEZ,RHO,POT,EH,EXC)
+
+!!$      AUX=R**2*(RHO*POT+TAU*TAUPOT)
+!!$      CALL RADIAL$INTEGRATE(GID,NR,AUX,AUX1)
+!!$      CALL RADIAL$VALUE(GID,NR,AUX1,RBOX,Ekin)
+!!$      EKIN=SUM(FOFI(:Nb)*EOFI(:Nb))-EKIN
+!!$      AUX=R**2*(RHOC*POT+TAUC*TAUPOT)
+!!$      CALL RADIAL$INTEGRATE(GID,NR,AUX,AUX1)
+!!$      CALL RADIAL$VALUE(GID,NR,AUX1,RBOX,Ekin_c)
+!!$      EKIN_C=SUM(FOFI(:NC)*EOFI(:NC))-EKIN_C
+
+
+      AUX=4.d0*pi*R**2*tau*y0
+      CALL RADIAL$INTEGRATE(GID,NR,AUX,AUX1)
+      CALL RADIAL$VALUE(GID,NR,AUX1,RBOX,Ekin)
+      AUX=4.d0*pi*R**2*tauc*y0
+      CALL RADIAL$INTEGRATE(GID,NR,AUX,AUX1)
+      CALL RADIAL$VALUE(GID,NR,AUX1,RBOX,Ekin_c)
+
+
+
+      
+
+      ECORE=EKIN_C+EH_C+EXC_C
+      WRITE(*,FMT='(80("="),T20,"ENERGY REPORT OF SETUPS$COREENERGY")')
+      WRITE(6,FMT='(30("."),T1,"FULL TOTAL ENERGY",T30,F25.7)')EKIN+EH+EXC
+      WRITE(6,FMT='(30("."),T1,"FULL KINETIC ENERGY",T30,F25.7)')EKIN
+      WRITE(6,FMT='(30("."),T1,"FULL HARTREE ENERGY",T30,F25.7)')EH
+      WRITE(6,FMT='(30("."),T1,"FULL XC ENERGY",T30,F25.7)')EXC
+      WRITE(6,FMT='(80("-"))')
+      WRITE(6,FMT='(30("."),T1,"CORE ENERGY",T30,F25.7)')EKIN_C+EH_C+EXC_C
+      WRITE(6,FMT='(30("."),T1,"CORE KINETIC ENERGY",T30,F25.7)')EKIN_C
+      WRITE(6,FMT='(30("."),T1,"CORE HARTREE ENERGY",T30,F25.7)')EH_C
+      WRITE(6,FMT='(30("."),T1,"CORE XC ENERGY:",T30,F25.7)')EXC_C
+      WRITE(6,FMT='(80("-"))')
+      WRITE(6,FMT='(30("."),T1,"VLNC ENERGY",T30,F25.7)') &
+     &                                             EKIN+EH+EXC-EKIN_C-EH_C-EXC_C
+      WRITE(6,FMT='(30("."),T1,"VLNC KINETIC ENERGY",T30,F25.7)')EKIN-EKIN_C
+      WRITE(6,FMT='(30("."),T1,"VLNC HARTREE ENERGY",T30,F25.7)')EH-EH_C
+      WRITE(6,FMT='(30("."),T1,"VLNC XC ENERGY:",T30,F25.7)')EXC-EXC_C
+      RETURN
+      END
 !  
 !     ...1.........2.........3.........4.........5.........6.........7.........8
       SUBROUTINE SETUP_REPORTFILE(LL_STP)

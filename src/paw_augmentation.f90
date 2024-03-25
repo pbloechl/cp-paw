@@ -470,9 +470,6 @@ LOGICAL(4),parameter :: Tmytest=.false.
       END IF
 !
 !     == CORE ONLY EXCHANGE ENERGY =============================================
-
-
-
       IF(TRHOKIN) THEN
         CALL AUGMENTATION_XC_META(GID,NR,1,1,AECORE,AECOREKIN &
      &                    ,COREEXC,AEXCPOT(:,1,1),AEPOTKIN(:,1,1))
