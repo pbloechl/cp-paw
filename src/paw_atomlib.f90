@@ -25,6 +25,7 @@
       REAL(8)                :: R1,DEX   ! R(I)=R1*EXP(DEX*(I-1))-R1
       REAL(8)                :: SVAR
       REAL(8)   ,ALLOCATABLE :: POT(:)
+      REAL(8)   ,ALLOCATABLE :: TAUPOT(:) !KINETIC ENERGY POTENTIAL 
       REAL(8)   ,ALLOCATABLE :: PHI(:,:)
       REAL(8)   ,ALLOCATABLE :: SPHI(:,:)
       REAL(8)   ,ALLOCATABLE :: R(:)
@@ -65,6 +66,8 @@
 !     == DETERMINE POTENTIAL                                                  ==
 !     ==========================================================================
       ALLOCATE(POT(NR))
+      ALLOCATE(TAUPOT(NR))
+      TAUPOT=0.D0
       IF(TFINITENUCLEUS) THEN
         CALL RADIAL$NUCPOT(GID,NR,AEZ,POT)
       ELSE  ! USE THIS TO FREDUCE THE SIZE OF THE NUCLEUS 
@@ -108,7 +111,7 @@
       ALLOCATE(PHI(NR,NB))
       ALLOCATE(SPHI(NR,NB))
       RBOX=R(NR-3)
-      CALL ATOMLIB$BOUNDSTATES(GID,NR,NB,LOFI,SOFI,NNOFI,EOFI,POT &
+      CALL ATOMLIB$BOUNDSTATES(GID,NR,NB,LOFI,SOFI,NNOFI,EOFI,POT,TAUPOT &
      &                            ,.FALSE.,.FALSE.,RBOX,PHI,SPHI)
 !
 !     ==========================================================================
@@ -126,7 +129,7 @@
 !     ==========================================================================
       TREL=.TRUE.
       TZORA=.TRUE.
-      CALL ATOMLIB$BOUNDSTATES(GID,NR,NB,LOFI,SOFI,NNOFI,EOFI,POT &
+      CALL ATOMLIB$BOUNDSTATES(GID,NR,NB,LOFI,SOFI,NNOFI,EOFI,POT,TAUPOT &
      &                            ,TREL,TZORA,RBOX,PHI,SPHI)
 !
 !     ==========================================================================
@@ -143,7 +146,7 @@
 !     ==========================================================================
       TREL=.TRUE.
       TZORA=.FALSE.
-      CALL ATOMLIB$BOUNDSTATES(GID,NR,NB,LOFI,SOFI,NNOFI,EOFI,POT &
+      CALL ATOMLIB$BOUNDSTATES(GID,NR,NB,LOFI,SOFI,NNOFI,EOFI,POT,TAUPOT &
      &                            ,TREL,TZORA,RBOX,PHI,SPHI)
 !
 !     ==========================================================================
@@ -178,7 +181,7 @@
 !     ==========================================================================
       TREL=.TRUE.
       TZORA=.TRUE.
-      CALL ATOMLIB$BOUNDSTATES(GID,NR,NB,LOFI,SOFI,NNOFI,EOFI,POT &
+      CALL ATOMLIB$BOUNDSTATES(GID,NR,NB,LOFI,SOFI,NNOFI,EOFI,POT,TAUPOT &
      &                            ,TREL,TZORA,RBOX,PHI,SPHI)
 !
 !     ==========================================================================
@@ -205,7 +208,7 @@
 !     ==========================================================================
       TREL=.TRUE.
       TZORA=.FALSE.
-      CALL ATOMLIB$BOUNDSTATES(GID,NR,NB,LOFI,SOFI,NNOFI,EOFI,POT &
+      CALL ATOMLIB$BOUNDSTATES(GID,NR,NB,LOFI,SOFI,NNOFI,EOFI,POT,TAUPOT &
      &                            ,TREL,TZORA,RBOX,PHI,SPHI)
 !
 !     ==========================================================================
@@ -695,7 +698,7 @@ END MODULE RADIALFOCK_MODULE
 !
 !     ...1.........2.........3.........4.........5.........6.........7.........8
       SUBROUTINE ATOMLIB$AESCF(GID,NR,KEY,RBOX,AEZ,NX,NB,LOFI,SOFI,FOFI,NNOFI &
-     &                        ,ETOT,POT,VFOCK,EOFI,PHI,SPHI)
+     &                        ,ETOT,POT,TAUPOT,VFOCK,EOFI,PHI,SPHI)
 !     **************************************************************************
 !     ** MAKES A SELF-CONSISTENT CALCULATION OF AN ATOM IN A BOX WITH         **
 !     ** RADIUS RBOX (RADIUS IS LIMITED BY THE GRID RBOX<R(NR-3) )            **
@@ -719,6 +722,7 @@ USE PERIODICTABLE_MODULE
       INTEGER(4) ,INTENT(INOUT)  :: NNOFI(NX)   ! #(NODES)
       REAL(8)    ,INTENT(OUT)    :: ETOT        ! TOTAL ENERGY
       REAL(8)    ,INTENT(INOUT)  :: POT(NR)     ! POTENTIAL
+      REAL(8)    ,INTENT(INOUT)  :: TAUPOT(NR)  ! POTENTIAL ON EKIN-DENSITY
       TYPE(VFOCK_TYPE),INTENT(INOUT)  :: VFOCK  ! FOCK TERM
       REAL(8)   ,INTENT(OUT)     :: EOFI(NX)    ! ONE-PARTICLE ENERGIES
       REAL(8)   ,INTENT(OUT)     :: PHI(NR,NX)  ! ONE-PARTICLE WAVE FUNCTIONS
@@ -729,21 +733,24 @@ USE PERIODICTABLE_MODULE
       REAL(8)   ,PARAMETER       :: XAVTOL=1.D-8
       INTEGER(4),PARAMETER       :: NITER=1000
       LOGICAL(4),PARAMETER       :: TBROYDEN=.TRUE.
-      LOGICAL(4),PARAMETER       :: TPR=.FALSE.
+      LOGICAL(4),PARAMETER       :: TPR=.TRUE.
       REAL(8)   ,PARAMETER       :: PI=4.D0*ATAN(1.D0)
       REAL(8)   ,PARAMETER       :: Y0=1.D0/SQRT(4.D0*PI) !SPH. HARM. L=0
       REAL(8)   ,PARAMETER       :: C0LL=Y0               !GAUNT COEFF
-      REAL(8)                    :: R(NR)
-      REAL(8)                    :: RHO(NR)
-      REAL(8)                    :: AUX(NR),AUX1(NR)   !AUXILIARY ARRAY
+      REAL(8)                    :: R(NR)   ! RADIAL GRID
+      REAL(8)                    :: RHO(NR) ! ELECTRON DENSITY
+      REAL(8)                    :: TAU(NR) ! KINETIC-ENERGY DENSITY
+      REAL(8)                    :: AUX(NR),AUX1(NR),AUX2(NR) !AUXILIARY ARRAYS
       REAL(8)                    :: MUX(NR)   !EXCHANGE ONLY POTENTIAL
+      REAL(8)                    :: DREL(NR)
       INTEGER(4)                 :: ITER
       REAL(8)                    :: XAV,XMAX
       REAL(8)                    :: XAVMIN,XMAXMIN,XDEMIN
       INTEGER(4)                 :: NCONV
       LOGICAL(4)                 :: CONVG
       REAL(8)                    :: EKIN,EH,EXC
-      REAL(8)                    :: POTIN(NR)
+      REAL(8)                    :: POTIN2(NR,2)  !INPUT POTENTIAL (AUCH TAUPOT)
+      REAL(8)                    :: POTOUT2(NR,2) !OUTPUTPOTENTIAL (AUCH TAUPOT)
       REAL(8)                    :: SVAR
       INTEGER(4)                 :: I,IB,JB,ISO,L,IR
       INTEGER(4)                 :: ISVAR,IARR(1)
@@ -762,10 +769,18 @@ USE PERIODICTABLE_MODULE
       CHARACTER(128)             :: STRING,STRING1
       REAL(8)                    :: SCALE
       REAL(8)                    :: EFOCK,EX
+      REAL(8)                    :: EFS
       LOGICAL                    :: TSECOND
       REAL(8)                    :: RFOCK !EXTENT OF ORBITALS DEFINING FOCK TERM
       REAL(8)       ,ALLOCATABLE :: EOFI_FOCK(:)
+
+      REAL(8)                    :: TAUTEST1(NR) 
+      REAL(8)                    :: TAUTEST2(NR) 
+      REAL(8)                    :: CG
+      INTEGER(4)                 :: LM1,LM2,LM3
+      CHARACTER(80)              :: FMTREPORT='(50("."),":",F20.5," ",A,T1,A)'
 !     **************************************************************************
+                               CALL TRACE$PUSH('ATOMLIB$AESCF')
 !     CALL ATOMLIB$TEST_ATOMLIB$BOUNDSTATE()
 !
 !     ==========================================================================
@@ -908,7 +923,7 @@ USE PERIODICTABLE_MODULE
         NB=IB
 !
 !       ========================================================================
-!       == SPECIAL TREATMENT OR EMPTY ATOMS                                   ==
+!       == SPECIAL TREATMENT FOR EMPTY ATOMS                                  ==
 !       ========================================================================
         IF(NB.EQ.0) THEN
           NB=1
@@ -959,6 +974,7 @@ USE PERIODICTABLE_MODULE
           POT(IR:)=0.D0
           EXIT
         ENDDO
+        TAUPOT(:)=0.D0
 !
 !       ========================================================================
 !       == DETERMINE NUMBER OF NODES FOR EACH SHELL                           ==
@@ -992,9 +1008,30 @@ USE PERIODICTABLE_MODULE
       XDEMIN=1.D+12
       NCONV=0
       CONVG=.FALSE.
-      POTIN=POT
-      CALL BROYDEN$NEW(NR,NBROYDENMEM,BROYDENSTEP)
+      POTIN2(:,1)=POT
+      POTIN2(:,2)=TAUPOT
+      CALL BROYDEN$NEW(2*NR,NBROYDENMEM,BROYDENSTEP)
+
+!!$OPEN(1111,FILE='RADIALGRID.DAT')
+!!$DO IR=1,NR
+!!$  WRITE(1111,*)R(IR),IR,POTIN2(IR,1)
+!!$ENDDO
+!!$CLOSE(1111)
+
       DO ITER=1,NITER
+!
+!       ========================================================================
+!       == COLLECT INPUT POTENTIALS                                           ==
+!       ========================================================================
+        POT   =POTIN2(:,1)
+        TAUPOT=POTIN2(:,2)
+
+!!$OPEN(1111,FILE='OUT.DAT')
+!!$DO IR=1,NR
+!!$  WRITE(1111,*)R(IR),POT(IR),TAUPOT(IR)
+!!$ENDDO
+!!$CLOSE(1111)
+!!$STOP 'FORCED 1'
 !
 !       ========================================================================
 !       == DETERMINE BOUND STATES FOR A GIVEN POTENTIAL AND ADD TO DENSITY    ==
@@ -1003,43 +1040,186 @@ USE PERIODICTABLE_MODULE
           CALL ATOMLIB$BOUNDSTATESWITHHF(GID,NR,NB,LOFI,SOFI,NNOFI,EOFI,POT &
      &                              ,VFOCK,TREL,TZORA,RBOX,PHI,SPHI)
         ELSE
-          CALL ATOMLIB$BOUNDSTATES(GID,NR,NB,LOFI,SOFI,NNOFI,EOFI,POT &
+!!$PRINT*,'-- GID ',GID,NR,NB,LOFI(1:NB),SOFI(1:NB),NNOFI(1:NB),EOFI(1:NB)
+!!$PRINT*,'--TREL ',TREL,TZORA,RBOX
+!PRINT*,'--POT ',POT
+          CALL ATOMLIB$BOUNDSTATES(GID,NR,NB,LOFI,SOFI,NNOFI,EOFI,POT,TAUPOT &
      &                            ,TREL,TZORA,RBOX,PHI,SPHI)
         END IF
 !
 !       ========================================================================
 !       == ADD UP CHARGE DENSITY                                              ==
 !       ========================================================================
+!       == EVALUATING THE KINETIC ENERGY FROM THE SECOND DERIVATIVE PRODUCES  ==
+!       == NOISE THAT DESCTROYS THE CONVERGENCE.                              ==
+!       ========================================================================
+!       == THE KINETIC ENERGY DENSITY CALCULATED FROM THE LAPLACIAN AND FROM  ==
+!       == THE SCHROEDINGER EQUATION PSI(E-V)PSI DIFFER BY THE RELATIVISTIC   ==
+!       == EFFECTS.                                                           ==
+!       ========================================================================
+!       == ALSO IN THE NON-RELATIVISTIC EFFECTS THERE IS A SMALL DISCREPANCY  ==
+!       == BETWEEN THE KINETIC ENERGY DENSITY FROM THE LAPLACIAN AND THE      ==
+!       == SCHROEDINGER EQUATION.                                             ==
+!       ========================================================================
         RHO(:)=0.D0
+        TAU(:)=0.D0
         DO IB=1,NB
           RHO(:)=RHO(:)+FOFI(IB)*C0LL*(PHI(:,IB)**2+SPHI(:,IB)**2)
+!CAUTION! THIS FORMULA IS ONLY APPROXIMATE!!!!
+!         == EVALUATE THE KINETIC ENERGY FROM THE LARGE COMPONENT ==============
+          AUX=0.D0
+          CALL RADIAL$VERLETD1(GID,NR,PHI(:,IB)/R**LOFI(IB),AUX1)
+          AUX1=AUX1*R**LOFI(IB)
+          AUX=AUX+REAL(LOFI(IB)+1,KIND=8)*AUX1**2
+          CALL RADIAL$VERLETD1(GID,NR,PHI(:,IB)*R**(LOFI(IB)+1),AUX1)
+          AUX1=AUX1/R**(LOFI(IB)+1)
+          AUX=AUX+REAL(LOFI(IB),KIND=8)*AUX1**2
+          AUX=0.5D0*AUX/REAL(2*LOFI(IB)+1,KIND=8)
+!         == RELATIVISTIC CORRECTION ===========================================
+          TAU(:)=TAU(:)+FOFI(IB)*C0LL*AUX(:)
+
+!!$IF(ITER.LT.0) THEN
+!!$  OPEN(1111,FILE='OUT.DAT')
+!!$  PRINT*,'FOFI ',LOFI(IB),FOFI(IB),C0LL,EOFI(IB)
+!!$  DO IR=2,NR
+!!$    WRITE(1111,*)R(IR),TAU(IR),4.D0*EXP(-4*R(IR))*C0LL
+!!$  ENDDO
+!!$  CLOSE(1111)
+!!$END IF
         ENDDO
 !
 !       ========================================================================
 !       ==  CALCULATE ENERGY                                                  ==
 !       ========================================================================
-        IF(TBROYDEN) POTIN=POT
         IF(CONVG) THEN
-          POTIN=POT  ! SAVE INPUT POTENTIAL TO AVOID OVERWRITING
 !         == DETERMINE KINETIC ENERGY ==========================================
+
+AUX(:)=TAUPOT(:)*TAU(:)*R(:)**2
+CALL RADIAL$INTEGRATE(GID,NR,AUX,AUX1)
+CALL RADIAL$VALUE(GID,NR,AUX1,RBOX,EKIN)
+PRINT*,'TAU*TAUPOT 1',EKIN
+
+AUX(:)=TAU(:)*R(:)**2/(1.D0+TAUPOT(:)*Y0)*TAUPOT(:)
+CALL RADIAL$INTEGRATE(GID,NR,AUX,AUX1)
+CALL RADIAL$VALUE(GID,NR,AUX1,RBOX,EKIN)
+PRINT*,'TAU*TAUPOT 2',EKIN
+!!$OPEN(999,FILE='XXX.DAT')
+!!$AUX=0.D0
+!!$DO IR=1,NR
+!!$  IF(RHO(IR)*Y0.LT.1.D-18) CYCLE
+!!$  CALL VOSKOWILKNUSAIRLDA(RHO(IR)*Y0,0.D0,AUX(IR),AUX1(1),AUX1(2))
+!!$  CALL DFT(RHO(IR)*Y0,0.D0,0.D0,0.D0,0.D0,AUX2(IR) &
+!!$          ,AUX1(1),AUX1(2),AUX1(3),AUX1(4),AUX1(5))
+!!$  WRITE(999,*)R(IR),RHO(IR)*Y0,AUX(IR),AUX2(IR)
+!!$ENDDO
+!!$CLOSE(999)
+!!$AUX(:)=4.D0*PI*AUX(:)*R(:)**2
+!!$CALL RADIAL$INTEGRATE(GID,NR,AUX,AUX1)
+!!$CALL RADIAL$VALUE(GID,NR,AUX1,RBOX,SVAR)
+!!$PRINT*,'VOSKO WILK NUSAIR  ',SVAR,EXC,SVAR-EXC
+
+!!$AUX(:)=4.D0*PI*AUX2(:)*R(:)**2
+!!$CALL RADIAL$INTEGRATE(GID,NR,AUX,AUX1)
+!!$CALL RADIAL$VALUE(GID,NR,AUX1,RBOX,SVAR)
+!!$PRINT*,'OLDFUNCTIONAL  ',SVAR,EXC,SVAR-EXC
+
+!!$AUX=RHO(:)*Y0
+!!$AUX(:)=4.D0*PI*AUX(:)*R(:)**2
+!!$CALL RADIAL$INTEGRATE(GID,NR,AUX,AUX1)
+!!$CALL RADIAL$VALUE(GID,NR,AUX1,RBOX,SVAR)
+!!$PRINT*,'CHARGE ',SVAR
+!
+!         ======================================================================
+!         == CALCULATE EKIN FROM KINETIC ENERGY DENSITY ========================
+!         == THIS IS TO TEST THE KINETIC ENERGY DENSITY CALCULATED FROM THE   ==
+!         == SQUARED GRADIENT INSTEAD OF USING (V-E)*RHO. THE TWO SHALL AGREE ==
+!         == IN THE NON-RELATIVISTIC CASE.                                    ==
+!         ======================================================================
+          AUX=4.D0*PI*(TAU*Y0)*R(:)**2
+          CALL RADIAL$INTEGRATE(GID,NR,AUX,AUX1)
+          CALL RADIAL$VALUE(GID,NR,AUX1,RBOX,SVAR)
+          WRITE(*,FMT=FMTREPORT)SVAR,'H','EKIN FROM SQUARED GRADIENT (NOT USED)'
+
+          CALL SCHROEDINGER$DREL(GID,NR,POT,0.D0,DREL)
+          AUX=4.D0*PI*(TAU*Y0)*R(:)**2 * (1.D0+DREL)
+          CALL RADIAL$INTEGRATE(GID,NR,AUX,AUX1)
+          CALL RADIAL$VALUE(GID,NR,AUX1,RBOX,SVAR)
+          WRITE(*,FMT=FMTREPORT) &
+         &      SVAR,'H','EKIN FROM SQUARED GRADIENT+ZORA CORR (NOT USED)'
+
+          AUX=4.D0*PI*(TAU*Y0)*R(:)**2 * DREL
+          CALL RADIAL$INTEGRATE(GID,NR,AUX,AUX1)
+          CALL RADIAL$VALUE(GID,NR,AUX1,RBOX,SVAR)
+          WRITE(*,FMT=FMTREPORT) &
+         &      SVAR,'H','RELATIVISTIC (ZORA) EKIN CORR (NOT USED)'
+
+          AUX=4.D0*PI*(TAU*Y0)*R(:)**2 * TAUPOT(:)*Y0
+          CALL RADIAL$INTEGRATE(GID,NR,AUX,AUX1)
+          CALL RADIAL$VALUE(GID,NR,AUX1,RBOX,SVAR)
+          WRITE(*,FMT=FMTREPORT) &
+         &      SVAR,'H','TAUPOT*TAU'
+!
+!         ======================================================================
+!         == CALCULATE KINETIC ENERGY FROM POTENTIAL AND ENERGY ================
+!         ======================================================================
           AUX(:)=0.D0
           DO IB=1,NB
+!           == THE ENERGY IS EOFI AND REQUIRES NORMALIZATION 
+!           == OF THE LARGE COMPONENT
+            AUX1(:)=PHI(:,IB)**2*R(:)**2
+            CALL RADIAL$INTEGRATE(GID,NR,AUX1,AUX2)
+            CALL RADIAL$VALUE(GID,NR,AUX2,RBOX,SVAR)
+            SVAR=1.D0/SVAR
+!
             AUX(:)=AUX(:) &
-       &          +(PHI(:,IB)**2+SPHI(:,IB)**2)*(EOFI(IB)-POT(:)*Y0)*FOFI(IB)
+        &          +FOFI(IB)*( (EOFI(IB)-POT(:)*Y0)*PHI(:,IB)**2*SVAR )
             IF(TFOCK.AND.TSECOND) THEN
                CALL RADIALFOCK$VPSI(GID,NR,VFOCK,LOFI(IB),PHI(:,IB),AUX1)
                AUX=AUX-PHI(:,IB)*AUX1(:)*FOFI(IB)
             END IF
           ENDDO
+          AUX(:)=AUX(:)-TAUPOT*TAU
           AUX(:)=AUX(:)*R(:)**2
           CALL RADIAL$INTEGRATE(GID,NR,AUX,AUX1)
           CALL RADIAL$VALUE(GID,NR,AUX1,RBOX,EKIN)
-          CALL ATOMLIB$BOXVOFRHO(GID,NR,RBOX,AEZ,RHO,POT,EH,EXC)
-          ETOT=EKIN+EH+EXC
+          WRITE(*,FMT=FMTREPORT)EKIN,'H','EKIN FROM (E-V)*RHO-TAU*TAUPOT (USED)'
+!
+!         ======================================================================
+!         == HARTREE AND EXCHANGE CORRELATION ENERGY                          ==
+!         ======================================================================
+          CALL ATOMLIB$BOXVOFRHO(GID,NR,RBOX,AEZ,RHO,TAU,POT,TAUPOT,EH,EXC)
+PRINT*,'IN AESCF  (1) (LOCAL) RBOX=',RBOX
+PRINT*,'EKIN   ',EKIN
+PRINT*,'EH     ',EH
+PRINT*,'EXC    ',EXC
+CALL SETUPS$COREENERGY(GID,NR,RBOX,AEZ,NB,1,LOFI,FOFI,EOFI,PHI,SPHI)
+!
+!         ======================================================================
+!         == ESTIMATE THE ENERGY DUE TO THE FINITE NUCLEAR SIZE               ==
+!         ======================================================================
+          CALL ATOMLIB_EFINITENUCSIZE(GID,NR,RBOX,AEZ,RHO,EFS)
+!
+!         ======================================================================
+!         == ADD RELATIVISTIC CORRECTION (MCDONALD AND VOSKO) TO EXC          ==
+!         == MACDONALD,VOSKO, J.PHYS.C: SOLID STATE PHYS 12, 2977 (1979)      ==
+!         ======================================================================
+IF(.NOT.TREL)PRINT*,'WARNING!!!!! RELATIVISTIC EFFECTS ARE SWITCHED OFF'
+          IF(TREL) THEN
+            DO IR=1,NR
+              CALL DFT$MACDONALD(RHO(IR)*Y0,AUX(IR),AUX1(IR))
+            ENDDO
+            AUX(:)=4.D0*PI*AUX(:)*R(:)**2
+            CALL RADIAL$INTEGRATE(GID,NR,AUX,AUX1)
+            CALL RADIAL$VALUE(GID,NR,AUX1,RBOX,SVAR)
+            WRITE(*,FMT=FMTREPORT) &
+        &        SVAR,'H','MACDONALD1979 RELATIVISTIC CORRECTION'
+            EXC=EXC+SVAR
+          END IF
+!
 !         == WORK OUT FOCK EXCHANGE ENERGY =====================================
           IF(TFOCK.AND.TSECOND) THEN
             CALL DFT$SETL4('XCONLY',.TRUE.)
-            CALL ATOMLIB$BOXVOFRHO(GID,NR,RBOX,AEZ,RHO,POT,EH,EX)
+            CALL ATOMLIB$BOXVOFRHO(GID,NR,RBOX,AEZ,RHO,TAU,POT,TAUPOT,EH,EX)
             CALL DFT$SETL4('XCONLY',.FALSE.)
 !           == SAVE SCALE AND MUX TO RESTORE VFOCK FOR LATER USE ===============
             SCALE=VFOCK%SCALE
@@ -1066,11 +1246,14 @@ USE PERIODICTABLE_MODULE
 !
 !         == PRINT ENERGIES ====================================================
           ETOT=EKIN+EH+EXC+SCALE*(EFOCK-EX)
+!
           IF(TPR) THEN
+!           __I PROVIDE RESULTS HERE WITH 10^-8 H PRECISION, BECAUSE____________
+!           __ATOMIC CODES ARE TESTED IN THE MICRO-HARTREE ACCURACY_____________
             WRITE(*,FMT='(80("="),T20,"ENERGY REPORT OF ATOMLIB$AESCF")')
-            WRITE(*,FMT='(30("."),T1,"TOTAL ENERGY:",T30,F15.6)')ETOT
-            WRITE(*,FMT='(30("."),T1,"KINETIC ENERGY:",T30,F15.6)')EKIN
-            WRITE(*,FMT='(30("."),T1,"HARTREE ENERGY:",T30,F15.6)')EH
+            WRITE(*,FMT='(30("."),T1,"TOTAL ENERGY:",T30,F15.8)')ETOT
+            WRITE(*,FMT='(30("."),T1,"KINETIC ENERGY:",T30,F15.8)')EKIN
+            WRITE(*,FMT='(30("."),T1,"HARTREE ENERGY:",T30,F15.8)')EH
             IF(TFOCK.AND.TSECOND) THEN
               WRITE(*,FMT='(30("."),T1,"EXACT XC MIXING FACTOR:",T30,F15.6)') &
      &                     SCALE
@@ -1084,9 +1267,15 @@ USE PERIODICTABLE_MODULE
             ELSE
               WRITE(*,FMT='(30("."),T1,"DFT XC ENERGY:",T30,F15.6)')EXC
             END IF
+            WRITE(*,FMT='(30("."),T1,"FINITE NUCLEUS:",T30,F15.8)')EFS
+            WRITE(*,FMT='(".... CALCULATION USES FINITE NUCLEUS")') 
+            WRITE(*,FMT='(".... DO NOT ADD FINITE NUCLEUS CORRECTION")') 
           END IF
 
-          POT=POTIN  ! RECOVER POT AS INPUT POTENTIAL
+          POT=POTIN2(:,1) ! RECOVER POT AS INPUT POTENTIAL
+          TAUPOT=POTIN2(:,2)
+PRINT*,'IN AESCF  (LOCAL) RBOX=',RBOX
+CALL SETUPS$COREENERGY(GID,NR,RBOX,AEZ,NB,1,LOFI,FOFI,EOFI,PHI,SPHI)
         END IF
 !
 !       ========================================================================
@@ -1107,7 +1296,24 @@ USE PERIODICTABLE_MODULE
 !       ========================================================================
 !       == CALCULATE OUTPUT POTENTIAL                                         ==
 !       ========================================================================
-        CALL ATOMLIB$BOXVOFRHO(GID,NR,RBOX,AEZ,RHO,POT,EH,EXC)
+        CALL ATOMLIB$BOXVOFRHO(GID,NR,RBOX,AEZ,RHO,TAU,POT,TAUPOT,EH,EXC)
+!       == ADD RELATIVISTIC EXCHANGE CORRECTION OF MACDONALD AND VOSKO
+        IF(TREL) THEN
+          DO IR=1,NR
+            CALL DFT$MACDONALD(RHO(IR)*Y0,AUX(IR),AUX1(IR))
+            POT(IR)=POT(IR)+AUX1(IR)/Y0
+          ENDDO
+        END IF
+!
+        POTOUT2(:,1)=POT
+        POTOUT2(:,2)=TAUPOT
+OPEN(1111,FILE='OUT.DAT')
+DO IR=1,NR
+  WRITE(1111,*)R(IR),POT(IR),TAUPOT(IR),POTIN2(IR,1),POTIN2(IR,2)
+ENDDO
+CLOSE(1111)
+!!$PRINT*,'RBOX ',RBOX
+!!$STOP 'FORCED 3'
 !
 !       == DETERMINE WAVE FUNCTIONS FOR FOCK POTENTIAL =========================
         IF(TFOCK.AND.(TSECOND.OR.CONVG)) THEN
@@ -1124,6 +1330,7 @@ USE PERIODICTABLE_MODULE
             ALLOCATE(EOFI_FOCK(NB))
             EOFI_FOCK(:)=EOFI(:NB)
             CALL ATOMLIB$BOUNDSTATES(GID,NR,NB,LOFI,SOFI,NNOFI,EOFI_FOCK,POT &
+     &                              ,TAUPOT &
      &                              ,TREL,TZORA,RFOCK,PHI,SPHI)
           ELSE
             CALL ATOMLIB$BOUNDSTATESWITHHF(GID,NR,NB,LOFI,SOFI,NNOFI,EOFI,POT &
@@ -1132,8 +1339,12 @@ USE PERIODICTABLE_MODULE
           CALL RADIALFOCK$MAKEVFOCK(GID,NR,NB,LOFI,SOFI,FOFI,PHI,RFOCK &
      &                            ,LRHOX,VFOCK)
           RHO(:)=0.D0
+          TAU(:)=0.D0
           DO IB=1,NB
             RHO(:)=RHO(:)+FOFI(IB)*C0LL*(PHI(:,IB)**2+SPHI(:,IB)**2)
+!CAUTION! THIS FORMULA IS ONLY APPROXIMATE!!!!
+            TAU(:)=TAU(:)+FOFI(IB)*C0LL*(EOFI_FOCK(IB)-POT(:)*Y0) &
+       &                               *(PHI(:,IB)**2+SPHI(:,IB)**2)
           ENDDO
           CALL ATOMLIB$BOXMUX(GID,NR,RFOCK,RHO,MUX)
           VFOCK%MUX(:)=MUX(:)          
@@ -1146,11 +1357,12 @@ USE PERIODICTABLE_MODULE
         IF(CONVG) EXIT
 !
 !       ========================================================================
-!       ==  GENERATE NEXT ITERATION USING D. G. ANDERSONS METHOD              ==
+!       ==  CHECK CONVERGENCE
 !       ========================================================================
-        XAV=SQRT(SUM(R**3*(POT-POTIN)**2)/SUM(R**3))
-        XMAX=MAXVAL(ABS(POT-POTIN))
-        IF(TPR)PRINT*,ITER,' AV(POT-POTIN)=',XAV,' MAX:(POT-POTIN)=',XMAX,NCONV,TFOCK.AND.TSECOND
+        XAV=SQRT(SUM(R**3*(POTOUT2(:,1)-POTIN2(:,1))**2)/SUM(R**3))
+        XMAX=MAXVAL(ABS(POTOUT2(:,1)-POTIN2(:,1)))
+        IF(TPR)PRINT*,ITER,' AV(POT-POTIN)=',XAV &
+       &                  ,' MAX:(POT-POTIN)=',XMAX,NCONV,TFOCK.AND.TSECOND
         NCONV=NCONV+1
         IF(XAV.LT.XAVMIN) THEN
           XAVMIN=XAV
@@ -1173,8 +1385,9 @@ USE PERIODICTABLE_MODULE
 !       ========================================================================
 !       ==  GENERATE NEXT ITERATION USING D. G. ANDERSONS METHOD              ==
 !       ========================================================================
-        CALL BROYDEN$STEP(NR,POTIN,POT-POTIN)
-        POT=POTIN
+        CALL BROYDEN$STEP(2*NR,POTIN2,POTOUT2-POTIN2)
+        POT   =POTIN2(:,1)
+        TAUPOT=POTIN2(:,2)
       ENDDO
 
       CALL BROYDEN$CLEAR
@@ -1186,6 +1399,7 @@ USE PERIODICTABLE_MODULE
         CALL ERROR$I4VAL('NITER',NITER)
         CALL ERROR$STOP('ATOMLIB$AESCF')
       END IF
+!
 !     == DFT CALCULATION IS CONVERGED. NOW CONVERGE WITH FOCK TERM =============
       IF(TFOCK.AND.(.NOT.TSECOND)) THEN
         TSECOND=.TRUE.
@@ -1210,6 +1424,19 @@ IF(TPR) THEN
   ENDDO
   PRINT*,'#ITERATIONS ',ITER
 END IF
+
+!!$OPEN(1111,FILE='OUT.DAT')
+!!$DO IR=1,NR
+!!$  WRITE(1111,*) R(IR),POT(IR),TAUPOT(IR)
+!!$ENDDO
+!!$CLOSE(1111)
+!!$STOP 'FORCED'
+
+CALL ATOMLIB_WRITEPHI('RHO',GID,NR,1,RHO)
+CALL ATOMLIB_WRITEPHI('TAU',GID,NR,1,TAU)
+CALL ATOMLIB_WRITEPHI('POT',GID,NR,1,POT)
+CALL ATOMLIB_WRITEPHI('TAUPOT',GID,NR,1,TAUPOT)
+
 !
 !     ==========================================================================
 !     == REORDER STATES ACCORDING TO ENERGY                                   ==
@@ -1240,13 +1467,12 @@ END IF
         SPHI(:,IB+1:JB)=SPHI(:,IB:JB-1)
         SPHI(:,IB)=AUX
       ENDDO
-!STOP 'FORCED STOP IN AESCF'
-
+                               CALL TRACE$POP
       RETURN
       END
 !
 !     ...1.........2.........3.........4.........5.........6.........7.........8
-      SUBROUTINE ATOMLIB$BOUNDSTATES(GID,NR,NB,LOFI,SOFI,NNOFI,EOFI,POT &
+      SUBROUTINE ATOMLIB$BOUNDSTATES(GID,NR,NB,LOFI,SOFI,NNOFI,EOFI,POT,TAUPOT &
      &                              ,TREL,TZORA,RBOX,PHI,SPHI)
 !     **************************************************************************
 !     **  FINDS A SET OF BOUNDSTATES FOR A GIVEN POTENTIAL                    **
@@ -1261,11 +1487,14 @@ END IF
       INTEGER(4) ,INTENT(IN)     :: NNOFI(NB)  !#(NODES)
       REAL(8)    ,INTENT(INOUT)  :: EOFI(NB)   !ENERGY
       REAL(8)    ,INTENT(IN)     :: POT(NR)    !POTENTIAL
+      REAL(8)    ,INTENT(IN)     :: TAUPOT(NR) !KINETIC-ENERGY POTENTIAL
       LOGICAL(4) ,INTENT(IN)     :: TREL       !SWITCH FOR RELATIVISTIC CORR/
       LOGICAL(4) ,INTENT(IN)     :: TZORA      !SWITCH FOR ZORA
       REAL(8)    ,INTENT(IN)     :: RBOX       !BOX RADIUS
       REAL(8)    ,INTENT(OUT)    :: PHI(NR,NB) !WAVE-FUNCTION (LARGE COMP.)
       REAL(8)    ,INTENT(OUT)    :: SPHI(NR,NB)!WAVE-FUNCTION (SMALL COMP.)
+      REAL(8)    ,PARAMETER      :: PI=4.D0*ATAN(1.D0)
+      REAL(8)    ,PARAMETER      :: Y0=1.D0/SQRT(4.D0*PI)
       REAL(8)                    :: DREL(NR)
       REAL(8)                    :: G(NR)
       REAL(8)                    :: R(NR)
@@ -1288,6 +1517,9 @@ END IF
           TVARDREL=.TRUE.
         END IF
       END IF
+!     == ADD KINETIC ENERGY POTENTIAL===========================================
+      DREL=DREL+TAUPOT*Y0
+!
 !     ==========================================================================
 !     == LOOP OVER ALL STATES                                                 ==
 !     ==========================================================================
@@ -1400,7 +1632,7 @@ END IF
 !     **************************************************************************
 !     **  FINDS A BOUND STATE OF THE RADIAL SCHROEDINGER EQUATION AND         **
 !     **  ITS ENERGY FOR A  SPECIFIED NUMBER OF NODES NN.                     **
-!     **  SCHROEDINGER EQUATION MAY INVOLVE AN INHOMOGENEITY G                **
+!     **  SCHROEDINGER EQUATION MAY INVOLVE AN INHOMOGENEITY G.               **
 !     **                                                                      **
 !     **  THE BOUNDARY CONDITION IS PHI(RBOX)=0                               **
 !     **                                                                      **
@@ -1411,6 +1643,10 @@ END IF
 !     **  SECONDLY, THE SCHROEDINGER EQUATION IS SOLVED INWARD, AND           **
 !     **  MATCHED WITH VALUE, EITHER AT THE CLASSICAL TURNING POINT           **
 !     **  OR A SPECIFIED RADIUS, WHATEVER IS SMALLER.                         **
+!     **                                                                      **
+!     **  DREL CAPTURES THE RELATIVISTIC CORRECTIONS AND AN OPTIONAL          **
+!     **  POTENTIAL ACTING ON THE KINETIC ENERGY DENSITY USED IN META-GGAS.   **
+!     **                                                                      **
 !     **************************************************************************
       IMPLICIT NONE
       INTEGER(4) ,INTENT(IN)     :: GID     ! GRID ID
@@ -1421,6 +1657,7 @@ END IF
       REAL(8)    ,INTENT(IN)     :: RBOX    ! BOX RADIUS
       LOGICAL(4) ,INTENT(IN)     :: TVARDREL! UPDATE RELATIVISTIC PARAMETER
       REAL(8)    ,INTENT(INOUT)  :: DREL(NR)! RELATIVISTIC CORRECTION
+                                            ! AND KINETIC-ENERGY-POTENTIAL
       REAL(8)    ,INTENT(IN)     :: G(NR)   ! INHOMOGENITY
       INTEGER(4) ,INTENT(IN)     :: NN      ! #(NODES)
       REAL(8)    ,INTENT(IN)     :: POT(NR) ! POTENTIAL
@@ -1433,6 +1670,7 @@ END IF
       REAL(8)                    :: R(NR)
       REAL(8)                    :: PHIHOM(NR),PHIINHOM(NR),GHOM(NR)
       REAL(8)                    :: PHI1(NR)
+      REAL(8)                    :: TAUPOT(NR) ! KINETIC-ENERGY POTENTIAL
       INTEGER(4) ,PARAMETER      :: NITER=100
       INTEGER(4)                 :: I,IR
       INTEGER(4)                 :: IDIR ! SWITCH FOR OUT/INWARD INTEGRATION 
@@ -1456,6 +1694,14 @@ END IF
         IF(R(IR).GE.RBOX) EXIT
       ENDDO
       DREL1=DREL
+!     == ON INPUT, DREL CONTAINS BOTH THE FROZEN RELATIVISTIC CORRECTION D =====
+!     ==    D=DREL+TAUPOT*Y0                                               =====
+!     == AS WELL AS THE POTENTIAL ON THE NONRELATIVISTIC KINETIC ENERGY DENSITY=
+!     == SUBRACT DERIVATIVE WRT KINETIC ENERGY DENSITY FOR META GGAS ==========
+      IF(TVARDREL) THEN
+        CALL SCHROEDINGER$DREL(GID,NR,POT,E,DREL1)
+        TAUPOT=DREL-DREL1
+      END IF
 !          
 !     ==========================================================================
 !     ==========================================================================
@@ -1493,7 +1739,10 @@ END IF
 !       == INTEGRATE RADIAL SCHROEDINGER EQUATION OUTWARD                     ==
 !       ========================================================================
         IDIR=1
-        IF(TVARDREL)CALL SCHROEDINGER$DREL(GID,NR,POT1,E,DREL1)
+        IF(TVARDREL) THEN
+          CALL SCHROEDINGER$DREL(GID,NR,POT1,E,DREL1)
+          DREL1=DREL1+TAUPOT
+        END IF
         CALL SCHROEDINGER$SPHERICAL(GID,NR,POT1,DREL1,SO,G,L,E,IDIR,PHI)
 !       == CHECK FOR OVERFLOW
         IF(.NOT.(PHI(IROUT).GT.0.OR.PHI(IROUT).LE.0)) THEN
@@ -1707,21 +1956,21 @@ END IF
 !     ==========================================================================
       Z0=333.333D0 ! FIRST VALUE IS MEANINGLESS
       DX=1.D-2
-      X0=E-dx
-!!$IF(l.eq.0.and.nn.eq.1) THEN
-!!$X0=X0+1.d-2
-!!$end if
-!!$IF(l.eq.0.and.nn.eq.1) THEN
-!!$open(unit=1005,file='xout')
-!!$do iter=1,20000
-!!$  e=-2.d0+2.5d-4*real(iter,kind=8)
+      X0=E-DX
+!!$IF(L.EQ.0.AND.NN.EQ.1) THEN
+!!$X0=X0+1.D-2
+!!$END IF
+!!$IF(L.EQ.0.AND.NN.EQ.1) THEN
+!!$OPEN(UNIT=1005,FILE='XOUT')
+!!$DO ITER=1,20000
+!!$  E=-2.D0+2.5D-4*REAL(ITER,KIND=8)
 !!$  CALL ATOMLIB_PAWDER(GID,NR,L,E,PSPOT,NPRO,PRO,DH,DO,G,PHI)
 !!$  CALL SCHROEDINGER$PHASESHIFT(GID,NR,PHI,RMINNODE,RBOX,Z0)
-!!$  write(1005,*)e,z0
-!!$enddo
-!!$close(1005)
-!!$call error$stop('---')
-!!$end if
+!!$  WRITE(1005,*)E,Z0
+!!$ENDDO
+!!$CLOSE(1005)
+!!$CALL ERROR$STOP('---')
+!!$END IF
       DO ITER=1,NITER
         E=X0
 !       ========================================================================
@@ -1749,24 +1998,24 @@ END IF
           PHI2(:)=PHI(:)
         END IF
         IF(ITER.GT.1.AND.Z0*ZM.LT.0.D0) EXIT
-!!$IF(l.eq.0.and.nn.eq.1) THEN
+!!$IF(L.EQ.0.AND.NN.EQ.1) THEN
 !!$ CALL ATOMLIB_WRITEPHI('ERROR_PAWPSI.DAT',GID,NR,1,PHI)
 !!$ CALL ERROR$I4VAL('L',L)
 !!$ CALL ERROR$I4VAL('NN',NN)
 !!$ CALL ERROR$R8VAL('RMINNODE',RMINNODE)
-!!$ CALL ERROR$R8VAL('Rbox',Rbox)
+!!$ CALL ERROR$R8VAL('RBOX',RBOX)
 !!$ CALL ERROR$R8VAL('X0',X0)
 !!$ CALL ERROR$R8VAL('Z0',Z0)
 !!$ CALL ERROR$STOP('ATOMLIB$PAWBOUNDSTATE')
-!!$endif
+!!$ENDIF
         IF(ITER.EQ.NITER) THEN
           CALL ERROR$MSG('SEARCH FOR BISECTION WINDOW FAILED')
           CALL ERROR$I4VAL('L',L)
           CALL ERROR$I4VAL('NN',NN)
-          CALL ERROR$r8VAL('XM',XM)
-          CALL ERROR$r8VAL('X0',X0)
-          CALL ERROR$r8VAL('ZM',ZM)
-          CALL ERROR$r8VAL('Z0',Z0)
+          CALL ERROR$R8VAL('XM',XM)
+          CALL ERROR$R8VAL('X0',X0)
+          CALL ERROR$R8VAL('ZM',ZM)
+          CALL ERROR$R8VAL('Z0',Z0)
           CALL ERROR$STOP('ATOMLIB$PAWBOUNDSTATE')
         END IF
         IF(ITER.EQ.1) DX=SIGN(DX,-Z0)
@@ -2174,9 +2423,34 @@ RETURN
       END
 !
 !     ...1.........2.........3.........4.........5.........6.........7.........8
-      SUBROUTINE ATOMLIB$BOXVOFRHO(GID,NR,RAD,AEZ,RHO,POT,EH,EXC)
-!     ******************************************************************
-!     **                                                              **
+      SUBROUTINE ATOMLIB_EFINITENUCSIZE(GID,NR,RAD,AEZ,RHO,EFS)
+!     **************************************************************************
+!     **  ESTIMATE THE ENERGY CORRECTION DUE TO FINITE SIZE OF THE NUCLEUS    **
+!     **************************************************************************
+      IMPLICIT NONE
+      INTEGER(4),INTENT(IN) :: GID
+      INTEGER(4),INTENT(IN) :: NR
+      REAL(8)   ,INTENT(IN) :: AEZ
+      REAL(8)   ,INTENT(IN) :: RAD
+      REAL(8)   ,INTENT(IN) :: RHO(NR) ! ELECTRON DENSITY
+      REAL(8)   ,INTENT(OUT):: EFS
+      REAL(8)   ,PARAMETER  :: PI=4.D0*ATAN(1.D0)
+      REAL(8)   ,PARAMETER  :: Y0=1.D0/SQRT(4.D0*PI)
+      REAL(8)               :: AUX(NR),AUX1(NR)
+      REAL(8)               :: R(NR)
+!     **************************************************************************
+      CALL RADIAL$R(GID,NR,R)
+      CALL RADIAL$NUCPOT(GID,NR,AEZ,AUX)
+      AUX=RHO*(R**2*AUX+AEZ*R/Y0)
+      CALL RADIAL$INTEGRATE(GID,NR,AUX,AUX1)
+      CALL RADIAL$VALUE(GID,NR,AUX1,RAD,EFS)
+      RETURN
+      END
+
+!
+!     ...1.........2.........3.........4.........5.........6.........7.........8
+      SUBROUTINE ATOMLIB$BOXVOFRHO(GID,NR,RAD,AEZ,RHO,TAU,POT,TAUPOT,EH,EXC)
+!     **************************************************************************
 !     **  ELECTROSTATIC AND EXCHANGE-CORRELATION POTENTIAL            **
 !     **                                                              **
 !     ******************************************************************
@@ -2185,8 +2459,10 @@ RETURN
       INTEGER(4),INTENT(IN) :: NR
       REAL(8)   ,INTENT(IN) :: AEZ
       REAL(8)   ,INTENT(IN) :: RAD
-      REAL(8)   ,INTENT(IN) :: RHO(NR)
-      REAL(8)   ,INTENT(OUT):: POT(NR)
+      REAL(8)   ,INTENT(IN) :: RHO(NR) ! ELECTRON DENSITY
+      REAL(8)   ,INTENT(IN) :: TAU(NR) ! KINETIC-ELECTRON DENSITY
+      REAL(8)   ,INTENT(OUT):: POT(NR) ! POTENTIAL ACTING ON ELECTRON DENSITY
+      REAL(8)   ,INTENT(OUT):: TAUPOT(NR) ! POTENTIAL ACTING ON KINETIC-ENERGY
       REAL(8)   ,INTENT(OUT):: EH
       REAL(8)   ,INTENT(OUT):: EXC
       REAL(8)   ,PARAMETER  :: RHOMIN=1.D-2
@@ -2194,20 +2470,20 @@ RETURN
       REAL(8)   ,PARAMETER  :: Y0=1.D0/SQRT(4.D0*PI)
       REAL(8)               :: POTH(NR)
       REAL(8)               :: POTXC(NR)
-      REAL(8)               :: FOURPI
       REAL(8)               :: RHO1(NR)
       REAL(8)               :: AUX(NR)
       REAL(8)               :: AUX1(NR)
       REAL(8)               :: EDEN(NR)
       REAL(8)               :: GRHO(NR)
       REAL(8)               :: R(NR)
-      REAL(8)               :: VGXC,VXC,EXC1,RH,GRHO2
+      REAL(8)               :: VGXC,VXC,EXC1,RH,GRHO2,TAUT
       REAL(8)               :: DUMMY1,DUMMY2,DUMMY3
+      REAL(8)               :: VT,VS,GVT2,GVS2,GVST,VTAUT,VTAUS
       REAL(8)               :: SVAR
       INTEGER(4)            :: IR,IRBOX
       REAL(8)               :: Q
+      LOGICAL(4)            :: TRHOKIN
 !     **************************************************************************
-      FOURPI=4.D0*PI
       CALL RADIAL$R(GID,NR,R)
       DO IR=1,NR
         IRBOX=IR    ! SMALLEST GRID-POINT INDEX WITH R(IRBOX).GE.RAD
@@ -2233,13 +2509,17 @@ RETURN
       CALL RADIAL$POISSON(GID,NR,0,RHO1,AUX)
       POTH(:)=POTH(:)+AUX(:)
       CALL RADIAL$VALUE(GID,NR,POTH,RAD,SVAR)
+!PRINT*,'CHARGE TEST ',SVAR
 !      SVAR=Q/RAD/Y0-SVAR
 !      POTH(1:IRBOX-1)=POTH(1:IRBOX-1)+SVAR
 !      POTH(IRBOX:NR)=Q/R(IRBOX:NR)/Y0
 !CHANGE 090618 BOUNDARY CONDITIONS: HARD SPHERE IN A METAL.
+
       POTH(:)=POTH(:)-SVAR
+
       POTH(IRBOX:)=0.D0
       EDEN(:)=EDEN(:)+0.5D0*RHO1(:)*POTH(:)
+
 !
       EDEN(:)=EDEN(:)*R(:)**2
       CALL RADIAL$INTEGRATE(GID,NR,EDEN,AUX1)
@@ -2248,18 +2528,35 @@ RETURN
 !     ==========================================================================
 !     == EXCHANGE CORRELATION                                                 ==
 !     ==========================================================================
+      CALL DFT$GETL4('META',TRHOKIN)
       CALL RADIAL$DERIVE(GID,NR,RHO,GRHO)
+      GRHO(1)=0.D0 ! THE GRADIENT OF THE RADIAL DENSITY VANISHES AT THE ORIGIN
+!CALL ATOMLIB_WRITEPHI('RHO',GID,NR,1,RHO)
+!CALL ATOMLIB_WRITEPHI('GRHO',GID,NR,1,GRHO)
       DO IR=1,NR
         RH=RHO(IR)*Y0
         GRHO2=(Y0*GRHO(IR))**2
+        IF(.NOT.TRHOKIN) THEN
         CALL DFT(RH,0.D0,GRHO2,0.D0,0.D0,EXC1,VXC,DUMMY1,VGXC,DUMMY2,DUMMY3)
+          TAUPOT(IR)=0.D0
+        ELSE
+          TAUT=TAU(IR)*Y0
+          CALL DFT_META(RH,0.D0,GRHO2,0.D0,0.D0,TAUT,0.D0 &
+    &                  ,EXC1,VXC,VS,GVT2,GVS2,GVST,VTAUT,VTAUS)
+          TAUPOT(IR)=VTAUT/Y0
+        END IF
         EDEN(IR)=4.D0*PI*EXC1   ! ANGULAR INTEGRATION ALREADY INCLUDED
         POTXC(IR)=VXC/Y0
         GRHO(IR)=VGXC*2.D0*GRHO(IR)
       ENDDO
+!!$CALL ATOMLIB_WRITEPHI('EDEN',GID,NR,1,EDEN)
+!!$CALL ATOMLIB_WRITEPHI('POTXC-1',GID,NR,1,POTXC)
+!!$CALL ATOMLIB_WRITEPHI('GRHO-1',GID,NR,1,GRHO)
+
       AUX(:)=R(:)**2*GRHO(:)
       CALL RADIAL$DERIVE(GID,NR,AUX,AUX1)
       GRHO(2:)=AUX1(2:)/R(2:)**2
+!!$CALL ATOMLIB_WRITEPHI('GRHO-2',GID,NR,1,GRHO)
       GRHO(1:5)=GRHO(5) ! AVOID ERRORS DUE TO TERMINATION OF THE GRID
                         ! 5 POINTS OFFSET FOR 5-POINT FORMULA APPLIED TWICE...
       POTXC(:)=POTXC(:)-GRHO(:)
@@ -2279,12 +2576,14 @@ RETURN
       ENDDO
 !
 !     ==========================================================================
-!     ==  CUT OF POTENTIAL FOTR LOW DENSITIES                                 ==
+!     ==                                                                      ==
 !     ==========================================================================
       POT=POTH+POTXC
-!CALL ATOMLIB_WRITEPHI('POTH',GID,NR,1,POTH)
-!CALL ATOMLIB_WRITEPHI('POTXC',GID,NR,1,POTXC)
-!CALL ATOMLIB_WRITEPHI('RHO',GID,NR,1,RHO)
+!!$CALL ATOMLIB_WRITEPHI('POTH',GID,NR,1,POTH)
+!!$CALL ATOMLIB_WRITEPHI('POTXC',GID,NR,1,POTXC)
+!!$CALL ATOMLIB_WRITEPHI('RHO',GID,NR,1,RHO)
+!!$CALL ERROR$MSG('FORCED STOP AFTER WRITING')
+!!$CALL ERROR$STOP('ATOMLIB$BOXVOFRHO')
       RETURN
       END
 !
@@ -2292,7 +2591,7 @@ RETURN
       SUBROUTINE ATOMLIB$BOXMUX(GID,NR,RAD,RHO,MUX)
 !     ******************************************************************
 !     **                                                              **
-!     **  ELECTROSTATIC AND EXCHANGE-CORRELATION POTENTIAL            **
+!     **  EXCHANGE-CORRELATION POTENTIAL                              **
 !     **                                                              **
 !     ******************************************************************
       IMPLICIT NONE
@@ -2304,7 +2603,6 @@ RETURN
       REAL(8),   PARAMETER  :: RHOMIN=1.D-2
       REAL(8)   ,PARAMETER  :: PI=4.D0*ATAN(1.D0)
       REAL(8)   ,PARAMETER  :: Y0=1.D0/SQRT(4.D0*PI)
-      REAL(8)               :: FOURPI
       REAL(8)               :: AUX(NR),AUX1(NR)
       REAL(8)               :: GRHO(NR)
       REAL(8)               :: R(NR)
@@ -2312,7 +2610,6 @@ RETURN
       REAL(8)               :: DUMMY1,DUMMY2,DUMMY3
       INTEGER(4)            :: IR,IRBOX
 !     **************************************************************************
-      FOURPI=4.D0*PI
       CALL RADIAL$R(GID,NR,R)
       DO IR=1,NR
         IRBOX=IR
