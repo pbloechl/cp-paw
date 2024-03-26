@@ -388,7 +388,7 @@ END MODULE NEWDFT_MODULE
       INTEGER(4)               :: IND,I,J
       IND=0
       DO I=1,N1
-        DO J=1,N1
+        DO J=1,N2
           IND=IND+1
           TENS(I,J)=VEC(IND)
          ENDDO
@@ -400,7 +400,7 @@ END MODULE NEWDFT_MODULE
       SUBROUTINE PAWLIBXC_A3(N1,VEC,TENS)
       IMPLICIT NONE
       INTEGER(4),INTENT(IN)    :: N1
-      REAL(8)   ,INTENT(IN)    :: VEC((N1*(N1+1))/2)
+      REAL(8)   ,INTENT(IN)    :: VEC((N1*(N1+1)*(N1+2))/6)
       REAL(8)   ,INTENT(INOUT) :: TENS(N1,N1,N1)
       INTEGER(4)               :: IND,I,J,K
       IND=0
@@ -443,7 +443,7 @@ END MODULE NEWDFT_MODULE
       INTEGER(4)               :: IND,I,J,K
       IND=0
       DO I=1,N1
-        DO J=1,N1
+        DO J=1,N2
           DO K=J,N2
             IND=IND+1
             TENS(I,J,K)=VEC(IND)
@@ -2061,10 +2061,10 @@ END IF
       REAL(8) :: V3TAU3(4)        ! 000,001,011,111
 !     **************************************************************************
 
-CALL ERROR$MSG('ROUTINE NOT FINISHED YET')
-! WATCH OUT REGARDING DIMENSIONS IN THE CALLING SEQUENCE. IT IS CALLED
-! WITH A 7-DIMENSIONAL ARRAY RATHER THAN A 9 DIMENSIONAL ARRAY.
-CALL ERROR$STOP('PAWLIBXC_MGGA3_A')
+!!$CALL ERROR$MSG('ROUTINE NOT FINISHED YET')
+!!$! WATCH OUT REGARDING DIMENSIONS IN THE CALLING SEQUENCE. IT IS CALLED
+!!$! WITH A 7-DIMENSIONAL ARRAY RATHER THAN A 9 DIMENSIONAL ARRAY.
+!!$CALL ERROR$STOP('PAWLIBXC_MGGA3_A')
 
       RHO(1)=0.5D0*(VAL(1)+VAL(2))                 ! RHOUP
       RHO(2)=0.5D0*(VAL(1)-VAL(2))                 ! RHODN

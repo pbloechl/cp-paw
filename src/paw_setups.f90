@@ -119,6 +119,8 @@ REAL(8)   ,ALLOCATABLE :: VADD(:)      !(NR)
 REAL(8)   ,ALLOCATABLE :: PSPOT(:)     !(NR)
 REAL(8)   ,ALLOCATABLE :: AECORE(:)    !(NR)  CORE ELECTRON DENSITY
 REAL(8)   ,ALLOCATABLE :: PSCORE(:)    !(NR)  PSEUDIZED ELECTRON DENSITY
+REAL(8)   ,ALLOCATABLE :: AECOREKIN(:) !(NR)  AE-CORE KINETIC ENERGY DENSITY
+REAL(8)   ,ALLOCATABLE :: PSCOREKIN(:) !(NR)  PS-CORE KINETIC ENERGY DENSITY
 REAL(8)   ,ALLOCATABLE :: PRO(:,:)     !(NR,LNX)  PROJECTOR FUNCTIONS
 REAL(8)                :: RBOX         ! PARTIAL WAVES HAVE OUTER NODE AT RBOX
 REAL(8)   ,ALLOCATABLE :: AEPHI(:,:)   !(NR,LNX)  AE PARTIAL WAVES
@@ -813,6 +815,28 @@ END MODULE SETUP_MODULE
           CALL ERROR$STOP('SETUP$GETR8A')
         END IF
         VAL=THIS%PSCORE
+!
+!     ==========================================================================
+!     ==  ALL-ELECTRON CORE KINETIC ENERGY DENSITY                            ==
+!     ==========================================================================
+      ELSE IF(ID.EQ.'AECOREKIN') THEN
+        IF(LEN.NE.NR) THEN
+          CALL ERROR$MSG('INCONSISTENT ARRAY SIZE')
+          CALL ERROR$CHVAL('ID',ID)
+          CALL ERROR$STOP('SETUP$GETR8A')
+        END IF
+        VAL=THIS%AECOREKIN
+!
+!     ==========================================================================
+!     ==  PSEUDO CORE KINETIC ENERGY DENSITY                                  ==
+!     ==========================================================================
+      ELSE IF(ID.EQ.'PSCOREKIN') THEN
+        IF(LEN.NE.NR) THEN
+          CALL ERROR$MSG('INCONSISTENT ARRAY SIZE')
+          CALL ERROR$CHVAL('ID',ID)
+          CALL ERROR$STOP('SETUP$GETR8A')
+        END IF
+        VAL=THIS%PSCOREKIN
 !
 !     ==========================================================================
 !     ==                                                                      ==
@@ -3004,11 +3028,12 @@ PRINT*,'THIS%SETTING%SO=',THIS%SETTING%SO
       THIS%ZV=ZV
 
 
-print*,'mit rout=',rout,'nc=',nc
-CALL SETUPS$COREENERGY(GID,NR,Rout,AEZ,NB,nc,LOFI,FOFI,EOFI,Psi,psism)
-print*,'mit rbox=',rbox
-CALL SETUPS$COREENERGY(GID,NR,RBOX,AEZ,NB,nc,LOFI,FOFI,EOFI,Psi,psism)
-call error$stop('forced in paw_setups')
+PRINT*,'THIS TEST SHOWS THE ENERGIED CALCULATED WITH ROUT AND RBOX'
+PRINT*,'MIT ROUT=',ROUT,'NC=',NC
+CALL SETUPS$COREENERGY(GID,NR,ROUT,AEZ,NB,NC,LOFI,FOFI,EOFI,PSI,PSISM)
+PRINT*,'MIT RBOX=',RBOX
+CALL SETUPS$COREENERGY(GID,NR,RBOX,AEZ,NB,NC,LOFI,FOFI,EOFI,PSI,PSISM)
+!CALL ERROR$STOP('FORCED IN PAW_SETUPS')
 !     
 !     ==========================================================================
 !     == CUT OFF TAIL OF THE CORE STATES. BOUND STATES HAVE A NODE AT ROUT,   ==
@@ -3068,6 +3093,15 @@ call error$stop('forced in paw_setups')
       ENDDO
       CALL ATOMIC_PSEUDIZE(GID,NR,THIS%PARMS%POW_CORE,THIS%PARMS%TVAL0_CORE &
      &         ,THIS%PARMS%VAL0_CORE,THIS%PARMS%RC_CORE,THIS%AECORE,THIS%PSCORE)
+!
+!     == CORE KINETIC ENERGY DENSITY ===========================================
+!     == NON-RELAT. KINETIC ENERGY OF THE LARGE COMPONENT FOR USE IN METAGGA ===
+      ALLOCATE(THIS%AECOREKIN(NR))
+      ALLOCATE(THIS%PSCOREKIN(NR))
+      CALL SETUPS$KINEDENSITY(GID,NR,NB,LOFI,FOFI,PSI,PSISM,THIS%AECOREKIN)
+      CALL ATOMIC_PSEUDIZE(GID,NR,THIS%PARMS%POW_CORE,.FALSE. &
+     &         ,0.D0,THIS%PARMS%RC_CORE,THIS%AECOREKIN,THIS%PSCOREKIN)
+!
       DEALLOCATE(PSI)
 !
 !     ==========================================================================
@@ -3226,49 +3260,97 @@ CALL TRACE$PASS('AFTER MAKEPARTIALWAVES')
       END
 !
 !     ...1.........2.........3.........4.........5.........6.........7.........8
-      SUBROUTINE SETUPS$COREENERGY(GID,NR,RBOX,AEZ,nb,NC,LOFI,FOFI,EOFI &
+      SUBROUTINE SETUPS$KINEDENSITY(GID,NR,NB,LOFI,FOFI,PSI,PSISM,TAU)
+!     **                                                                      **
+!     **  RADIAL KINETIC ENERGY DENSITY TAU IS CALCULATED FROM WAVE FUNCTIONS **
+!     **                                                                      **
+!     **  CURRENTLY, THE NON-RELATIVISTIC KINETIC ENERGY FOR THE LARGE        **
+!     **  COMPONENT IS CALCULATED FOR USE IN META-GGA FUNCTIONALS             **
+!     **************************************************************************
+      IMPLICIT NONE
+      INTEGER(4),INTENT(IN) :: GID
+      INTEGER(4),INTENT(IN) :: NR
+      INTEGER(4),INTENT(IN) :: NB
+      INTEGER(4),INTENT(IN) :: LOFI(NB)
+      REAL(8)   ,INTENT(IN) :: FOFI(NB)
+      REAL(8)   ,INTENT(IN) :: PSI(NR,NB)
+      REAL(8)   ,INTENT(IN) :: PSISM(NR,NB)
+      REAL(8)   ,INTENT(OUT):: TAU(NR)
+      REAL(8)   ,PARAMETER  :: PI=4.D0*ATAN(1.D0)
+      REAL(8)   ,PARAMETER  :: Y0=1.D0/SQRT(4.D0*PI)
+      REAL(8)   ,PARAMETER  :: C0LL=1.D0/SQRT(4.D0*PI)
+      REAL(8)               :: R(NR)
+      REAL(8)               :: AUX(NR),AUX1(NR)
+      INTEGER(4)            :: IB
+      LOGICAL(4),PARAMETER  :: TPR=.TRUE.
+      REAL(8)               :: EKIN
+!     **************************************************************************
+      CALL RADIAL$R(GID,NR,R)
+      TAU(:)=0.D0
+      DO IB=1,NB
+        CALL RADIAL$VERLETD1(GID,NR,PSI(:,IB)/R**LOFI(IB),AUX1)
+        AUX1=AUX1*R**LOFI(IB)
+        AUX=REAL(LOFI(IB)+1,KIND=8)*AUX1**2
+        CALL RADIAL$VERLETD1(GID,NR,PSI(:,IB)*R**(LOFI(IB)+1),AUX1)
+        AUX1=AUX1/R**(LOFI(IB)+1)
+        AUX=AUX+REAL(LOFI(IB),KIND=8)*AUX1**2
+        AUX=0.5D0*AUX/REAL(2*LOFI(IB)+1,KIND=8)
+!       == RELATIVISTIC CORRECTION ===========================================
+        TAU(:)=TAU(:)+FOFI(IB)*C0LL*AUX(:)
+      ENDDO
+      IF(TPR) THEN
+        AUX=4.D0*PI*R**2*TAU*Y0
+        CALL RADIAL$INTEGRATE(GID,NR,AUX,AUX1)
+        CALL RADIAL$VALUE(GID,NR,AUX1,R(NR-2),EKIN)
+        WRITE(*,FMT='("KINETIC ENERGY FROM SETUPS$KINEDENSITY:",F20.5)')EKIN
+      END IF
+      RETURN
+      END
+!
+!     ...1.........2.........3.........4.........5.........6.........7.........8
+      SUBROUTINE SETUPS$COREENERGY(GID,NR,RBOX,AEZ,NB,NC,LOFI,FOFI,EOFI &
      &                            ,PSI,PSISM)
       IMPLICIT NONE
       INTEGER(4),INTENT(IN) :: GID
       INTEGER(4),INTENT(IN) :: NR
       REAL(8)   ,INTENT(IN) :: RBOX
-      INTEGER(4),INTENT(IN) :: Nb
+      INTEGER(4),INTENT(IN) :: NB
       INTEGER(4),INTENT(IN) :: NC
       REAL(8)   ,INTENT(IN) :: AEZ
-      INTEGER(4),INTENT(IN) :: LOFI(Nb)
-      REAL(8)   ,INTENT(IN) :: FOFI(Nb)
-      REAL(8)   ,INTENT(IN) :: EOFI(Nb)
-      REAL(8)   ,INTENT(IN) :: PSI(NR,Nb)
-      REAL(8)   ,INTENT(IN) :: PSISM(NR,Nb)
+      INTEGER(4),INTENT(IN) :: LOFI(NB)
+      REAL(8)   ,INTENT(IN) :: FOFI(NB)
+      REAL(8)   ,INTENT(IN) :: EOFI(NB)
+      REAL(8)   ,INTENT(IN) :: PSI(NR,NB)
+      REAL(8)   ,INTENT(IN) :: PSISM(NR,NB)
       REAL(8)   ,PARAMETER  :: PI=4.D0*ATAN(1.D0)
       REAL(8)   ,PARAMETER  :: Y0=1.D0/SQRT(4.D0*PI)
       REAL(8)   ,PARAMETER  :: C0LL=Y0        !GAUNT COEFF
       REAL(8)               :: R(NR)          ! RADIAL GRID
       REAL(8)               :: RHO(NR)        ! ELECTRON DENSITY
       REAL(8)               :: TAU(NR)        ! KINETIC ENERGY DENSITY
-      REAL(8)               :: rhoc(NR)       ! CORE ELECTRON DENSITY
-      REAL(8)               :: tauc(NR)       ! CORE KINETIC ENERGY DENSITY
-      REAL(8)               :: pot(NR)
-      REAL(8)               :: taupot(NR)
+      REAL(8)               :: RHOC(NR)       ! CORE ELECTRON DENSITY
+      REAL(8)               :: TAUC(NR)       ! CORE KINETIC ENERGY DENSITY
+      REAL(8)               :: POT(NR)
+      REAL(8)               :: TAUPOT(NR)
       REAL(8)               :: AUX(NR)
       REAL(8)               :: AUX1(NR)
-      REAL(8)               :: Eh,exc,ekin,eh_c,exc_c,ekin_c
+      REAL(8)               :: EH,EXC,EKIN,EH_C,EXC_C,EKIN_C
       REAL(8)               :: ECORE
       INTEGER(4)            :: IB
 !     **************************************************************************
       CALL RADIAL$R(GID,NR,R)
       RHO(:)=0.D0
       TAU(:)=0.D0
-print*,'fofi ',fofi
+PRINT*,'FOFI ',FOFI
       DO IB=1,NB
         RHO(:)=RHO(:)+FOFI(IB)*C0LL*( PSI(:,IB)**2+PSISM(:,IB)**2 )
 !
 !       == EVALUATE THE KINETIC ENERGY FROM THE LARGE COMPONENT ==============
         AUX=0.D0
-        CALL RADIAL$VERLETD1(GID,NR,PsI(:,IB)/R**LOFI(IB),AUX1)
+        CALL RADIAL$VERLETD1(GID,NR,PSI(:,IB)/R**LOFI(IB),AUX1)
         AUX1=AUX1*R**LOFI(IB)
         AUX=AUX+REAL(LOFI(IB)+1,KIND=8)*AUX1**2
-        CALL RADIAL$VERLETD1(GID,NR,PsI(:,IB)*R**(LOFI(IB)+1),AUX1)
+        CALL RADIAL$VERLETD1(GID,NR,PSI(:,IB)*R**(LOFI(IB)+1),AUX1)
         AUX1=AUX1/R**(LOFI(IB)+1)
         AUX=AUX+REAL(LOFI(IB),KIND=8)*AUX1**2
         AUX=0.5D0*AUX/REAL(2*LOFI(IB)+1,KIND=8)
@@ -3281,37 +3363,44 @@ print*,'fofi ',fofi
       ENDDO
 !!$      CALL ATOMLIB$BOXVOFRHO(GID,NR,RBOX,AEZ,RHOC,TAUC,POT,TAUPOT,EH_C,EXC_C)
 !!$      CALL ATOMLIB$BOXVOFRHO(GID,NR,RBOX,AEZ,RHO,TAU,POT,TAUPOT,EH,EXC)
-!!$CALL SETUP_WRITEPHI('rho.dat',GID,NR,1,rho*y0*4.d0*pi*r**2)
-!!$CALL SETUP_WRITEPHI('rhoc.dat',GID,NR,1,rhoc*y0*4.d0*pi*r**2)
-!!$CALL SETUP_WRITEPHI('rhov.dat',GID,NR,1,(rho-rhoc)*y0*4.d0*pi*r**2)
-!!$CALL SETUP_WRITEPHI('tau.dat',GID,NR,1,tau*y0*4.d0*pi*r**2)
-!!$CALL SETUP_WRITEPHI('tauc.dat',GID,NR,1,tauc*y0*4.d0*pi*r**2)
-!!$CALL SETUP_WRITEPHI('tauv.dat',GID,NR,1,(tau-tauc)*4.d0*pi*y0*r**2)
+!!$CALL SETUP_WRITEPHI('RHO.DAT',GID,NR,1,RHO*Y0*4.D0*PI*R**2)
+!!$CALL SETUP_WRITEPHI('RHOC.DAT',GID,NR,1,RHOC*Y0*4.D0*PI*R**2)
+!!$CALL SETUP_WRITEPHI('RHOV.DAT',GID,NR,1,(RHO-RHOC)*Y0*4.D0*PI*R**2)
+!!$CALL SETUP_WRITEPHI('TAU.DAT',GID,NR,1,TAU*Y0*4.D0*PI*R**2)
+!!$CALL SETUP_WRITEPHI('TAUC.DAT',GID,NR,1,TAUC*Y0*4.D0*PI*R**2)
+!!$CALL SETUP_WRITEPHI('TAUV.DAT',GID,NR,1,(TAU-TAUC)*4.D0*PI*Y0*R**2)
 
       CALL ATOMLIB$BOXVOFRHO(GID,NR,RBOX,AEZ,RHOC,POT,EH_C,EXC_C)
       CALL ATOMLIB$BOXVOFRHO(GID,NR,RBOX,AEZ,RHO,POT,EH,EXC)
-
-!!$      AUX=R**2*(RHO*POT+TAU*TAUPOT)
-!!$      CALL RADIAL$INTEGRATE(GID,NR,AUX,AUX1)
-!!$      CALL RADIAL$VALUE(GID,NR,AUX1,RBOX,Ekin)
-!!$      EKIN=SUM(FOFI(:Nb)*EOFI(:Nb))-EKIN
-!!$      AUX=R**2*(RHOC*POT+TAUC*TAUPOT)
-!!$      CALL RADIAL$INTEGRATE(GID,NR,AUX,AUX1)
-!!$      CALL RADIAL$VALUE(GID,NR,AUX1,RBOX,Ekin_c)
-!!$      EKIN_C=SUM(FOFI(:NC)*EOFI(:NC))-EKIN_C
-
-
-      AUX=4.d0*pi*R**2*tau*y0
+!
+!     ==========================================================================
+!     == THIS IS FOR USE OF THE RELATIVISTIC KINETIC ENERGY                   ==
+!     ==========================================================================
+      AUX=R**2*(RHO*POT+TAU*TAUPOT)
       CALL RADIAL$INTEGRATE(GID,NR,AUX,AUX1)
-      CALL RADIAL$VALUE(GID,NR,AUX1,RBOX,Ekin)
-      AUX=4.d0*pi*R**2*tauc*y0
+      CALL RADIAL$VALUE(GID,NR,AUX1,RBOX,EKIN)
+      EKIN=SUM(FOFI(:NB)*EOFI(:NB))-EKIN
+      AUX=R**2*(RHOC*POT+TAUC*TAUPOT)
       CALL RADIAL$INTEGRATE(GID,NR,AUX,AUX1)
-      CALL RADIAL$VALUE(GID,NR,AUX1,RBOX,Ekin_c)
-
-
-
-      
-
+      CALL RADIAL$VALUE(GID,NR,AUX1,RBOX,EKIN_C)
+      EKIN_C=SUM(FOFI(:NC)*EOFI(:NC))-EKIN_C
+!
+!     ==========================================================================
+!     == KINETIC ENERGY FROM NON-RELATIVISTIC KINETIC ENERGY DENSITY          ==
+!     ==========================================================================
+      AUX=4.D0*PI*R**2*TAU*Y0
+      CALL RADIAL$INTEGRATE(GID,NR,AUX,AUX1)
+      CALL RADIAL$VALUE(GID,NR,AUX1,RBOX,EKIN)
+      AUX=4.D0*PI*R**2*TAUC*Y0
+      CALL RADIAL$INTEGRATE(GID,NR,AUX,AUX1)
+      CALL RADIAL$VALUE(GID,NR,AUX1,RBOX,EKIN_C)
+PRINT*,'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+PRINT*,'CAUTION! THE FOLLOWING ENERGY REPORT USES THE NON-RELATIVISTIC'
+PRINT*,'         KINETIC ENERGY EXPRESSION ON THE LARGE COMPONENT'
+!
+!     ==========================================================================
+!     == REPORT ENERGIES                                                      ==
+!     ==========================================================================
       ECORE=EKIN_C+EH_C+EXC_C
       WRITE(*,FMT='(80("="),T20,"ENERGY REPORT OF SETUPS$COREENERGY")')
       WRITE(6,FMT='(30("."),T1,"FULL TOTAL ENERGY",T30,F25.7)')EKIN+EH+EXC
