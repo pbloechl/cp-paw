@@ -707,7 +707,7 @@ END MODULE RADIALFOCK_MODULE
 !     **                                                                      **
 !     **************************************************************************
       USE RADIALFOCK_MODULE
-USE PERIODICTABLE_MODULE
+      USE PERIODICTABLE_MODULE, ONLY: PERIODICTABLE$GET
       IMPLICIT NONE
       INTEGER(4) ,INTENT(IN)     :: GID         ! GRID ID
       INTEGER(4) ,INTENT(IN)     :: NR          ! #(GRID POINTS)
@@ -896,6 +896,8 @@ USE PERIODICTABLE_MODULE
             END IF
           ENDDO
         ENDDO
+!
+!       == FILL UP VALENCE SHELLS ==============================================
         DO L=0,3    
           IF(L.EQ.0)CALL PERIODICTABLE$GET(NINT(AEZ),'OCC(S)',ISVAR1)
           IF(L.EQ.1)CALL PERIODICTABLE$GET(NINT(AEZ),'OCC(P)',ISVAR1)
@@ -938,6 +940,7 @@ USE PERIODICTABLE_MODULE
 !       == NUCLEAR AND ELECTRONIC CHARGE =======================================
         FTOT=SUM(FOFI(:NB))
         SVAR=AEZ-FTOT
+        IF(AEZ.EQ.0.D0) SVAR=1.D-8 
         IF(SVAR.LT.0.D0) THEN
           DO IB=NB,1,-1
             FOFI(IB)=FOFI(IB)+SVAR
@@ -948,11 +951,15 @@ USE PERIODICTABLE_MODULE
               FOFI(IB)=0.D0
             END IF
           ENDDO
+        ELSE IF(SVAR.GT.1.D-8) THEN
+          CALL ERROR$MSG('INCONSISTENCY FOR NON-INTEGER ATOMIC NUMBERS')
+          CALL ERROR$STOP('ATOMLIB$AESCF')
         END IF
 !
 !       == CONSISTENCY CHECK  ==================================================
+!       == THE TOLERANCE IS RELATED TO THE CUTOFFS ABOVE =======================
         FTOT=SUM(FOFI(:NB))
-        IF(ABS(FTOT-AEZ).GT.1.D-8) THEN
+        IF(ABS(FTOT-AEZ).GT.1.D-7) THEN
           DO IB=1,NB
             WRITE(* &
         &       ,'("IB=",I2," L=",I1," SOFI=",I2," F=",F8.2," SUM(F)=",F8.2)') &
@@ -965,6 +972,7 @@ USE PERIODICTABLE_MODULE
         END IF
 !
         CALL RADIAL$NUCPOT(GID,NR,AEZ,POT)
+!
 !       == USE "HARD SPHERE BOUNDARY CONDITION" FOR THE POISSON EQUATION =======
 !       == THAT IS CHOOSE THE POT(R)=0 FOR R>RBOX ==============================
         CALL RADIAL$VALUE(GID,NR,POT,RBOX,SVAR)
@@ -1381,6 +1389,10 @@ CLOSE(1111)
 !       == IF PREVIOUS CONDITIONS CANNOT BE MET DO THE BEST YOU CAN AND
 !       == CECK IF MINIMUM REQUIREMENT IS FULFILLED
         CONVG=CONVG.OR.(XMAX.LT.TOL).AND.NCONV.GT.5
+!
+!       == QUIT LOOP IF THERE ARE NO ELECTRONS, WHICH MAKES CONVERGENCE ========
+!       == DIFFICULT BUT ALSO TRIVIAL ==========================================
+        CONVG=CONVG.OR.(AEZ.LT.1.D-7)
 !
 !       ========================================================================
 !       ==  GENERATE NEXT ITERATION USING D. G. ANDERSONS METHOD              ==

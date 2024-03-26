@@ -91,6 +91,7 @@ TYPE ATOMWAVES_TYPE
   REAL(8)   ,ALLOCATABLE :: AEPSI(:,:)
   REAL(8)   ,ALLOCATABLE :: AEPSISM(:,:)
   REAL(8)   ,ALLOCATABLE :: AEPOT(:)
+  REAL(8)   ,ALLOCATABLE :: AETAUPOT(:)  !DERIVATIVE WRT KINETIC-ENERGY DENSITY
 END TYPE ATOMWAVES_TYPE
 TYPE SETTING_TYPE
   LOGICAL  :: TREL ! RELATIVISTIC OR NON-RELATIVISTIC
@@ -2805,7 +2806,11 @@ RCL=RCOV
 !     **************************************************************************
       USE PERIODICTABLE_MODULE
       USE STRINGS_MODULE
-      USE SETUP_MODULE
+      USE SETUP_MODULE,ONLY:THIS &
+     &                     ,GIDG_PROTO &
+     &                     ,LMNXX &
+     &                     ,LMRXX &
+     &                     ,LNXX
       USE LINKEDLIST_MODULE
       USE RADIALFOCK_MODULE, ONLY: VFOCK_TYPE
       IMPLICIT NONE
@@ -2900,21 +2905,30 @@ RCL=RCOV
 !     ==  PERFORM ALL-ELECTRON CALCULATION FOR THE ATOM IN A BOX              ==
 !     ==========================================================================
       ALLOCATE(THIS%ATOM%AEPOT(NR))
+      ALLOCATE(THIS%ATOM%AETAUPOT(NR)) !POTENTIAL FOR KINETIC ENERGY DENSITY
       ALLOCATE(PSI(NR,NBX))
       ALLOCATE(PSISM(NR,NBX))
 !
 !     == SET SWITCHES FOR RELATIVISTIC/NON-RELATIVISTIC HERE ===================
       THIS%SETTING%TREL=.TRUE.
-!THIS%SETTING%TREL=.FALSE.
+THIS%SETTING%TREL=.FALSE.
 !     __SPIN ORBIT SWITCH IS READ FROM !AUGMENT BLOCK. DEFAULT=.FALSE.__________
-!THIS%SETTING%SO=.FALSE.
-PRINT*,'THIS%SETTING%SO=',THIS%SETTING%SO
+THIS%SETTING%SO=.FALSE.
 !THIS%SETTING%SO=.TRUE.
       THIS%SETTING%ZORA=.TRUE.
       IF(THIS%SETTING%SO)THIS%SETTING%ZORA=.FALSE.
 !THIS%SETTING%ZORA=.FALSE.
 !     == SELECT HARTREE FOCK ADMIXTURE =========================================
       THIS%SETTING%FOCK=0.D0
+
+      WRITE(*,FMT='(59("."),":",L8,T1,A)') & 
+     &     THIS%SETTING%TREL,'RELATIVISTIC EFFECTS (TREL)'
+      WRITE(*,FMT='(59("."),":",L8,T1,A)') &
+     &     THIS%SETTING%SO,'SPIN-ORBIT COUPLING (TSO)'
+      WRITE(*,FMT='(59("."),":",L8,T1,A)') &
+     &     THIS%SETTING%ZORA,'ZORA APPROX (ZORA)'
+      WRITE(*,FMT='(59("."),":",L8,T1,A)') &
+     &     THIS%SETTING%FOCK,'FOCK TERMS (FOCK)'
 !
       CALL LMTO$GETL4('ON',TCHK)
       IF(TCHK) THEN
@@ -2957,13 +2971,24 @@ PRINT*,'THIS%SETTING%SO=',THIS%SETTING%SO
       SOFI=-1111
       FOFI=0.D0
       NNOFI=-1111
+
+      WRITE(*,FMT='(59("."),":",F10.5,T1,A)')ROUT,'ROUT USE IN AESCF'
 !
 !     == PERFORM ALL-ELECTRON SELF-CONSISTENT CALCULATION OF THE ATOM
       CALL ATOMLIB$AESCF(GID,NR,KEY,ROUT,AEZ,NBX,NB,LOFI,SOFI,FOFI,NNOFI &
-    &                   ,ETOT,THIS%ATOM%AEPOT,VFOCK,EOFI,PSI,PSISM)
+    &                   ,ETOT,THIS%ATOM%AEPOT,THIS%ATOM%AETAUPOT,VFOCK &
+    &                   ,EOFI,PSI,PSISM)
       CALL TIMING$CLOCKOFF('SCF-ATOM')
       CALL TRACE$PASS('AFTER SCF-ATOM')
 
+      WRITE(*,FMT='(59("."),":",F10.5,T1,A)')ETOT,'ETOT FROM AESCF'
+
+CALL SETUP_WRITEPHI('POT.DAT',GID,NR,1,THIS%ATOM%AEPOT*Y0)
+CALL SETUP_WRITEPHI('TAUPOT.DAT',GID,NR,1,THIS%ATOM%AETAUPOT*Y0)
+CALL SETUP_WRITEPHI('PSI.DAT',GID,NR,NB,PSI)
+CALL SETUP_WRITEPHI('PSISM.DAT',GID,NR,NB,PSISM)
+CALL ERROR$MSG('FORCED STOP AFTER ATOMLIB$AESCF FOR TESTING PURPOSES')
+CALL ERROR$STOP('SETUP_READ')
 !     
 !     ==========================================================================
 !     ==  SELECT CORE, AND REORDER STATES                                     ==
@@ -3045,6 +3070,8 @@ CALL SETUPS$COREENERGY(GID,NR,RBOX,AEZ,NB,NC,LOFI,FOFI,EOFI,PSI,PSISM)
         PSISM(IR:,:NC)=0.D0
         EXIT
       ENDDO
+!
+!     == NORMALIZE WAVE FUNCTIONS AND MAP ONTO "THIS" ==========================
       ALLOCATE(AUX(NR))
       DO IB=1,NC
         AUX(:)=R(:)**2*(PSI(:,IB)**2+PSISM(:,IB)**2)
@@ -3150,8 +3177,8 @@ WRITE(6,*)'LOX=   ',LOX
       ENDDO
 !
       CALL TIMING$CLOCKON('MAKEPARTIALWAVES')
-      CALL SETUP_MAKEPARTIALWAVES(GID,NR,KEY,LL_STP,AEZ,THIS%ATOM%AEPOT &
-     &          ,VFOCK,NB,NC &
+      CALL SETUP_MAKEPARTIALWAVES(GID,NR,KEY,LL_STP,AEZ &
+     &          ,THIS%ATOM%AEPOT,THIS%ATOM%AETAUPOT,VFOCK,NB,NC &
      &          ,LOFI(1:NB),SOFI(1:NB),NNOFI(1:NB),EOFI(1:NB),FOFI(1:NB) &
      &          ,RBOX,ROUT,LNX,LOX,THIS%PARMS%TYPE,RC,LAMBDA &
      &          ,THIS%ISCATT &
@@ -3341,7 +3368,6 @@ CALL TRACE$PASS('AFTER MAKEPARTIALWAVES')
       CALL RADIAL$R(GID,NR,R)
       RHO(:)=0.D0
       TAU(:)=0.D0
-PRINT*,'FOFI ',FOFI
       DO IB=1,NB
         RHO(:)=RHO(:)+FOFI(IB)*C0LL*( PSI(:,IB)**2+PSISM(:,IB)**2 )
 !
@@ -3370,8 +3396,8 @@ PRINT*,'FOFI ',FOFI
 !!$CALL SETUP_WRITEPHI('TAUC.DAT',GID,NR,1,TAUC*Y0*4.D0*PI*R**2)
 !!$CALL SETUP_WRITEPHI('TAUV.DAT',GID,NR,1,(TAU-TAUC)*4.D0*PI*Y0*R**2)
 
-      CALL ATOMLIB$BOXVOFRHO(GID,NR,RBOX,AEZ,RHOC,POT,EH_C,EXC_C)
-      CALL ATOMLIB$BOXVOFRHO(GID,NR,RBOX,AEZ,RHO,POT,EH,EXC)
+      CALL ATOMLIB$BOXVOFRHO(GID,NR,RBOX,AEZ,RHOC,TAUC,POT,TAUPOT,EH_C,EXC_C)
+      CALL ATOMLIB$BOXVOFRHO(GID,NR,RBOX,AEZ,RHO,TAU,POT,TAUPOT,EH,EXC)
 !
 !     ==========================================================================
 !     == THIS IS FOR USE OF THE RELATIVISTIC KINETIC ENERGY                   ==
@@ -4029,7 +4055,8 @@ PRINT*,'         KINETIC ENERGY EXPRESSION ON THE LARGE COMPONENT'
       END
 !
 !     ...1.........2.........3.........4.........5.........6.........7.........8
-      SUBROUTINE SETUP_MAKEPARTIALWAVES(GID,NR,KEY,LL_STP,AEZ,AEPOT,VFOCK &
+      SUBROUTINE SETUP_MAKEPARTIALWAVES(GID,NR,KEY,LL_STP &
+     &                  ,AEZ,AEPOT,AETAUPOT,VFOCK &
      &                  ,NB,NC,LOFI,SOFI,NNOFI,EOFI,FOFI &
      &                  ,RBOX,ROUT,LNX,LOX,TYPE,RC,LAMBDA,ISCATT &
      &                  ,AEPHI,AEPHISM,PSPHI,PSPHISM,NLPHI,NLPHISM,QN,QNSM &
@@ -4053,6 +4080,7 @@ PRINT*,'         KINETIC ENERGY EXPRESSION ON THE LARGE COMPONENT'
       TYPE(LL_TYPE),INTENT(INOUT) :: LL_STP
       REAL(8)   ,INTENT(IN) :: AEZ
       REAL(8)   ,INTENT(IN) :: AEPOT(NR)   ! ALL ELECTRON POTENTIAL
+      REAL(8)   ,INTENT(IN) :: AETAUPOT(NR)! ALL ELECTRON EKIN-POTENTIAL
       TYPE(VFOCK_TYPE),INTENT(INOUT) :: VFOCK
       INTEGER(4),INTENT(IN) :: NB
       INTEGER(4),INTENT(IN) :: NC
@@ -4270,7 +4298,7 @@ END IF
       CALL SETUP_PAWDENSITY(GID,NR,LNX,LOX,NB,NC,LOFI,NNOFI,EOFI,FOFI &
      &                      ,AECORE,PSCORE &
      &                      ,AEPHI,AEPHISM,PSPHI,PSPHISM,PRO &
-     &                      ,DH,DOVER,AEPOT,PSPOT,VFOCK &
+     &                      ,DH,DOVER,AEPOT,AETAUPOT,PSPOT,VFOCK &
      &                      ,ROUT,TREL,TZORA &
      &                      ,PAWRHO,PSRHO,AEPSIF,PSPSIF,AUGPSIF)
 !!$PRINT*,'GID,NR(3) ',GID,NR,R(1:3),'...',R(NR)
@@ -4494,7 +4522,7 @@ END IF
       SUBROUTINE SETUP_PAWDENSITY(GID,NR,LNX,LOX,NB,NC,LOFI,NNOFI,EOFI,FOFI &
      &                            ,AECORE,PSCORE &
      &                            ,AEPHI,AEPHISM,PSPHI,PSPHISM,PRO &
-     &                            ,DH,DOVER,AEPOT,PSPOT,VFOCK &
+     &                            ,DH,DOVER,AEPOT,AETAUPOT,PSPOT,VFOCK &
      &                            ,ROUT,TREL,TZORA &
      &                            ,PAWRHO,PSRHO,AEPSIF,PSPSIF,AUGPSIF)
 !     **************************************************************************
@@ -4527,6 +4555,7 @@ END IF
       REAL(8)   ,INTENT(IN) :: DH(LNX,LNX)
       REAL(8)   ,INTENT(IN) :: DOVER(LNX,LNX)
       REAL(8)   ,INTENT(IN) :: AEPOT(NR)
+      REAL(8)   ,INTENT(IN) :: AETAUPOT(NR)
       REAL(8)   ,INTENT(IN) :: PSPOT(NR)
       TYPE(VFOCK_TYPE),INTENT(INOUT) :: VFOCK
       LOGICAL(4),INTENT(IN) :: TREL
@@ -4631,10 +4660,12 @@ PRINT*,'=================== L=',L,' ================================='
         TVARDREL=TREL.AND.(.NOT.TZORA) 
         IF(TREL.AND.TZORA)CALL SCHROEDINGER$DREL(GID,NR,AEPOT,0.D0,DREL)
 !
+!       == ADD KINETIC ENERGY POTENTIAL ========================================
+        DREL=DREL+AETAUPOT*Y0
+
         NN0=-1
         G(:)=0.D0
         DO IB=NC+1,NB
-          IVB=IB-NC
           IF(LOFI(IB).NE.L) CYCLE
 !PRINT*,'        ---- IB=',IB,' --------------------------------'
           IF(NN0.EQ.-1)NN0=NNOFI(IB)
@@ -4645,12 +4676,12 @@ PRINT*,'=================== L=',L,' ================================='
 !         ======================================================================
           G(:)=0.D0
           CALL ATOMLIB$BOUNDSTATE(GID,NR,L,0,0.D0,ROUT,TVARDREL &
-       &                         ,DREL,G,NNOFI(IB),AEPOT,E,AEPSIF(:,IVB))
+       &                         ,DREL,G,NNOFI(IB),AEPOT,E,AEPSIF(:,IB-NC))
           CALL ATOMLIB$UPDATESTATEWITHHF(GID,NR,L,0,DREL,G,AEPOT,VFOCK &
        &                              ,ROUT,E,AEPSIF(:,IB-NC))
 !!$          IF(TREL.AND.(.NOT.TZORA)) THEN
 !!$            CALL SCHROEDINGER$SPHSMALLCOMPONENT(GID,NR,L,ISO &
-!!$     &                                    ,DREL,G,AEPSIF(:,IVB),AEPSIFSM(:,IVB))
+!!$     &                            ,DREL,G,AEPSIF(:,IB-NC),AEPSIFSM(:,IB-NC))
 !!$          ELSE
 !!$            AEPSIFSM(:,IB-NC)=0.D0
 !!$          END IF
@@ -10184,159 +10215,159 @@ PRINT*,'EOFPHI ',EOFPHI
       END
 
 
-!
-!     ..........................................................................
-      SUBROUTINE SETUP_IDENTIFYRMAX()
-      USE PERIODICTABLE_MODULE
-      USE RADIALFOCK_MODULE, ONLY: VFOCK_TYPE
-      IMPLICIT NONE
-      INTEGER(4),PARAMETER  :: NR=1300
-      REAL(8)   ,PARAMETER  :: R1=1.D-4
-      REAL(8)   ,PARAMETER  :: DEX=1.D-2
-      INTEGER(4),PARAMETER  :: NBX=20
-      REAL(8)   ,PARAMETER  :: RNSCORE=0.07D0 !SEE MASTERS THESIS ROBERT SCHADE
-      REAL(8)   ,PARAMETER  :: RNSPHI=0.09D0  !SEE MASTERS THESIS ROBERT SCHADE
-      CHARACTER(32),PARAMETER  :: KEY='START,REL,NONSO,NONZORA'
-      LOGICAL(4),PARAMETER  :: TSMALL=.TRUE.
-      LOGICAL(4),PARAMETER  :: TVARDREL=.TRUE.
-      INTEGER(4),PARAMETER  :: SO=0
-!     == KAPPA=-L-1 FOR L*S.GE.0; KAPPA=L FOR L*S<0; KAPPA=-1 FOR SO=0 =====
-      REAL(8)   ,PARAMETER  :: KAPPA=-1  ! NO SPIN ORBIT
-      INTEGER(4),PARAMETER  :: LX=3
-      INTEGER(4),PARAMETER  :: NFILX=7
-      INTEGER(4)            :: NB
-      INTEGER(4)            :: LOFI(NBX)
-      INTEGER(4)            :: SOFI(NBX)
-      REAL(8)               :: FOFI(NBX)
-      INTEGER(4)            :: NNOFI(NBX)
-      REAL(8)               :: EOFI(NBX),ECORE(NBX)
-      TYPE(VFOCK_TYPE)      :: VFOCK
-      INTEGER(4)            :: NFIL
-      INTEGER(4)            :: IZ
-      INTEGER(4)            :: GID
-      INTEGER(4)            :: IB,IR,L,IND,IRARR(1),IRCL,I
-      REAL(8)               :: R(NR)
-      REAL(8)               :: AUX(NR),AUX1(NR)
-      REAL(8)               :: DREL(NR)
-      REAL(8)               :: G(NR)
-      REAL(8)               :: GSM(NR)
-      REAL(8)               :: ROUT
-      REAL(8)               :: RAD(NBX)
-      REAL(8)               :: AEPOT(NR)
-      REAL(8)  ,ALLOCATABLE :: PSI(:,:)     !(NR,NBX)
-      REAL(8)  ,ALLOCATABLE :: PSISM(:,:)   !(NR,NBX)
-      REAL(8)  ,ALLOCATABLE :: UCORE(:,:)   !(NR,NBX)
-      REAL(8)  ,ALLOCATABLE :: UCORESM(:,:) !(NR,NBX)
-      REAL(8)               :: ETOT,AEZ
-      REAL(8)               :: RNS
-      REAL(8)               :: E,X,Y
-      CHARACTER(20)         :: NAME(NFILX)
-      REAL(8)               :: SPEEDOFLIGHT,ALPHA
-      REAL(8)               :: RCOV
-!     **************************************************************************
-      ALLOCATE(PSI(NR,NBX))
-      ALLOCATE(PSISM(NR,NBX))
-      ALLOCATE(UCORE(NR,NBX))
-      ALLOCATE(UCORESM(NR,NBX))
-
-      CALL CONSTANTS$GET('C',SPEEDOFLIGHT)
-      ALPHA=1.D0/SPEEDOFLIGHT ! FINE STRUCTURE CONSTANT IN A.U.
-      DO I=1,NFILX
-        WRITE(NAME(I),*)I
-        NAME(I)='MYTESY'//TRIM(ADJUSTL(NAME(I)))
-        CALL FILEHANDLER$SETFILE(NAME(I),.FALSE.,TRIM(NAME(I))//'.DAT')
-        CALL FILEHANDLER$SETSPECIFICATION(NAME(I),'FORM','FORMATTED')
-        CALL FILEHANDLER$UNIT(NAME(I),NFIL)
-        REWIND(NFIL)
-      ENDDO
-!
-!     ==========================================================================
-!     == DEFINE RADIAL GRID                                                   ==
-!     ==========================================================================
-      CALL RADIAL$NEW('SHLOG',GID)
-      CALL RADIAL$SETR8(GID,'R1',R1)
-      CALL RADIAL$SETR8(GID,'DEX',DEX)
-      CALL RADIAL$SETI4(GID,'NR',NR)
-      CALL RADIAL$R(GID,NR,R)
-      ROUT=R(NR-3)
-      DO IR=1,NR
-        IRCL=IR
-        IF(R(IR).GT.3.D0) EXIT
-      ENDDO
-!
-!     ==========================================================================
-!     == LOOP OVER ALL ELEMENTS                                               ==
-!     ==========================================================================
-      DO IZ=1,105
-        CALL PERIODICTABLE$GET(IZ,'Z',AEZ)
-        CALL ATOMLIB$AESCF(GID,NR,KEY,ROUT,AEZ,NBX,NB,LOFI,SOFI,FOFI,NNOFI &
-    &                   ,ETOT,AEPOT,VFOCK,EOFI,PSI,PSISM)
-!
-!       ========================================================================
-!       ==  COLLECT RADII                                                     ==
-!       ========================================================================
-        DO L=0,LX
-          G(:)=0.D0
-          GSM(:)=0.D0
-          DO IB=1,NB
-            IF(LOFI(IB).NE.L) CYCLE
-            E=EOFI(IB)
-            CALL SCHROEDINGER$DREL(GID,NR,AEPOT,E,DREL)
-!
-!           == PREPARE INHOMOGENEITY ===========================================
-            AUX=0.5D0*ALPHA*(1.D0+DREL)*GSM   
-            CALL RADIAL$DERIVE(GID,NR,AUX,AUX1)
-            AUX=AUX1+(1.D0-KAPPA)/R*AUX  
-            AUX(1)=AUX(2)
-            G=G-AUX !GSM=-FSM(IB-1)
-!
-!           == OBTAIN LARGE COMPONENT ==========================================
-            RNS=0.D0
-            IF(IB.GT.1.AND.TSMALL) RNS=RNSCORE !AVOID SPURIOUS ZEROS NEAR ORIGIN
-            CALL ATOMLIB$BOUNDSTATE(GID,NR,L,SO,RNS,ROUT,TVARDREL &
-     &                         ,DREL,G,0,AEPOT,E,UCORE(:,IB))
-            ECORE(IB)=E
-!
-!           == CONSTRUCT SMALL COMPONENT =======================================
-            DREL(IRCL:)=0.D0  ! MAY HAVE BEEN RESET IN ATOMLIB$BOUNDSTATE
-            CALL SCHROEDINGER$SPHSMALLCOMPONENT(GID,NR,L,SO &
-     &                                      ,DREL,GSM,UCORE(:,IB),UCORESM(:,IB))
-            UCORESM(IRCL:,IB)=0.D0
-!
-!           == PROVIDE WAVE FUNCTIONS FOR THE NEXT NODELESS LEVEL ==============
-            G=-UCORE(:,IB)
-            GSM=-UCORESM(:,IB)
-          ENDDO
-        ENDDO
-
-!       ========================================================================
-!       ==  COLLECT RADII                                                     ==
-!       ========================================================================
-        CALL PERIODICTABLE$GET(IZ,'R(COV)',RCOV)
-        DO L=0,LX
-          RAD=5.1D0
-          IND=L
-          DO IB=1,NB
-            IF(LOFI(IB).NE.L) CYCLE
-            IND=IND+1
-            IRARR=MAXLOC(ABS(R*UCORE(:,IB)))
-            RAD(IND)=MIN(5.D0,R(IRARR(1)))
-            X=AEZ
-            Y=R(IRARR(1))
-            IF(Y.GT.5.D0) CYCLE
-            IF(Y.LT.1.D-1) CYCLE
-            Y=LOG(Y)
-            X=LOG(X)
-            CALL FILEHANDLER$UNIT(NAME(IND),NFIL)
-            WRITE(NFIL,FMT='(2F10.5)')X,Y
-          ENDDO
-        ENDDO
-      ENDDO
-      DO I=1,NFILX
-        CALL FILEHANDLER$CLOSE(NAME(I))
-      ENDDO
-      RETURN
-      END
+!!$!
+!!$!     ..........................................................................
+!!$      SUBROUTINE SETUP_IDENTIFYRMAX()
+!!$      USE PERIODICTABLE_MODULE
+!!$      USE RADIALFOCK_MODULE, ONLY: VFOCK_TYPE
+!!$      IMPLICIT NONE
+!!$      INTEGER(4),PARAMETER  :: NR=1300
+!!$      REAL(8)   ,PARAMETER  :: R1=1.D-4
+!!$      REAL(8)   ,PARAMETER  :: DEX=1.D-2
+!!$      INTEGER(4),PARAMETER  :: NBX=20
+!!$      REAL(8)   ,PARAMETER  :: RNSCORE=0.07D0 !SEE MASTERS THESIS ROBERT SCHADE
+!!$      REAL(8)   ,PARAMETER  :: RNSPHI=0.09D0  !SEE MASTERS THESIS ROBERT SCHADE
+!!$      CHARACTER(32),PARAMETER  :: KEY='START,REL,NONSO,NONZORA'
+!!$      LOGICAL(4),PARAMETER  :: TSMALL=.TRUE.
+!!$      LOGICAL(4),PARAMETER  :: TVARDREL=.TRUE.
+!!$      INTEGER(4),PARAMETER  :: SO=0
+!!$!     == KAPPA=-L-1 FOR L*S.GE.0; KAPPA=L FOR L*S<0; KAPPA=-1 FOR SO=0 =====
+!!$      REAL(8)   ,PARAMETER  :: KAPPA=-1  ! NO SPIN ORBIT
+!!$      INTEGER(4),PARAMETER  :: LX=3
+!!$      INTEGER(4),PARAMETER  :: NFILX=7
+!!$      INTEGER(4)            :: NB
+!!$      INTEGER(4)            :: LOFI(NBX)
+!!$      INTEGER(4)            :: SOFI(NBX)
+!!$      REAL(8)               :: FOFI(NBX)
+!!$      INTEGER(4)            :: NNOFI(NBX)
+!!$      REAL(8)               :: EOFI(NBX),ECORE(NBX)
+!!$      TYPE(VFOCK_TYPE)      :: VFOCK
+!!$      INTEGER(4)            :: NFIL
+!!$      INTEGER(4)            :: IZ
+!!$      INTEGER(4)            :: GID
+!!$      INTEGER(4)            :: IB,IR,L,IND,IRARR(1),IRCL,I
+!!$      REAL(8)               :: R(NR)
+!!$      REAL(8)               :: AUX(NR),AUX1(NR)
+!!$      REAL(8)               :: DREL(NR)
+!!$      REAL(8)               :: G(NR)
+!!$      REAL(8)               :: GSM(NR)
+!!$      REAL(8)               :: ROUT
+!!$      REAL(8)               :: RAD(NBX)
+!!$      REAL(8)               :: AEPOT(NR)
+!!$      REAL(8)  ,ALLOCATABLE :: PSI(:,:)     !(NR,NBX)
+!!$      REAL(8)  ,ALLOCATABLE :: PSISM(:,:)   !(NR,NBX)
+!!$      REAL(8)  ,ALLOCATABLE :: UCORE(:,:)   !(NR,NBX)
+!!$      REAL(8)  ,ALLOCATABLE :: UCORESM(:,:) !(NR,NBX)
+!!$      REAL(8)               :: ETOT,AEZ
+!!$      REAL(8)               :: RNS
+!!$      REAL(8)               :: E,X,Y
+!!$      CHARACTER(20)         :: NAME(NFILX)
+!!$      REAL(8)               :: SPEEDOFLIGHT,ALPHA
+!!$      REAL(8)               :: RCOV
+!!$!     **************************************************************************
+!!$      ALLOCATE(PSI(NR,NBX))
+!!$      ALLOCATE(PSISM(NR,NBX))
+!!$      ALLOCATE(UCORE(NR,NBX))
+!!$      ALLOCATE(UCORESM(NR,NBX))
+!!$
+!!$      CALL CONSTANTS$GET('C',SPEEDOFLIGHT)
+!!$      ALPHA=1.D0/SPEEDOFLIGHT ! FINE STRUCTURE CONSTANT IN A.U.
+!!$      DO I=1,NFILX
+!!$        WRITE(NAME(I),*)I
+!!$        NAME(I)='MYTESY'//TRIM(ADJUSTL(NAME(I)))
+!!$        CALL FILEHANDLER$SETFILE(NAME(I),.FALSE.,TRIM(NAME(I))//'.DAT')
+!!$        CALL FILEHANDLER$SETSPECIFICATION(NAME(I),'FORM','FORMATTED')
+!!$        CALL FILEHANDLER$UNIT(NAME(I),NFIL)
+!!$        REWIND(NFIL)
+!!$      ENDDO
+!!$!
+!!$!     ==========================================================================
+!!$!     == DEFINE RADIAL GRID                                                   ==
+!!$!     ==========================================================================
+!!$      CALL RADIAL$NEW('SHLOG',GID)
+!!$      CALL RADIAL$SETR8(GID,'R1',R1)
+!!$      CALL RADIAL$SETR8(GID,'DEX',DEX)
+!!$      CALL RADIAL$SETI4(GID,'NR',NR)
+!!$      CALL RADIAL$R(GID,NR,R)
+!!$      ROUT=R(NR-3)
+!!$      DO IR=1,NR
+!!$        IRCL=IR
+!!$        IF(R(IR).GT.3.D0) EXIT
+!!$      ENDDO
+!!$!
+!!$!     ==========================================================================
+!!$!     == LOOP OVER ALL ELEMENTS                                               ==
+!!$!     ==========================================================================
+!!$      DO IZ=1,105
+!!$        CALL PERIODICTABLE$GET(IZ,'Z',AEZ)
+!!$        CALL ATOMLIB$AESCF(GID,NR,KEY,ROUT,AEZ,NBX,NB,LOFI,SOFI,FOFI,NNOFI &
+!!$    &                   ,ETOT,AEPOT,VFOCK,EOFI,PSI,PSISM)
+!!$!
+!!$!       ========================================================================
+!!$!       ==  COLLECT RADII                                                     ==
+!!$!       ========================================================================
+!!$        DO L=0,LX
+!!$          G(:)=0.D0
+!!$          GSM(:)=0.D0
+!!$          DO IB=1,NB
+!!$            IF(LOFI(IB).NE.L) CYCLE
+!!$            E=EOFI(IB)
+!!$            CALL SCHROEDINGER$DREL(GID,NR,AEPOT,E,DREL)
+!!$!
+!!$!           == PREPARE INHOMOGENEITY ===========================================
+!!$            AUX=0.5D0*ALPHA*(1.D0+DREL)*GSM   
+!!$            CALL RADIAL$DERIVE(GID,NR,AUX,AUX1)
+!!$            AUX=AUX1+(1.D0-KAPPA)/R*AUX  
+!!$            AUX(1)=AUX(2)
+!!$            G=G-AUX !GSM=-FSM(IB-1)
+!!$!
+!!$!           == OBTAIN LARGE COMPONENT ==========================================
+!!$            RNS=0.D0
+!!$            IF(IB.GT.1.AND.TSMALL) RNS=RNSCORE !AVOID SPURIOUS ZEROS NEAR ORIGIN
+!!$            CALL ATOMLIB$BOUNDSTATE(GID,NR,L,SO,RNS,ROUT,TVARDREL &
+!!$     &                         ,DREL,G,0,AEPOT,E,UCORE(:,IB))
+!!$            ECORE(IB)=E
+!!$!
+!!$!           == CONSTRUCT SMALL COMPONENT =======================================
+!!$            DREL(IRCL:)=0.D0  ! MAY HAVE BEEN RESET IN ATOMLIB$BOUNDSTATE
+!!$            CALL SCHROEDINGER$SPHSMALLCOMPONENT(GID,NR,L,SO &
+!!$     &                                      ,DREL,GSM,UCORE(:,IB),UCORESM(:,IB))
+!!$            UCORESM(IRCL:,IB)=0.D0
+!!$!
+!!$!           == PROVIDE WAVE FUNCTIONS FOR THE NEXT NODELESS LEVEL ==============
+!!$            G=-UCORE(:,IB)
+!!$            GSM=-UCORESM(:,IB)
+!!$          ENDDO
+!!$        ENDDO
+!!$
+!!$!       ========================================================================
+!!$!       ==  COLLECT RADII                                                     ==
+!!$!       ========================================================================
+!!$        CALL PERIODICTABLE$GET(IZ,'R(COV)',RCOV)
+!!$        DO L=0,LX
+!!$          RAD=5.1D0
+!!$          IND=L
+!!$          DO IB=1,NB
+!!$            IF(LOFI(IB).NE.L) CYCLE
+!!$            IND=IND+1
+!!$            IRARR=MAXLOC(ABS(R*UCORE(:,IB)))
+!!$            RAD(IND)=MIN(5.D0,R(IRARR(1)))
+!!$            X=AEZ
+!!$            Y=R(IRARR(1))
+!!$            IF(Y.GT.5.D0) CYCLE
+!!$            IF(Y.LT.1.D-1) CYCLE
+!!$            Y=LOG(Y)
+!!$            X=LOG(X)
+!!$            CALL FILEHANDLER$UNIT(NAME(IND),NFIL)
+!!$            WRITE(NFIL,FMT='(2F10.5)')X,Y
+!!$          ENDDO
+!!$        ENDDO
+!!$      ENDDO
+!!$      DO I=1,NFILX
+!!$        CALL FILEHANDLER$CLOSE(NAME(I))
+!!$      ENDDO
+!!$      RETURN
+!!$      END
 
 !!$POSITION OF THE MAXIMUM RAD(Z)=EXP[A+B*LN(Z)]  0.1<Y<5.
 !!$ N=1  ---     ---     0.072414   -1.0164
