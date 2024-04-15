@@ -751,7 +751,6 @@ END MODULE RADIALFOCK_MODULE
       REAL(8)                    :: EKIN,EH,EXC
       REAL(8)                    :: POTIN2(NR,2)  !INPUT POTENTIAL (AUCH TAUPOT)
       REAL(8)                    :: POTOUT2(NR,2) !OUTPUTPOTENTIAL (AUCH TAUPOT)
-      REAL(8)                    :: SVAR
       INTEGER(4)                 :: I,IB,JB,ISO,L,IR
       INTEGER(4)                 :: ISVAR,IARR(1)
       LOGICAL(4)                 :: TSTART  ! CALCULATE ANGULAR MOMENTA ETC
@@ -779,6 +778,7 @@ END MODULE RADIALFOCK_MODULE
       REAL(8)                    :: CG
       INTEGER(4)                 :: LM1,LM2,LM3
       CHARACTER(80)              :: FMTREPORT='(50("."),":",F20.5," ",A,T1,A)'
+      REAL(8)                    :: SVAR,SVAR1,SVAR2,SVAR3,ETAUTAUPOT
 !     **************************************************************************
                                CALL TRACE$PUSH('ATOMLIB$AESCF')
 !     CALL ATOMLIB$TEST_ATOMLIB$BOUNDSTATE()
@@ -1033,7 +1033,6 @@ END MODULE RADIALFOCK_MODULE
 !       ========================================================================
         POT   =POTIN2(:,1)
         TAUPOT=POTIN2(:,2)
-
 !!$OPEN(1111,FILE='OUT.DAT')
 !!$DO IR=1,NR
 !!$  WRITE(1111,*)R(IR),POT(IR),TAUPOT(IR)
@@ -1051,8 +1050,14 @@ END MODULE RADIALFOCK_MODULE
 !!$PRINT*,'-- GID ',GID,NR,NB,LOFI(1:NB),SOFI(1:NB),NNOFI(1:NB),EOFI(1:NB)
 !!$PRINT*,'--TREL ',TREL,TZORA,RBOX
 !PRINT*,'--POT ',POT
+PRINT*,'MARKE 0C '
+!TAUPOT=MAX(TAUPOT,0.D0)
           CALL ATOMLIB$BOUNDSTATES(GID,NR,NB,LOFI,SOFI,NNOFI,EOFI,POT,TAUPOT &
      &                            ,TREL,TZORA,RBOX,PHI,SPHI)
+
+CALL ATOMLIB_WRITEPHI('RHO',GID,NR,1,RHO)
+
+PRINT*,'MARKE 0D '
         END IF
 !
 !       ========================================================================
@@ -1073,6 +1078,7 @@ END MODULE RADIALFOCK_MODULE
         TAU(:)=0.D0
         DO IB=1,NB
           RHO(:)=RHO(:)+FOFI(IB)*C0LL*(PHI(:,IB)**2+SPHI(:,IB)**2)
+
 !CAUTION! THIS FORMULA IS ONLY APPROXIMATE!!!!
 !         == EVALUATE THE KINETIC ENERGY FROM THE LARGE COMPONENT ==============
           AUX=0.D0
@@ -1084,17 +1090,38 @@ END MODULE RADIALFOCK_MODULE
           AUX=AUX+REAL(LOFI(IB),KIND=8)*AUX1**2
           AUX=0.5D0*AUX/REAL(2*LOFI(IB)+1,KIND=8)
 !         == RELATIVISTIC CORRECTION ===========================================
-          TAU(:)=TAU(:)+FOFI(IB)*C0LL*AUX(:)
+          TAU(:)=TAU(:)+FOFI(IB)*C0LL*AUX(:) 
 
-!!$IF(ITER.LT.0) THEN
-!!$  OPEN(1111,FILE='OUT.DAT')
-!!$  PRINT*,'FOFI ',LOFI(IB),FOFI(IB),C0LL,EOFI(IB)
-!!$  DO IR=2,NR
-!!$    WRITE(1111,*)R(IR),TAU(IR),4.D0*EXP(-4*R(IR))*C0LL
-!!$  ENDDO
-!!$  CLOSE(1111)
-!!$END IF
+! == CHECK SCHR\"ODINGER EQUATION
+AUX1=4.D0*PI*R**2*( Y0*C0LL*AUX(:) &
+&                 + TAUPOT*Y0 * C0LL*AUX(:)*Y0 &
+&                 + Y0*C0LL*POT(:)*C0LL*PHI(:,IB)**2)
+CALL RADIAL$INTEGRATE(GID,NR,AUX1,AUX2)
+CALL RADIAL$VALUE(GID,NR,AUX2,R(NR-3),SVAR1)
+!
+! == CHECK NORM OF WAVE FUNCTIONS
+AUX1=4.D0*PI*R**2*Y0*C0LL*PHI(:,IB)**2
+CALL RADIAL$INTEGRATE(GID,NR,AUX1,AUX2)
+CALL RADIAL$VALUE(GID,NR,AUX2,R(NR-3),SVAR2)
+
+! == TAUPOT TERM
+AUX1=4.D0*PI*R**2 * TAUPOT*Y0 * C0LL*AUX(:)*Y0
+CALL RADIAL$INTEGRATE(GID,NR,AUX1,AUX2)
+CALL RADIAL$VALUE(GID,NR,AUX2,R(NR-3),SVAR3)
+!
+PRINT*,'ENERGY ',IB,SVAR1-EOFI(IB),SVAR2,SVAR3*FOFI(IB)
+
         ENDDO
+PRINT*,'MARKE 0E '
+        TAU(1)=0.D0 !REGULARIZE 
+
+
+! == TAUPOT TERM
+AUX1=4.D0*PI*R**2 * TAUPOT*Y0 * TAU*Y0
+CALL RADIAL$INTEGRATE(GID,NR,AUX1,AUX2)
+CALL RADIAL$VALUE(GID,NR,AUX2,R(NR-3),SVAR3)
+PRINT*,'TAUPOT TERM SUMMED UP',SVAR3
+!
 !
 !       ========================================================================
 !       ==  CALCULATE ENERGY                                                  ==
@@ -1111,6 +1138,7 @@ AUX(:)=TAU(:)*R(:)**2/(1.D0+TAUPOT(:)*Y0)*TAUPOT(:)
 CALL RADIAL$INTEGRATE(GID,NR,AUX,AUX1)
 CALL RADIAL$VALUE(GID,NR,AUX1,RBOX,EKIN)
 PRINT*,'TAU*TAUPOT 2',EKIN
+
 !!$OPEN(999,FILE='XXX.DAT')
 !!$AUX=0.D0
 !!$DO IR=1,NR
@@ -1195,6 +1223,7 @@ PRINT*,'TAU*TAUPOT 2',EKIN
 !         ======================================================================
 !         == HARTREE AND EXCHANGE CORRELATION ENERGY                          ==
 !         ======================================================================
+PRINT*,'MARKE 1 ',TAU(1)
           CALL ATOMLIB$BOXVOFRHO(GID,NR,RBOX,AEZ,RHO,TAU,POT,TAUPOT,EH,EXC)
 PRINT*,'IN AESCF  (1) (LOCAL) RBOX=',RBOX
 PRINT*,'EKIN   ',EKIN
@@ -1304,7 +1333,9 @@ CALL SETUPS$COREENERGY(GID,NR,RBOX,AEZ,NB,1,LOFI,FOFI,EOFI,PHI,SPHI)
 !       ========================================================================
 !       == CALCULATE OUTPUT POTENTIAL                                         ==
 !       ========================================================================
+PRINT*,'MARKE 2 ',TAU(1)
         CALL ATOMLIB$BOXVOFRHO(GID,NR,RBOX,AEZ,RHO,TAU,POT,TAUPOT,EH,EXC)
+PRINT*,'MARKE 2A '
 !       == ADD RELATIVISTIC EXCHANGE CORRECTION OF MACDONALD AND VOSKO
         IF(TREL) THEN
           DO IR=1,NR
@@ -1362,13 +1393,17 @@ CLOSE(1111)
 !       ========================================================================
 !       ==  EXIT IF CONVERGED (ONLY FOR TFOCK IN THE FIRST SEQUENCE)          ==
 !       ========================================================================
+PRINT*,'MARKE 2B '
         IF(CONVG) EXIT
+PRINT*,'MARKE 2C '
 !
 !       ========================================================================
 !       ==  CHECK CONVERGENCE
 !       ========================================================================
         XAV=SQRT(SUM(R**3*(POTOUT2(:,1)-POTIN2(:,1))**2)/SUM(R**3))
+PRINT*,'MARKE 2CX '
         XMAX=MAXVAL(ABS(POTOUT2(:,1)-POTIN2(:,1)))
+PRINT*,'MARKE 2C1 '
         IF(TPR)PRINT*,ITER,' AV(POT-POTIN)=',XAV &
        &                  ,' MAX:(POT-POTIN)=',XMAX,NCONV,TFOCK.AND.TSECOND
         NCONV=NCONV+1
@@ -1380,26 +1415,34 @@ CLOSE(1111)
           XMAXMIN=XMAX
           NCONV=0
         END IF
+PRINT*,'MARKE 2C2 '
 !
 !       == QUIT LOOP IF BOTH TOLERANCES ARE FULFILLED ==========================
         CONVG=(XMAX.LT.XMAXTOL).AND.(XAV.LT.XAVTOL)
         IF(TFOCK.AND.(.NOT.TSECOND)) THEN
           CONVG=(XMAX.LT.PRETOL).AND.(XAV.LT.PRETOL)
         END IF
+PRINT*,'MARKE 2C3 '
+
 !       == IF PREVIOUS CONDITIONS CANNOT BE MET DO THE BEST YOU CAN AND
 !       == CECK IF MINIMUM REQUIREMENT IS FULFILLED
         CONVG=CONVG.OR.(XMAX.LT.TOL).AND.NCONV.GT.5
+PRINT*,'MARKE 2C4 '
 !
 !       == QUIT LOOP IF THERE ARE NO ELECTRONS, WHICH MAKES CONVERGENCE ========
 !       == DIFFICULT BUT ALSO TRIVIAL ==========================================
         CONVG=CONVG.OR.(AEZ.LT.1.D-7)
+PRINT*,'MARKE 2C5 '
 !
 !       ========================================================================
 !       ==  GENERATE NEXT ITERATION USING D. G. ANDERSONS METHOD              ==
 !       ========================================================================
+PRINT*,'MARKE 2D '
         CALL BROYDEN$STEP(2*NR,POTIN2,POTOUT2-POTIN2)
+PRINT*,'MARKE 2E '
         POT   =POTIN2(:,1)
         TAUPOT=POTIN2(:,2)
+PRINT*,'MARKE 2F '
       ENDDO
 
       CALL BROYDEN$CLEAR
@@ -1448,6 +1491,8 @@ CALL ATOMLIB_WRITEPHI('RHO',GID,NR,1,RHO)
 CALL ATOMLIB_WRITEPHI('TAU',GID,NR,1,TAU)
 CALL ATOMLIB_WRITEPHI('POT',GID,NR,1,POT)
 CALL ATOMLIB_WRITEPHI('TAUPOT',GID,NR,1,TAUPOT)
+CALL ERROR$MSG('FORCED STOP IN AESCF')
+CALL ERROR$STOP('AESCF')
 
 !
 !     ==========================================================================
@@ -2549,7 +2594,7 @@ RETURN
         RH=RHO(IR)*Y0
         GRHO2=(Y0*GRHO(IR))**2
         IF(.NOT.TRHOKIN) THEN
-        CALL DFT(RH,0.D0,GRHO2,0.D0,0.D0,EXC1,VXC,DUMMY1,VGXC,DUMMY2,DUMMY3)
+          CALL DFT(RH,0.D0,GRHO2,0.D0,0.D0,EXC1,VXC,DUMMY1,VGXC,DUMMY2,DUMMY3)
           TAUPOT(IR)=0.D0
         ELSE
           TAUT=TAU(IR)*Y0
@@ -2564,6 +2609,10 @@ RETURN
 !!$CALL ATOMLIB_WRITEPHI('EDEN',GID,NR,1,EDEN)
 !!$CALL ATOMLIB_WRITEPHI('POTXC-1',GID,NR,1,POTXC)
 !!$CALL ATOMLIB_WRITEPHI('GRHO-1',GID,NR,1,GRHO)
+PRINT*,'FROM ATOMLIB$BOXVOFRHO: ',TRHOKIN,TAU(1:2)
+CALL ATOMLIB_WRITEPHI('TAUPOTXXX',GID,NR,1,TAUPOT)
+CALL ATOMLIB_WRITEPHI('TAUXXX',GID,NR,1,TAU)
+CALL ATOMLIB_WRITEPHI('RHOXXX',GID,NR,1,RHO)
 
       AUX(:)=R(:)**2*GRHO(:)
       CALL RADIAL$DERIVE(GID,NR,AUX,AUX1)

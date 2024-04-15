@@ -312,10 +312,53 @@ END MODULE NEWDFT_MODULE
 !     **************************************************************************
       USE PAWLIBXC_MODULE, ONLY: TINI &
      &                          ,XC_FUNC
+      USE XC_F03_LIB_M, ONLY : XC_F03_FUNC_INFO_T &
+     &                        ,XC_F03_FUNC_INFO_GET_FLAGS &
+     &                        ,XC_FLAGS_NEEDS_LAPLACIAN 
       IMPLICIT NONE
+      TYPE(XC_F03_FUNC_INFO_T)     :: XC_INFO
 !     **************************************************************************
       IF(TINI) RETURN
       TINI=.TRUE.
+!
+!     ==========================================================================
+!     == CHECK WHETHER LAPLACIAN IS USED. (THE LAPLACIAN IS NOT IMPLEMENTED)
+!     ==========================================================================
+!     == IFLAGS=XC_F03_FUNC_INFO_GET_FLAGS(XC_INFO) IS AN C-INTEGER, WHICH IS ==
+!     == CONSIDERED AS A BIT STRING. THE VALUE OF A PARTICULAR BIT IS         ==
+!     == OBTAINED WITH THE "BITWISE AND" IAND(IFLAGS,2^J) WHERE J IS THE      ==
+!     == POSITION OF THE BIT OF INTEREST (J=0,1,2,...). THE C-INTEGER         ==
+!     == XC_FLAGS_NEEDS_LAPLACIAN = 32768 =2^15 HAS A TRUE-BIT AT POSITION    ==
+!     == J=15. THE FUNCTION IAND(IFLAGS,XC_FLAGS_NEEDS_LAPLACIAN)             ==
+!     == CREATES A BIT STRING WHICH IS ZERO EVERYWHERE, EXCEPT POSITION 15,   ==
+!     == WHERE IT CAN BE 1 OR 0. THUS IT PRODUCES EITHER                      ==
+!     == XC_FLAGS_NEEDS_LAPLACIAN OR A STRING OF ZEROS, WHICH IS THE          ==
+!     == INTEGER ZERO. HENCE, IF                                              ==
+!     ==   IAND(IFLAGS,XC_FLAGS_NEEDS_LAPLACIAN).EQ.XC_FLAGS_NEEDS_LAPLACIAN  ==
+!     == THE LAPLACIAN IS REQUIRED, OTHERWISE, IT IS NOT.                     ==
+!     == IN THE FOLLOWING, THE ENTRIES IN TAKEN FROM LIBXC_MASTER.F90 OF THE  ==
+!     == LBXC LIBRARY.                                                        ==
+!     ==    XC_FLAGS_HAVE_EXC        =     1 = 2^0                            ==
+!     ==    XC_FLAGS_HAVE_VXC        =     2 = 2^1                            ==
+!     ==    XC_FLAGS_HAVE_FXC        =     4 = 2^2                            ==
+!     ==    XC_FLAGS_HAVE_KXC        =     8 = 2^3                            ==
+!     ==    XC_FLAGS_HAVE_LXC        =    16 = 2^4                            ==
+!     ==    XC_FLAGS_HAVE_ALL        =    31 = THE MOST COMMON CASE           ==
+!     ==                                  31 = 2^0+2^1+2^2+2^3+2^4=(1,1,1,1,1)==
+!     ==    XC_FLAGS_1D              =    32 = 2^5                            ==
+!     ==    XC_FLAGS_2D              =    64 = 2^6                            ==
+!     ==    XC_FLAGS_3D              =   128 = 2^7                            ==
+!     ==    XC_FLAGS_VV10            =  1024 = 2^10                           ==
+!     ==    XC_FLAGS_STABLE          =  8192 = 2^13                           ==
+!     ==    XC_FLAGS_DEVELOPMENT     = 16384 = 2^14                           ==
+!     ==    XC_FLAGS_NEEDS_LAPLACIAN = 32768 = 2^15                           ==
+!     ==    XC_FLAGS_NEEDS_TAU       = 65536 = 2^16                           ==
+!     ==========================================================================
+      IF(IAND(XC_F03_FUNC_INFO_GET_FLAGS(XC_INFO),XC_FLAGS_NEEDS_LAPLACIAN) &
+     &   .EQ. XC_FLAGS_NEEDS_LAPLACIAN) THEN
+         CALL ERROR$MSG('FUNCTIONALS USING LAPLACIAN ARE NOT ALLOWED')
+         CALL ERROR$STOP('PAWLIBXC_INITIALIZE')
+      END IF
 !
 !     ==========================================================================
 !     == SANITY CHECK OF THE PAWLIBXC MODULE                                  ==
@@ -1272,7 +1315,7 @@ END MODULE NEWDFT_MODULE
           CASE(XC_FAMILY_LDA,XC_FAMILY_HYB_LDA) 
             VAL=VAL
           CASE(XC_FAMILY_GGA,XC_FAMILY_HYB_GGA)
-            VAL=val
+            VAL=VAL
           CASE(XC_FAMILY_MGGA,XC_FAMILY_HYB_MGGA)
             VAL=.TRUE.
           CASE(XC_FAMILY_UNKNOWN) 
