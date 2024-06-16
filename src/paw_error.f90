@@ -280,7 +280,8 @@ END MODULE ERROR_MODULE
         CALL FILEHANDLER$CLOSEALL
       END IF
       CALL MPE$STOPALL(NCODE)
-      STOP 'IN ERROR$STOP'
+!     == JOB STOPS IN MPE$STOPALL WITH ERROR CODE NCODE ========================
+      ERROR STOP 'IN ERROR$STOP' ! THIS STATEMENT IS SUPERFLUOUS
       END
 !
 !     ..................................................................
@@ -299,5 +300,5 @@ END MODULE ERROR_MODULE
 !     ==========================================================================
 !     == THE FOLLOWING STOP IS SUPERFLUOUS
 !     ==========================================================================
-      STOP 'NORMAL STOP'
+      STOP 'NORMAL STOP'  ! THIS STATEMENT IS SUPERFLUOUS
       END

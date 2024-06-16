@@ -18,14 +18,11 @@ TYPE(LL_TYPE) :: LL_STRC
 TYPE(LL_TYPE) :: LL_CNTL
 CONTAINS
 !     ...1.........2.........3.........4.........5.........6.........7.........8
-        SUBROUTINE PUTHEADER(NFILO,VERSIONTEXT)
+        SUBROUTINE PUTHEADER(NFILO)
         USE CLOCK_MODULE
-        USE VERSION_MODULE
         IMPLICIT NONE
         INTEGER(4)   ,INTENT(IN) :: NFILO
-        CHARACTER(*) ,INTENT(IN) :: VERSIONTEXT
         CHARACTER(32)            :: DATIME
-        CHARACTER(32)            :: HOSTNAME
         INTEGER(4)               :: STATUS
 !       ****************************************************************
         WRITE(NFILO,FMT='()')
@@ -41,44 +38,11 @@ CONTAINS
      &       //',"P.E. BLOECHL, (C) CLAUSTHAL UNIVERSITY OF TECHNOLOGY (CUT)")')
         WRITE(NFILO,FMT='(T10' &
      &                      //',"DISTRIBUTED UNDER THE GNU PUBLIC LICENSE V3")')
-        WRITE(NFILO,FMT='(T10,A)')TRIM(VERTYP)
-        WRITE(NFILO,FMT='(T10,A)')TRIM(VERINF)
-        WRITE(NFILO,FMT='(T10,A)')TRIM(VERREV)
-        WRITE(NFILO,FMT='(T10,A)')TRIM(VERAUT)
-        WRITE(NFILO,FMT='(T10,A)')TRIM(VERDAT)
-
-        IF (VERSIONTEXT (17:17).NE.'%')THEN
-          WRITE(NFILO,FMT='(A)') VERSIONTEXT
-        ENDIF
+        CALL CPPAW_WRITEVERSION(NFILO)
 
         CALL CLOCK$NOW(DATIME)
-        CALL GET_ENVIRONMENT_VARIABLE('HOSTNAME',HOSTNAME,STATUS=STATUS)
-        IF(STATUS.NE.0) HOSTNAME='UNKNOWN HOSTNAME'
-        WRITE(NFILO,FMT='("PROGRAM STARTED: ",A32," ON ",A)') &
-     &           DATIME,HOSTNAME
-        CALL LOCK$REPORT(NFILO)
+        WRITE(NFILO,FMT='("PROGRAM STARTED on ",A32)')DATIME
         END SUBROUTINE PUTHEADER
-!
-!     ...1.........2.........3.........4.........5.........6.........7.........8
-        SUBROUTINE PRINTVERSION()
-        USE VERSION_MODULE
-        IMPLICIT NONE
-!       ****************************************************************
-        WRITE(*,FMT='()')
-        WRITE(*,FMT='(72("*"))')
-        WRITE(*,FMT='(72("*"),T15' &
-     &              //',"  CP-PAW VERSION INFO: ")')
-        WRITE(*,FMT='(72("*"))')
-
-        WRITE(*,FMT='(A)')TRIM(VERTYP)
-        WRITE(*,FMT='(A)')TRIM(VERINF)
-        WRITE(*,FMT='(A)')TRIM(VERREV)
-        WRITE(*,FMT='(A)')TRIM(VERAUT)
-        WRITE(*,FMT='(A)')TRIM(VERDAT)
-        WRITE(*,FMT='(72("*"))')
-        CALL ERROR$NORMALSTOP
-        STOP
-        END SUBROUTINE PRINTVERSION
 !       ................................................................
         SUBROUTINE WRITER8(NFIL,NAME,VALUE,UNIT)
         INTEGER(4)  ,INTENT(IN) :: NFIL
@@ -281,7 +245,6 @@ CALL TRACE$PASS('DONE')
       INTEGER(4)                   :: NFILO
 !      LOGICAL(4)                   :: TOLATE
 !      INTEGER(4)                   :: MAXTIM(3)
-      CHARACTER(256)               :: VERSIONTEXT
       CHARACTER(512)               :: CNTLNAME
       CHARACTER(512)               :: ROOTNAME
       CHARACTER(32)                :: CH32SVAR
@@ -292,12 +255,13 @@ CALL TRACE$PASS('DONE')
       INTEGER(4)                   :: RUNTIME(3)
       INTEGER(4)   ,ALLOCATABLE    :: SPLITKEY(:)
       INTEGER                      :: ST
-      COMMON/VERSION/VERSIONTEXT
 !     **************************************************************************
                           CALL TRACE$PUSH('READIN')
 !
 !     ==========================================================================
 !     ==  SET CONTROLFILENAME AND STANDARD ROOT                               ==
+!     ==  PAW_VERSION, WHICH RESOLVES THE OPTIONS OF THE EXECUTABLE           ==
+!     ==  HAS BEEN CALLED ALREADY FROM THE MAIN PROGRAM. SEE PAW.F90          ==
 !     ==========================================================================
       CALL MPE$QUERY('~',NTASKS,THISTASK)
       IF(THISTASK.EQ.1) THEN
@@ -315,28 +279,6 @@ CALL TRACE$PASS('DONE')
         END IF
       END IF
       CALL MPE$BROADCAST('~',1,CNTLNAME)
-      IF(+CNTLNAME.EQ.'--HELP'.OR.+CNTLNAME.EQ.'-H'.OR.+CNTLNAME.EQ.'?') THEN
-        WRITE(*,FMT='("USAGE:"/"=====")')
-        WRITE(*,FMT='(T5,"1ST ARGUMENT",T25,"ACTION"/T5,32("-"))')
-        WRITE(*,FMT='(T5,"CONTROL FILENAME",T25,"EXECUTE ")')
-        CH32SVAR=-'--HELP'
-        WRITE(*,FMT='(T5,A6,T25,"PRINT HELP INFORMATION")')TRIM(CH32SVAR)
-        CH32SVAR=-'-H'
-        WRITE(*,FMT='(T5,A2,T25,"PRINT HELP INFORMATION")')TRIM(CH32SVAR)
-        WRITE(*,FMT='(T5,"?",T25,"PRINT HELP INFORMATION")')
-        CH32SVAR=-'--VERSION'
-        WRITE(*,FMT='(T5,A9,T25,"PRINT VERSION INFORMATION")')TRIM(CH32SVAR)
-        CH32SVAR=-'--PARMFILE'
-        WRITE(*,FMT='(T5,A10,T25,"PRINT PARMFILE")')TRIM(CH32SVAR)
-        CALL ERROR$NORMALSTOP
-      ELSE IF(+CNTLNAME.EQ.'--VERSION') THEN
-        CALL PRINTVERSION()
-        CALL ERROR$NORMALSTOP
-      ELSE IF(+CNTLNAME.EQ.'--PARMFILE') THEN
-        CALL VERSION$WRITEPARMFILE()
-        CALL ERROR$NORMALSTOP
-      END IF
-
 !
 !     ==========================================================================
 !     ==  DEFINE POLYMER IF NECESSARY                                         ==
@@ -394,11 +336,6 @@ CALL TRACE$PASS('DONE')
       CALL FILEHANDLER$SETSPECIFICATION(+'CNTL','POSITION','REWIND')
       CALL FILEHANDLER$SETSPECIFICATION(+'CNTL','ACTION','READ')
       CALL FILEHANDLER$SETSPECIFICATION(+'CNTL','FORM','FORMATTED')
-!
-!     ==========================================================================
-!     ==  CHECK EXPIRATION DATE                                               ==
-!     ==========================================================================
-      CALL LOCK$BREAKPOINT
 !    
 !     ==========================================================================
 !     ==  READ BUFFER CNTL                                                    ==
@@ -422,7 +359,7 @@ CALL TRACE$PASS('DONE')
 !     ==  WRITE HEADER                                                        ==
 !     ==========================================================================
       CALL FILEHANDLER$UNIT('PROT',NFILO)
-      CALL PUTHEADER(NFILO,VERSIONTEXT)
+      CALL PUTHEADER(NFILO)
 !
 !     ==========================================================================
 !     ==  READ BLOCK !DIMER  AND !CONTROL!GENERIC START= (FOR PLACEDIMER)     ==
@@ -1091,7 +1028,19 @@ CALL TRACE$PASS('DONE')
 !
 !     ...1.........2.........3.........4.........5.........6.........7.........8
       SUBROUTINE READIN_DFT(LL_CNTL_)
-      USE LINKEDLIST_MODULE
+!     **************************************************************************
+!     **  READ INPUT DATA FROM THE !CONTROL!DFT BLOCK OF THE CONTROL FILE     **
+!     **                                                                      **
+!     **  CAUTION: VARIABLE CHTYPE OCCURS WITH SAME NAME IN LINKEDLIST_MODULE **
+!     **           THAT IS THE REASON THE USE STATEMENT BEING VERY EXPLICIT   **
+!     **************************************************************************
+      USE LINKEDLIST_MODULE, ONLY : LL_TYPE &
+     &                             ,LINKEDLIST$GET &
+     &                             ,LINKEDLIST$EXISTD &
+     &                             ,LINKEDLIST$EXISTL &
+     &                             ,LINKEDLIST$SELECT &
+     &                             ,LINKEDLIST$SET &
+     &                             ,LINKEDLIST$SIZE 
       IMPLICIT NONE
       TYPE(LL_TYPE),INTENT(IN) :: LL_CNTL_
       TYPE(LL_TYPE)            :: LL_CNTL
@@ -1099,6 +1048,8 @@ CALL TRACE$PASS('DONE')
       LOGICAL(4)               :: TCHK,TCHK1,TCHK2
       REAL(8)                  :: SVAR
       CHARACTER(32)            :: MODUS
+      CHARACTER(32)            :: CHTYPE(3)  ! LIBXC IDENTIFIERS
+      INTEGER(4)               :: LEN
       REAL(8)                  :: ANGSTROM  ! ANGSTROM
 !     **************************************************************************
                           CALL TRACE$PUSH('READIN_DFT')
@@ -1109,13 +1060,38 @@ CALL TRACE$PASS('DONE')
       CALL LINKEDLIST$SELECT(LL_CNTL,'CONTROL')
       CALL LINKEDLIST$SELECT(LL_CNTL,'DFT')
 !
-!     == GET NON-DEFAULT VALUES ================================================
-      CALL LINKEDLIST$EXISTD(LL_CNTL,'TYPE',1,TCHK)
-      IF(.NOT.TCHK) THEN
-        CALL LINKEDLIST$SET(LL_CNTL,'TYPE',0,1)
+!     ==========================================================================
+!     == FUNCTIONAL TYPE                                                      ==
+!     ==========================================================================
+      CALL LINKEDLIST$EXISTD(LL_CNTL,'LIBXC',1,TCHK)
+      CALL LINKEDLIST$EXISTD(LL_CNTL,'TYPE',1,TCHK1)
+      IF(TCHK.AND.TCHK1) THEN
+        CALL ERROR$MSG('TYPE AND LIBXC ARE MUTUALLY EXCLUSIVE')
+        CALL ERROR$MSG('REMOVE ONE OF THEM FROM !CONTROL!DFT')
+        CALL ERROR$STOP('READIN_DFT')
       END IF
-      CALL LINKEDLIST$GET(LL_CNTL,'TYPE',1,ILDA)
-      CALL DFT$SETI4('TYPE',ILDA)
+!
+!     == SET DEFAULT (PERDEW BURKE ERNZERHOF GGA) ==============================
+      IF((.NOT.TCHK).AND.(.NOT.TCHK1)) THEN
+        ILDA=10   ! PBE FUNCTIONAL, INTRINSIC IMPLEMENTATION 
+        CALL DFT$SETI4('TYPE',ILDA)
+      END IF
+!
+!     == READ FUNCTIONAL SPECIFICATION =========================================
+      IF(TCHK) THEN
+!       -- READ LIBXC INPUT ----------------------------------------------------
+        CALL LINKEDLIST$SIZE(LL_CNTL,'LIBXC',1,LEN)
+        IF(LEN.GT.SIZE(CHTYPE)) THEN
+          CALL ERROR$MSG('NUMBER OF LIBXC IDENTIFIERS EXCEEDS MAXIMUM')
+          CALL ERROR$STOP('READIN_DFT')
+        END IF
+        CALL LINKEDLIST$GET(LL_CNTL,'LIBXC',1,CHTYPE(1:LEN))
+        CALL DFT$SETCHA('TYPE',LEN,CHTYPE(1:LEN))
+      ELSE IF(TCHK1) THEN
+!       -- USE INTRINSIC FUNCTIONALS W/O LIBXC ---------------------------------
+        CALL LINKEDLIST$GET(LL_CNTL,'TYPE',1,ILDA)
+        CALL DFT$SETI4('TYPE',ILDA)
+      END IF
 !
 !     ==========================================================================
 !     == VAN DER WAALS INTERFACE                                              ==
@@ -1904,9 +1880,6 @@ CALL LMTO$SETL4('ON',.FALSE.)
 !     == IF OCCUPATIONS ARE DYNAMICAL THE OCCUPATIONS ARE BY DEFAULT READ
 !     == FROM THE RESTART FILE UNLESS THE PARAMETER STARTTYPE IS SPECIFIED 
 !     ==  ON INPUT IN THIS !CNTL!MERMIN BLOCK
-!
-      CALL LOCK$DISABLE('!MERMIN IN READIN_MERMIN')
-!
       CALL LINKEDLIST$SELECT(LL_CNTL,'MERMIN')
 !
 !     ==================================================================
@@ -3883,7 +3856,6 @@ CALL ERROR$STOP('READIN_ANALYSE_OPTIC')
       USE IO_MODULE
       USE LINKEDLIST_MODULE
       USE CONSTANTS_MODULE
-      USE VERSION_MODULE, ONLY : VERINF
       IMPLICIT NONE
       INTEGER(4)            :: NFILO   ! PROTOCOL FILE UNIT
       INTEGER(4)            :: NFIL
@@ -3891,7 +3863,6 @@ CALL ERROR$STOP('READIN_ANALYSE_OPTIC')
       INTEGER(4)            :: NKPT
       REAL(8)               :: ANGSTROM
       REAL(8)               :: SVAR
-      CHARACTER(128)        :: STPVERSION
 !     **************************************************************************
                           CALL TRACE$PUSH('STRCIN')
       CALL FILEHANDLER$UNIT('PROT',NFILO)
