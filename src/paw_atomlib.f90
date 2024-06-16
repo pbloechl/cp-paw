@@ -749,8 +749,9 @@ END MODULE RADIALFOCK_MODULE
       INTEGER(4)                 :: NCONV
       LOGICAL(4)                 :: CONVG
       REAL(8)                    :: EKIN,EH,EXC
-      REAL(8)                    :: POTIN2(NR,2)  !INPUT POTENTIAL (AUCH TAUPOT)
-      REAL(8)                    :: POTOUT2(NR,2) !OUTPUTPOTENTIAL (AUCH TAUPOT)
+      REAL(8)                    :: POTIN(NR)
+      REAL(8)                    :: SVAR
+      REAL(8)                    :: FMAX
       INTEGER(4)                 :: I,IB,JB,ISO,L,IR
       INTEGER(4)                 :: ISVAR,IARR(1)
       LOGICAL(4)                 :: TSTART  ! CALCULATE ANGULAR MOMENTA ETC
@@ -936,20 +937,38 @@ END MODULE RADIALFOCK_MODULE
         END IF
 !
 !       == CORRECT FOR NON-INTEGER ATOMIC NUMBERS ==============================
-!       == THIS IS USED FOR DUMMY HYDROGEN ATOMS, THAT CARRY ONLY A FRACTIONAL =
-!       == NUCLEAR AND ELECTRONIC CHARGE =======================================
-        FTOT=SUM(FOFI(:NB))
-        SVAR=AEZ-FTOT
-        IF(AEZ.EQ.0.D0) SVAR=1.D-8 
+!       == OCCUPATIONS ARE FIRST FILLED ACCORDING TO NINT(AEZ). ================
+!       == THIS POSSIBILY IS USED FOR DUMMY HYDROGEN ATOMS, THAT CARRY ONLY ====
+!       == A FRACTIONAL NUCLEAR AND ELECTRONIC CHARGE ==========================
+        FTOT=SUM(FOFI(:NB))   ! =NINT(AEZ)
+        SVAR=AEZ-FTOT         ! =AEZ-NINT(AEZ)
+!
+!       == REMOVE ELECTRONS ====================================================
         IF(SVAR.LT.0.D0) THEN
           DO IB=NB,1,-1
             FOFI(IB)=FOFI(IB)+SVAR
-            IF(FOFI(IB).GE.0.D0) THEN
-              EXIT
+            FOFI(IB)=MAX(0.D0,SVAR)
+            SVAR=SVAR-FOFI(IB)
+            IF(SVAR.GE.0.D0) EXIT 
+          ENDDO
+
+!       == ADD ELECTRONS =======================================================
+        ELSE IF(SVAR.GT.0.D0) THEN
+          DO IB=1,NB
+            L=LOFI(IB)
+            IF(TSO.AND.L.NE.0) THEN
+              IF(SOFI(IB).EQ.-1) THEN
+                FMAX=REAL(2*L,KIND=8)
+              ELSE IF(SOFI(IB).EQ.1) THEN
+                FMAX=REAL(2*L+2,KIND=8)
+              END IF
             ELSE
-              SVAR=FOFI(IB)
-              FOFI(IB)=0.D0
+              FMAX=REAL(2*(2*L+1),KIND=8)
             END IF
+            SVAR=SVAR+FOFI(IB)
+            FOFI(IB)=MIN(FMAX,SVAR)
+            SVAR=SVAR-FOFI(IB)
+            IF(SVAR.LE.0.D0) EXIT            
           ENDDO
         ELSE IF(SVAR.GT.1.D-8) THEN
           CALL ERROR$MSG('INCONSISTENCY FOR NON-INTEGER ATOMIC NUMBERS')
@@ -968,6 +987,7 @@ END MODULE RADIALFOCK_MODULE
           CALL ERROR$MSG('INCONSISTENT NUMBER OF ELECTRONS')
           CALL ERROR$R8VAL('AEZ ',AEZ)
           CALL ERROR$R8VAL('#(ELECTRONS) ',FTOT)
+          CALL ERROR$R8VAL('#(ELECTRONS)-AEZ ',FTOT-AEZ)
           CALL ERROR$STOP('ATOMLIB$AESCF')
         END IF
 !
@@ -2028,6 +2048,7 @@ CALL ERROR$STOP('AESCF')
 !!$CLOSE(1005)
 !!$CALL ERROR$STOP('---')
 !!$END IF
+      ZM=0.D0 ! INITIALIZATION TO MAKE COMPILER HAPPY
       DO ITER=1,NITER
         E=X0
 !       ========================================================================
@@ -2054,7 +2075,9 @@ CALL ERROR$STOP('AESCF')
         ELSE
           PHI2(:)=PHI(:)
         END IF
-        IF(ITER.GT.1.AND.Z0*ZM.LT.0.D0) EXIT
+        IF(ITER.GT.1) THEN
+          IF(Z0*ZM.LT.0.D0) EXIT
+        END IF
 !!$IF(L.EQ.0.AND.NN.EQ.1) THEN
 !!$ CALL ATOMLIB_WRITEPHI('ERROR_PAWPSI.DAT',GID,NR,1,PHI)
 !!$ CALL ERROR$I4VAL('L',L)
@@ -2594,7 +2617,7 @@ RETURN
         RH=RHO(IR)*Y0
         GRHO2=(Y0*GRHO(IR))**2
         IF(.NOT.TRHOKIN) THEN
-          CALL DFT(RH,0.D0,GRHO2,0.D0,0.D0,EXC1,VXC,DUMMY1,VGXC,DUMMY2,DUMMY3)
+        CALL DFT(RH,0.D0,GRHO2,0.D0,0.D0,EXC1,VXC,DUMMY1,VGXC,DUMMY2,DUMMY3)
           TAUPOT(IR)=0.D0
         ELSE
           TAUT=TAU(IR)*Y0
