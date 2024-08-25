@@ -976,7 +976,7 @@ MODULE DFT_MODULE
         CALL ERROR$R8VAL('GVXCST ',GVXCST)
         CALL ERROR$R8VAL('VTAUT  ',VTAUT)
         CALL ERROR$R8VAL('VTAUS  ',VTAUS)
-        CALL ERROR$STOP('DFT')
+        CALL ERROR$STOP('DFT_META')
       END IF
 
       RETURN
@@ -1842,8 +1842,8 @@ MODULE DFT_MODULE
 !     == avoid divide-by-zero for small densities/ non-relativistic limit ======
 !     ==========================================================================
       if(rho.lt.1.d-12) then
-        ex=0.d0
-        dex=0.d0
+        e=0.d0
+        pot=0.d0
         return
       end if
 !

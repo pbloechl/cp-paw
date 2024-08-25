@@ -749,7 +749,8 @@ END MODULE RADIALFOCK_MODULE
       INTEGER(4)                 :: NCONV
       LOGICAL(4)                 :: CONVG
       REAL(8)                    :: EKIN,EH,EXC
-      REAL(8)                    :: POTIN(NR)
+      REAL(8)                    :: POTIN2(NR,2)
+      REAL(8)                    :: POTOUT2(NR,2)
       REAL(8)                    :: SVAR
       REAL(8)                    :: FMAX
       INTEGER(4)                 :: I,IB,JB,ISO,L,IR
@@ -779,7 +780,7 @@ END MODULE RADIALFOCK_MODULE
       REAL(8)                    :: CG
       INTEGER(4)                 :: LM1,LM2,LM3
       CHARACTER(80)              :: FMTREPORT='(50("."),":",F20.5," ",A,T1,A)'
-      REAL(8)                    :: SVAR,SVAR1,SVAR2,SVAR3,ETAUTAUPOT
+      REAL(8)                    :: SVAR1,SVAR2,SVAR3,ETAUTAUPOT
 !     **************************************************************************
                                CALL TRACE$PUSH('ATOMLIB$AESCF')
 !     CALL ATOMLIB$TEST_ATOMLIB$BOUNDSTATE()
@@ -1249,7 +1250,7 @@ PRINT*,'IN AESCF  (1) (LOCAL) RBOX=',RBOX
 PRINT*,'EKIN   ',EKIN
 PRINT*,'EH     ',EH
 PRINT*,'EXC    ',EXC
-CALL SETUPS$COREENERGY(GID,NR,RBOX,AEZ,NB,1,LOFI,FOFI,EOFI,PHI,SPHI)
+!CALL SETUPS$COREENERGY(GID,NR,RBOX,AEZ,NB,1,LOFI,FOFI,EOFI,PHI,SPHI)
 !
 !         ======================================================================
 !         == ESTIMATE THE ENERGY DUE TO THE FINITE NUCLEAR SIZE               ==
@@ -1332,7 +1333,7 @@ IF(.NOT.TREL)PRINT*,'WARNING!!!!! RELATIVISTIC EFFECTS ARE SWITCHED OFF'
           POT=POTIN2(:,1) ! RECOVER POT AS INPUT POTENTIAL
           TAUPOT=POTIN2(:,2)
 PRINT*,'IN AESCF  (LOCAL) RBOX=',RBOX
-CALL SETUPS$COREENERGY(GID,NR,RBOX,AEZ,NB,1,LOFI,FOFI,EOFI,PHI,SPHI)
+!CALL SETUPS$COREENERGY(GID,NR,RBOX,AEZ,NB,1,LOFI,FOFI,EOFI,PHI,SPHI)
         END IF
 !
 !       ========================================================================

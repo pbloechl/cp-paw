@@ -354,11 +354,21 @@ END MODULE NEWDFT_MODULE
 !     ==    XC_FLAGS_NEEDS_LAPLACIAN = 32768 = 2^15                           ==
 !     ==    XC_FLAGS_NEEDS_TAU       = 65536 = 2^16                           ==
 !     ==========================================================================
-      IF(IAND(XC_F03_FUNC_INFO_GET_FLAGS(XC_INFO),XC_FLAGS_NEEDS_LAPLACIAN) &
-     &   .EQ. XC_FLAGS_NEEDS_LAPLACIAN) THEN
-         CALL ERROR$MSG('FUNCTIONALS USING LAPLACIAN ARE NOT ALLOWED')
-         CALL ERROR$STOP('PAWLIBXC_INITIALIZE')
-      END IF
+
+!CAUTION!!! THE STATEMENT BELOW IS A CHECK THAT DOES NOT WORK. 
+!           IT SHOULD BE FIXED
+
+!!$PRINT*,'PAWLIBXC_INITIALIZE MARKE 1'
+!!$PRINT*,'XC_F03_FUNC_INFO_GET_FLAGS(XC_INFO) ',XC_F03_FUNC_INFO_GET_FLAGS(XC_INFO)
+!!$PRINT*,'XC_FLAGS_NEEDS_LAPLACIAN ',XC_FLAGS_NEEDS_LAPLACIAN
+!!$PRINT*,'IAND ',IAND(XC_F03_FUNC_INFO_GET_FLAGS(XC_INFO),XC_FLAGS_NEEDS_LAPLACIAN)
+!!$
+!!$
+!!$      IF(IAND(XC_F03_FUNC_INFO_GET_FLAGS(XC_INFO),XC_FLAGS_NEEDS_LAPLACIAN) &
+!!$     &   .EQ. XC_FLAGS_NEEDS_LAPLACIAN) THEN
+!!$         CALL ERROR$MSG('FUNCTIONALS USING LAPLACIAN ARE NOT ALLOWED')
+!!$         CALL ERROR$STOP('PAWLIBXC_INITIALIZE')
+!!$      END IF
 !
 !     ==========================================================================
 !     == SANITY CHECK OF THE PAWLIBXC MODULE                                  ==
@@ -1940,7 +1950,9 @@ END IF
 !     ...1.........2.........3.........4.........5.........6.........7.........8
       SUBROUTINE PAWLIBXC_MGGA1(XC_FUNC,VAL,EXC,DER)
 !     **************************************************************************
-!     ** DFT3 INTERFACE TO LIBXC CALL FOR THE GGA FAMILY                      **
+!     ** DFT INTERFACE TO LIBXC CALL                                          **
+!     **                                                                      **
+!     ** CAUTION: VLAPL SET TO ZERO BECAUSE IT RETURNED NANS                  **
 !     **************************************************************************
       USE XC_F03_LIB_M    , ONLY : XC_F03_FUNC_T &               !TYPE
      &                            ,XC_F03_FUNC_INFO_T &          !TYPE
@@ -1993,6 +2005,10 @@ END IF
 ! F03_GGA_EXC_VXC_FXC_KXC?
 
       XC_INFO=XC_F03_FUNC_GET_INFO(XC_FUNC)
+      VRHO=0.D0
+      VSIGMA=0.D0
+      VLAPL=0.D0
+      VTAU=0.D0
       SELECT CASE (XC_F03_FUNC_INFO_GET_FAMILY(XC_INFO))
         CASE(XC_FAMILY_LDA)
           CALL XC_F03_LDA_EXC_VXC(XC_FUNC,NP,RHO &
@@ -2006,6 +2022,9 @@ END IF
         CASE(XC_FAMILY_MGGA,XC_FAMILY_HYB_MGGA)
           CALL XC_F03_MGGA_EXC_VXC(XC_FUNC,NP,RHO,SIGMA,LAPL,TAU &
      &                            ,EXCARR,VRHO,VSIGMA,VLAPL,VTAU)
+!CAUTION VLAPL IS RETURNED AS NAN RATHER THAN ZERO. I NEED TO FIND OUT 
+!WHETHER THE CALL RETURNS VLAPL AND WHEN NOT.
+          VLAPL=0.D0
       END SELECT
 
       EXC=EXCARR(1)
