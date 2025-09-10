@@ -56,7 +56,8 @@ MODULE DFT_MODULE
       LOGICAL(4),PARAMETER :: TSAFE  =.TRUE.  ! NO DENSITY-GRID INTERPOLATION
       LOGICAL(4)           :: TSPIN  =.TRUE.  ! CAN BE SET W.O. INITIALIZATION
       LOGICAL(4)           :: TGRA   =.FALSE. ! GRADIENTS ARE USED (OUTPUT)
-      LOGICAL(4)           :: TMETA  =.FALSE. ! KINETIC ENERGY DENSITY USED
+      LOGICAL(4)           :: TSIC   =.FALSE. ! NOT USED
+      LOGICAL(4)           :: TPLUSU =.FALSE. ! NOT USED
 !     == SWITCHES FOR INTERNAL BOOKKEEPING =====================================
       REAL(8)   ,PARAMETER :: RHOTMIN=1.D-6   ! MINIMUM DENSITY
       LOGICAL(4)           :: TINI   =.FALSE. ! INITIALIZATION DONE
@@ -524,7 +525,6 @@ MODULE DFT_MODULE
       IF(ID.EQ.'TYPE') THEN
         IT=VALUE
         TGRA=.FALSE.
-        TMETA=.FALSE.
         TCHK=.FALSE.
         IF(IT.EQ.0)  THEN ;TCHK=.TRUE. ;TGRA=.FALSE. ;END IF
         IF(IT.EQ.1)  THEN ;TCHK=.TRUE. ;TGRA=.FALSE. ;END IF
@@ -657,8 +657,7 @@ MODULE DFT_MODULE
 !     ** E.G. SELECT DENSITY FUNCTIONAL BY NAME                               **
 !     **************************************************************************
       USE DFT_MODULE, ONLY : TLIBXC &
-     &                      ,TGRA &
-     &                      ,TMETA
+     &                      ,TGRA
       IMPLICIT NONE
       CHARACTER(*),INTENT(IN) :: ID
       INTEGER(4)  ,INTENT(IN) :: LEN
@@ -673,7 +672,6 @@ MODULE DFT_MODULE
 !         == THIS IS FOR THE FUNCTIONALS IN LIBXC ==============================
           CALL PAWLIBXC$SETCHA('FUNCTIONAL',LEN,VAL)
           CALL PAWLIBXC$GETL4('GRADIENT',TGRA)
-          CALL PAWLIBXC$GETL4('METAGGA',TMETA)
         ELSE
 !         == THIS IS FOR THE CPPAW INTRINSIC FUNCTIONALS =======================
           IF(LEN.EQ.1) THEN
@@ -731,9 +729,7 @@ MODULE DFT_MODULE
       LOGICAL(4)  ,INTENT(OUT):: VAL
 !     **************************************************************************
       IF(ID.EQ.'GC') THEN
-        VAL=TGRA     ! FUNCTIONAL DEPENDS IN DENSITY GRADIENTS
-      ELSE IF(ID.EQ.'META') THEN
-        VAL=TMETA    ! FUNCTIONAL DEPENDS ON KINETIC ENERGY DENSITY
+        VAL=TGRA
       ELSE IF(ID.EQ.'SPIN') THEN
         VAL=TSPIN    ! SPIN-POLARIZATION CONSIDERED
       ELSE
@@ -760,227 +756,25 @@ MODULE DFT_MODULE
       TGRA_=TGRA
       RETURN          
       END
-!
-!     ...1.........2.........3.........4.........5.........6.........7.........8
-      SUBROUTINE DFT_META(RHOT,RHOS,GRHOT2,GRHOS2,GRHOST,TAUT,TAUS &
-     &              ,EXC,VXCT,VXCS,GVXCT2,GVXCS2,GVXCST,VTAUT,VTAUS)
-!     **************************************************************************
-!     **  EVALUATE EXCHANGE CORRELATION ENERGY AND POTENTIAL                  **
-!     **                                                                      **
-!     **  THIS ROUTINE DFT_META WILL REPLACE THE PREVIOUS ROUTINE DFT()       **
-!     **                                                                      **
-!     **************************************************************************
-      USE DFT_MODULE
-      IMPLICIT NONE
-      REAL(8)   ,INTENT(IN) :: RHOT
-      REAL(8)   ,INTENT(IN) :: RHOS
-      REAL(8)   ,INTENT(IN) :: GRHOT2
-      REAL(8)   ,INTENT(IN) :: GRHOS2
-      REAL(8)   ,INTENT(IN) :: GRHOST
-      REAL(8)   ,INTENT(IN) :: TAUT
-      REAL(8)   ,INTENT(IN) :: TAUS
-      REAL(8)   ,INTENT(OUT):: EXC
-      REAL(8)   ,INTENT(OUT):: VXCT
-      REAL(8)   ,INTENT(OUT):: VXCS
-      REAL(8)   ,INTENT(OUT):: GVXCT2
-      REAL(8)   ,INTENT(OUT):: GVXCS2
-      REAL(8)   ,INTENT(OUT):: GVXCST
-      REAL(8)   ,INTENT(OUT):: VTAUT
-      REAL(8)   ,INTENT(OUT):: VTAUS
-      REAL(8)               :: VAL(7)
-      REAL(8)               :: DEXC(7)
-      REAL(8)               :: EXC1
-      REAL(8)               :: DEXC1(7)
-      REAL(8)               :: VAL_9(9),DEXC1_9(9)
-!     **************************************************************************
-      IF(.NOT.TINI) CALL DFT_INITIALIZE
-
-!!$PRINT*,'RHOT,RHOS,GRHOT2,GRHOS2,GRHOST,TAUT,TAUS'
-!!$PRINT*,RHOT,RHOS,GRHOT2,GRHOS2,GRHOST,TAUT,TAUS
-
-      EXC=0.D0
-      VXCT=0.D0
-      VXCS=0.D0
-      GVXCT2=0.D0
-      GVXCS2=0.D0
-      GVXCST=0.D0
-      VTAUS=0.D0
-      VTAUT=0.D0
-!
-!     ==========================================================================
-!     == INITIALIZE VALUES                                                    ==
-!     ==========================================================================
-      VAL(1)=RHOT
-      VAL(3)=GRHOT2
-      IF(TSPIN) THEN
-        VAL(2)=RHOS
-        VAL(4)=GRHOS2
-        VAL(5)=GRHOST
-      ELSE
-        VAL(2)=0.D0
-        VAL(4)=0.D0
-        VAL(5)=0.D0
-      END IF
-      IF(TMETA) THEN
-        VAL(6)=TAUT
-        VAL(7)=TAUS
-      ELSE
-        VAL(6)=0.D0
-        VAL(7)=0.D0
-      END IF
-      EXC    =0.D0
-      DEXC(:)=0.D0
-!
-!     ==========================================================================
-!     == AVOID VERY SMALL DENSITIES                                           ==
-!     ==========================================================================
-      IF(VAL(1).LT.RHOTMIN) THEN
-!RETURN !#
-        VAL(1)=RHOTMIN
-      END IF
-!
-!     == SPIN DENSITY MUST NOT BE LARGER THAN THE TOTAL DENSITY ================
-      IF(ABS(VAL(2)).GE.VAL(1)-RHOTMIN) THEN
-        VAL(2)=MAX(VAL(2),-VAL(1)+RHOTMIN)
-        VAL(2)=MIN(VAL(2),VAL(1)-RHOTMIN)
-      END IF
-!
-!     ==========================================================================
-!     ==  EXCHANGE FUNCTIONAL                                                 ==
-!     ==========================================================================
-      IF(TX) THEN 
-        CALL EXCHANGE$EVAL1(VAL(1:5),EXC1,DEXC1(1:5))
-        EXC=EXC+EXC1*SCALEX
-        DEXC(:5)=DEXC(:5)+DEXC1(:5)*SCALEX
-      END IF
-!
-!     ==========================================================================
-!     ==  PERDEW WANG PARAMETERIZATION OF LOCAL CORRELATION                   ==
-!     ==========================================================================
-      IF(TPW91L.AND.TCORRELATION) THEN
-        CALL PERDEWWANG91L$EVAL1(VAL(1:5),EXC1,DEXC1(1:5))
-        EXC=EXC+EXC1
-        DEXC(:5)=DEXC(:5)+DEXC1(:5)
-      END IF
-!
-!     ==========================================================================
-!     ==  PERDEW-ZUNGER PARAMETERIZATION OF LOCAL CORRELATION                 ==
-!     ==========================================================================
-      IF(TPZ.AND.TCORRELATION) THEN
-        CALL PERDEWZUNGER$EVAL1(VAL(1:5),EXC1,DEXC1(1:5))
-        EXC=EXC+EXC1
-        DEXC(:5)=DEXC(:5)+DEXC1(:5)
-      END IF
-!
-!     ==========================================================================
-!     ==  PERDEW GRADIENT CORRECTION TO CORRELATION                           ==
-!     ==========================================================================
-      IF(TPERDEW.AND.TCORRELATION) THEN
-        CALL PERDEW$EVAL1(VAL(1:5),EXC1,DEXC1(1:5))
-        EXC=EXC+EXC1
-        DEXC(:5)=DEXC(:5)+DEXC1(:5)
-      END IF
-!
-!     ==========================================================================
-!     ==  PERDEW WANG 91 GRADIENT CORRECTION TO CORRELATION                   ==
-!     ==  ( INCLUDES ALSO LOCAL CORRELATION)                                  ==
-!     ==========================================================================
-      IF(TPW91G.AND.TCORRELATION) THEN
-        DEXC1=0.D0
-        CALL PERDEWWANG91G$EVAL(VAL(1),VAL(2),VAL(3),EXC1 &
-     &                         ,DEXC1(1),DEXC1(2),DEXC1(3))
-        EXC=EXC+EXC1
-        DEXC(:5)=DEXC(:5)+DEXC1(:5)
-      END IF
-!
-!     ==========================================================================
-!     ==  PBE96 EXCHANGE CORRELATION FUNCTIONAL                               ==
-!     ==========================================================================
-      IF(TPBE96.AND.TCORRELATION) THEN
-        CALL PBE$EVAL1(VAL(1:5),EXC1,DEXC1(1:5))
-        EXC=EXC+EXC1
-        DEXC(:5)=DEXC(:5)+DEXC1(:5)
-      END IF
-!
-!     ==========================================================================
-!     ==  LYP88 CORRELATION FUNCTIONAL                                        ==
-!     ==========================================================================
-      IF(TLYP88.AND.TCORRELATION) THEN
-        CALL LYP88$EVAL1(VAL(1:5),EXC1,DEXC1(1:5))
-        EXC=EXC+EXC1
-        DEXC(:5)=DEXC(:5)+DEXC1(:5)
-      END IF
-!
-!     ==========================================================================
-!     ==  LIBXC INTERFACE
-!     ==========================================================================
-!     == THE LIBXC INTERFACE DOES NOT (YET) ALLOW TO SWITCH OFF CORRELATION   ==
-!     == THEREFORE THIS TERM IS NOT SWITCHED OFF BY TCORRELATION=.FALZSE.     ==
-!     == TCORRELATION IS USED FOR HYBRID FUNCTIONALS TO SELECT ONLY EXCHANGE. ==
-      IF(TLIBXC) THEN
-        EXC=0.D0
-        DEXC=0.D0
-        EXC1=0.D0
-        DEXC1=0.D0
-!CAUTION! SWITCHES OFF DEPENDENCE FOR LAPLACIAN!!!
-!CAUTION! MUST NOT BE USED WITH FUNCTIONALS DEPENDIN ON THE LAPLACIAN.
-        VAL_9(1:5)=VAL(1:5)
-        VAL_9(6:7)=0.D0
-        VAL_9(8:9)=VAL(6:7)
-        CALL PAWLIBXC$MGGA(VAL,EXC1,DEXC1_9)
-        DEXC1(1:5)=DEXC1_9(1:5)
-        DEXC1(6:7)=DEXC1_9(8:9)
-!
-        EXC            =EXC+EXC1
-        DEXC(:7)       =DEXC(:7)       +DEXC1(:7)
-      END IF
-!
-!     ==========================================================================
-!     ==  WRAP-UP  (CHECKS ETC.)                                              ==
-!     ==========================================================================
-     IF(RHOT.LT.RHOTMIN) THEN
-        DEXC(1)=EXC/RHOTMIN 
-        DEXC(2:)=DEXC(2:)*RHOT/RHOTMIN
-        EXC=EXC*RHOT/RHOTMIN
-      END IF
-!
-      VXCT  =DEXC(1)
-      VXCS  =DEXC(2)
-      GVXCT2=DEXC(3)
-      GVXCS2=DEXC(4)
-      GVXCST=DEXC(5)
-      VTAUT =DEXC(6)
-      VTAUS =DEXC(7)
-!
-!     ==========================================================================
-!     == CATCH NAN-S (NAN=NOT-A-NUMBER)                                       ==
-!     ==========================================================================
-      IF(EXC.NE.EXC.OR.VXCT.NE.VXCT.OR.VXCS.NE.VXCS &
-     &             .OR.GVXCT2.NE.GVXCT2.OR.GVXCS2.NE.GVXCS2 &
-                   .OR.GVXCST.NE.GVXCST &
-     &             .OR.VTAUT.NE.VTAUT.OR.VTAUS.NE.VTAUS) THEN
-        CALL ERROR$MSG('ERROR AFTER DFT')
-        CALL ERROR$L4VAL('TSPIN ',TSPIN)
-        CALL ERROR$R8VAL('EXC    ',EXC)
-        CALL ERROR$R8VAL('RHOT   ',RHOT)
-        CALL ERROR$R8VAL('RHOS   ',RHOS)
-        CALL ERROR$R8VAL('GRHOT2 ',GRHOT2)
-        CALL ERROR$R8VAL('GRHOS2 ',GRHOS2)
-        CALL ERROR$R8VAL('GRHOST ',GRHOST)
-        CALL ERROR$R8VAL('TAUT   ',TAUT)
-        CALL ERROR$R8VAL('TAUS   ',TAUS)
-        CALL ERROR$R8VAL('VXCT   ',VXCT)
-        CALL ERROR$R8VAL('VXCS   ',VXCS)
-        CALL ERROR$R8VAL('GVXCT2 ',GVXCT2)
-        CALL ERROR$R8VAL('GVXCS2 ',GVXCS2)
-        CALL ERROR$R8VAL('GVXCST ',GVXCST)
-        CALL ERROR$R8VAL('VTAUT  ',VTAUT)
-        CALL ERROR$R8VAL('VTAUS  ',VTAUS)
-        CALL ERROR$STOP('DFT_META')
-      END IF
-
-      RETURN
-      END
+!!$!
+!!$!     ...1.........2.........3.........4.........5.........6.........7.........8
+!!$      SUBROUTINE DFT$SETR8(ID,VAL)
+!!$!     **************************************************************************
+!!$!     **************************************************************************
+!!$      USE DFT_MODULE
+!!$      IMPLICIT NONE
+!!$      CHARACTER(*),INTENT(IN) :: ID
+!!$      LOGICAL(4)  ,INTENT(IN) :: VAL
+!!$!     **************************************************************************
+!!$      IF(ID.EQ.'SCALEX') THEN
+!!$        SCALEX=VAL
+!!$      ELSE
+!!$        CALL ERROR$MSG('IDENTIFIER NOT RECOGNIZED')
+!!$        CALL ERROR$CHVAL('ID',ID)
+!!$        CALL ERROR$STOP('DFT$SETR8')
+!!$      END IF
+!!$      RETURN
+!!$      END
 !
 !     ...1.........2.........3.........4.........5.........6.........7.........8
       SUBROUTINE DFT(RHOT,RHOS,GRHOT2,GRHOS2,GRHOST &
@@ -1345,276 +1139,6 @@ MODULE DFT_MODULE
       RETURN
     END SUBROUTINE DFT2
 !
-!     ...1.........2.........3.........4.........5.........6.........7.........8
-      SUBROUTINE DFT3_META(VAL_,EXC,DEXC,D2EXC,D3EXC)
-!     **************************************************************************
-!     **  EVALUATE EXCHANGE AND CORRELATION ENERGY                            **
-!     **  AND ITS FIRST, SECOND AND THIRD DERIVATIVES                         **
-!     **                                                                      **
-!     **  DFT_META WILL REPLACE DFT3(...)                                     **
-!     **                                                                      **
-!     **  VAL(1)=RHOT TOTAL ELECTRON DENSITY                                  **
-!     **  VAL(2)=RHOS ELECTRON SPIN DENSITY                                   **
-!     **  VAL(3)=(GRAD*RHOT)**2 SQUARED GRADIENT OF TOTAL DENSITY             **
-!     **  VAL(4)=(GRAD*RHOS)**2 SQUARED GRADIENT OF SPIN DENSITY              **
-!     **  VAL(5)=(GRAD*RHOT)*(GRAD*RHOS)                                      **
-!     **  VAL(6)=TAUT TOTAL KINETIC ENERGY DENSITY                            **
-!     **  VAL(7)=TAUS SPIN KINETIC ENERGY DENSITY                             **
-!     **                                                                      **
-!     **************************************************************************
-      USE DFT_MODULE
-      IMPLICIT NONE
-      REAL(8)   ,INTENT(IN) :: VAL_(7) !(RHOT,RHOS,GRHOT2,GRHOS2,GRHOST 
-                                       !  ,TAUT,TAUS)
-      REAL(8)   ,INTENT(OUT):: EXC
-      REAL(8)   ,INTENT(OUT):: DEXC(7)       ! DEXC/DVAL(I)
-      REAL(8)   ,INTENT(OUT):: D2EXC(7,7)   ! D2EXC/(DVAL(I)DVAL(J))
-      REAL(8)   ,INTENT(OUT):: D3EXC(7,7,7)! D3EXC/(DVAL(I)DVAL(J),DVAL(K))
-      REAL(8)               :: VAL(7)
-      REAL(8)               :: EXC1,DEXC1(7),D2EXC1(7,7),D3EXC1(7,7,7)
-      REAL(8)               :: VAL_9(9),DEXC1_9(9),D2EXC1_9(9,9),D3EXC1_9(9,9,9)
-!     **************************************************************************
-!
-!     ==========================================================================
-!     == INITIALIZE VALUES                                                    ==
-!     ==========================================================================
-      VAL(:)=VAL_(:)
-      IF(.NOT.TSPIN) THEN
-       VAL(2)=0.D0
-       VAL(4)=0.D0
-       VAL(5)=0.D0
-       VAL(7)=0.D0
-      END IF
-      EXC       =0.D0
-      DEXC(:)   =0.D0
-      D2EXC(:,:)=0.D0
-      D3EXC(:,:,:)=0.D0
-!
-!     ==========================================================================
-!     == RETURN IF TOTAL DENSITY BELOW ZERO                                   ==
-!     ==========================================================================
-      IF(VAL(1).LE.0.D0) RETURN
-!
-!     ==========================================================================
-!     == AVOID VERY SMALL DENSITIES                                           ==
-!     ==========================================================================
-      IF(VAL(1).LT.RHOTMIN) THEN
-        VAL(1)=RHOTMIN
-      END IF
-
-      IF(ABS(VAL(2)).GE.VAL(1)-RHOTMIN) THEN
-        VAL(2)=MAX(VAL(2),-VAL(1)+RHOTMIN)
-        VAL(2)=MIN(VAL(2),VAL(1)-RHOTMIN)
-      END IF
-!
-!     ==========================================================================
-!     ==  EXCHANGE ENERGY                                                     ==
-!     ==========================================================================
-      IF(TX) THEN
-        CALL EXCHANGE$EVAL3(VAL,EXC1,DEXC1(:5),D2EXC1(:5,:5),D3EXC1(:5,:5,:5))
-        EXC=EXC+EXC1*SCALEX
-        DEXC(:5)=DEXC(:5)+DEXC1(:5)*SCALEX
-        D2EXC(:5,:5)=D2EXC(:5,:5)+D2EXC1(:5,:5)*SCALEX
-        D3EXC(:5,:5,:5)=D3EXC(:5,:5,:5)+D3EXC1(:5,:5,:5)*SCALEX
-      END IF
-!
-!     ==========================================================================
-!     ==  PERDEW WANG PARAMETERIZATION OF LOCAL CORRELATION                   ==
-!     ==========================================================================
-      IF(TPW91L.AND.TCORRELATION) THEN
-        CALL PERDEWWANG91L$EVAL3(VAL(:5),EXC1,DEXC1(:5),D2EXC1(:5,:5) &
-     &                                             ,D3EXC1(:5,:5,:5))
-        EXC=EXC+EXC1
-        DEXC(:5)=DEXC(:5)+DEXC(:5)
-        D2EXC(:5,:5)=D2EXC(:5,:5)+D2EXC1(:5,:5)
-        D3EXC(:5,:5,:5)=D3EXC(:5,:5,:5)+D3EXC1(:5,:5,:5)
-      END IF
-!
-!     ==========================================================================
-!     ==  PERDEW ZUNGER PARAMETERIZATION OF LOCAL CORRELATION                 ==
-!     ==========================================================================
-      IF(TPZ.AND.TCORRELATION) THEN
-        CALL PERDEWZUNGER$EVAL3(VAL(:5),EXC1,DEXC1(:5),D2EXC1(:5,:5) &
-     &                                            ,D3EXC1(:5,:5,:5))
-        EXC=EXC+EXC1
-        DEXC(:5)=DEXC(:5)+DEXC1(:5)
-        D2EXC(:5,:5)=D2EXC(:5,:5)+D2EXC1(:5,:5)
-        D3EXC(:5,:5,:5)=D3EXC(:5,:5,:5)+D3EXC1(:5,:5,:5)
-      END IF
-!
-!     ==========================================================================
-!     ==  PERDEW GRADIENT CORRECTION TO CORRELATION                           ==
-!     ==========================================================================
-      IF(TPERDEW.AND.TCORRELATION) THEN
-        CALL PERDEW$EVAL3(VAL(:5),EXC1,DEXC1(:5),D2EXC1(:5,:5) &
-     &                                          ,D3EXC1(:5,:5,:5))
-        EXC=EXC+EXC1
-        DEXC(:5)=DEXC(:5)+DEXC1(:5)
-        D2EXC(:5,:5)=D2EXC(:5,:5)+D2EXC1(:5,:5)
-        D3EXC(:5,:5,:5)=D3EXC(:5,:5,:5)+D3EXC1(:5,:5,:5)
-      END IF
-!
-!     ==========================================================================
-!     ==  PERDEW WANG 91 GRADIENT CORRECTION TO CORRELATION                   ==
-!     ==  ( INCLUDES ALSO LOCAL CORRELATION)                       ========   ==
-!     ==================================================================
-      IF(TPW91G.AND.TCORRELATION) THEN
-        CALL PERDEWWANG91G$EVAL2(VAL(1),VAL(2),VAL(3),EXC1 &
-     &       ,DEXC1(1),DEXC1(2),DEXC1(3) &
-     &       ,D2EXC1(1,1),D2EXC1(1,2),D2EXC1(1,3) &
-     &       ,D2EXC1(2,2),D2EXC1(2,3),D2EXC1(3,3))
-        D2EXC1(2,1)=D2EXC1(1,2)
-        D2EXC1(3,1)=D2EXC1(1,3)
-        D2EXC1(3,2)=D2EXC1(2,3)
-        EXC=EXC+EXC1
-        DEXC(1:3)=DEXC(1:3)+DEXC1(1:3)        
-        D2EXC(1:3,1:3)=D2EXC(1:3,1:3)+D2EXC(1:3,1:3)
-      END IF
-!
-!     ==========================================================================
-!     ==  PBE96 EXCHANGE CORRELATION FUNCTIONAL                               ==
-!     ==========================================================================
-      IF(TPBE96.AND.TCORRELATION) THEN
-        CALL PBE$EVAL3(VAL(:5),EXC1,DEXC1(:5),D2EXC1(:5,:5),D3EXC1(:5,:5,:5))
-        EXC=EXC+EXC1
-        DEXC(:5)=DEXC(:5)+DEXC1(:5)
-        D2EXC(:5,:5)=D2EXC(:5,:5)+D2EXC1(:5,:5)
-        D3EXC(:5,:5,:5)=D3EXC(:5,:5,:5)+D3EXC1(:5,:5,:5)
-      END IF
-!
-!     ==========================================================================
-!     ==  LEE YANG-PARR 88 CORRELATION FUNCTIONAL                             ==
-!     ==========================================================================
-      IF(TLYP88.AND.TCORRELATION) THEN
-        CALL LYP88$EVAL3(VAL(:5),EXC1,DEXC1(:5),D2EXC1(:5,:5),D3EXC1(:5,:5,:5))
-        EXC=EXC+EXC1
-        DEXC(:5)=DEXC(:5)+DEXC1(:5)
-        D2EXC(:5,:5)=D2EXC(:5,:5)+D2EXC1(:5,:5)
-        D3EXC(:5,:5,:5)=D3EXC(:5,:5,:5)+D3EXC1(:5,:5,:5)
-      END IF
-!!$!
-!!$!     ==========================================================================
-!!$!     ==  SCAN FUNCTIONAL  (EXCHANGE AND CORRELATION)                         ==
-!!$!     ==========================================================================
-!!$!     == THE SCAN FUNCTIONAL DOES NOT (YET) ALLOW TO SWITCH OFF CORRELATION   ==
-!!$!     == THEREFORE THIS TERM IS NOT SWITCHED OFF BY TCORRELATION=.FALZSE.     ==
-!!$!     == TCORRELATION IS USED FOR HYBRID FUNCTIONALS TO SELECT ONLY EXCHANGE. ==
-!!$      IF(TLIBXC.AND.TMETA) THEN
-!!$        EXC=0.D0
-!!$        DEXC=0.D0
-!!$        D2EXC=0.D0
-!!$        D3EXC=0.D0
-!!$        EXC1=0.D0
-!!$        DEXC1=0.D0
-!!$        D2EXC1=0.D0
-!!$        D3EXC1=0.D0
-!!$        CALL DFT_META$EVAL3(VAL(:7),EXC1,DEXC1(:7),D2EXC1(:7,:7),D3EXC1(:7,:7,:7)) 
-!!$!        CALL SCAN$EVAL3(VAL(:7),EXC1,DEXC1(:7),D2EXC1(:7,:7),D3EXC1(:7,:7,:7))
-!!$        EXC            =EXC+EXC1
-!!$        DEXC(:7)       =DEXC(:7)       +DEXC1(:7)
-!!$        D2EXC(:7,:7)   =D2EXC(:7,:7)   +D2EXC1(:7,:7)
-!!$        D3EXC(:7,:7,:7)=D3EXC(:7,:7,:7)+D3EXC1(:7,:7,:7)
-!!$CALL ERROR$MSG('DFT_META INTERFACE NOT FUNCTIONAL YET')
-!!$CALL ERROR$STOP('DFT3_META')
-!!$      END IF
-!
-!     ==========================================================================
-!     ==  LIBXC INTERFACE
-!     ==========================================================================
-!     == THE LIBXC INTERFACE DOES NOT (YET) ALLOW TO SWITCH OFF CORRELATION   ==
-!     == THEREFORE THIS TERM IS NOT SWITCHED OFF BY TCORRELATION=.FALZSE.     ==
-!     == TCORRELATION IS USED FOR HYBRID FUNCTIONALS TO SELECT ONLY EXCHANGE. ==
-      IF(TLIBXC) THEN
-        EXC=0.D0
-        DEXC=0.D0
-        D2EXC=0.D0
-        D3EXC=0.D0
-        EXC1=0.D0
-        DEXC1=0.D0
-        D2EXC1=0.D0
-        D3EXC1=0.D0
-!CAUTION! SWITCHES OFF DEPENDENCE FOR LAPLACIAN!!!
-!CAUTION! MUST NOT BE USED WITH FUNCTIONALS DEPENDIN ON THE LAPLACIAN.
-        VAL_9(1:5)=VAL(1:5)
-        VAL_9(6:7)=0.D0
-        VAL_9(8:9)=VAL(6:7)
-        CALL PAWLIBXC$MGGA3(VAL,EXC1,DEXC1,D2EXC1,D3EXC1)
-        DEXC1(1:5)=DEXC1_9(1:5)
-        DEXC1(6:7)=DEXC1_9(8:9)
-        D2EXC1(1:5,1:5)=D2EXC1_9(1:5,1:5)
-        D2EXC1(6:7,1:5)=D2EXC1_9(8:9,1:5)
-        D2EXC1(1:5,6:7)=D2EXC1_9(1:5,8:9)
-        D2EXC1(6:7,6:7)=D2EXC1_9(8:9,8:9)
-        D3EXC1(1:5,1:5,1:5)=D3EXC1_9(1:5,1:5,1:5)
-        D3EXC1(1:5,1:5,6:7)=D3EXC1_9(1:5,1:5,8:9)
-        D3EXC1(1:5,6:7,1:5)=D3EXC1_9(1:5,8:9,1:5)
-        D3EXC1(1:5,6:7,6:7)=D3EXC1_9(1:5,8:9,8:9)
-        D3EXC1(6:7,1:5,1:5)=D3EXC1_9(8:9,1:5,1:5)
-        D3EXC1(6:7,1:5,6:7)=D3EXC1_9(8:9,1:5,8:9)
-        D3EXC1(6:7,6:7,1:5)=D3EXC1_9(8:9,8:9,1:5)
-        D3EXC1(6:7,6:7,6:7)=D3EXC1_9(8:9,8:9,8:9)
-!
-        EXC            =EXC+EXC1
-        DEXC(:7)       =DEXC(:7)       +DEXC1(:7)
-        D2EXC(:7,:7)   =D2EXC(:7,:7)   +D2EXC1(:7,:7)
-        D3EXC(:7,:7,:7)=D3EXC(:7,:7,:7)+D3EXC1(:7,:7,:7)
-      END IF
-!
-!     ==========================================================================
-!     ==  WRAPUP AND CHECKS                                                   ==
-!     ==========================================================================
-      IF(VAL_(1).LT.RHOTMIN) THEN
-        D3EXC(1,1,1)=0.D0
-        D3EXC(1,1,2:7)=0.D0
-        D3EXC(1,2:7,1)=0.D0
-        D3EXC(2:7,1,1)=0.D0
-        D3EXC(1,2:7,2:7)=D2EXC(2:7,2:7)/RHOTMIN
-        D3EXC(2:7,1,2:7)=D2EXC(2:7,2:7)/RHOTMIN
-        D3EXC(2:7,2:7,1)=D2EXC(2:7,2:7)/RHOTMIN
-        D3EXC(2:7,2:7,2:7)=D3EXC(2:7,2:7,2:7)*VAL_(1)/RHOTMIN
-        D2EXC(1,1)=0.D0
-        D2EXC(1,2:7)=DEXC(2:7)/RHOTMIN
-        D2EXC(2:7,1)=DEXC(2:7)/RHOTMIN
-        D2EXC(2:7,2:7)=D2EXC(2:7,2:7)*VAL_(1)/RHOTMIN
-        DEXC(1)=EXC/RHOTMIN
-        DEXC(2:7)=DEXC(2:7)*VAL_(1)/RHOTMIN
-        EXC=EXC*VAL_(1)/RHOTMIN
-      END IF
-!     == TEST FOR NANS. ONE SHOULD USE ISNAN OR SOMETHING....
-      IF(EXC.NE.EXC &
-            .OR.DEXC(1).NE.DEXC(1).OR.DEXC(2).NE.DEXC(2) &
-            .OR.DEXC(3).NE.DEXC(3).OR.DEXC(4).NE.DEXC(4) &
-            .OR.DEXC(5).NE.DEXC(5).OR.DEXC(6).NE.DEXC(6) &
-            .OR.DEXC(7).NE.DEXC(7) &
-     &      .OR.D2EXC(1,1).NE.D2EXC(1,1) &
-            .OR.D2EXC(1,2).NE.D2EXC(1,2).OR.D2EXC(1,3).NE.D2EXC(1,3) &
-            .OR.D2EXC(2,2).NE.D2EXC(2,2).OR.D2EXC(2,3).NE.D2EXC(2,3) &
-            .OR.D2EXC(3,3).NE.D2EXC(3,3)) THEN
-        CALL ERROR$R8VAL('VAL(1)',VAL(1))
-        CALL ERROR$R8VAL('VAL(2)',VAL(2))
-        CALL ERROR$R8VAL('VAL(3)',VAL(3))
-        CALL ERROR$R8VAL('VAL(4)',VAL(4))
-        CALL ERROR$R8VAL('VAL(5)',VAL(5))
-        CALL ERROR$R8VAL('VAL(6)',VAL(6))
-        CALL ERROR$R8VAL('VAL(7)',VAL(7))
-        CALL ERROR$R8VAL('EXC ',EXC)
-        CALL ERROR$R8VAL('DEXC(1)',DEXC(1))
-        CALL ERROR$R8VAL('DEXC(2)',DEXC(2))
-        CALL ERROR$R8VAL('DEXC(3)',DEXC(3))
-        CALL ERROR$R8VAL('DEXC(3)',DEXC(4))
-        CALL ERROR$R8VAL('DEXC(3)',DEXC(5))
-        CALL ERROR$R8VAL('DEXC(3)',DEXC(6))
-        CALL ERROR$R8VAL('DEXC(3)',DEXC(7))
-        CALL ERROR$R8VAL('D2EXC(1,1)',D2EXC(1,1))
-        CALL ERROR$R8VAL('D2EXC(1,2)',D2EXC(1,2))
-        CALL ERROR$R8VAL('D2EXC(1,3)',D2EXC(1,3))
-        CALL ERROR$R8VAL('D2EXC(2,2)',D2EXC(2,2))
-        CALL ERROR$R8VAL('D2EXC(2,3)',D2EXC(2,3))
-        CALL ERROR$R8VAL('D2EXC(3,3)',D2EXC(3,3))
-        CALL ERROR$STOP('DFT3_META')
-      END IF
-      RETURN
-      END
 !
 !     ...1.........2.........3.........4.........5.........6.........7.........8
       SUBROUTINE DFT3(VAL_,EXC,DEXC,D2EXC,D3EXC)
@@ -1830,7 +1354,7 @@ MODULE DFT_MODULE
       REAL(8)    ,PARAMETER  :: FOURTHIRD=4.D0/3.D0
       REAL(8)    ,PARAMETER  :: PI=4.D0*ATAN(1.D0)
       REAL(8)    ,PARAMETER  :: SPEEDOFLIGHT=137.035999084D0
-      REAL(8)    ,PARAMETER  :: EXFAC=-(3.d0/4.d0)*( 3.D0/PI )**(1.D0/3.D0)
+      REAL(8)    ,PARAMETER  :: EXFAC=-(3.D0/4.D0)*( 3.D0/PI )**(1.D0/3.D0)
       REAL(8)                :: PHIREL,DPHIREL
       REAL(8)                :: BETA,DBETA
       REAL(8)                :: ETA,DETA
@@ -1839,13 +1363,13 @@ MODULE DFT_MODULE
 !     **************************************************************************
 !
 !     ==========================================================================
-!     == avoid divide-by-zero for small densities/ non-relativistic limit ======
+!     == AVOID DIVIDE-BY-ZERO FOR SMALL DENSITIES/ NON-RELATIVISTIC LIMIT ======
 !     ==========================================================================
-      if(rho.lt.1.d-12) then
-        e=0.d0
-        pot=0.d0
-        return
-      end if
+      IF(RHO.LT.1.D-12) THEN
+        E=0.D0
+        POT=0.D0
+        RETURN
+      END IF
 !
 !     ==========================================================================
 !     == EXCHANGE ENERGY DENSITY OF HOMOGENEOUS ELECTRON GAS ===================
@@ -2244,13 +1768,6 @@ END MODULE EXCHANGE_MODULE
       IF(ID.EQ.'TYPE') THEN
         ITYPE=VAL_
         TINI=.FALSE.
-        IF(ALLOCATED(FXARRAY)) THEN 
-          CALL ERROR$MSG('FORBIDDEN ATTEMPT TO RESET EXCHANGE MODUL')
-          CALL ERROR$MSG('AFTER INITIALIZATION')
-          CALL ERROR$CHVAL('ID',ID)
-          CALL ERROR$I4VAL('VALUE',VAL_)
-          CALL ERROR$STOP('EXCHANGE$SETI4')
-        END IF
       END IF
       RETURN 
       END
