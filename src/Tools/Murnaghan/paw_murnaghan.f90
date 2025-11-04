@@ -38,7 +38,12 @@
      WRITE(*,FMT='(A80)') &
     &     'MURNAGHAN EQUATION OF STATE IS BASED ON THE ASSUMPTION THAT THE' &
     &    ,'BULK MODULUS DEPENDS LINEARLY ON PRESSURE.' &
-    &    ,'SOURCE: F.D. MURNAGHAN, PNAS 30, 244 (1934)'
+    &    ,'SOURCE: F.D. MURNAGHAN, PNAS 30, 244 (1944)'
+!
+!     ==========================================================================
+!     == MPE$INIT MUST BE CALLED ALSO FOR NON-PARALLEL CODES                  ==
+!     ==========================================================================
+      CALL MPE$INIT
 !
 !    ==========================================================================
 !    == COLLECT UNITS FROM COMMAND LINE                                       ==
@@ -67,6 +72,8 @@
     &                    ,"LENGTH UNIT OF FIRST COLUMN IN ABOHR")')
          WRITE(*,FMT=-'(T5,"-VBL VALUE",T30 &
     &                    ,"VOLUME / LATTICE CONSTANT^3")')
+         WRITE(*,FMT=-'(T5,"-SCALE VALUE",T30 &
+    &                    ,"SCALE FACTOR FOR VOLUME AND ENERGY")')
          WRITE(*,FMT='("INPUT CONTAINS TWO COLUMNS WITH DATA:")')
          WRITE(*,FMT=-'(T5,"FIRST COLUMN:",T30,"LATTICE CONSTANT OR VOLUME")')
          WRITE(*,FMT=-'(T5,"SECOND COLUMN:",T30,"ENERGY")')
@@ -188,6 +195,16 @@
      WRITE(*,FMT='("EQUILIBRIUM BULK MODULUS B0 IN GPA",T50,F10.5)')SVAR
      WRITE(*,FMT='("PRESSURE DERIVATIVE OF BULK MODULUS BPRIME",T50,F10.5)') &
    &       PARMS(4)
+     WRITE(*,FMT='(A)')'MURNAGHAN EQUATION OF STATE E(V) IN FORTRAN:'
+     WRITE(*,FMT='(A)') &
+    &        'E=E0' &
+    &      //'+(B0*V0/(BPRIME*(BPRIME-1.D0)))*((V/V0)**(-BPRIME+1.D0)-1.D0)'
+     WRITE(*,FMT='(A)') &
+    &        '    +(B0*V0/BPRIME)*((V/V0)-1.D0)'
+     WRITE(*,FMT='(A)')'FOR A DERIVATION OF MURNAGHANS EQUATION OF STATE SEE:'
+     WRITE(*,FMT='(A)') &
+    &     '"THEORY OF FIRST-PRINCIPLES CALCULATIONS"' &
+    &     //' ON HTTPS://PHISX.ORG'
 !
 !    ===========================================================================
 !    == PRINT ENERGY VOLUME CURVE WITH INPUT FOR COMPARISON                   ==
@@ -229,6 +246,7 @@
          WRITE(8,FMT='(3F15.10)')VI,EFIT,(VI/VBYL3)**(1.D0/3.D0)
        END IF
      ENDDO
+     CALL ERROR$NORMALSTOP()
      STOP
      END
 !

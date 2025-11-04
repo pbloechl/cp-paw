@@ -295,7 +295,7 @@ CONTAINS
       END IF
 !     __ERROR HANDLING__________________________________________________________
       IF(IERR.NE.0) THEN 
-        WRITE(*,*)'MPE$COMBINE<TYPEID><RANKID> ',THISTASK,LENG,VAL
+!        WRITE(*,*)'MPE$COMBINE<TYPEID><RANKID> ',THISTASK,LENG,VAL
         CALL MPI_ERROR_STRING(IERR,ERRORSTRING,ERRORSTRINGLEN)
         CALL ERROR$MSG('MPI ERROR IN MPI_ALLREDUCE')
         CALL ERROR$MSG(ERRORSTRING(1:ERRORSTRINGLEN))
@@ -1580,7 +1580,9 @@ END MODULE MPE_MODULE
       THIS%SENDTAG(:)=0
       THIS%RECEIVETAG(:)=0
       NULLIFY(THIS%NEXT)
-      CALL MPE$SELECT('~')
+      SENDTAG=>THIS%SENDTAG
+      RECEIVETAG=>THIS%RECEIVETAG
+!     ===  INITIAL SELECTION IS '~'  ===========================================
 #ENDIF
 !     
 !     ================================================================

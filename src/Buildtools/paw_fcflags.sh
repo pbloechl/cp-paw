@@ -9,6 +9,9 @@ export THISDIR=$(pwd)
 ##
 ## https://fortran-lang.discourse.group/t/compilation-flags-advice-for-production-and-distribution/2821/2
 ##     
+##   Remark: compile option -c is not included to permit compiling and linking
+##           in one step.  
+##     
 ##   Author P. Bloechl May, 2024 
 ################################################################################
 # 
@@ -145,11 +148,32 @@ if [[ $OS = Unix && $COMPILER = ifort && $TYPE=debug ]] ; then
   #                        when performing interprocedural optimizations.
   #-ftrapuv             # Initializes stack local variables to an unusual value 
   #                        to aid error detection.
-  FCFLAGS="-debug full -g3 -O0 -CB -init:snan,arrays -warn all -gen-interfaces \
-           -traceback -check all -check bounds -fpe-all=0 -fpe0 \
+  # FCFLAGS="-debug full -g3 -O0 -CB -init:snan,arrays -warn all \
+  #          -gen-interfaces -traceback \
+  #          -check all -check bounds \
+  #          -fpe-all=0 -fpe0 \
+  #          -diag-error-limit=10 -diag-disable=5268 -diag-disable=7025 \
+  #          -diag-disable=10346 -ftrapuv "
+
+  # flags used by axel ehrich 
+  # FCFLAGS="-c -O0 -CA -CU -CB -g \
+  #          -check udio_iostat -check stack 
+  #          -check output_conversion -check contiguous -check assume \
+  #          -check bounds -check arg_temp_created -check format \
+  #          -check uninit -check bounds -check format \
+  #          -check pointers -check uninit \
+  #          -debug full -debug-parameters all \
+  #          -fp-stack-check -traceback -warn declarations"
+  # compromise between axel and default
+  FCFLAGS="-debug full -g2 -O0 -CB -init:snan,arrays -warn all \
+           -gen-interfaces -traceback \
+           -check udio_iostat -check stack 
+           -check output_conversion -check contiguous -check assume \
+           -check bounds -check arg_temp_created -check format \
+           -check uninit -check bounds -check format \
+           -fpe-all=0 -fpe0 \
            -diag-error-limit=10 -diag-disable=5268 -diag-disable=7025 \
            -diag-disable=10346 -ftrapuv "
-
 
 elif [[ $OS = Windows && $COMPILER = ifort && $TYPE = debug ]] ; then
   # /debug:full
@@ -242,6 +266,10 @@ elif [[ $OS = Unix && $COMPILER = ifort && $TYPE = release ]] ; then
            -diag-disable=10346  -diag-disable=10397 \
            -ftz -inline-forceinline -finline-functions-ipo -ip"
 
+  # axels parameter
+  # FCFLAGS="-c -O3 -no-ipo -no-ip -xCORE-AVX2 -finline-functions \
+  #           -finline-limit=50"
+
 elif [[ $COMPILER = gfortran && $TYPE = debug ]] ; then
   #  -g3                         # generate full debug information
   #  -O0                         # disable optimizations
@@ -308,7 +336,8 @@ elif [[ $COMPILER = gfortran && $TYPE = debug ]] ; then
            -finit-integer=-2147483647  -finit-real=snan -fbacktrace \
            -fmax-errors=10 -Wno-maybe-uninitialized -Wall \
            -fno-unsafe-math-optimizations \
-           -fsignaling-nans -frounding-math -Wno-surprising"
+           -fsignaling-nans -frounding-math -Wno-surprising \
+           -march=native"
 
 
 elif [[ $OS = Darwin && $COMPILER = gfortran && $TYPE = release ]] ; then
@@ -439,7 +468,7 @@ elif [[ $OS = Darwin && $COMPILER = gfortran && $TYPE = release ]] ; then
  -fsplit-paths -ftree-loop-distribute-patterns \
  -ftree-loop-distribution -ftree-loop-vectorize -ftree-partial-pre \
  -ftree-slp-vectorize -funswitch-loops -fvect-cost-model \
- -fversion-loops-for-strides"
+ -fversion-loops-for-strides -march=native"
 
 elif [[ ( $OS = Linux || $OS = Windows ) \
            && $COMPILER = gfortran && $TYPE = release ]] ; then
@@ -455,9 +484,8 @@ elif [[ ( $OS = Linux || $OS = Windows ) \
   #                           aggressive optimization decisions.
   # -flto=3                 #
 
- FCFLAGS="-ftree-vectorize -funroll-loops -O3 -finline-functions
- -fwhole-program -flto=3" 
-
+ FCFLAGS="-ftree-vectorize -funroll-loops -O3 -finline-functions \
+          -fwhole-program -flto=3 -march=native" 
 fi
 
 # because flags are written to sttout, VERBOSE messes up the result

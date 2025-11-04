@@ -16,7 +16,7 @@
       IMPLICIT NONE
       TYPE(LL_TYPE)             :: LL_STRC
       INTEGER(4)                :: NFIL 
-      INTEGER(4)                :: NFILO    !PROTOCOLL-FILE UNIT 
+      INTEGER(4)                :: NFILO    !PROTOCOL-FILE UNIT 
       INTEGER(4)                :: NARGS 
       LOGICAL(4)                :: TCHK
       CHARACTER(64)             :: ROOTNAME
@@ -29,6 +29,10 @@
       INTEGER(4)                :: IAT
       REAL(8)                   :: TRANSFORM(3,3)
 !     **************************************************************************
+!     ==========================================================================
+!     == MPE$INIT MUST BE CALLED ALSO FOR NON-PARALLEL CODES                  ==
+!     ==========================================================================
+      CALL MPE$INIT
 !
 !     ==========================================================================
 !     ==  READ ATOMIC STRUCTURE                                               ==
@@ -156,6 +160,7 @@
           CALL EXTRACTCLUSTERS(IAT,RBAS,NAT,R)
         END IF
       ENDDO
+      CALL ERROR$NORMALSTOP()
       STOP
       END
 !

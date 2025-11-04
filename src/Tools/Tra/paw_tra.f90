@@ -123,6 +123,11 @@ END MODULE TRAJECTORY_MODULE
       CHARACTER(40)  :: STR
 !     **************************************************************************
                           CALL TRACE$PUSH('MAIN')
+!     ==========================================================================
+!     == MPE$INIT MUST BE CALLED ALSO FOR NON-PARALLEL CODES                  ==
+!     ==========================================================================
+      CALL MPE$INIT
+
       CALL GET_COMMAND_ARGUMENT(1,FILE)
       I=INDEX(FILE,'.',BACK=.TRUE.)
       ROOT=FILE(1:I-1)
@@ -347,6 +352,7 @@ END MODULE TRAJECTORY_MODULE
       WRITE(NFILO,FMT='(72("="),T20," PAW_TRA TOOL FINISHED ")')
       WRITE(NFILO,FMT='(72("="))')
                           CALL TRACE$POP
+      CALL ERROR$NORMALSTOP()
       STOP
       END
 !
@@ -710,7 +716,7 @@ END MODULE TRAJECTORY_MODULE
       CALL FILEHANDLER$CLOSE('CORRELATION')
 !     
 !     ==========================================================================
-!     ==  WRITE ATOMS TO PROTOCOLL FILE                                       ==
+!     ==  WRITE ATOMS TO PROTOCOL FILE                                        ==
 !     ==========================================================================
 !     
 !     ==========================================================================
@@ -1065,7 +1071,7 @@ END MODULE TRAJECTORY_MODULE
         ENDDO
 !     
 !       ================================================================
-!       ==  WRITE ATOMS TO PROTOCOLL FILE                             ==
+!       ==  WRITE ATOMS TO PROTOCOL FILE                              ==
 !       ================================================================
         CALL REPORT$TITLE(NFILO,'SNAPSHOT')
         CALL REPORT$R8VAL(NFILO,'TIME',TIME/(PICO*SECOND),'PSEC')
@@ -1080,7 +1086,7 @@ END MODULE TRAJECTORY_MODULE
         WRITE(NFILO,*) 
 !     
 !       ================================================================
-!       ==  WRITE ATOMS TO PROTOCOLL FILE                             ==
+!       ==  WRITE ATOMS TO PROTOCOL FILE                              ==
 !       ================================================================
         CALL FILEHANDLER$UNIT('SNAPSHOT',NFIL)
         CALL WRITECSSR(NFIL,'TEST',RBAS,NATM,ATOMM,POSM,QM,.TRUE.)
@@ -1268,7 +1274,7 @@ END MODULE TRAJECTORY_MODULE
 !
         IF(NPLOT.GT.1) THEN
           WRITE(FILEID,FMT=*)IPLOT
-          FILEID='SPAGHETTI_'//ADJUSTL(FILEID)
+          FILEID='SPAGHETTI_'//TRIM(ADJUSTL(FILEID))
         ELSE
           FILEID='SPAGHETTI'
         END IF
@@ -1312,7 +1318,13 @@ END MODULE TRAJECTORY_MODULE
       SUBROUTINE TEMPERATURE(LL_CNTL_)
       USE STRINGS_MODULE
       USE LINKEDLIST_MODULE
-      USE TRAJECTORY_MODULE
+      USE TRAJECTORY_MODULE, ONLY : NSTEP &
+     &                             ,NAT &
+     &                             ,QNAT &
+     &                             ,MASS &
+     &                             ,ATOM &
+     &                             ,TRA &
+     &                             ,TQMMM
       IMPLICIT NONE
       TYPE(LL_TYPE),INTENT(IN) :: LL_CNTL_
       TYPE(LL_TYPE)            :: LL_CNTL
@@ -2820,7 +2832,6 @@ INTEGER(4)                :: J,NATM
 !      =========================================================================
 !      ==   CHECK                                                             ==
 !      =========================================================================
-
        IF(.NOT.TQMMM) THEN
           DO I=1,NAT
              IF(IZ(I).EQ.0) THEN

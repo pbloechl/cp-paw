@@ -20,6 +20,11 @@
        INTEGER(4)                :: I
        INTEGER(4)                :: NLISTS
 !      ******************************************************************
+!     ==========================================================================
+!     == MPE$INIT MUST BE CALLED ALSO FOR NON-PARALLEL CODES                  ==
+!     ==========================================================================
+      CALL MPE$INIT
+
        I=COMMAND_ARGUMENT_COUNT()
        IF(I.NE.1) THEN
          WRITE(*,FMT='(A)')'CORRECT USAGE: PAW_WAVE.X [FILE]'
@@ -173,6 +178,8 @@
       !CALL LINKEDLIST$SELECT(LL_STRC,'~')
       !CALL LINKEDLIST$SELECT(LL_STRC,'STRUCTURE')
       !CALL LINKEDLIST$REPORT_UNUSED(LL_STRC,NFILO)
+!
+      CALL ERROR$NORMALSTOP()
       STOP
       END
 !
@@ -188,7 +195,7 @@
        TYPE(LL_TYPE)             :: LL_STRC
        CHARACTER(256)            :: TITLE
        INTEGER(4)                :: NFIL
-       INTEGER(4)                :: NFILO !FORTRAN UNIT OF PROTOCOLL FILE
+       INTEGER(4)                :: NFILO !FORTRAN UNIT OF PROTOCOL FILE
        REAL(8)                   :: RBAS(3,3)
        INTEGER(4)                :: NAT
        REAL(8)      ,ALLOCATABLE :: POS(:,:)   !(3,NAT)
@@ -1535,6 +1542,8 @@
 !     ==========================================================================
 !     ==  REMARK "SET DATA STYLE LINES" IS NOT RECOGNIZED ANY MORE
 !     ==  REMARK "SET DGRID3D  60,60,1" DOES NOT POPERLY INTERPOLATE
+!     ==  REMARK "SET DGRID3D  60,60,1" IS NO MORE ACCEPTED:
+!     ===         USE "SET DGRID3D  60,60" INSTEAD
 !     ==  Z-RANGE (DATA) REMARK "SET DGRID3D  60,60,1" DOES NOT POPERLY 
 !     ==  INTERPOLATE
       WRITE(NFIL,*)'#'                                                     
@@ -1571,7 +1580,7 @@
       WRITE(NFIL,*)-'SET XRANGE [XMIN:XMAX]'                                
       WRITE(NFIL,*)-'SET YRANGE [YMIN:YMAX]'                                
       WRITE(NFIL,*)-'SET ZRANGE [ZMIN:ZMAX]'                                
-      WRITE(NFIL,*)-'SET DGRID3D  60,60,1','     #SAMPLE DATA ONTO A 60X60 GRID'
+      WRITE(NFIL,*)-'SET DGRID3D  60,60     #SAMPLE DATA ONTO A 60X60 GRID'
       WRITE(NFIL,*)'#'                                                     
       WRITE(NFIL,*)'#=========================================================='
       WRITE(NFIL,*)'# SURFACE PLOT                                           =='
@@ -1617,7 +1626,7 @@
       WRITE(NFIL,*)-'# SET TERMINAL WXT SIZE 350,262 ENHANCED ' &
      &            ,-" FONT 'VERDANA,10' PERSIST "
       WRITE(NFIL,*)'#----USE PDF TERMINAL FOR PDF FILES------------------------'
-      WRITE(NFIL,*)-'# SET TERMINAL PDF COLOR ENHANCED '
+      WRITE(NFIL,*)-'# SET TERMINAL PDFCAIRO COLOR ENHANCED '
       WRITE(NFIL,*)'#----USE AQUA TERMINAL FOR OSX SCREEN----------------------'
       WRITE(NFIL,*)-"# SET TERMINAL AQUA ENHANCED SOLID FONT 'HELVETICA,20'" &
      &            ,-"TITLE 'CONTOUR'"
