@@ -1813,6 +1813,7 @@ END IF
         ZM=Z0
         X0=X0+DX
       ENDDO
+print*,'--------atomlib$boundstate 1st loop e=',e,dx
 !          
 !     ==========================================================================
 !     ==========================================================================
@@ -1846,6 +1847,7 @@ END IF
         Z0=Z0-REAL(NN+1,KIND=8)
         IF(TWRITE)WRITE(*,FMT='("LOOP2 X0=",F10.5," Z0=",E12.3)')X0,Z0
 
+print*,'--------atomlib$boundstate 2nd loop e=',e,dx,iter
         IF(ABS(2.D0*DX).LE.TOL) EXIT
         IF(Z0.GT.0.D0) THEN
           PHI1(:)=PHI(:)
@@ -1866,6 +1868,7 @@ END IF
 !     ==========================================================================
 !     ==  AVERAGE BOTH BOUNDS OF BISECTION                                    ==
 !     ==========================================================================
+print*,'--------atomlib$boundstate average r',r(irbox-1),r(irbox),rbox
       X1=R(IRBOX-1)
       X2=R(IRBOX)
       Y1=PHI1(IRBOX-1)

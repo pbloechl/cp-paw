@@ -1271,7 +1271,9 @@ PRINT*,'CONSTANT ENERGY ',ECONS,SVAR
       REAL(8)                :: PICO
       REAL(8)                :: SECOND
       INTEGER(4)             :: NTASKS,THISTASK
-      REAL(8)   ,ALLOCATABLE :: DWORK(:) 
+      INTEGER(4)             :: LENWORK   
+      CHARACTER(64),ALLOCATABLE :: NAME(:)  ! (LENWORK)
+      REAL(8)   ,ALLOCATABLE :: DWORK(:) ! (LENWORK)
       REAL(8)                :: TIME
       REAL(8)                :: SVAR
       INTEGER(4)             :: NAT,NATM
@@ -1288,6 +1290,7 @@ PRINT*,'CONSTANT ENERGY ',ECONS,SVAR
       LOGICAL(4)             :: TQMMM,TCALGARYQMMM,TCHK
       REAL(8)                :: QMMMKIN,QMMMPOT,QMMMTHERM
       REAL(8)                :: EEXT
+      integer(4)             :: i
 !     **************************************************************************
       CALL MPE$QUERY('MONOMER',NTASKS,THISTASK)
       IF(THISTASK.NE.1) RETURN
@@ -1375,6 +1378,60 @@ PRINT*,'CONSTANT ENERGY ',ECONS,SVAR
         DWORK(7)=ENOSEP
         DWORK(8)=HEAT
         CALL TRAJECTORYIO$ADD(NFI,TIME,8,DWORK)
+        DEALLOCATE(DWORK)
+      END IF
+      CALL TRAJECTORYIO$SELECT('NONE')
+!   
+!     ==========================================================================
+!     ==   WRITE DETAILED ENERGY TRAJECTORY                                   ==
+!     ==   ALL ENERGIES IN ENERGYLIST ARE REPORTED                            ==
+!     ==========================================================================
+                              CALL TRACE$PASS('BEFORE E-TRAJECTORY')
+      CALL TRAJECTORYIO$SELECT('ALLENERGY-TRAJECTORY')
+      CALL TRAJECTORYIO$GETL4('ON',TCHK)
+      IF(TCHK) THEN
+        LENWORK=34
+        ALLOCATE(DWORK(LENWORK))
+        ALLOCATE(NAME(LENWORK))
+        NAME( 1)='CONSTANT ENERGY'
+        NAME( 2)='TOTAL ENERGY'
+        NAME( 3)='IONIC KINETIC ENERGY'
+        NAME( 4)='WAVEFUNCTION KINETIC ENERGY'
+        NAME( 5)='BO-WAVEFUNCTION KINETIC ENERGY'
+        NAME( 6)='ATOM THERMOSTAT'
+        NAME( 7)='ELECTRON THERMOSTAT'
+        NAME( 8)='CONSTRAINT KINETIC ENERGY'
+        NAME( 9)='OCCUPATIONAL ENTROPY TERM (-TS)'
+        NAME(10)='OCCUPATION KINETIC ENERGY'
+        NAME(11)='CELLOSTAT KINETIC'
+        NAME(12)='CELLOSTAT POTENTIAL'
+        NAME(13)='VAN DER WAALS ENERGY'
+        NAME(14)='QMMM KINETIC ENERGY'
+        NAME(15)='QMMM POTENTIAL ENERGY'
+        NAME(16)='COSMO KINETIC ENERGY'
+        NAME(17)='COSMO POTENTIAL ENERGY'
+        NAME(18)='SOLVENT PAULI REPULSION'
+        NAME(19)='AE  KINETIC'
+        NAME(20)='AE  ELECTROSTATIC'
+        NAME(21)='AE  EXCHANGE-CORRELATION'
+        NAME(22)='PS  KINETIC'
+        NAME(23)='PS  ELECTROSTATIC'
+        NAME(24)='PS  EXCHANGE-CORRELATION'
+        NAME(25)='PAIRPOTENTIAL'
+        NAME(26)='BACKGROUND'
+        NAME(27)='BACKGROUND ENERGY'
+        NAME(28)='DMFT INTERFACE'
+        NAME(29)='LMTO INTERFACE'
+        NAME(30)='LOCAL CORRELATION'
+        NAME(31)='ISOLATE ENERGY'
+        NAME(32)='EXTERNAL POTENTIAL'
+        NAME(33)='    LOCAL CORRELATIONS'
+        NAME(34)='IONIC TEMPERATURE'
+
+        DO I=1,LENWORK
+          CALL ENERGYLIST$GET(TRIM(NAME(I)),DWORK(I))
+        ENDDO
+        CALL TRAJECTORYIO$ADD(NFI,TIME,LENWORK,DWORK)
         DEALLOCATE(DWORK)
       END IF
       CALL TRAJECTORYIO$SELECT('NONE')

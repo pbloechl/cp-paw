@@ -2692,6 +2692,7 @@ END IF
       INTEGER(4)             :: NBH
       INTEGER(4)             :: NAT
       REAL(8)   ,ALLOCATABLE :: R(:,:)
+integer(4):: ib
 !     **************************************************************************
                               CALL TRACE$PUSH('WAVES$PROJECTIONS')
                               CALL TIMING$CLOCKON('W:PROJ')
@@ -2717,6 +2718,10 @@ END IF
             CALL ERROR$CHVAL('ID',ID)
             CALL ERROR$STOP('WAVES$PROJECTIONS')
           END IF
+!!$do ib=1,nbh
+!!$  write(*,fmt='("<pro|psi> ",i3,30f10.6)')2*ib-1,real(this%proj(:,ib,:))
+!!$  write(*,fmt='("<pro|psi> ",i3,30f10.6)')2*ib,aimag(this%proj(:,ib,:))
+!!$enddo
         ENDDO
       ENDDO
       DEALLOCATE(R)
