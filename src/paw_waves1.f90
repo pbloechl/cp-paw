@@ -3607,7 +3607,7 @@ integer(4):: ib
       INTEGER(4)             :: IAT,ISP,NN
       INTEGER(4)             :: NTASKS,THISTASK
 !     **************************************************************************
-                                          CALL TRACE$PUSH('WAVES_OFFSITEDENMAT')
+                   CALL TRACE$PUSH('WAVES_OFFSITEDENMAT')
       NAT=MAP%NAT
 !
 !     ==========================================================================

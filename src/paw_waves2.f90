@@ -1888,7 +1888,7 @@ PRINT*,'A     ',(A(I,I),I=1,NB)
 !     ==========================================================================
       CALL LIB$DIAGR8(NB,CHIPSI,EIG,U)
 !CALL DIAG(NB,NB,CHIPSI,EIG,U)
-!WRITE(*,FMT='("EIG",20E10.3)')EIG
+WRITE(*,FMT='("EIG",20E10.3)')EIG
 !DO I=1,NB
 !  WRITE(*,FMT='("U",I2,20E10.3)')I,U(I,:)
 !ENDDO
@@ -1898,8 +1898,8 @@ PRINT*,'A     ',(A(I,I),I=1,NB)
 !     ==  ITERATIVE CALCULATION OF GAMMA                                      ==
 !     ==========================================================================
 !     ==========================================================================
-      DO ITER=1,MAX
-!PRINT*,'==================',ITER,'==========================='
+      BIGLOOP: DO ITER=1,MAX
+PRINT*,'==================',ITER,'==========================='
 !       ========================================================================
 !       ==  CALCULATE <PHI(+)|PHI(+)>-1 WITH PRESENT LAMBDA                   ==
 !       ==  GAMN(I,J)=PSIPSI(I,J)+LAMBDA(K,I)*CHIPSI(K,J)                     ==
@@ -2003,7 +2003,7 @@ PRINT*,'A     ',(A(I,I),I=1,NB)
             END IF
           ENDDO
         ENDDO
-      ENDDO
+      ENDDO BIGLOOP
       CALL ERROR$MSG('LOOP FOR ORTHOGONALIZATION IS NOT CONVERGED')
       CALL ERROR$MSG('THIS IS NOT AN UNUSUAL PROBLEM DURING STARTUP')
       CALL ERROR$MSG('1) SPECIFY SAFEORTHO=F, WHICH IS MORE ROBUST')

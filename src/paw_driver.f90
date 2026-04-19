@@ -1388,6 +1388,7 @@ PRINT*,'CONSTANT ENERGY ',ECONS,SVAR
 !     ==========================================================================
                               CALL TRACE$PASS('BEFORE E-TRAJECTORY')
       CALL TRAJECTORYIO$SELECT('ALLENERGY-TRAJECTORY')
+CALL TRAJECTORYIO$SETL4('ON',.true.)
       CALL TRAJECTORYIO$GETL4('ON',TCHK)
       IF(TCHK) THEN
         LENWORK=34
@@ -1431,6 +1432,8 @@ PRINT*,'CONSTANT ENERGY ',ECONS,SVAR
         DO I=1,LENWORK
           CALL ENERGYLIST$GET(TRIM(NAME(I)),DWORK(I))
         ENDDO
+!fixes
+dwork(1)=econs
         CALL TRAJECTORYIO$ADD(NFI,TIME,LENWORK,DWORK)
         DEALLOCATE(DWORK)
       END IF
