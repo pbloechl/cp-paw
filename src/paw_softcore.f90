@@ -1,17 +1,17 @@
 MODULE CORE_MODULE
-!**                                                                   **
-!**  THE COMPLEX POINTER LIST THIS IS NEEDED FOR THE PARALLELIZATION  **
-!**  BECAUSE EVERY NODE WILL CALCULATE THE CORE LEVELS ONLY FOR ITS   **
-!**  OWN SET OF ATOMS AND ONLY THE FIRST NODE CAN WRITE               **
-!**                                                                   **
-!**  COMMUNIATION IN CORE$REPORT NOT DONE YET.                        **
-!**                                                                   **
+!**                                                                           **
+!**  THE COMPLEX POINTER LIST THIS IS NEEDED FOR THE PARALLELIZATION          **
+!**  BECAUSE EVERY NODE WILL CALCULATE THE CORE LEVELS ONLY FOR ITS           **
+!**  OWN SET OF ATOMS AND ONLY THE FIRST NODE CAN WRITE                       **
+!**                                                                           **
+!**  COMMUNIATION IN CORE$REPORT NOT DONE YET.                                **
+!**                                                                           **
 TYPE CORESHIFT_TYPE
-INTEGER(4)           :: IAT
-INTEGER(4)           :: N
-CHARACTER(8),POINTER :: TYPE(:)
-REAL(8)     ,POINTER :: E(:)
-REAL(8)     ,POINTER :: EATOM(:)
+INTEGER(4)           :: IAT        !ATOM INDEX
+INTEGER(4)           :: N          !#(CORE WAVE FUNCTIONS PER SPIN (L,M,N))
+CHARACTER(8),POINTER :: TYPE(:)    !ONE OF 'S','P','D','F','?'
+REAL(8)     ,POINTER :: E(:)       !CRYSTAL CORE ENERGY LEVELS
+REAL(8)     ,POINTER :: EATOM(:)   !ATOMIC ENERGY EIGENVALUE
 TYPE(CORESHIFT_TYPE),POINTER :: NEXT
 END TYPE CORESHIFT_TYPE
 LOGICAL(4)                  :: TCORESHIFTS=.TRUE.
@@ -23,13 +23,13 @@ TYPE(CORESHIFT_TYPE),POINTER:: THIS
 LOGICAL(4),SAVE             :: TINI=.FALSE.
 END MODULE CORE_MODULE
 !
-!     ..................................................................
+!     ...1.........2.........3.........4.........5.........6.........7.........8
       SUBROUTINE CORE$SETL4(ID,VAL)
       USE CORE_MODULE
       IMPLICIT NONE
       CHARACTER(*),INTENT(IN) :: ID
       LOGICAL(4)  ,INTENT(IN) :: VAL
-!     ******************************************************************
+!     **************************************************************************
       IF(ID.EQ.'ON') THEN
         TCORESHIFTS=VAL
       ELSE IF(ID.EQ.'DEFAULT') THEN
@@ -42,7 +42,7 @@ END MODULE CORE_MODULE
       RETURN
       END
 !
-!     ..................................................................
+!     ...1.........2.........3.........4.........5.........6.........7.........8
       SUBROUTINE CORE$SETCHA(ID,LEN,VAL)
       USE CORE_MODULE
       IMPLICIT NONE
@@ -50,8 +50,9 @@ END MODULE CORE_MODULE
       INTEGER(4)  ,INTENT(IN) :: LEN
       CHARACTER(*),INTENT(IN) :: VAL(LEN)
       INTEGER(4)              :: I
-!     ******************************************************************
+!     **************************************************************************
       IF(ID.EQ.'ATOMS') THEN
+!       == LIST OF ATOMS FOR WHICH THE CORE STATES SHALL BE EVALUATED ==========
         IF(ALLOCATED(ATOMS))DEALLOCATE(ATOMS)
         NATOMS=LEN
         ALLOCATE(ATOMS(NATOMS))
@@ -87,18 +88,17 @@ END MODULE CORE_MODULE
       REAL(8)     ,ALLOCATABLE :: EATOM(:)
       CHARACTER(8),ALLOCATABLE :: XTYPE(:)
       INTEGER(4)               :: SNDTASK,RCVTASK
-!     ******************************************************************
+!     **************************************************************************
       IF(.NOT.TINI) RETURN
                              CALL TRACE$PUSH('CORE$REPORT')
       CALL MPE$QUERY('MONOMER',NTASKS,THISTASK)
       CALL CONSTANTS('EV',EV)
 
-!     == CREATE A MAPPING ARRAY FROM ATOMS TO TASKS FOR EACH NODE.          ==
-!     == ATOMS NOT PRESENT ON THIS TASK OBTAIN 0 FOR THE ATOM NUMBER        ==
+!     == CREATE A MAPPING ARRAY FROM ATOMS TO TASKS FOR EACH NODE.            ==
+!     == ATOMS NOT PRESENT ON THIS TASK OBTAIN 0 FOR THE ATOM NUMBER          ==
       CALL ATOMLIST$NATOM(NAT)
       ALLOCATE(TASKARR(NAT))
-      TASKARR(:)=0
-!
+      TASKARR(:)=0   ! TASK ID FOR EACH ATOM
       IF(FIRST%IAT.NE.0) THEN 
         THIS=>FIRST
         DO 
@@ -109,7 +109,7 @@ END MODULE CORE_MODULE
         ENDDO
       ENDIF
 !
-!     == COMMUNICATE A UNIQUE MAPPING KNOWN TO ALL TASKS =====================
+!     == COMMUNICATE A UNIQUE MAPPING KNOWN TO ALL TASKS =======================
 ! THIS COMMUNICATION IS UNNECCESARILY COMPLICATED.
       ALLOCATE(TASKARR1(NAT))
       TASKARR1(:)=0
@@ -142,6 +142,8 @@ END MODULE CORE_MODULE
           N=THIS%N
         END IF
         CALL MPE$SENDRECEIVE('MONOMER',TASKARR(IAT),1,N)
+
+!
         ALLOCATE(E(N))
         ALLOCATE(EATOM(N))
         ALLOCATE(XTYPE(N))
@@ -153,9 +155,9 @@ END MODULE CORE_MODULE
         CALL MPE$SENDRECEIVE('MONOMER',TASKARR(IAT),1,E)
         CALL MPE$SENDRECEIVE('MONOMER',TASKARR(IAT),1,EATOM)
         CALL MPE$SENDRECEIVE('MONOMER',TASKARR(IAT),1,XTYPE)
-!       == TASK 1 RECEIVED DATA ==============================================
+!       == TASK 1 RECEIVED DATA ================================================
 !
-!       == PRINT INFORMATION ON THE FIRST TASK ===============================
+!       == PRINT INFORMATION ON THE FIRST TASK =================================
         IF(THISTASK.EQ.1) THEN
           CALL ATOMLIST$GETCH('NAME',IAT,NAME)
           CALL REPORT$TITLE(NFIL,'EIGENVALUES OF CORE STATES FROM ATOM '& 
@@ -182,32 +184,39 @@ END MODULE CORE_MODULE
       END
 !
 ! SANTOS040617 BEGIN
-!     ..................................................................
+!     ...1.........2.........3.........4.........5.........6.........7.........8
       SUBROUTINE CORE_CORESHIFTS(IAT,ISP,GID,NR,LMRXX,AEPOT)
-!     ******************************************************************
-!     **                                                              **
-!     **  CALCULATES THE EIGENVALUES OF CORE HAMILTONIAN              **
-!     **                                                              **
-!     ******************************************************************
-!      USE ATOMS_MODULE
-      USE CORE_MODULE
+!     **************************************************************************
+!     **  CALCULATES THE EIGENVALUES OF CORE HAMILTONIAN                      **
+!     **                                                                      **
+!     **  IS CALLED FROM PAW_AUGMENTATION, WHICH EXECUTES ONLY ON ONE TASK    **
+!     **                                                                      **
+!     **                                                                      **
+!     **************************************************************************
+      USE CORE_MODULE, ONLY : CORESHIFT_TYPE &
+     &                       ,TCORESHIFTS &
+     &                       ,DEFAULT &
+     &                       ,TINI &
+     &                       ,THIS,FIRST &
+     &                       ,NATOMS &
+     &                       ,ATOMS 
       IMPLICIT NONE
-      INTEGER(4),INTENT(IN) :: IAT
-      INTEGER(4),INTENT(IN) :: ISP
-      INTEGER(4),INTENT(IN) :: GID
-      INTEGER(4),INTENT(IN) :: NR
+      INTEGER(4),INTENT(IN) :: IAT     ! ATOM INDEX
+      INTEGER(4),INTENT(IN) :: ISP     ! ATOM TYPE
+      INTEGER(4),INTENT(IN) :: GID     ! GRID ID
+      INTEGER(4),INTENT(IN) :: NR      ! #(GRID POINTS)
       INTEGER(4),INTENT(IN) :: LMRXX
-      REAL(8)   ,INTENT(IN) :: AEPOT(NR,LMRXX)
+      REAL(8)   ,INTENT(IN) :: AEPOT(NR,LMRXX) ! 1C-AE POTENTIAL
       REAL(8)   ,PARAMETER  :: PI=4.D0*ATAN(1.D0)
-      REAL(8)               :: ATPOT(NR)
-      REAL(8)   ,ALLOCATABLE:: AEPOT1(:,:) !(NR,LMRXX)
-      INTEGER(4)            :: NB
-      INTEGER(4)            :: NC
-      INTEGER(4),ALLOCATABLE:: LB(:)
-!     REAL(8)   ,ALLOCATABLE:: FB(:)
-      REAL(8)   ,ALLOCATABLE:: EB(:)
-      REAL(8)   ,ALLOCATABLE:: AEPSI(:,:)
-      REAL(8)               :: R(NR)
+      REAL(8)               :: ATPOT(NR)  !RADIAL ATOM POTENTIAL 
+      REAL(8)   ,ALLOCATABLE:: AEPOT1(:,:)!(NR,LMRXX)
+      INTEGER(4)            :: NB         !#(ATOMIC CORE AND VALENCE STATES)
+      INTEGER(4)            :: NC         !#(ATOMIC CORE STATES)
+      INTEGER(4),ALLOCATABLE:: LB(:)      !MAIN ANGULAR MOMENTUM
+!     REAL(8)   ,ALLOCATABLE:: FB(:)  
+      REAL(8)   ,ALLOCATABLE:: EB(:)      !ENERGY LEVEL
+      REAL(8)   ,ALLOCATABLE:: AEPSI(:,:) !AE WAVE FUNCTION
+      REAL(8)               :: R(NR)      !RADIAL GRID
       CHARACTER(32)         :: NAME
       INTEGER(4)            :: LMNX
       INTEGER(4)            :: LMRX
@@ -221,7 +230,7 @@ END MODULE CORE_MODULE
       INTEGER(4)            :: L1,L2,IM1,IM2
       REAL(8)               :: AEDMU(NR)
       REAL(8)               :: DWORK1(NR)
-      REAL(8)               :: CG
+      REAL(8)               :: CG          !GAUNT COEFFICIENT
       REAL(8)               :: SVAR
 
       REAL(8)   ,ALLOCATABLE:: HAMIL(:,:)
@@ -230,10 +239,11 @@ END MODULE CORE_MODULE
       INTEGER(4)            :: NFILO
       REAL(8)               :: EV             ! ELECTRON VOLT
       LOGICAL(4)            :: TCHK
-!     ******************************************************************
+!     **************************************************************************
       IF(.NOT.TCORESHIFTS) RETURN
       CALL RADIAL$R(GID,NR,R)
       CALL ATOMLIST$GETCH('NAME',IAT,NAME)
+!     == CHECK WHETHER CORE LEVELS SHALL BE CALCULATED FOR THIS ATOM (IAT)  ====
       TCHK=DEFAULT
       DO I=1,NATOMS
         IF(NAME.EQ.ATOMS(I)) THEN
@@ -242,9 +252,9 @@ END MODULE CORE_MODULE
       ENDDO
       IF(.NOT.TCHK) RETURN
 !
-!     ===================================================================
-!     ==  SELECT THE PROPER ENTRY IN THE TABLE                         ==
-!     ===================================================================
+!     ==========================================================================
+!     ==  SELECT THE PROPER ENTRY IN THE TABLE                                ==
+!     ==========================================================================
       THIS=>FIRST
       IF(.NOT.TINI) THEN
         TINI=.TRUE.
@@ -255,8 +265,7 @@ END MODULE CORE_MODULE
         NULLIFY(THIS%TYPE)
         NULLIFY(THIS%NEXT)
       ELSE
-        DO
-          IF(THIS%IAT.EQ.IAT) EXIT
+        DO WHILE (THIS%IAT.NE.IAT) 
           IF(ASSOCIATED(THIS%NEXT)) THEN
             THIS=>THIS%NEXT
           ELSE
@@ -271,10 +280,11 @@ END MODULE CORE_MODULE
           END IF
         ENDDO
       END IF
+!     == THE POINTER "THIS" REFERS NOW TO THE ATOM AT HAND =====================
 !
-!     ==================================================================
-!     ==  COLLECT CORE PARTIAL WAVES FROM SETUP OBJECT                ==
-!     ==================================================================
+!     ==========================================================================
+!     ==  COLLECT ATOMIC CORE WAVE FUNCTIONS AEPSI FROM SETUP OBJECT          ==
+!     ==========================================================================
       CALL SETUP$ISELECT(ISP)
       CALL SETUP$GETI4('NB',NB)
       CALL SETUP$GETI4('NC',NC)
@@ -283,18 +293,18 @@ END MODULE CORE_MODULE
         CALL REPORT$TITLE(NFILO,'NO CORE STATES FOR ATOM '//TRIM(NAME))
         RETURN
       END IF
-      CALL SETUP$GETR8A('AEPOT',NR,ATPOT)
       ALLOCATE(LB(NB))
-      CALL SETUP$GETI4A('LB',NB,LB)
       ALLOCATE(EB(NB))
-      CALL SETUP$GETR8A('EB',NB,EB)
       ALLOCATE(AEPSI(NR,NB))
-      CALL SETUP$GETR8A('AEPSI',NR*NB,AEPSI)
+      CALL SETUP$GETR8A('AEPOT',NR,ATPOT)    !POTENTIAL OF THE ATOM
+      CALL SETUP$GETI4A('LB',NB,LB)          !MAIN ANGULAR MOMENTUM
+      CALL SETUP$GETR8A('EB',NB,EB)          !ATOMIC ENERGY LEVEL
+      CALL SETUP$GETR8A('AEPSI',NR*NB,AEPSI) !ATOMIC WAVE FUNCTION
       CALL SETUP$UNSELECT()
 !
-!     ==================================================================
-!     ==  CONSTANTS                                                   ==
-!     ==================================================================
+!     ==========================================================================
+!     ==  CONSTANTS                                                           ==
+!     ==========================================================================
       LMNX=0
       LMRX=0
       DO I=1,NC
@@ -309,16 +319,16 @@ END MODULE CORE_MODULE
         ALLOCATE(THIS%EATOM(LMNX))
       END IF
 
-!     ==================================================================
-!     == SUBTRACTS ATOMIC AE POTENTIAL FROM AE TOTAL POTENTIAL        ==
-!     ==================================================================
+!     ==========================================================================
+!     == SUBTRACTS ATOMIC AE POTENTIAL FROM AE TOTAL POTENTIAL                ==
+!     ==========================================================================
       ALLOCATE(AEPOT1(NR,LMRXX))
-      AEPOT1(:,:)=AEPOT(:,:)
+      AEPOT1(:,LMRX)=AEPOT(:,LMRX)
       AEPOT1(:,1)=AEPOT(:,1)-ATPOT(:)
 
-!     ==================================================================
-!     ==   CALCULATE HAMILTONIAN                                      ==
-!     ==================================================================
+!     ==========================================================================
+!     ==   CALCULATE HAMILTONIAN                                              ==
+!     ==========================================================================
       ALLOCATE(HAMIL(LMNX,LMNX))      
       HAMIL(:,:)=0.D0
 !
@@ -327,14 +337,15 @@ END MODULE CORE_MODULE
         L1=LB(LN1)
         DO IM1=1,2*L1+1
           LMN1=LMN1+1
-          LMN2=0
           LM1=L1**2+IM1
+!
+          LMN2=0
           DO LN2=1,NC
             L2=LB(LN2)
             DO IM2=1,2*L2+1
               LMN2=LMN2+1
               LM2=L2**2+IM2
-            
+!
               IF(LMN1.EQ.LMN2) THEN
                 HAMIL(LMN1,LMN2)=EB(LN1)
               END IF
@@ -357,17 +368,17 @@ END MODULE CORE_MODULE
       ENDDO
       DEALLOCATE(AEPOT1)
 !
-!     ==================================================================
-!     ==  DIAGONALIZATION OF THE HAMILTONIAN                          ==
-!     ==================================================================
+!     ==========================================================================
+!     ==  DIAGONALIZATION OF THE HAMILTONIAN                                  ==
+!     ==========================================================================
       ALLOCATE(EIGENVAL(LMNX))
       ALLOCATE(EIGENVEC(LMNX,LMNX))
       CALL LIB$DIAGR8(LMNX,HAMIL,EIGENVAL,EIGENVEC)
       DEALLOCATE(EIGENVEC)
 !
-!     ==================================================================
-!     ==  WRITE INTO TABLE                                            ==
-!     ==================================================================
+!     ==========================================================================
+!     ==  WRITE INTO TABLE                                                    ==
+!     ==========================================================================
       LMN1=0
       DO LN1=1,NC
         L1=LB(LN1)
@@ -375,11 +386,15 @@ END MODULE CORE_MODULE
           LMN1=LMN1+1
           THIS%E(LMN1)=EIGENVAL(LMN1)
           THIS%EATOM(LMN1)=EB(LN1)
+!
+!         == MAIN QUANTUM NUMBER I =============================================
           I=L1
           DO LN2=1,LN1
             IF(LB(LN2).NE.L1) CYCLE
             I=I+1
           ENDDO
+!
+!         == COMPOSE STRING 1S,2S,2P,3S,3P,3D,... ==============================
           WRITE(THIS%TYPE(LMN1),FMT='(I2)')I
           IF(L1.EQ.0) THEN
             THIS%TYPE(LMN1)=TRIM(THIS%TYPE(LMN1))//'S'
@@ -396,9 +411,9 @@ END MODULE CORE_MODULE
       ENDDO
       
 
-!     ==================================================================
-!     ==  CLOSE DOWN                                                  ==
-!     ==================================================================
+!     ==========================================================================
+!     ==  CLOSE DOWN                                                          ==
+!     ==========================================================================
       DEALLOCATE(LB)
 !     DEALLOCATE(FB)
       DEALLOCATE(EB)
