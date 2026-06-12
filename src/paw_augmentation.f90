@@ -481,8 +481,8 @@ END MODULE AUGMENTATION_MODULE
 !     ==========================================================================
 !     ==  EVALUATE CORE SHIFTS                                                ==
 !     ==========================================================================
-      CALL CORE_CORESHIFTS(IAT,ISP,GID,NR,LMRX,AETOTPOT)
-      call CORE_BEYONDFROZENCORE(IAT,ISP,GID,NR,LMRX,AETOTPOT)
+!      CALL CORE_CORESHIFTS(IAT,ISP,GID,NR,LMRX,NDIMD,AETOTPOT)
+      CALL CORE_BEYONDFROZENCORE(IAT,ISP,GID,NR,LMRX,NDIMD,AETOTPOT)
 !
       DEALLOCATE(AEHPOT)
       DEALLOCATE(PSHPOT)

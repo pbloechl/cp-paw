@@ -184,255 +184,259 @@ END MODULE CORE_MODULE
       END
 !
 ! SANTOS040617 BEGIN
-!     ...1.........2.........3.........4.........5.........6.........7.........8
-      SUBROUTINE CORE_CORESHIFTS(IAT,ISP,GID,NR,LMRXX,AEPOT)
-!     **************************************************************************
-!     **  CALCULATES THE EIGENVALUES OF CORE HAMILTONIAN                      **
-!     **                                                                      **
-!     **  IS CALLED FROM PAW_AUGMENTATION, WHICH EXECUTES ONLY ON ONE TASK    **
-!     **                                                                      **
-!     **                                                                      **
-!     **************************************************************************
-      USE CORE_MODULE, ONLY : CORESHIFT_TYPE &
-     &                       ,TCORESHIFTS &
-     &                       ,DEFAULT &
-     &                       ,TINI &
-     &                       ,THIS,FIRST &
-     &                       ,NATOMS &
-     &                       ,ATOMS 
-      IMPLICIT NONE
-      INTEGER(4),INTENT(IN) :: IAT     ! ATOM INDEX
-      INTEGER(4),INTENT(IN) :: ISP     ! ATOM TYPE
-      INTEGER(4),INTENT(IN) :: GID     ! GRID ID
-      INTEGER(4),INTENT(IN) :: NR      ! #(GRID POINTS)
-      INTEGER(4),INTENT(IN) :: LMRXX
-      REAL(8)   ,INTENT(IN) :: AEPOT(NR,LMRXX) ! 1C-AE POTENTIAL
-      REAL(8)   ,PARAMETER  :: PI=4.D0*ATAN(1.D0)
-      REAL(8)               :: ATPOT(NR)  !RADIAL ATOM POTENTIAL 
-      REAL(8)   ,ALLOCATABLE:: AEPOT1(:,:)!(NR,LMRXX)
-      INTEGER(4)            :: NB         !#(ATOMIC CORE AND VALENCE STATES)
-      INTEGER(4)            :: NC         !#(ATOMIC CORE STATES)
-      INTEGER(4),ALLOCATABLE:: LB(:)      !MAIN ANGULAR MOMENTUM
-!     REAL(8)   ,ALLOCATABLE:: FB(:)  
-      REAL(8)   ,ALLOCATABLE:: EB(:)      !ENERGY LEVEL
-      REAL(8)   ,ALLOCATABLE:: AEPSI(:,:) !AE WAVE FUNCTION
-      REAL(8)               :: R(NR)      !RADIAL GRID
-      CHARACTER(32)         :: NAME
-      INTEGER(4)            :: LMNX
-      INTEGER(4)            :: LMRX
-
-      INTEGER(4)            :: I
-      REAL(8)               :: AUX2
-
-      INTEGER(4)            :: LMN1,LMN2
-      INTEGER(4)            :: LN1,LN2
-      INTEGER(4)            :: LM1,LM2,LM3
-      INTEGER(4)            :: L1,L2,IM1,IM2
-      REAL(8)               :: AEDMU(NR)
-      REAL(8)               :: DWORK1(NR)
-      REAL(8)               :: CG          !GAUNT COEFFICIENT
-      REAL(8)               :: SVAR
-
-      REAL(8)   ,ALLOCATABLE:: HAMIL(:,:)
-      REAL(8)   ,ALLOCATABLE:: EIGENVAL(:)
-      REAL(8)   ,ALLOCATABLE:: EIGENVEC(:,:)
-      INTEGER(4)            :: NFILO
-      REAL(8)               :: EV             ! ELECTRON VOLT
-      LOGICAL(4)            :: TCHK
-!     **************************************************************************
-      IF(.NOT.TCORESHIFTS) RETURN
-      CALL RADIAL$R(GID,NR,R)
-      CALL ATOMLIST$GETCH('NAME',IAT,NAME)
-!     == CHECK WHETHER CORE LEVELS SHALL BE CALCULATED FOR THIS ATOM (IAT)  ====
-      TCHK=DEFAULT
-      DO I=1,NATOMS
-        IF(NAME.EQ.ATOMS(I)) THEN
-          TCHK=.NOT.DEFAULT
-        END IF
-      ENDDO
-      IF(.NOT.TCHK) RETURN
-!
-!     ==========================================================================
-!     ==  SELECT THE PROPER ENTRY IN THE TABLE                                ==
-!     ==========================================================================
-      THIS=>FIRST
-      IF(.NOT.TINI) THEN
-        TINI=.TRUE.
-        THIS%IAT=IAT
-        THIS%N=0
-        NULLIFY(THIS%E)
-        NULLIFY(THIS%EATOM)
-        NULLIFY(THIS%TYPE)
-        NULLIFY(THIS%NEXT)
-      ELSE
-        DO WHILE (THIS%IAT.NE.IAT) 
-          IF(ASSOCIATED(THIS%NEXT)) THEN
-            THIS=>THIS%NEXT
-          ELSE
-            ALLOCATE(THIS%NEXT)
-            THIS=>THIS%NEXT
-            NULLIFY(THIS%NEXT)
-            THIS%IAT=IAT
-            THIS%N=0
-            NULLIFY(THIS%E)
-            NULLIFY(THIS%EATOM)
-            NULLIFY(THIS%TYPE)
-          END IF
-        ENDDO
-      END IF
-!     == THE POINTER "THIS" REFERS NOW TO THE ATOM AT HAND =====================
-!
-!     ==========================================================================
-!     ==  COLLECT ATOMIC CORE WAVE FUNCTIONS AEPSI FROM SETUP OBJECT          ==
-!     ==========================================================================
-      CALL SETUP$ISELECT(ISP)
-      CALL SETUP$GETI4('NB',NB)
-      CALL SETUP$GETI4('NC',NC)
-      IF (NC.EQ.0) THEN
-        CALL FILEHANDLER$UNIT('PROT',NFILO)
-        CALL REPORT$TITLE(NFILO,'NO CORE STATES FOR ATOM '//TRIM(NAME))
-        RETURN
-      END IF
-      ALLOCATE(LB(NB))
-      ALLOCATE(EB(NB))
-      ALLOCATE(AEPSI(NR,NB))
-      CALL SETUP$GETR8A('AEPOT',NR,ATPOT)    !POTENTIAL OF THE ATOM
-      CALL SETUP$GETI4A('LB',NB,LB)          !MAIN ANGULAR MOMENTUM
-      CALL SETUP$GETR8A('EB',NB,EB)          !ATOMIC ENERGY LEVEL
-      CALL SETUP$GETR8A('AEPSI',NR*NB,AEPSI) !ATOMIC WAVE FUNCTION
-      CALL SETUP$UNSELECT()
-!
-!     ==========================================================================
-!     ==  CONSTANTS                                                           ==
-!     ==========================================================================
-      LMNX=0
-      LMRX=0
-      DO I=1,NC
-        LMNX=LMNX+2*LB(I)+1
-        LMRX=MAX(LMRX,(2*LB(I)+1)**2)
-      ENDDO
-      LMRX=MIN(LMRX,LMRXX)
-      IF(THIS%N.NE.LMNX) THEN
-        THIS%N=LMNX
-        ALLOCATE(THIS%TYPE(LMNX))
-        ALLOCATE(THIS%E(LMNX))
-        ALLOCATE(THIS%EATOM(LMNX))
-      END IF
-
-!     ==========================================================================
-!     == SUBTRACTS ATOMIC AE POTENTIAL FROM AE TOTAL POTENTIAL                ==
-!     ==========================================================================
-      ALLOCATE(AEPOT1(NR,LMRXX))
-      AEPOT1(:,LMRX)=AEPOT(:,LMRX)
-      AEPOT1(:,1)=AEPOT(:,1)-ATPOT(:)
-
-!     ==========================================================================
-!     ==   CALCULATE HAMILTONIAN                                              ==
-!     ==========================================================================
-      ALLOCATE(HAMIL(LMNX,LMNX))      
-      HAMIL(:,:)=0.D0
-!
-      LMN1=0
-      DO LN1=1,NC
-        L1=LB(LN1)
-        DO IM1=1,2*L1+1
-          LMN1=LMN1+1
-          LM1=L1**2+IM1
-!
-          LMN2=0
-          DO LN2=1,NC
-            L2=LB(LN2)
-            DO IM2=1,2*L2+1
-              LMN2=LMN2+1
-              LM2=L2**2+IM2
-!
-              IF(LMN1.EQ.LMN2) THEN
-                HAMIL(LMN1,LMN2)=EB(LN1)
-              END IF
-!
-              AEDMU(:)=0.D0
-              DO LM3=1,LMRX
-                CALL CLEBSCH(LM1,LM2,LM3,CG)
-                IF(CG.NE.0.D0) THEN
-                  AEDMU(:)=AEDMU(:)+CG*AEPOT1(:,LM3)
-                END IF
-              ENDDO
-!
-              DWORK1(:)=(AEDMU(:)*AEPSI(:,LN1)*AEPSI(:,LN2))*R(:)**2
-              CALL RADIAL$INTEGRAL(GID,NR,DWORK1,SVAR)
-              HAMIL(LMN1,LMN2)=HAMIL(LMN1,LMN2)+SVAR
-!
-            ENDDO
-          ENDDO
-        ENDDO
-      ENDDO
-      DEALLOCATE(AEPOT1)
-!
-!     ==========================================================================
-!     ==  DIAGONALIZATION OF THE HAMILTONIAN                                  ==
-!     ==========================================================================
-      ALLOCATE(EIGENVAL(LMNX))
-      ALLOCATE(EIGENVEC(LMNX,LMNX))
-      CALL LIB$DIAGR8(LMNX,HAMIL,EIGENVAL,EIGENVEC)
-      DEALLOCATE(EIGENVEC)
-!
-!     ==========================================================================
-!     ==  WRITE INTO TABLE                                                    ==
-!     ==========================================================================
-      LMN1=0
-      DO LN1=1,NC
-        L1=LB(LN1)
-        DO IM1=1,2*L1+1
-          LMN1=LMN1+1
-          THIS%E(LMN1)=EIGENVAL(LMN1)
-          THIS%EATOM(LMN1)=EB(LN1)
-!
-!         == MAIN QUANTUM NUMBER I =============================================
-          I=L1
-          DO LN2=1,LN1
-            IF(LB(LN2).NE.L1) CYCLE
-            I=I+1
-          ENDDO
-!
-!         == COMPOSE STRING 1S,2S,2P,3S,3P,3D,... ==============================
-          WRITE(THIS%TYPE(LMN1),FMT='(I2)')I
-          IF(L1.EQ.0) THEN
-            THIS%TYPE(LMN1)=TRIM(THIS%TYPE(LMN1))//'S'
-          ELSE IF(L1.EQ.1) THEN
-            THIS%TYPE(LMN1)=TRIM(THIS%TYPE(LMN1))//'P'
-          ELSE IF(L1.EQ.2) THEN
-            THIS%TYPE(LMN1)=TRIM(THIS%TYPE(LMN1))//'D'
-          ELSE IF(L1.EQ.3) THEN
-            THIS%TYPE(LMN1)=TRIM(THIS%TYPE(LMN1))//'F'
-          ELSE
-            THIS%TYPE(LMN1)=TRIM(THIS%TYPE(LMN1))//'?'
-          END IF
-        ENDDO
-      ENDDO
-      
-
-!     ==========================================================================
-!     ==  CLOSE DOWN                                                          ==
-!     ==========================================================================
-      DEALLOCATE(LB)
-!     DEALLOCATE(FB)
-      DEALLOCATE(EB)
-      DEALLOCATE(AEPSI)
-      DEALLOCATE(HAMIL)
-      DEALLOCATE(EIGENVAL)
-
-      RETURN
-      END
+!!$!     ...1.........2.........3.........4.........5.........6.........7.........8
+!!$      SUBROUTINE CORE_CORESHIFTS(IAT,ISP,GID,NR,LMRXX,NDIMD,AEPOT)
+!!$!     **************************************************************************
+!!$!     **  CALCULATES THE EIGENVALUES OF CORE HAMILTONIAN                      **
+!!$!     **                                                                      **
+!!$!     **  IS CALLED FROM PAW_AUGMENTATION, WHICH EXECUTES ONLY ON ONE TASK    **
+!!$!     **                                                                      **
+!!$!     **                                                                      **
+!!$!     **************************************************************************
+!!$      USE CORE_MODULE, ONLY : CORESHIFT_TYPE &
+!!$     &                       ,TCORESHIFTS &
+!!$     &                       ,DEFAULT &
+!!$     &                       ,TINI &
+!!$     &                       ,THIS,FIRST &
+!!$     &                       ,NATOMS &
+!!$     &                       ,ATOMS 
+!!$      IMPLICIT NONE
+!!$      INTEGER(4),INTENT(IN) :: IAT     ! ATOM INDEX
+!!$      INTEGER(4),INTENT(IN) :: ISP     ! ATOM TYPE
+!!$      INTEGER(4),INTENT(IN) :: GID     ! GRID ID
+!!$      INTEGER(4),INTENT(IN) :: NR      ! #(GRID POINTS)
+!!$      INTEGER(4),INTENT(IN) :: NDIMD   ! #(DENSITY SPIN COMPONENTS)
+!!$      INTEGER(4),INTENT(IN) :: LMRXX
+!!$      REAL(8)   ,INTENT(IN) :: AEPOT(NR,LMRXX,NDIMD) ! 1C-AE POTENTIAL
+!!$      REAL(8)   ,PARAMETER  :: PI=4.D0*ATAN(1.D0)
+!!$      REAL(8)               :: ATPOT(NR)  !RADIAL ATOM POTENTIAL 
+!!$      REAL(8)   ,ALLOCATABLE:: AEPOT1(:,:,:)!(NR,LMRX,NDIMD)
+!!$      INTEGER(4)            :: NB         !#(ATOMIC CORE AND VALENCE STATES)
+!!$      INTEGER(4)            :: NC         !#(ATOMIC CORE STATES)
+!!$      INTEGER(4),ALLOCATABLE:: LB(:)      !MAIN ANGULAR MOMENTUM
+!!$!     REAL(8)   ,ALLOCATABLE:: FB(:)  
+!!$      REAL(8)   ,ALLOCATABLE:: EB(:)      !ENERGY LEVEL
+!!$      REAL(8)   ,ALLOCATABLE:: AEPSI(:,:) !AE WAVE FUNCTION
+!!$      REAL(8)               :: R(NR)      !RADIAL GRID
+!!$      CHARACTER(32)         :: NAME
+!!$      INTEGER(4)            :: LMNX
+!!$      INTEGER(4)            :: LMRX
+!!$
+!!$      INTEGER(4)            :: I
+!!$      REAL(8)               :: AUX2
+!!$
+!!$      INTEGER(4)            :: LMN1,LMN2
+!!$      INTEGER(4)            :: LN1,LN2
+!!$      INTEGER(4)            :: LM1,LM2,LM3
+!!$      INTEGER(4)            :: L1,L2,IM1,IM2
+!!$      REAL(8)               :: AEDMU(NR)
+!!$      REAL(8)               :: DWORK1(NR)
+!!$      REAL(8)               :: CG          !GAUNT COEFFICIENT
+!!$      REAL(8)               :: SVAR
+!!$
+!!$      REAL(8)   ,ALLOCATABLE:: HAMIL(:,:)
+!!$      REAL(8)   ,ALLOCATABLE:: EIGENVAL(:)
+!!$      REAL(8)   ,ALLOCATABLE:: EIGENVEC(:,:)
+!!$      INTEGER(4)            :: NFILO
+!!$      REAL(8)               :: EV             ! ELECTRON VOLT
+!!$      LOGICAL(4)            :: TCHK
+!!$!     **************************************************************************
+!!$      IF(.NOT.TCORESHIFTS) RETURN
+!!$      CALL RADIAL$R(GID,NR,R)
+!!$      CALL ATOMLIST$GETCH('NAME',IAT,NAME)
+!!$!     == CHECK WHETHER CORE LEVELS SHALL BE CALCULATED FOR THIS ATOM (IAT)  ====
+!!$      TCHK=DEFAULT
+!!$      DO I=1,NATOMS
+!!$        IF(NAME.EQ.ATOMS(I)) THEN
+!!$          TCHK=.NOT.DEFAULT
+!!$        END IF
+!!$      ENDDO
+!!$      IF(.NOT.TCHK) RETURN
+!!$!
+!!$!     ==========================================================================
+!!$!     ==  SELECT THE PROPER ENTRY IN THE TABLE                                ==
+!!$!     ==========================================================================
+!!$      THIS=>FIRST
+!!$      IF(.NOT.TINI) THEN
+!!$        TINI=.TRUE.
+!!$        THIS%IAT=IAT
+!!$        THIS%N=0
+!!$        NULLIFY(THIS%E)
+!!$        NULLIFY(THIS%EATOM)
+!!$        NULLIFY(THIS%TYPE)
+!!$        NULLIFY(THIS%NEXT)
+!!$      ELSE
+!!$        DO WHILE (THIS%IAT.NE.IAT) 
+!!$          IF(ASSOCIATED(THIS%NEXT)) THEN
+!!$            THIS=>THIS%NEXT
+!!$          ELSE
+!!$            ALLOCATE(THIS%NEXT)
+!!$            THIS=>THIS%NEXT
+!!$            NULLIFY(THIS%NEXT)
+!!$            THIS%IAT=IAT
+!!$            THIS%N=0
+!!$            NULLIFY(THIS%E)
+!!$            NULLIFY(THIS%EATOM)
+!!$            NULLIFY(THIS%TYPE)
+!!$          END IF
+!!$        ENDDO
+!!$      END IF
+!!$!     == THE POINTER "THIS" REFERS NOW TO THE ATOM AT HAND =====================
+!!$!
+!!$!     ==========================================================================
+!!$!     ==  COLLECT ATOMIC CORE WAVE FUNCTIONS AEPSI FROM SETUP OBJECT          ==
+!!$!     ==========================================================================
+!!$      CALL SETUP$ISELECT(ISP)
+!!$      CALL SETUP$GETI4('NB',NB)
+!!$      CALL SETUP$GETI4('NC',NC)
+!!$      IF (NC.EQ.0) THEN
+!!$        CALL FILEHANDLER$UNIT('PROT',NFILO)
+!!$        CALL REPORT$TITLE(NFILO,'NO CORE STATES FOR ATOM '//TRIM(NAME))
+!!$        RETURN
+!!$      END IF
+!!$      ALLOCATE(LB(NB))
+!!$      ALLOCATE(EB(NB))
+!!$      ALLOCATE(AEPSI(NR,NB))
+!!$      CALL SETUP$GETR8A('AEPOT',NR,ATPOT)    !POTENTIAL OF THE ATOM
+!!$      CALL SETUP$GETI4A('LB',NB,LB)          !MAIN ANGULAR MOMENTUM
+!!$      CALL SETUP$GETR8A('EB',NB,EB)          !ATOMIC ENERGY LEVEL
+!!$      CALL SETUP$GETR8A('AEPSI',NR*NB,AEPSI) !ATOMIC WAVE FUNCTION
+!!$      CALL SETUP$UNSELECT()
+!!$!
+!!$!     ==========================================================================
+!!$!     ==  CONSTANTS                                                           ==
+!!$!     ==========================================================================
+!!$      LMNX=0
+!!$      LMRX=0
+!!$      DO I=1,NC
+!!$        LMNX=LMNX+2*LB(I)+1
+!!$        LMRX=MAX(LMRX,(2*LB(I)+1)**2)
+!!$      ENDDO
+!!$      LMRX=MIN(LMRX,LMRXX)
+!!$      IF(THIS%N.NE.LMNX) THEN
+!!$        THIS%N=LMNX
+!!$        ALLOCATE(THIS%TYPE(LMNX))
+!!$        ALLOCATE(THIS%E(LMNX))
+!!$        ALLOCATE(THIS%EATOM(LMNX))
+!!$      END IF
+!!$
+!!$!     ==========================================================================
+!!$!     == SUBTRACTS ATOMIC AE POTENTIAL FROM AE TOTAL POTENTIAL                ==
+!!$!     ==========================================================================
+!!$      ALLOCATE(AEPOT1(NR,LMRXX,NDIMD))
+!!$      AEPOT1(:,LMRX,:)=AEPOT(:,LMRX,:)
+!!$      AEPOT1(:,1)=AEPOT(:,1)-ATPOT(:)
+!!$!
+!!$!     ==========================================================================
+!!$!     ==   CALCULATE HAMILTONIAN                                              ==
+!!$!     ==========================================================================
+!!$      ALLOCATE(HAMIL(LMNX,LMNX))      
+!!$      HAMIL(:,:)=0.D0
+!!$!
+!!$      LMN1=0
+!!$      DO LN1=1,NC
+!!$        L1=LB(LN1)
+!!$        DO IM1=1,2*L1+1
+!!$          LMN1=LMN1+1
+!!$          LM1=L1**2+IM1
+!!$!
+!!$          LMN2=0
+!!$          DO LN2=1,NC
+!!$            L2=LB(LN2)
+!!$            DO IM2=1,2*L2+1
+!!$              LMN2=LMN2+1
+!!$              LM2=L2**2+IM2
+!!$!
+!!$              IF(LMN1.EQ.LMN2) THEN
+!!$                HAMIL(LMN1,LMN2)=EB(LN1)
+!!$              END IF
+!!$!
+!!$              AEDMU(:)=0.D0
+!!$              DO LM3=1,LMRX
+!!$                CALL CLEBSCH(LM1,LM2,LM3,CG)
+!!$                IF(CG.NE.0.D0) THEN
+!!$                  AEDMU(:)=AEDMU(:)+CG*AEPOT1(:,LM3)
+!!$                END IF
+!!$              ENDDO
+!!$!
+!!$              DWORK1(:)=(AEDMU(:)*AEPSI(:,LN1)*AEPSI(:,LN2))*R(:)**2
+!!$              CALL RADIAL$INTEGRAL(GID,NR,DWORK1,SVAR)
+!!$              HAMIL(LMN1,LMN2)=HAMIL(LMN1,LMN2)+SVAR
+!!$!
+!!$            ENDDO
+!!$          ENDDO
+!!$        ENDDO
+!!$      ENDDO
+!!$      DEALLOCATE(AEPOT1)
+!!$!
+!!$!     ==========================================================================
+!!$!     ==  DIAGONALIZATION OF THE HAMILTONIAN                                  ==
+!!$!     ==========================================================================
+!!$      ALLOCATE(EIGENVAL(LMNX))
+!!$      ALLOCATE(EIGENVEC(LMNX,LMNX))
+!!$      CALL LIB$DIAGR8(LMNX,HAMIL,EIGENVAL,EIGENVEC)
+!!$      DEALLOCATE(EIGENVEC)
+!!$!
+!!$!     ==========================================================================
+!!$!     ==  WRITE INTO TABLE                                                    ==
+!!$!     ==========================================================================
+!!$      LMN1=0
+!!$      DO LN1=1,NC
+!!$        L1=LB(LN1)
+!!$        DO IM1=1,2*L1+1
+!!$          LMN1=LMN1+1
+!!$          THIS%E(LMN1)=EIGENVAL(LMN1)
+!!$          THIS%EATOM(LMN1)=EB(LN1)
+!!$!
+!!$!         == MAIN QUANTUM NUMBER I =============================================
+!!$          I=L1
+!!$          DO LN2=1,LN1
+!!$            IF(LB(LN2).NE.L1) CYCLE
+!!$            I=I+1
+!!$          ENDDO
+!!$!
+!!$!         == COMPOSE STRING 1S,2S,2P,3S,3P,3D,... ==============================
+!!$          WRITE(THIS%TYPE(LMN1),FMT='(I2)')I
+!!$          IF(L1.EQ.0) THEN
+!!$            THIS%TYPE(LMN1)=TRIM(THIS%TYPE(LMN1))//'S'
+!!$          ELSE IF(L1.EQ.1) THEN
+!!$            THIS%TYPE(LMN1)=TRIM(THIS%TYPE(LMN1))//'P'
+!!$          ELSE IF(L1.EQ.2) THEN
+!!$            THIS%TYPE(LMN1)=TRIM(THIS%TYPE(LMN1))//'D'
+!!$          ELSE IF(L1.EQ.3) THEN
+!!$            THIS%TYPE(LMN1)=TRIM(THIS%TYPE(LMN1))//'F'
+!!$          ELSE
+!!$            THIS%TYPE(LMN1)=TRIM(THIS%TYPE(LMN1))//'?'
+!!$          END IF
+!!$        ENDDO
+!!$      ENDDO
+!!$      
+!!$
+!!$!     ==========================================================================
+!!$!     ==  CLOSE DOWN                                                          ==
+!!$!     ==========================================================================
+!!$      DEALLOCATE(LB)
+!!$!     DEALLOCATE(FB)
+!!$      DEALLOCATE(EB)
+!!$      DEALLOCATE(AEPSI)
+!!$      DEALLOCATE(HAMIL)
+!!$      DEALLOCATE(EIGENVAL)
+!!$
+!!$      RETURN
+!!$      END
 !
 ! SANTOS040617 END
 !     ...1.........2.........3.........4.........5.........6.........7.........8
-      SUBROUTINE CORE_BEYONDFROZENCORE(IAT,ISP,GID,NR,LMRXX,AEPOT)
+      SUBROUTINE CORE_BEYONDFROZENCORE(IAT,ISP,GID,NR,LMRXX,NDIMD,AEPOT)
 !     **************************************************************************
 !     **  WORK OUT HAMILTONIAN BETWEEN FROZEN CORE STATES AND ALL-ELECTRON    **
 !     **  PARTIAL WAVES
 !     **                                                                      **
 !     **  IS CALLED FROM PAW_AUGMENTATION, WHICH EXECUTES ONLY ON ONE TASK    **
 !     **                                                                      **
+! TODO: THE HVV LACKS THE ATOMIC POTENTIAL AND THE KINETIC ENERGY
+! TODO: INCLUDE SPIN-ORBIT COUPLING
+
 !     **                                                                      **
 !     **************************************************************************
       IMPLICIT NONE
@@ -441,11 +445,14 @@ END MODULE CORE_MODULE
       INTEGER(4),INTENT(IN) :: GID     ! GRID ID
       INTEGER(4),INTENT(IN) :: NR      ! #(GRID POINTS)
       INTEGER(4),INTENT(IN) :: LMRXX
-      REAL(8)   ,INTENT(IN) :: AEPOT(NR,LMRXX) ! 1C-AE POTENTIAL
+      INTEGER(4),INTENT(IN) :: NDIMD   ! #(DENSITY SPIN COMPONENTS)
+      REAL(8)   ,INTENT(IN) :: AEPOT(NR,LMRXX,NDIMD) ! 1C-AE POTENTIAL
+      COMPLEX(8),PARAMETER  :: CI=(0.D0,1.D0)  !COMPLEX SQRT(-1)
+      COMPLEX(8),PARAMETER  :: CZERO=(0.D0,0.D0)  !COMPLEX ZERO
       REAL(8)   ,PARAMETER  :: PI=4.D0*ATAN(1.D0)
       REAL(8)   ,PARAMETER  :: EPSILONNU=0.D0
       REAL(8)               :: ATPOT(NR)  !RADIAL ATOM POTENTIAL 
-      REAL(8)   ,ALLOCATABLE:: AEPOT1(:,:)!(NR,LMRXX)
+      REAL(8)   ,ALLOCATABLE:: AEPOT1(:,:,:)!(NR,LMRXX,NDIMD)
       INTEGER(4)            :: LNX        !
       INTEGER(4)            :: LMNX
       INTEGER(4),ALLOCATABLE:: LOX(:)     !MAIN ANGULAR MOMENTUM OF PARTIAL W.
@@ -456,7 +463,7 @@ END MODULE CORE_MODULE
       INTEGER(4)            :: LMNCX
       INTEGER(4),ALLOCATABLE:: LB(:)      !MAIN ANGULAR MOMENTUM
       REAL(8)   ,ALLOCATABLE:: EB(:)      !ENERGY LEVEL
-      REAL(8)   ,ALLOCATABLE:: AEPSI(:,:) !(NR,?) AE WAVE FUNCTION
+      REAL(8)   ,ALLOCATABLE:: AEPSI(:,:) !(NR,NB) AE WAVE FUNCTION
       REAL(8)               :: R(NR)      !RADIAL GRID
       CHARACTER(32)         :: NAME
       INTEGER(4)            :: LMRX
@@ -469,19 +476,24 @@ END MODULE CORE_MODULE
       INTEGER(4)            :: LN1,LN2
       INTEGER(4)            :: LM1,LM2,LM3
       INTEGER(4)            :: L1,L2,IM1,IM2
-      REAL(8)               :: AEDMU(NR)
+      INTEGER(4)            :: I1A,I1B,I2A,I2B
+      INTEGER(4)            :: IDIMD
+      REAL(8)               :: AEDMU(NR,NDIMD)
       REAL(8)               :: DWORK1(NR)
       REAL(8)               :: CG          !GAUNT COEFFICIENT
       REAL(8)               :: SVAR
-
-      REAL(8)   ,ALLOCATABLE:: HCC(:,:)
-      REAL(8)   ,ALLOCATABLE:: HCV(:,:)
-      REAL(8)   ,ALLOCATABLE:: OCC(:,:)
-      REAL(8)   ,ALLOCATABLE:: OCV(:,:)
+      REAL(8)               :: X(NDIMD)
+      COMPLEX(8)            :: CMAT22(2,2)
+      COMPLEX(8),ALLOCATABLE:: HCC(:,:)
+      COMPLEX(8),ALLOCATABLE:: HCV(:,:)
+      COMPLEX(8),ALLOCATABLE:: HVV(:,:)
+      COMPLEX(8),ALLOCATABLE:: OCC(:,:)
+      COMPLEX(8),ALLOCATABLE:: OCV(:,:)
+      COMPLEX(8),ALLOCATABLE:: OVV(:,:)
       REAL(8)   ,ALLOCATABLE:: EIGENVAL(:)
-      REAL(8)   ,ALLOCATABLE:: EIGENVEC(:,:)
-      REAL(8)   ,ALLOCATABLE:: selfenergy(:,:)
-      REAL(8)   ,ALLOCATABLE:: green(:,:)
+      COMPLEX(8),ALLOCATABLE:: EIGENVEC(:,:)
+      COMPLEX(8),ALLOCATABLE:: SELFENERGY(:,:)
+      COMPLEX(8),ALLOCATABLE:: GREEN(:,:)
       INTEGER(4)            :: NFILO
 !     **************************************************************************
       CALL RADIAL$R(GID,NR,R)
@@ -503,8 +515,10 @@ WRITE(*,FMT='(80("="),T20,A)')'CORE_BEYONDFROZENCORE FOR ATOM '//TRIM(NAME)
       CALL SETUP$GETI4('NB',NB)
       CALL SETUP$GETI4('NC',NC)
       IF (NC.EQ.0) THEN
+!       == NO CORE STATES, NOTHING TO DO, RETURN ===============================
         CALL FILEHANDLER$UNIT('PROT',NFILO)
-        CALL REPORT$TITLE(NFILO,'NO CORE STATES FOR ATOM '//TRIM(NAME))
+!        CALL REPORT$TITLE(NFILO,'NO CORE STATES FOR ATOM '//TRIM(NAME))
+        CALL SETUP$UNSELECT()
         RETURN
       END IF
       ALLOCATE(LB(NB))
@@ -516,12 +530,12 @@ WRITE(*,FMT='(80("="),T20,A)')'CORE_BEYONDFROZENCORE FOR ATOM '//TRIM(NAME)
       CALL SETUP$GETR8A('AEPSI',NR*NB,AEPSI) !ATOMIC WAVE FUNCTION
       CALL SETUP$UNSELECT()
 
-write(*,fmt='("lnx=",10i5)')lnx
-write(*,fmt='("lox=",10i5)')lox
-write(*,fmt='("nb=",10i5)')nb
-write(*,fmt='("nc=",10i5)')nc
-write(*,fmt='("lb=",10i5)')lb(:nc)
-write(*,fmt='("eb=",5f12.3)')eb(:nc)
+WRITE(*,FMT='("LNX=",10I5)')LNX
+WRITE(*,FMT='("LOX=",10I5)')LOX
+WRITE(*,FMT='("NB=",10I5)')NB
+WRITE(*,FMT='("NC=",10I5)')NC
+WRITE(*,FMT='("LB=",10I5)')LB(:NC)
+WRITE(*,FMT='("EB=",5F12.3)')EB(:NC)
 !
 !     ==========================================================================
 !     ==  CONSTANTS                                                           ==
@@ -538,25 +552,24 @@ write(*,fmt='("eb=",5f12.3)')eb(:nc)
         LMRX=MAX(LMRX,(2*LOX(LN)+1)**2)
       ENDDO
       LMRX=MIN(LMRX,LMRXX)
-write(*,fmt='("lmnx=",10i5)')lmnx
-write(*,fmt='("lmncx=",10i5)')lmncx
-write(*,fmt='("lmrx=",10i5)')lmrx
-
-
+WRITE(*,FMT='("NDIMD=",10I5)')NDIMD
+WRITE(*,FMT='("LMNX=",10I5)')LMNX
+WRITE(*,FMT='("LMNCX=",10I5)')LMNCX
+WRITE(*,FMT='("LMRX=",10I5)')LMRX
 !     ==========================================================================
 !     == SUBTRACTS ATOMIC AE POTENTIAL FROM AE TOTAL POTENTIAL                ==
 !     ==========================================================================
-      ALLOCATE(AEPOT1(NR,LMRXX))
-      AEPOT1(:,LMRX)=AEPOT(:,LMRX)
-      AEPOT1(:,1)=AEPOT(:,1)-ATPOT(:)
-
+      ALLOCATE(AEPOT1(NR,LMRX,NDIMD))
+      AEPOT1(:,:,:)=AEPOT(:,:LMRX,:)
+      AEPOT1(:,1,1)=AEPOT1(:,1,1)-ATPOT(:)
+!
 !     ==========================================================================
 !     ==   CALCULATE CORE-CORE HAMILTONIAN                                    ==
 !     ==========================================================================
-      ALLOCATE(HCC(LMNCX,LMNCX))      
-      ALLOCATE(OCC(LMNCX,LMNCX))      
-      HCC(:,:)=0.D0
-      OCC(:,:)=0.D0
+      ALLOCATE(HCC(2*LMNCX,2*LMNCX))      
+      ALLOCATE(OCC(2*LMNCX,2*LMNCX))      
+      HCC(:,:)=CZERO
+      OCC(:,:)=CZERO
 !
       LMN1=0
       DO LN1=1,NC
@@ -564,6 +577,8 @@ write(*,fmt='("lmrx=",10i5)')lmrx
         DO IM1=1,2*L1+1
           LMN1=LMN1+1
           LM1=L1**2+IM1
+          I1A=2*(LMN1-1)+1
+          I1B=I1A+1
 !
           LMN2=0
           DO LN2=1,NC
@@ -571,59 +586,68 @@ write(*,fmt='("lmrx=",10i5)')lmrx
             DO IM2=1,2*L2+1
               LMN2=LMN2+1
               LM2=L2**2+IM2
+              I2A=2*(LMN2-1)+1
+              I2B=I1A+1
 !
-              IF(LMN1.EQ.LMN2) THEN
-                HCC(LMN1,LMN2)=EB(LN1)
-              END IF
-!
-              AEDMU(:)=0.D0
+              AEDMU(:,:)=0.D0
               DO LM3=1,LMRX
                 CALL CLEBSCH(LM1,LM2,LM3,CG)
                 IF(CG.NE.0.D0) THEN
-                  AEDMU(:)=AEDMU(:)+CG*AEPOT1(:,LM3)
+                  AEDMU(:,:)=AEDMU(:,:)+CG*AEPOT1(:,LM3,:)
                 END IF
               ENDDO
 !
-              DWORK1(:)=AEDMU(:)*AEPSI(:,LN1)*AEPSI(:,LN2)*R(:)**2
-              CALL RADIAL$INTEGRAL(GID,NR,DWORK1,SVAR)
-              HCC(LMN1,LMN2)=HCC(LMN1,LMN2)+SVAR
-!occ is the unit matrix by construction
-              if(lm1.eq.lm2) then
+!             == X(IDIMD)=<PSI(LMN1)|AEPOT(IDIMD)|PSI(LMN2)>
+              DO IDIMD=1,NDIMD
+                DWORK1(:)=AEDMU(:,IDIMD)*AEPSI(:,LN1)*AEPSI(:,LN2)*R(:)**2
+                CALL RADIAL$INTEGRAL(GID,NR,DWORK1,X(IDIMD))
+              ENDDO
+              CALL CORE_RHOMAG2UPDN(NDIMD,X,CMAT22)
+              HCC(I1A:I1B,I2A:I2B)=HCC(I1A:I1B,I2A:I2B)+CMAT22(:,:)
+
+!OCC IS THE UNIT MATRIX BY CONSTRUCTION
+              IF(LM1.EQ.LM2) THEN
                 DWORK1(:)=AEPSI(:,LN1)*AEPSI(:,LN2)*R(:)**2
-                CALL RADIAL$INTEGRAL(GID,NR,DWORK1,SVAR)
-                OCC(LMN1,LMN2)=OCC(LMN1,LMN2)+SVAR
-              end if
-!
+                CALL RADIAL$INTEGRAL(GID,NR,DWORK1,X(1))
+                CALL CORE_RHOMAG2UPDN(1,X,CMAT22)
+                OCC(I1A:I1B,I2A:I2B)=OCC(I1A:I1B,I2A:I2B)+CMAT22
+                IF(LMN1.EQ.LMN2) THEN
+                  HCC(I1A:I1B,I2A:I2B)=HCC(I1A:I1B,I2A:I2B)+CMAT22*EB(LN1)
+                END IF
+              END IF
+
             ENDDO
           ENDDO
         ENDDO
       ENDDO
 
-write(*,fmt='(80("="),t20,A)')' core overlap '
-write(*,fmt='(i5,"     ",100i10)')0,(lmn2,lmn2=1,lmncx)
-do lmn1=1,lmncx
-  write(*,fmt='(i5,"occ: ",100f10.5)')lmn1,occ(lmn1,:)
-enddo
-write(*,fmt='(80("="),t20,A)')' core Hamiltonian '
-write(*,fmt='(i5,"     ",100i10)')0,(lmn2,lmn2=1,lmncx)
-do lmn1=1,lmncx
-  write(*,fmt='(i5,"hcc: ",100f10.2)')lmn1,Hcc(lmn1,:)
-enddo
+WRITE(*,FMT='(80("="),T20,A)')' CORE OVERLAP '
+WRITE(*,FMT='(I5,"     ",100I10)')0,(LMN2,LMN2=1,LMNCX)
+DO LMN1=1,2*LMNCX
+  WRITE(*,FMT='(I5,"OCC: ",100F10.5)')LMN1,REAL(OCC(LMN1,:))
+ENDDO
+WRITE(*,FMT='(80("="),T20,A)')' CORE HAMILTONIAN '
+WRITE(*,FMT='(I5,"     ",100I10)')0,(LMN2,LMN2=1,LMNCX)
+DO LMN1=1,2*LMNCX
+  WRITE(*,FMT='(I5,"HCC: ",100F10.2)')LMN1,REAL(HCC(LMN1,:))
+ENDDO
 
 
 !     ==========================================================================
 !     ==   CALCULATE CORE-VALENCE HAMILTONIAN                                 ==
 !     ==========================================================================
-      ALLOCATE(HCV(LMNcX,LMNX))      
-      ALLOCATE(OCV(LMNcX,LMNX))      
-      HCV(:,:)=0.D0
-      OCV(:,:)=0.D0
+      ALLOCATE(HCV(2*LMNCX,2*LMNX))      
+      ALLOCATE(OCV(2*LMNCX,2*LMNX))      
+      HCV(:,:)=CZERO
+      OCV(:,:)=CZERO
       LMN1=0
       DO LN1=1,NC
         L1=LB(LN1)
         DO IM1=1,2*L1+1
           LMN1=LMN1+1
           LM1=L1**2+IM1
+          I1A=2*(LMN1-1)+1
+          I1B=I1A+1
 !
           LMN2=0
           DO LN2=1,LNX
@@ -631,27 +655,97 @@ enddo
             DO IM2=1,2*L2+1
               LMN2=LMN2+1
               LM2=L2**2+IM2
+              I2A=2*(LMN2-1)+1
+              I2B=I2A+1
 !
-!
-              AEDMU(:)=0.D0
+              AEDMU(:,:)=0.D0
               DO LM3=1,LMRX
                 CALL CLEBSCH(LM1,LM2,LM3,CG)
                 IF(CG.NE.0.D0) THEN
-                  AEDMU(:)=AEDMU(:)+CG*AEPOT1(:,LM3)
+                  AEDMU(:,:)=AEDMU(:,:)+CG*AEPOT1(:,LM3,:)
                 END IF
               ENDDO
 !
-              DWORK1(:)=AEDMU(:)*AEPSI(:,LN1)*AEPHI(:,LN2)*R(:)**2
-              CALL RADIAL$INTEGRAL(GID,NR,DWORK1,SVAR)
-              HCV(LMN1,LMN2)=HCV(LMN1,LMN2)+SVAR
-
-!ocv is zero by construction
-              if(lm1.eq.lm2) then
+!             == X(IDIMD)=<PSI(LMN1)|AEPOT(IDIMD)|PSI(LMN2)>
+              DO IDIMD=1,NDIMD
+                DWORK1(:)=AEDMU(:,IDIMD)*AEPSI(:,LN1)*AEPHI(:,LN2)*R(:)**2
+                CALL RADIAL$INTEGRAL(GID,NR,DWORK1,X(IDIMD))
+              ENDDO
+              CALL CORE_RHOMAG2UPDN(NDIMD,X,CMAT22)
+              HCV(I1A:I1B,I2A:I2B)=HCV(I1A:I1B,I2A:I2B)+CMAT22(:,:)
+! 
+!OCV IS ZERO BY CONSTRUCTION
+              IF(LM1.EQ.LM2) THEN
                 DWORK1(:)=AEPSI(:,LN1)*AEPHI(:,LN2)*R(:)**2
-                CALL RADIAL$INTEGRAL(GID,NR,DWORK1,SVAR)
-                OCV(LMN1,LMN2)=OCV(LMN1,LMN2)+SVAR
-                HCV(LMN1,LMN2)=HCV(LMN1,LMN2)+SVAR*eb(ln1)
-              end if
+                CALL RADIAL$INTEGRAL(GID,NR,DWORK1,X(1))
+                CALL CORE_RHOMAG2UPDN(1,X,CMAT22)
+                OCV(I1A:I1B,I2A:I2B)=OCV(I1A:I1B,I2A:I2B)+CMAT22(:,:)
+                HCV(I1A:I1B,I2A:I2B)=HCV(I1A:I1B,I2A:I2B)+CMAT22(:,:)*EB(LN1)
+              END IF
+
+            ENDDO
+          ENDDO
+        ENDDO
+      ENDDO
+WRITE(*,FMT='(80("="),T20,A)')' CORE-VALENCE OVERLAP '
+WRITE(*,FMT='(I5,"     ",100I10)')0,(LMN2,LMN2=1,2*LMNX)
+DO LMN1=1,2*LMNCX
+  WRITE(*,FMT='(I5,"OCV: ",100F10.5)')LMN1,REAL(OCV(LMN1,:))
+ENDDO
+WRITE(*,FMT='(80("="),T20,A)')' CORE-VALENCE HAMILTONIAN '
+WRITE(*,FMT='(I5,"     ",100I10)')0,(LMN2,LMN2=1,2*LMNX)
+DO LMN1=1,2*LMNCX
+  WRITE(*,FMT='(I5,"HCV: ",100F10.2)')LMN1,REAL(HCV(LMN1,:))
+ENDDO
+
+!     ==========================================================================
+!     ==  VALENCE HAMILTONIAN AND OVERLAP
+!     ==========================================================================
+      ALLOCATE(HVV(2*LMNX,2*LMNX))      
+      ALLOCATE(OVV(2*LMNX,2*LMNX))      
+      HVV(:,:)=CZERO
+      OVV(:,:)=CZERO
+      LMN1=0
+      DO LN1=1,LNX
+        L1=LOX(LN1)
+        DO IM1=1,2*L1+1
+          LMN1=LMN1+1
+          LM1=L1**2+IM1
+          I1A=2*(LMN1-1)+1
+          I1B=I1A+1
+!
+          LMN2=0
+          DO LN2=1,LNX
+            L2=LOX(LN2)
+            DO IM2=1,2*L2+1
+              LMN2=LMN2+1
+              LM2=L2**2+IM2
+              I2A=2*(LMN2-1)+1
+              I2B=I2A+1
+!
+!
+              AEDMU(:,:)=0.D0
+              DO LM3=1,LMRX
+                CALL CLEBSCH(LM1,LM2,LM3,CG)
+                IF(CG.NE.0.D0) THEN
+                  AEDMU(:,:)=AEDMU(:,:)+CG*AEPOT1(:,LM3,:)
+                END IF
+              ENDDO
+!
+              DO IDIMD=1,NDIMD
+                DWORK1(:)=AEDMU(:,IDIMD)*AEPHI(:,LN1)*AEPHI(:,LN2)*R(:)**2
+                CALL RADIAL$INTEGRAL(GID,NR,DWORK1,X(IDIMD))
+              ENDDO
+              CALL CORE_RHOMAG2UPDN(NDIMD,X,CMAT22)
+              HVV(I1A:I1B,I2A:I2B)=HVV(I1A:I1B,I2A:I2B)+CMAT22(:,:)
+
+!OCV IS ZERO BY CONSTRUCTION
+              IF(LM1.EQ.LM2) THEN
+                DWORK1(:)=AEPHI(:,LN1)*AEPHI(:,LN2)*R(:)**2
+                CALL RADIAL$INTEGRAL(GID,NR,DWORK1,X(1))
+                CALL CORE_RHOMAG2UPDN(1,X,CMAT22)
+                OVV(I1A:I1B,I2A:I2B)=OVV(I1A:I1B,I2A:I2B)+CMAT22(:,:)
+              END IF
 ! 
             ENDDO
           ENDDO
@@ -659,47 +753,61 @@ enddo
       ENDDO
       DEALLOCATE(AEPOT1)
 
-write(*,fmt='(80("="),t20,A)')' core-valence overlap '
-write(*,fmt='(i5,"     ",100i10)')0,(lmn2,lmn2=1,lmnx)
-do lmn1=1,lmncx
-  write(*,fmt='(i5,"ocv: ",100f10.5)')lmn1,ocv(lmn1,:)
-enddo
-write(*,fmt='(80("="),t20,A)')' core-valence Hamiltonian '
-write(*,fmt='(i5,"     ",100i10)')0,(lmn2,lmn2=1,lmnx)
-do lmn1=1,lmncx
-  write(*,fmt='(i5,"hcv: ",100f10.2)')lmn1,Hcv(lmn1,:)
-enddo
+WRITE(*,FMT='(80("="),T20,A)')' VALENCE OVERLAP '
+WRITE(*,FMT='(I5,"     ",100I10)')0,(LMN2,LMN2=1,2*LMNX)
+DO LMN1=1,2*LMNX
+  WRITE(*,FMT='(I5,"OVV: ",100F10.5)')LMN1,REAL(OVV(LMN1,:))
+ENDDO
+WRITE(*,FMT='(80("="),T20,A)')' VALENCE HAMILTONIAN '
+WRITE(*,FMT='(I5,"     ",100I10)')0,(LMN2,LMN2=1,2*LMNX)
+DO LMN1=1,2*LMNX
+  WRITE(*,FMT='(I5,"HVV: ",100F10.5)')LMN1,REAL(HVV(LMN1,:))
+ENDDO
+
+!!$WRITE(*,*)'CORE DENSITY AT NUCLEUS    ', AEPSI(1,1)**2
+!!$WRITE(*,*)'VALENCE DENSITY AT NUCLEUS ', AEPHI(1,1)**2
+
+
 !
 !     ==========================================================================
 !     ==  DIAGONALIZATION OF THE HAMILTONIAN                                  ==
 !     ==========================================================================
-      ALLOCATE(EIGENVAL(LMNcX))
-      ALLOCATE(EIGENVEC(LMNcX,LMNcX))
-      CALL LIB$DIAGR8(LMNcX,HCC,EIGENVAL,EIGENVEC)
+      ALLOCATE(EIGENVAL(2*LMNCX))
+      ALLOCATE(EIGENVEC(2*LMNCX,2*LMNCX))
+      CALL LIB$DIAGC8(2*LMNCX,HCC,EIGENVAL,EIGENVEC)
       DEALLOCATE(EIGENVEC)
 
 WRITE(*,FMT='("EIGENVALUES ",5F12.3)')EIGENVAL
 !     ==========================================================================
-!     ==  self energy                                                         ==
+!     ==  SELF ENERGY                                                         ==
 !     ==========================================================================
-      ALLOCATE(SELFENERGY(LMNX,LMNX))
-      ALLOCATE(GREEN(LMNCX,LMNCX))
+      ALLOCATE(SELFENERGY(2*LMNX,2*LMNX))
+      ALLOCATE(GREEN(2*LMNCX,2*LMNCX))
 
-      CALL LIB$INVERTR8(LMNCX,EPSILONNU*OCC-HCC,GREEN)
-write(*,fmt='(80("="),t20,A)')' core greens function '
-write(*,fmt='(i5,"     ",100i10)')0,(lmn2,lmn2=1,lmncx)
-do lmn1=1,lmncx
-  write(*,fmt='(i5,"green: ",100f10.5)')lmn1,green(lmn1,:)
-enddo
+      CALL LIB$INVERTC8(2*LMNCX,EPSILONNU*OCC-HCC,GREEN)
+WRITE(*,FMT='(80("="),T20,A)')' CORE GREENS FUNCTION '
+WRITE(*,FMT='(I5,"     ",100I10)')0,(LMN2,LMN2=1,2*LMNCX)
+DO LMN1=1,2*LMNCX
+  WRITE(*,FMT='(I5,"GREEN: ",100F10.5)')LMN1,REAL(GREEN(LMN1,:))
+ENDDO
       
-      SELFENERGY=MATMUL(TRANSPOSE(HCV-epsilonnu*ocv) &
-     &                 ,MATMUL(green,HCV-epsilonnu*ocv))
+      SELFENERGY=MATMUL(TRANSPOSE(HCV-EPSILONNU*OCV) &
+     &                 ,MATMUL(GREEN,HCV-EPSILONNU*OCV))
 
-write(*,fmt='(80("="),t20,A)')' self energy '
-write(*,fmt='(i5,"     ",100i10)')0,(lmn2,lmn2=1,lmnx)
-do lmn1=1,lmnx
-  write(*,fmt='(i5,"sigma: ",100f10.5)')lmn1,selfenergy(lmn1,:)
-enddo
+WRITE(*,FMT='(80("="),T20,A)')' SELF ENERGY '
+WRITE(*,FMT='(I5,"     ",100I10)')0,(LMN2,LMN2=1,2*LMNX)
+DO LMN1=1,2*LMNX
+  WRITE(*,FMT='(I5,"SIGMA: ",100F8.3)')LMN1,REAL(SELFENERGY(LMN1,:))
+ENDDO
+
+!
+!     ==========================================================================
+!     ==  ENERGY GAIN FROM CORE-VALENCE INTERACTION                           ==
+!     ==========================================================================
+!!$      ALLOCATE(OVVIN(LMNX,LMNX))      
+!!$      CALL LIB$INVERTR8(LMNX,OVV,OVVIN)
+!!$         MATMUL(MATMUL(HCV,OVVIN),TRANSPOSE(HCV))
+
 !
 !     ==========================================================================
 !     ==  CLOSE DOWN                                                          ==
@@ -713,5 +821,37 @@ enddo
       DEALLOCATE(HCC)
       DEALLOCATE(HCV)
 
+      RETURN
+      END
+!
+!     ...1.........2.........3.........4.........5.........6.........7.........8
+      SUBROUTINE CORE_RHOMAG2UPDN(NDIMD,X,H)
+!     **************************************************************************
+!     ** TRANSFORMS MATRIX ELEMENTS INTO THE UPDN REPRESENTATION              **
+!     **   NDIMD=1 H=SIGMA_0*X(1)                                             **
+!     **   NDIMD=2 H=SIGMA_0*X(1)+SIGMAZ*X(2)                                 **
+!     **   NDIMD=4 H=SIGMA_0*X(1)+SIGMAX*X(2)+SIGMAY*X(3)+SIGMAZ*X(4)         **
+!     ** WHERE THE SIGMA ARE PAULI MATRICES                                   **
+!     **************************************************************************
+      IMPLICIT NONE
+      INTEGER(4),INTENT(IN) :: NDIMD
+      REAL(8)   ,INTENT(IN) :: X(NDIMD)
+      COMPLEX(8),INTENT(OUT):: H(2,2)
+      COMPLEX(8),PARAMETER  :: CI=(0.D0,1.D0)
+      COMPLEX(8),PARAMETER  :: CZERO=(0.D0,0.D0)
+!     **************************************************************************
+      H(1,1)=X(1)
+      H(2,1)=CZERO
+      H(1,2)=CZERO
+      H(2,2)=X(1)
+      IF(NDIMD.EQ.2) THEN
+        H(1,1)=H(1,1)+X(2)
+        H(2,2)=H(2,2)-X(2)
+      ELSE IF(NDIMD.EQ.4) THEN
+        H(1,1)=H(1,1)+X(4)
+        H(2,2)=H(2,2)-X(4)
+        H(1,2)=H(1,2)+X(2)+CI*X(3)
+        H(2,1)=H(2,1)+X(2)-CI*X(3)
+      END IF
       RETURN
       END
